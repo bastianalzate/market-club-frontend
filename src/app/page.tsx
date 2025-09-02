@@ -3,6 +3,7 @@
 import HeroSection from "@/components/home/HeroSection";
 import BrandsCarousel from "@/components/home/BrandsCarousel";
 import NewFlavorsSection from "@/components/home/NewFlavorsSection";
+import ProductSlider from "@/components/home/ProductSlider";
 import ProductCard from "@/features/products/components/ProductCard";
 import { Product } from "@/features/products/types/product";
 
@@ -102,6 +103,7 @@ export default function HomePage() {
       <HeroSection />
       <BrandsCarousel />
       <NewFlavorsSection />
+      <ProductSlider />
 
       {/* Featured Products Section */}
       <section className="py-16 bg-gray-50">
