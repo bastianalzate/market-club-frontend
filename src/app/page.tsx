@@ -108,8 +108,8 @@ export default function HomePage() {
       <NewFlavorsSection />
       <ProductSlider />
       <FavoriteProducts />
-      <MarketClubBanner />
       <BeerClubSection />
+      <MarketClubBanner />
 
       {/* Featured Products Section */}
     </div>
