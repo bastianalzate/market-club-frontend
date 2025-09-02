@@ -126,15 +126,30 @@ export default function ProductSlider() {
                       {product.price}
                     </p>
                     <div className="flex items-center justify-center mt-5 space-x-2 px-4">
-                      {product.colors.map((color, colorIndex) => (
-                        <div
-                          key={colorIndex}
-                          className={`w-3 h-3 bg-${color} border border-${color.replace(
-                            "400",
-                            "600"
-                          )} rounded-full`}
-                        ></div>
-                      ))}
+                      {product.colors.map((color, colorIndex) => {
+                        // Mapear colores a clases específicas de Tailwind
+                        const colorMap: { [key: string]: string } = {
+                          "amber-400": "bg-amber-400 border-amber-600",
+                          "orange-400": "bg-orange-400 border-orange-600",
+                          "yellow-400": "bg-yellow-400 border-yellow-600",
+                          "blue-400": "bg-blue-400 border-blue-600",
+                          "red-400": "bg-red-400 border-red-600",
+                          "pink-400": "bg-pink-400 border-pink-600",
+                          "orange-200": "bg-orange-200 border-orange-400",
+                          white: "bg-white border-gray-300",
+                          "green-400": "bg-green-400 border-green-600",
+                        };
+
+                        const colorClass =
+                          colorMap[color] || "bg-gray-400 border-gray-600";
+
+                        return (
+                          <div
+                            key={colorIndex}
+                            className={`w-3 h-3 ${colorClass} rounded-full`}
+                          ></div>
+                        );
+                      })}
                     </div>
                     {/* Espacio adicional en la parte inferior */}
                     <div className="pb-6"></div>

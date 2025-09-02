@@ -22,12 +22,12 @@ export default function HeroSection() {
                 title="Market Club"
                 className="flex items-center space-x-3"
               >
-                <div className="w-8 h-8 border-2 border-white rounded-sm flex items-center justify-center">
-                  <div className="w-4 h-4 border-2 border-white rounded-sm"></div>
+                <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center">
+                  <span className="text-black text-lg font-bold">■</span>
                 </div>
                 <div className="w-px h-8 bg-white"></div>
                 <span className="text-2xl font-bold text-white uppercase tracking-wide">
-                  Market Club
+                  MARKET CLUB
                 </span>
               </Link>
             </div>

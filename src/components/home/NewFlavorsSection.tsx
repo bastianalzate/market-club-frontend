@@ -1,3 +1,5 @@
+"use client";
+
 export default function NewFlavorsSection() {
   return (
     <section className="relative py-16 bg-black overflow-hidden">

@@ -4,6 +4,7 @@ import HeroSection from "@/components/home/HeroSection";
 import BrandsCarousel from "@/components/home/BrandsCarousel";
 import NewFlavorsSection from "@/components/home/NewFlavorsSection";
 import ProductSlider from "@/components/home/ProductSlider";
+import FavoriteProducts from "@/components/home/FavoriteProducts";
 import ProductCard from "@/features/products/components/ProductCard";
 import { Product } from "@/features/products/types/product";
 
@@ -104,6 +105,7 @@ export default function HomePage() {
       <BrandsCarousel />
       <NewFlavorsSection />
       <ProductSlider />
+      <FavoriteProducts />
 
       {/* Featured Products Section */}
       <section className="py-16 bg-gray-50">
