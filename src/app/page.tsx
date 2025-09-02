@@ -1,103 +1,197 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import HeroSection from "@/components/home/HeroSection";
+import BrandsCarousel from "@/components/home/BrandsCarousel";
+import NewFlavorsSection from "@/components/home/NewFlavorsSection";
+import ProductCard from "@/features/products/components/ProductCard";
+import { Product } from "@/features/products/types/product";
+
+// Mock data for demonstration
+const mockProducts: Product[] = [
+  {
+    id: 1,
+    name: "IPA Artesanal Local",
+    description:
+      "Una IPA refrescante con notas cítricas y un amargor equilibrado",
+    price: 8.99,
+    image:
+      "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=400&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=400&fit=crop",
+    ],
+    category: "IPA",
+    brand: "Cervecería Local",
+    alcoholContent: 6.5,
+    volume: 355,
+    style: "India Pale Ale",
+    origin: "Local",
+    inStock: true,
+    stockQuantity: 50,
+    rating: 4.5,
+    reviewCount: 23,
+    tags: ["artesanal", "local", "IPA"],
+    featured: true,
+    createdAt: "2024-01-01",
+    updatedAt: "2024-01-01",
+  },
+  {
+    id: 2,
+    name: "Stout Imperial Premium",
+    description: "Stout rico y cremoso con notas de chocolate y café",
+    price: 12.99,
+    image:
+      "https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?w=400&h=400&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?w=400&h=400&fit=crop",
+    ],
+    category: "Stout",
+    brand: "Cervecería Premium",
+    alcoholContent: 8.2,
+    volume: 500,
+    style: "Imperial Stout",
+    origin: "Importada",
+    inStock: true,
+    stockQuantity: 25,
+    rating: 4.8,
+    reviewCount: 15,
+    tags: ["premium", "importada", "stout"],
+    featured: true,
+    createdAt: "2024-01-01",
+    updatedAt: "2024-01-01",
+  },
+  {
+    id: 3,
+    name: "Lager Clásica",
+    description: "Lager suave y refrescante, perfecta para cualquier ocasión",
+    price: 6.99,
+    image:
+      "https://images.unsplash.com/photo-1566633806327-38e8c4d0a6b8?w=400&h=400&fit=crop",
+    images: [
+      "https://images.unsplash.com/photo-1566633806327-38e8c4d0a6b8?w=400&h=400&fit=crop",
+    ],
+    category: "Lager",
+    brand: "Cervecería Tradicional",
+    alcoholContent: 4.8,
+    volume: 330,
+    style: "Pale Lager",
+    origin: "Local",
+    inStock: true,
+    stockQuantity: 100,
+    rating: 4.2,
+    reviewCount: 45,
+    tags: ["clásica", "refrescante", "lager"],
+    featured: false,
+    createdAt: "2024-01-01",
+    updatedAt: "2024-01-01",
+  },
+];
+
+export default function HomePage() {
+  const handleAddToCart = (product: Product) => {
+    // TODO: Implementar lógica del carrito
+    console.log("Agregar al carrito:", product);
+  };
+
+  const handleAddToWishlist = (product: Product) => {
+    // TODO: Implementar lógica de wishlist
+    console.log("Agregar a wishlist:", product);
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen">
+      <HeroSection />
+      <BrandsCarousel />
+      <NewFlavorsSection />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* Featured Products Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Cervezas Destacadas
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Descubre nuestras selecciones más populares y las nuevas
+              incorporaciones a nuestra colección de cervezas premium.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {mockProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={handleAddToCart}
+                onAddToWishlist={handleAddToWishlist}
+              />
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <a
+              href="/products"
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 transition-colors"
+            >
+              Ver Todas las Cervezas
+            </a>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              ¿Por qué elegir Market Club?
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Ofrecemos la mejor experiencia en compra de cervezas con calidad
+              garantizada
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">🚚</span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Envío Rápido
+              </h3>
+              <p className="text-gray-600">
+                Recibe tus cervezas en 24-48 horas con envío seguro y
+                refrigerado
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">🌟</span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Calidad Premium
+              </h3>
+              <p className="text-gray-600">
+                Solo trabajamos con las mejores cervecerías y marcas reconocidas
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">💬</span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Soporte 24/7
+              </h3>
+              <p className="text-gray-600">
+                Nuestro equipo está disponible para ayudarte en cualquier
+                momento
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

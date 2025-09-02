@@ -1,0 +1,224 @@
+"use client";
+
+import Link from "next/link";
+import {
+  ShoppingCart,
+  User,
+  Search,
+  Menu,
+  X,
+  ShoppingBasket,
+} from "lucide-react";
+import { useState } from "react";
+
+export default function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  return (
+    <header className="w-full">
+      {/* Banner Superior */}
+      <div className="bg-amber-700 py-2">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <p className="text-center text-black font-medium tracking-wide uppercase text-sm">
+            Solo realizamos domicilios en Medellín
+          </p>
+        </div>
+      </div>
+
+      {/* Header Principal */}
+      <div className="py-4 bg-white sm:py-6">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <div className="shrink-0">
+              <Link
+                href="/"
+                title="Market Club"
+                className="flex items-center space-x-3"
+              >
+                <ShoppingBasket className="w-8 h-8 text-black" />
+                <div className="w-px h-8 bg-black"></div>
+                <span className="text-2xl font-bold text-black uppercase tracking-wide">
+                  Market Club
+                </span>
+              </Link>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="flex md:hidden">
+              <button
+                type="button"
+                className="text-black"
+                onClick={toggleMenu}
+                aria-expanded={isMenuOpen}
+              >
+                {!isMenuOpen ? (
+                  <Menu className="w-7 h-7" />
+                ) : (
+                  <X className="w-7 h-7" />
+                )}
+              </button>
+            </div>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden space-x-10 md:flex md:items-center md:justify-center lg:space-x-12">
+              <Link
+                href="/"
+                title="Inicio"
+                className="text-base font-normal text-amber-600 transition-all duration-200 hover:text-amber-700"
+              >
+                Inicio
+              </Link>
+
+              <Link
+                href="/products"
+                title="Tienda"
+                className="text-base font-normal text-gray-900 transition-all duration-200 hover:text-gray-600"
+              >
+                Tienda
+              </Link>
+
+              <Link
+                href="/gifts"
+                title="Armá tu regalo"
+                className="text-base font-normal text-gray-900 transition-all duration-200 hover:text-gray-600"
+              >
+                Armá tu regalo
+              </Link>
+
+              <Link
+                href="/kits"
+                title="Kit"
+                className="text-base font-normal text-gray-900 transition-all duration-200 hover:text-gray-600"
+              >
+                Kit
+              </Link>
+
+              <Link
+                href="/about"
+                title="Market Club"
+                className="text-base font-normal text-gray-900 transition-all duration-200 hover:text-gray-600"
+              >
+                Market Club
+              </Link>
+
+              <Link
+                href="/contact"
+                title="Contacto"
+                className="text-base font-normal text-gray-900 transition-all duration-200 hover:text-gray-600"
+              >
+                Contacto
+              </Link>
+            </nav>
+
+            {/* Desktop Actions */}
+            <div className="hidden md:flex md:items-center md:space-x-4">
+              {/* Search */}
+              <button className="p-2 text-gray-700 hover:text-gray-900 transition-colors">
+                <Search className="w-5 h-5" />
+              </button>
+
+              {/* Cart */}
+              <Link
+                href="/cart"
+                className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                <ShoppingCart className="w-5 h-5" />
+              </Link>
+
+              {/* User Profile */}
+              <Link
+                href="/profile"
+                className="p-2 bg-gray-100 text-gray-700 hover:text-gray-900 hover:bg-gray-200 rounded-full transition-colors border border-gray-300"
+              >
+                <User className="w-5 h-5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Mobile Navigation */}
+          {isMenuOpen && (
+            <nav>
+              <div className="flex flex-col pt-8 pb-4 space-y-6">
+                <Link
+                  href="/"
+                  title="Inicio"
+                  className="text-base font-normal text-amber-600 transition-all duration-200 hover:text-amber-700"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Inicio
+                </Link>
+
+                <Link
+                  href="/products"
+                  title="Tienda"
+                  className="text-base font-normal text-gray-900 transition-all duration-200 hover:text-gray-600"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Tienda
+                </Link>
+
+                <Link
+                  href="/gifts"
+                  title="Armá tu regalo"
+                  className="text-base font-normal text-gray-900 transition-all duration-200 hover:text-gray-600"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Armá tu regalo
+                </Link>
+
+                <Link
+                  href="/kits"
+                  title="Kit"
+                  className="text-base font-normal text-gray-900 transition-all duration-200 hover:text-gray-600"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Kit
+                </Link>
+
+                <Link
+                  href="/about"
+                  title="Market Club"
+                  className="text-base font-normal text-gray-900 transition-all duration-200 hover:text-gray-600"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Market Club
+                </Link>
+
+                <Link
+                  href="/contact"
+                  title="Contacto"
+                  className="text-base font-normal text-gray-900 transition-all duration-200 hover:text-gray-600"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Contacto
+                </Link>
+
+                {/* Mobile Actions */}
+                <div className="flex items-center space-x-4 pt-4 border-t border-gray-200">
+                  <button className="p-2 text-gray-700 hover:text-gray-900 transition-colors">
+                    <Search className="w-5 h-5" />
+                  </button>
+                  <Link
+                    href="/cart"
+                    className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+                  >
+                    <ShoppingCart className="w-5 h-5" />
+                  </Link>
+                  <Link
+                    href="/profile"
+                    className="p-2 bg-gray-100 text-gray-700 hover:text-gray-900 hover:bg-gray-200 rounded-full transition-colors border border-gray-300"
+                  >
+                    <User className="w-5 h-5" />
+                  </Link>
+                </div>
+              </div>
+            </nav>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}
