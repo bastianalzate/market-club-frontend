@@ -7,6 +7,7 @@ import ProductSlider from "@/components/home/ProductSlider";
 import FavoriteProducts from "@/components/home/FavoriteProducts";
 import MarketClubBanner from "@/components/home/MarketClubBanner";
 import BeerClubSection from "@/components/home/BeerClubSection";
+import BeerCarousel from "@/components/home/BeerCarousel";
 import ProductCard from "@/features/products/components/ProductCard";
 import { Product } from "@/features/products/types/product";
 
@@ -110,6 +111,7 @@ export default function HomePage() {
       <FavoriteProducts />
       <BeerClubSection />
       <MarketClubBanner />
+      <BeerCarousel />
 
       {/* Featured Products Section */}
     </div>
