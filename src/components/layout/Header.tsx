@@ -73,7 +73,7 @@ export default function Header() {
               </Link>
 
               <Link
-                href="/products"
+                href="/tienda"
                 title="Tienda"
                 className="text-base font-normal text-gray-900 transition-all duration-200 hover:text-gray-600"
               >
@@ -152,7 +152,7 @@ export default function Header() {
                 </Link>
 
                 <Link
-                  href="/products"
+                  href="/tienda"
                   title="Tienda"
                   className="text-base font-normal text-gray-900 transition-all duration-200 hover:text-gray-600"
                   onClick={() => setIsMenuOpen(false)}
