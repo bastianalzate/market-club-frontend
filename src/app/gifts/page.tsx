@@ -1,6 +1,7 @@
 import GiftBanner from "@/components/gifts/GiftBanner";
 import GiftInfoSection from "@/components/gifts/GiftInfoSection";
 import GiftProcessSteps from "@/components/gifts/GiftProcessSteps";
+import ProductSelectionFlow from "@/components/gifts/ProductSelectionFlow";
 
 export default function GiftsPage() {
   return (
@@ -13,6 +14,9 @@ export default function GiftsPage() {
 
       {/* Pasos del proceso */}
       <GiftProcessSteps />
+
+      {/* Flujo de selección de productos */}
+      <ProductSelectionFlow />
 
       {/* Contenido adicional de la página */}
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-16">
