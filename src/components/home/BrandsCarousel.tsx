@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 // Datos reales de los proveedores usando las imágenes locales
 const proveedores = [
@@ -32,19 +32,35 @@ const proveedores = [
 ];
 
 export default function BrandsCarousel() {
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const scrollElement = scrollRef.current;
+    if (!scrollElement) return;
+
+    let animationId: number;
+    let currentPosition = 0;
+    const speed = 3; // Velocidad rápida
+
     const animate = () => {
-      setScrollPosition((prev) => {
-        const newPosition = prev + 0.5; // Movimiento más lento
-        // Reset cuando llega al final para crear loop infinito
-        return newPosition >= 100 ? 0 : newPosition;
-      });
+      currentPosition += speed;
+      
+      // Si llegamos al final de la primera secuencia, reiniciamos sin salto visual
+      if (currentPosition >= proveedores.length * 64) {
+        currentPosition = 0;
+      }
+      
+      scrollElement.style.transform = `translateX(-${currentPosition}px)`;
+      animationId = requestAnimationFrame(animate);
     };
 
-    const interval = setInterval(animate, 50); // Actualización cada 50ms para movimiento suave
-    return () => clearInterval(interval);
+    animationId = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    };
   }, []);
 
   return (
@@ -60,25 +76,25 @@ export default function BrandsCarousel() {
       
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
         <div className="flex items-center justify-center">
-          {/* Carousel de logos con movimiento continuo */}
+          {/* Carousel de logos verdaderamente infinito */}
           <div className="w-full overflow-hidden">
             <div 
+              ref={scrollRef}
               className="flex transition-transform duration-0"
               style={{
-                transform: `translateX(-${scrollPosition}%)`,
-                width: `${proveedores.length * 3 * 25}%` // 3 pasadas para movimiento suave
+                width: `${proveedores.length * 6 * 64}px`
               }}
             >
               {/* Primera pasada de logos */}
               {proveedores.map((proveedor) => (
-                <div key={`first-${proveedor.id}`} className="flex-shrink-0 w-1/4 px-1">
+                <div key={`first-${proveedor.id}`} className="flex-shrink-0 w-64">
                   <div className="flex justify-center">
                     <Image
-                      className="object-contain w-auto h-16 sm:h-20 lg:h-24"
+                      className="object-contain w-auto h-24 sm:h-32 lg:h-40"
                       src={proveedor.logo}
                       alt={proveedor.alt}
-                      width={160}
-                      height={96}
+                      width={200}
+                      height={120}
                       loading="lazy"
                     />
                   </div>
@@ -87,14 +103,14 @@ export default function BrandsCarousel() {
               
               {/* Segunda pasada de logos */}
               {proveedores.map((proveedor) => (
-                <div key={`second-${proveedor.id}`} className="flex-shrink-0 w-1/4 px-1">
+                <div key={`second-${proveedor.id}`} className="flex-shrink-0 w-64">
                   <div className="flex justify-center">
                     <Image
-                      className="object-contain w-auto h-16 sm:h-20 lg:h-24"
+                      className="object-contain w-auto h-24 sm:h-32 lg:h-40"
                       src={proveedor.logo}
                       alt={proveedor.alt}
-                      width={160}
-                      height={96}
+                      width={200}
+                      height={120}
                       loading="lazy"
                     />
                   </div>
@@ -103,14 +119,62 @@ export default function BrandsCarousel() {
               
               {/* Tercera pasada de logos */}
               {proveedores.map((proveedor) => (
-                <div key={`third-${proveedor.id}`} className="flex-shrink-0 w-1/4 px-1">
+                <div key={`third-${proveedor.id}`} className="flex-shrink-0 w-64">
                   <div className="flex justify-center">
                     <Image
-                      className="object-contain w-auto h-16 sm:h-20 lg:h-24"
+                      className="object-contain w-auto h-24 sm:h-32 lg:h-40"
                       src={proveedor.logo}
                       alt={proveedor.alt}
-                      width={160}
-                      height={96}
+                      width={200}
+                      height={120}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              ))}
+              
+              {/* Cuarta pasada de logos */}
+              {proveedores.map((proveedor) => (
+                <div key={`fourth-${proveedor.id}`} className="flex-shrink-0 w-64">
+                  <div className="flex justify-center">
+                    <Image
+                      className="object-contain w-auto h-24 sm:h-32 lg:h-40"
+                      src={proveedor.logo}
+                      alt={proveedor.alt}
+                      width={200}
+                      height={120}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              ))}
+              
+              {/* Quinta pasada de logos */}
+              {proveedores.map((proveedor) => (
+                <div key={`fifth-${proveedor.id}`} className="flex-shrink-0 w-64">
+                  <div className="flex justify-center">
+                    <Image
+                      className="object-contain w-auto h-24 sm:h-32 lg:h-40"
+                      src={proveedor.logo}
+                      alt={proveedor.alt}
+                      width={200}
+                      height={120}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              ))}
+              
+              {/* Sexta pasada de logos */}
+              {proveedores.map((proveedor) => (
+                <div key={`sixth-${proveedor.id}`} className="flex-shrink-0 w-64">
+                  <div className="flex justify-center">
+                    <Image
+                      className="object-contain w-auto h-24 sm:h-32 lg:h-40"
+                      src={proveedor.logo}
+                      alt={proveedor.alt}
+                      width={200}
+                      height={120}
                       loading="lazy"
                     />
                   </div>

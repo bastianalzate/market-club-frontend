@@ -19,6 +19,15 @@ const config: Config = {
         oswald: ["var(--font-oswald)", "sans-serif"],
         inter: ["var(--font-inter)", "sans-serif"],
       },
+      animation: {
+        "scroll-infinite": "scroll-infinite 15s linear infinite",
+      },
+      keyframes: {
+        "scroll-infinite": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(calc(-100% / 6))" },
+        },
+      },
     },
   },
   plugins: [],
