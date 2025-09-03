@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Grid, List } from "lucide-react";
+import { Grid, List, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Product {
   id: number;
@@ -21,6 +21,16 @@ interface ProductGridProps {
 
 export default function ProductGrid({ products }: ProductGridProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Configuración de paginación
+  const productsPerPage = 9;
+  const totalPages = Math.ceil(products.length / productsPerPage);
+
+  // Obtener productos de la página actual
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+  const currentProducts = products.slice(startIndex, endIndex);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("es-CO", {
@@ -30,9 +40,27 @@ export default function ProductGrid({ products }: ProductGridProps) {
     }).format(price);
   };
 
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    // Scroll hacia arriba para ver los productos
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      goToPage(currentPage + 1);
+    }
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) {
+      goToPage(currentPage - 1);
+    }
+  };
+
   return (
     <div className="flex-1">
-      {/* Controles de vista */}
+      {/* Controles de vista y paginación */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
           <button
@@ -58,7 +86,8 @@ export default function ProductGrid({ products }: ProductGridProps) {
         </div>
 
         <div className="text-sm text-gray-500">
-          Mostrando {products.length} productos
+          Mostrando {startIndex + 1}-{Math.min(endIndex, products.length)} de{" "}
+          {products.length} productos
         </div>
       </div>
 
@@ -70,7 +99,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
             : "grid-cols-1"
         }`}
       >
-        {products.map((product) => (
+        {currentProducts.map((product) => (
           <div
             key={product.id}
             className={`bg-white rounded-lg shadow-sm border overflow-hidden ${
@@ -151,6 +180,77 @@ export default function ProductGrid({ products }: ProductGridProps) {
           </div>
         ))}
       </div>
+
+      {/* Paginación */}
+      {totalPages > 1 && (
+        <div className="mt-12 flex items-center justify-center">
+          <div className="flex items-center space-x-2">
+            {/* Botón anterior */}
+            <button
+              onClick={goToPrevPage}
+              disabled={currentPage === 1}
+              className={`p-2 rounded-lg transition-colors ${
+                currentPage === 1
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+              }`}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            {/* Números de página */}
+            <div className="flex items-center space-x-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => {
+                  // Mostrar solo algunas páginas para evitar demasiados botones
+                  if (
+                    page === 1 ||
+                    page === totalPages ||
+                    (page >= currentPage - 1 && page <= currentPage + 1)
+                  ) {
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => goToPage(page)}
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          page === currentPage
+                            ? "bg-amber-600 text-white"
+                            : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  } else if (
+                    page === currentPage - 2 ||
+                    page === currentPage + 2
+                  ) {
+                    return (
+                      <span key={page} className="px-2 text-gray-400">
+                        ...
+                      </span>
+                    );
+                  }
+                  return null;
+                }
+              )}
+            </div>
+
+            {/* Botón siguiente */}
+            <button
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+              className={`p-2 rounded-lg transition-colors ${
+                currentPage === totalPages
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+              }`}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

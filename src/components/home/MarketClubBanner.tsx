@@ -1,6 +1,11 @@
+"use client";
+
 export default function MarketClubBanner() {
   return (
-    <section className="py-8 bg-black overflow-hidden">
+    <section
+      className="py-8 overflow-hidden"
+      style={{ backgroundColor: "#B58E31" }}
+    >
       <div className="relative">
         {/* Tira horizontal con MARKET CLUB repetido */}
         <div className="whitespace-nowrap overflow-hidden">
