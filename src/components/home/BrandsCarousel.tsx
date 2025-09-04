@@ -1,65 +1,97 @@
-"use client";
+import Image from "next/image";
 
-// Mock data para logos de marcas de cerveza
-const brandLogos = [
+// Datos reales de los proveedores usando las imágenes locales
+const proveedores = [
   {
     id: 1,
-    name: "Logo 1",
-    logo: "https://cdn.rareblocks.xyz/collection/celebration/images/logos/1/logo-1.png",
-    alt: "Logo 1",
+    name: "Proveedor 1",
+    logo: "/images/proveedores/proveedor-01.png",
+    alt: "Logo Proveedor 1",
   },
   {
     id: 2,
-    name: "Logo 2",
-    logo: "https://cdn.rareblocks.xyz/collection/celebration/images/logos/1/logo-2.png",
-    alt: "Logo 2",
+    name: "Proveedor 2",
+    logo: "/images/proveedores/proveedor-02.png",
+    alt: "Logo Proveedor 2",
   },
   {
     id: 3,
-    name: "Logo 3",
-    logo: "https://cdn.rareblocks.xyz/collection/celebration/images/logos/1/logo-3.png",
-    alt: "Logo 3",
+    name: "Proveedor 3",
+    logo: "/images/proveedores/proveedor-03.png",
+    alt: "Logo Proveedor 3",
   },
   {
     id: 4,
-    name: "Logo 4",
-    logo: "https://cdn.rareblocks.xyz/collection/celebration/images/logos/1/logo-4.png",
-    alt: "Logo 4",
+    name: "Proveedor 4",
+    logo: "/images/proveedores/proveedor-04.png",
+    alt: "Logo Proveedor 4",
   },
   {
     id: 5,
-    name: "Logo 5",
-    logo: "https://cdn.rareblocks.xyz/collection/celebration/images/logos/1/logo-5.png",
-    alt: "Logo 5",
-  },
-  {
-    id: 6,
-    name: "Logo 6",
-    logo: "https://cdn.rareblocks.xyz/collection/celebration/images/logos/1/logo-6.png",
-    alt: "Logo 6",
+    name: "Proveedor 5",
+    logo: "/images/proveedores/proveedor-05.png",
+    alt: "Logo Proveedor 5",
   },
 ];
 
 export default function BrandsCarousel() {
+
   return (
-    <section className="py-10 bg-gray-50 sm:py-16 lg:py-24">
-      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="grid items-center grid-cols-2 gap-10 sm:gap-y-16 sm:grid-cols-3 xl:grid-cols-6">
-          {brandLogos.map((brand) => (
-            <div key={brand.id}>
-              <img
-                className="object-contain w-auto mx-auto h-14"
-                src={brand.logo}
-                alt={brand.alt}
-                loading="lazy"
-                onError={(e) => {
-                  // Replace with a placeholder if image fails to load
-                  const target = e.target as HTMLImageElement;
-                  target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='80' viewBox='0 0 200 80'%3E%3Crect width='200' height='80' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='12' fill='%236b7280'%3E${brand.name}%3C/text%3E%3C/svg%3E`;
+    <section className="py-10 bg-white sm:py-16 lg:py-24 relative overflow-hidden">
+      {/* Banda negra superior */}
+      <div className="absolute top-0 left-0 right-0 h-2 bg-black"></div>
+      
+      {/* Banda negra inferior */}
+      <div className="absolute bottom-0 left-0 right-0 h-2 bg-black"></div>
+      
+      {/* Línea dorada vertical izquierda */}
+      <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-600"></div>
+      
+      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
+        <div className="flex items-center justify-center">
+          {/* Carousel de logos verdaderamente infinito */}
+          <div className="w-full overflow-hidden">
+            <div className="whitespace-nowrap overflow-hidden">
+              <div 
+                className="inline-block"
+                style={{
+                  animation: 'scroll-logos 15s linear infinite'
                 }}
-              />
+              >
+              {/* Primera secuencia de logos */}
+              {proveedores.map((proveedor) => (
+                <div key={`first-${proveedor.id}`} className="inline-block w-64 mx-8">
+                  <div className="flex justify-center">
+                    <Image
+                      className="object-contain w-auto h-24 sm:h-32 lg:h-40"
+                      src={proveedor.logo}
+                      alt={proveedor.alt}
+                      width={200}
+                      height={120}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              ))}
+              
+              {/* Segunda secuencia de logos (duplicada para scroll infinito) */}
+              {proveedores.map((proveedor) => (
+                <div key={`second-${proveedor.id}`} className="inline-block w-64 mx-8">
+                  <div className="flex justify-center">
+                    <Image
+                      className="object-contain w-auto h-24 sm:h-32 lg:h-40"
+                      src={proveedor.logo}
+                      alt={proveedor.alt}
+                      width={200}
+                      height={120}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              ))}
+              </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>

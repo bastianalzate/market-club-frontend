@@ -1,18 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Search } from "lucide-react";
 
 export default function HeroSection() {
   return (
     <div className="">
       {/* Hero Section */}
-      <section className="relative py-12 overflow-hidden bg-black sm:pb-16 lg:pb-20 xl:pb-24">
-        <div className="px-4 mx-auto relative sm:px-6 lg:px-8 max-w-7xl">
+      <section className="relative py-12 overflow-hidden sm:pb-16 lg:pb-20 xl:pb-24">
+        {/* Fondo negro simple */}
+        <div className="absolute inset-0 z-0 bg-black"></div>
+        <div className="px-4 mx-auto relative z-10 sm:px-6 lg:px-8 max-w-7xl">
           <div className="grid items-center grid-cols-1 gap-y-12 lg:grid-cols-2 gap-x-16">
             <div>
               <h1 className="text-4xl font-normal text-white sm:text-5xl lg:text-6xl xl:text-7xl">
-                Descubre el Mundo de las Mejores Cervezas
+                <span className="block">Descubre el</span>
+                <span className="block">Mundo de las</span>
+                <span className="block">Mejores</span>
+                <span className="block">Cervezas</span>
               </h1>
               <p className="mt-4 text-lg font-normal text-gray-400 sm:mt-8">
                 Desde cervezas artesanales locales hasta importadas premium. Tu
@@ -97,44 +103,29 @@ export default function HeroSection() {
             </div>
 
             <div className="relative">
+              {/* Fondo con texto PAULANER repetido en toda la sección derecha */}
               <div className="absolute inset-0">
-                <svg
-                  className="blur-3xl filter opacity-70"
-                  style={{ filter: "blur(64px)" }}
-                  width="444"
-                  height="536"
-                  viewBox="0 0 444 536"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M225.919 112.719C343.98 64.6648 389.388 -70.487 437.442 47.574C485.496 165.635 253.266 481.381 135.205 529.435C17.1445 577.488 57.9596 339.654 9.9057 221.593C-38.1482 103.532 107.858 160.773 225.919 112.719Z"
-                    fill="url(#hero-gradient)"
+                <Image
+                  src="/images/banner/fondo-banner.png"
+                  alt="Fondo PAULANER"
+                  fill
+                  className="object-cover opacity-20"
+                  priority
+                />
+              </div>
+              
+              {/* Contenedor de la botella */}
+              <div className="relative w-[273px] h-[741px] mx-auto">
+                {/* Imagen de la botella original */}
+                <div className="relative z-10 flex justify-center items-center h-full">
+                  <Image
+                    src="/images/banner/cerbeza-banner.png"
+                    alt="Cerveza Premium"
+                    width={273}
+                    height={741}
+                    className="object-contain drop-shadow-2xl"
+                    priority
                   />
-                  <defs>
-                    <linearGradient
-                      id="hero-gradient"
-                      x1="82.7339"
-                      y1="550.792"
-                      x2="-39.945"
-                      y2="118.965"
-                      gradientUnits="userSpaceOnUse"
-                    >
-                      <stop offset="0%" stopColor="#f59e0b" />
-                      <stop offset="100%" stopColor="#ea580c" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-
-              <div className="absolute inset-0">
-                <div className="w-full h-full opacity-50 bg-gradient-to-br from-amber-500/20 to-orange-500/20"></div>
-              </div>
-
-              {/* Placeholder para imagen de cerveza */}
-              <div className="relative w-full max-w-md mx-auto">
-                <div className="w-full h-96 bg-gradient-to-br from-amber-200 to-orange-300 rounded-lg flex items-center justify-center">
-                  <span className="text-6xl">🍺</span>
                 </div>
               </div>
             </div>
