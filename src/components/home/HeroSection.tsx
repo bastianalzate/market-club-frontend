@@ -12,18 +12,14 @@ export default function HeroSection() {
         {/* Fondo negro simple */}
         <div className="absolute inset-0 z-0 bg-black"></div>
         <div className="px-4 mx-auto relative z-10 sm:px-6 lg:px-8 max-w-7xl">
-          <div className="grid items-center grid-cols-1 gap-y-12 lg:grid-cols-2 gap-x-16">
+          <div className="grid items-start grid-cols-1 gap-y-12 lg:grid-cols-2 gap-x-16 pt-16">
             <div>
-              <h1 className="text-4xl font-normal text-white sm:text-5xl lg:text-6xl xl:text-7xl">
-                <span className="block">Descubre el</span>
-                <span className="block">Mundo de las</span>
-                <span className="block">Mejores</span>
-                <span className="block">Cervezas</span>
+              <h1 className="font-bold text-white" style={{ fontFamily: 'var(--font-oswald)', fontSize: '80px' }}>
+                <span className="block">Brinda como</span>
+                <span className="block">en Oktoberfest</span>
               </h1>
-              <p className="mt-4 text-lg font-normal text-gray-400 sm:mt-8">
-                Desde cervezas artesanales locales hasta importadas premium. Tu
-                destino para explorar sabores únicos y tradiciones cerveceras de
-                todo el mundo.
+              <p className="mt-4 text-lg font-normal text-white sm:mt-8" style={{ fontFamily: 'var(--font-inter)' }}>
+                Directo desde Múnich, esta cerveza de trigo alemana es un ícono de sabor y tradición.
               </p>
 
               <form
@@ -41,7 +37,7 @@ export default function HeroSection() {
                       type="text"
                       name=""
                       id=""
-                      placeholder="Busca IPA, Stout, Lager, etc."
+                      placeholder="Cerveza Alemana, Paulaner"
                       className="block w-full py-4 pr-6 text-white placeholder-gray-500 bg-black border border-transparent rounded-full pl-14 sm:py-5 focus:border-transparent focus:ring-0"
                     />
                   </div>
@@ -49,16 +45,16 @@ export default function HeroSection() {
                 <div className="sm:absolute flex sm:right-1.5 sm:inset-y-1.5 mt-4 sm:mt-0">
                   <button
                     type="submit"
-                    className="inline-flex items-center justify-center w-full px-5 py-5 text-sm font-semibold tracking-widest text-black uppercase transition-all duration-200 bg-white rounded-full sm:w-auto sm:py-3 hover:opacity-90"
+                    className="inline-flex items-center justify-center w-full px-5 py-5 text-sm font-bold tracking-widest text-black uppercase transition-all duration-200 bg-white rounded-full sm:w-auto sm:py-3 hover:opacity-90"
                   >
-                    Buscar Cervezas
+                    ¡DESCÚBRELA AHORA!
                   </button>
                 </div>
               </form>
 
               <div className="mt-8 sm:mt-12">
-                <p className="text-lg font-normal text-white">
-                  Confían en nosotros 50k+ clientes
+                <p className="text-lg font-normal text-white" style={{ fontFamily: 'var(--font-inter)' }}>
+                  Calidad Premium
                 </p>
 
                 <div className="flex items-center mt-3">
@@ -92,11 +88,11 @@ export default function HeroSection() {
                       </svg>
                     ))}
                   </div>
-                  <span className="ml-2 text-base font-normal text-white">
-                    4.8/5
+                  <span className="ml-2 text-base font-normal text-white" style={{ fontFamily: 'var(--font-inter)' }}>
+                    4.1/5
                   </span>
-                  <span className="ml-1 text-base font-normal text-gray-500">
-                    (14k Reseñas)
+                  <span className="ml-1 text-base font-normal text-gray-500" style={{ fontFamily: 'var(--font-inter)' }}>
+                    (14k Vistas)
                   </span>
                 </div>
               </div>
@@ -106,7 +102,7 @@ export default function HeroSection() {
               {/* Fondo con texto PAULANER repetido en toda la sección derecha */}
               <div className="absolute inset-0">
                 <Image
-                  src="/images/banner/fondo-banner.png"
+                  src="/images/banner/fondo-banner.png?v=4"
                   alt="Fondo PAULANER"
                   fill
                   className="object-cover opacity-20"
@@ -119,7 +115,7 @@ export default function HeroSection() {
                 {/* Imagen de la botella original */}
                 <div className="relative z-10 flex justify-center items-center h-full">
                   <Image
-                    src="/images/banner/cerbeza-banner.png"
+                    src="/images/banner/cerbeza-banner.png?v=4"
                     alt="Cerveza Premium"
                     width={273}
                     height={741}
