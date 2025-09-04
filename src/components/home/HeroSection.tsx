@@ -14,12 +14,19 @@ export default function HeroSection() {
         <div className="px-4 mx-auto relative z-10 sm:px-6 lg:px-8 max-w-7xl">
           <div className="grid items-start grid-cols-1 gap-y-12 lg:grid-cols-2 gap-x-16 pt-16">
             <div>
-              <h1 className="font-bold text-white" style={{ fontFamily: 'var(--font-oswald)', fontSize: '80px' }}>
+              <h1
+                className="font-bold text-white"
+                style={{ fontFamily: "var(--font-oswald)", fontSize: "80px" }}
+              >
                 <span className="block">Brinda como</span>
                 <span className="block">en Oktoberfest</span>
               </h1>
-              <p className="mt-4 text-lg font-normal text-white sm:mt-8" style={{ fontFamily: 'var(--font-inter)' }}>
-                Directo desde Múnich, esta cerveza de trigo alemana es un ícono de sabor y tradición.
+              <p
+                className="mt-4 text-lg font-normal text-white sm:mt-8"
+                style={{ fontFamily: "var(--font-inter)" }}
+              >
+                Directo desde Múnich, esta cerveza de trigo alemana es un ícono
+                de sabor y tradición.
               </p>
 
               <form
@@ -53,7 +60,10 @@ export default function HeroSection() {
               </form>
 
               <div className="mt-8 sm:mt-12">
-                <p className="text-lg font-normal text-white" style={{ fontFamily: 'var(--font-inter)' }}>
+                <p
+                  className="text-lg font-normal text-white"
+                  style={{ fontFamily: "var(--font-inter)" }}
+                >
                   Calidad Premium
                 </p>
 
@@ -88,10 +98,16 @@ export default function HeroSection() {
                       </svg>
                     ))}
                   </div>
-                  <span className="ml-2 text-base font-normal text-white" style={{ fontFamily: 'var(--font-inter)' }}>
+                  <span
+                    className="ml-2 text-base font-normal text-white"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
                     4.1/5
                   </span>
-                  <span className="ml-1 text-base font-normal text-gray-500" style={{ fontFamily: 'var(--font-inter)' }}>
+                  <span
+                    className="ml-1 text-base font-normal text-gray-500"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
                     (14k Vistas)
                   </span>
                 </div>
@@ -105,11 +121,11 @@ export default function HeroSection() {
                   src="/images/banner/fondo-banner.png?v=4"
                   alt="Fondo PAULANER"
                   fill
-                  className="object-cover opacity-20"
+                  className="object-cover"
                   priority
                 />
               </div>
-              
+
               {/* Contenedor de la botella */}
               <div className="relative w-[273px] h-[741px] mx-auto">
                 {/* Imagen de la botella original */}
