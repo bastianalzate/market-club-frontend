@@ -1,7 +1,4 @@
-"use client";
-
 import Image from "next/image";
-import { useEffect, useRef } from "react";
 
 // Datos reales de los proveedores usando las imágenes locales
 const proveedores = [
@@ -29,39 +26,15 @@ const proveedores = [
     logo: "/images/proveedores/proveedor-04.png",
     alt: "Logo Proveedor 4",
   },
+  {
+    id: 5,
+    name: "Proveedor 5",
+    logo: "/images/proveedores/proveedor-05.png",
+    alt: "Logo Proveedor 5",
+  },
 ];
 
 export default function BrandsCarousel() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const scrollElement = scrollRef.current;
-    if (!scrollElement) return;
-
-    let animationId: number;
-    let currentPosition = 0;
-    const speed = 3; // Velocidad rápida
-
-    const animate = () => {
-      currentPosition += speed;
-      
-      // Si llegamos al final de la primera secuencia, reiniciamos sin salto visual
-      if (currentPosition >= proveedores.length * 64) {
-        currentPosition = 0;
-      }
-      
-      scrollElement.style.transform = `translateX(-${currentPosition}px)`;
-      animationId = requestAnimationFrame(animate);
-    };
-
-    animationId = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-      }
-    };
-  }, []);
 
   return (
     <section className="py-10 bg-white sm:py-16 lg:py-24 relative overflow-hidden">
@@ -78,16 +51,16 @@ export default function BrandsCarousel() {
         <div className="flex items-center justify-center">
           {/* Carousel de logos verdaderamente infinito */}
           <div className="w-full overflow-hidden">
-            <div 
-              ref={scrollRef}
-              className="flex transition-transform duration-0"
-              style={{
-                width: `${proveedores.length * 6 * 64}px`
-              }}
-            >
-              {/* Primera pasada de logos */}
+            <div className="whitespace-nowrap overflow-hidden">
+              <div 
+                className="inline-block"
+                style={{
+                  animation: 'scroll-logos 15s linear infinite'
+                }}
+              >
+              {/* Primera secuencia de logos */}
               {proveedores.map((proveedor) => (
-                <div key={`first-${proveedor.id}`} className="flex-shrink-0 w-64">
+                <div key={`first-${proveedor.id}`} className="inline-block w-64 mx-8">
                   <div className="flex justify-center">
                     <Image
                       className="object-contain w-auto h-24 sm:h-32 lg:h-40"
@@ -101,9 +74,9 @@ export default function BrandsCarousel() {
                 </div>
               ))}
               
-              {/* Segunda pasada de logos */}
+              {/* Segunda secuencia de logos (duplicada para scroll infinito) */}
               {proveedores.map((proveedor) => (
-                <div key={`second-${proveedor.id}`} className="flex-shrink-0 w-64">
+                <div key={`second-${proveedor.id}`} className="inline-block w-64 mx-8">
                   <div className="flex justify-center">
                     <Image
                       className="object-contain w-auto h-24 sm:h-32 lg:h-40"
@@ -116,70 +89,7 @@ export default function BrandsCarousel() {
                   </div>
                 </div>
               ))}
-              
-              {/* Tercera pasada de logos */}
-              {proveedores.map((proveedor) => (
-                <div key={`third-${proveedor.id}`} className="flex-shrink-0 w-64">
-                  <div className="flex justify-center">
-                    <Image
-                      className="object-contain w-auto h-24 sm:h-32 lg:h-40"
-                      src={proveedor.logo}
-                      alt={proveedor.alt}
-                      width={200}
-                      height={120}
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              ))}
-              
-              {/* Cuarta pasada de logos */}
-              {proveedores.map((proveedor) => (
-                <div key={`fourth-${proveedor.id}`} className="flex-shrink-0 w-64">
-                  <div className="flex justify-center">
-                    <Image
-                      className="object-contain w-auto h-24 sm:h-32 lg:h-40"
-                      src={proveedor.logo}
-                      alt={proveedor.alt}
-                      width={200}
-                      height={120}
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              ))}
-              
-              {/* Quinta pasada de logos */}
-              {proveedores.map((proveedor) => (
-                <div key={`fifth-${proveedor.id}`} className="flex-shrink-0 w-64">
-                  <div className="flex justify-center">
-                    <Image
-                      className="object-contain w-auto h-24 sm:h-32 lg:h-40"
-                      src={proveedor.logo}
-                      alt={proveedor.alt}
-                      width={200}
-                      height={120}
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              ))}
-              
-              {/* Sexta pasada de logos */}
-              {proveedores.map((proveedor) => (
-                <div key={`sixth-${proveedor.id}`} className="flex-shrink-0 w-64">
-                  <div className="flex justify-center">
-                    <Image
-                      className="object-contain w-auto h-24 sm:h-32 lg:h-40"
-                      src={proveedor.logo}
-                      alt={proveedor.alt}
-                      width={200}
-                      height={120}
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>

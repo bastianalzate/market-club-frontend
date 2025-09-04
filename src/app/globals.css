@@ -31,12 +31,26 @@ body {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-33.33%);
+    transform: translateX(-50%);
   }
 }
 
 .animate-scroll {
   animation: scroll 15s linear infinite;
+}
+
+/* Animación específica para el carousel de logos */
+@keyframes scroll-logos {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-logos {
+  animation: scroll-logos 15s linear infinite;
 }
 
 /* Pausar animación en hover para mejor legibilidad */

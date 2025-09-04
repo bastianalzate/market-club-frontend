@@ -20,7 +20,7 @@ const config: Config = {
         inter: ["var(--font-inter)", "sans-serif"],
       },
       animation: {
-        "scroll-infinite": "scroll-infinite 15s linear infinite",
+        "scroll-infinite": "scroll-infinite 20s linear infinite",
       },
       keyframes: {
         "scroll-infinite": {
