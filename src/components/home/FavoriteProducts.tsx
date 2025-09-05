@@ -131,16 +131,25 @@ export default function FavoriteProducts() {
                   {/* Botón de carrito cuadrado */}
                   <button
                     onClick={() => handleAddToCart(product.id)}
-                    className="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                    className="p-3 rounded-lg transition-colors hover:bg-gray-50"
+                    style={{ 
+                      backgroundColor: 'transparent',
+                      borderColor: '#D0D5DD',
+                      borderWidth: '1px',
+                      borderStyle: 'solid'
+                    }}
                     aria-label="Agregar al carrito"
                   >
-                    <ShoppingCart className="w-5 h-5 text-gray-700" />
+                    <ShoppingCart className="w-5 h-5" style={{ color: '#B58E31' }} />
                   </button>
 
                   {/* Botón principal "Añadir al carrito" */}
                   <button
                     onClick={() => handleAddToCart(product.id)}
-                    className="flex-1 flex items-center justify-center space-x-2 bg-amber-600 hover:bg-amber-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+                    className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+                    style={{ backgroundColor: '#B58E31' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A07D2A'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B58E31'}
                   >
                     <span>Añadir al carrito</span>
                     <ArrowRight className="w-4 h-4" />

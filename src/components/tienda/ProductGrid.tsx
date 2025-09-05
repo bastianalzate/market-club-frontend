@@ -169,9 +169,12 @@ export default function ProductGrid({ products }: ProductGridProps) {
                   disabled={!product.inStock}
                   className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                     product.inStock
-                      ? "bg-amber-600 text-white hover:bg-amber-700"
+                      ? "text-white"
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
+                  style={product.inStock ? { backgroundColor: '#B58E31' } : {}}
+                  onMouseEnter={product.inStock ? (e) => e.currentTarget.style.backgroundColor = '#A07D2A' : undefined}
+                  onMouseLeave={product.inStock ? (e) => e.currentTarget.style.backgroundColor = '#B58E31' : undefined}
                 >
                   Agregar al carrito
                 </button>
