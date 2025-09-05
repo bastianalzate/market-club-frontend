@@ -110,8 +110,9 @@ export default function HomePage() {
       <NewFlavorsSection />
       <ProductSlider />
       <FavoriteProducts />
+      <MarketClubBanner backgroundColor="#FFFFFF" textColor="#000000" />
       <BeerClubSection />
-      <MarketClubBanner />
+      <MarketClubBanner backgroundColor="#000000" textColor="#FFFFFF" />
       <BeerCarousel />
       <ServicesBanner />
 
