@@ -37,19 +37,18 @@ const proveedores = [
 export default function BrandsCarousel() {
 
   return (
-    <section className="py-10 bg-white sm:py-16 lg:py-24 relative overflow-hidden">
+    <section className="relative overflow-hidden bg-white" style={{ height: '150px', maxHeight: '150px' }}>
       {/* Banda negra superior */}
-      <div className="absolute top-0 left-0 right-0 h-2 bg-black"></div>
+      <div className="absolute top-0 left-0 right-0 h-px bg-black"></div>
       
       {/* Banda negra inferior */}
-      <div className="absolute bottom-0 left-0 right-0 h-2 bg-black"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-black"></div>
       
-      {/* Línea dorada vertical izquierda */}
-      
-      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
-        <div className="flex items-center justify-center">
+      {/* Contenedor del carrusel de logos */}
+      <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl" style={{ height: '150px' }}>
+        <div className="flex items-center justify-center h-full">
           {/* Carousel de logos verdaderamente infinito */}
-          <div className="w-full overflow-hidden">
+          <div className="w-full overflow-hidden h-full flex items-center">
             <div className="whitespace-nowrap overflow-hidden">
               <div 
                 className="inline-block"
