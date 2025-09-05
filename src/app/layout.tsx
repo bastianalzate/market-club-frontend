@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Oswald, Inter } from "next/font/google";
+import { Geist, Geist_Mono, Oswald, Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import MainLayout from "@/components/layout/MainLayout";
 
@@ -25,6 +25,12 @@ const inter = Inter({
   weight: ["400"],
 });
 
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: "Market Club - Tu Destino para las Mejores Cervezas",
   description:
@@ -48,7 +54,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${inter.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${inter.variable} ${plusJakartaSans.variable} antialiased`}
       >
         <MainLayout>{children}</MainLayout>
       </body>
