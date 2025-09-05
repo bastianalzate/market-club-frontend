@@ -114,14 +114,14 @@ export default function HeroSection() {
               </div>
             </div>
 
-            <div className="relative">
+            <div className="relative min-h-[600px]">
               {/* Fondo con texto PAULANER repetido en toda la sección derecha */}
-              <div className="absolute inset-0">
+              <div className="absolute inset-0 flex items-center justify-center">
                 <Image
                   src="/images/banner/fondo-banner.png?v=4"
                   alt="Fondo PAULANER"
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   priority
                 />
               </div>

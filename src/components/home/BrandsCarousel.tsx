@@ -45,7 +45,6 @@ export default function BrandsCarousel() {
       <div className="absolute bottom-0 left-0 right-0 h-2 bg-black"></div>
       
       {/* Línea dorada vertical izquierda */}
-      <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-600"></div>
       
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
         <div className="flex items-center justify-center">
@@ -63,11 +62,11 @@ export default function BrandsCarousel() {
                 <div key={`first-${proveedor.id}`} className="inline-block w-64 mx-8">
                   <div className="flex justify-center">
                     <Image
-                      className="object-contain w-auto h-24 sm:h-32 lg:h-40"
+                      className="object-contain w-auto h-32 sm:h-40 lg:h-48"
                       src={proveedor.logo}
                       alt={proveedor.alt}
-                      width={200}
-                      height={120}
+                      width={250}
+                      height={150}
                       loading="lazy"
                     />
                   </div>
@@ -79,11 +78,11 @@ export default function BrandsCarousel() {
                 <div key={`second-${proveedor.id}`} className="inline-block w-64 mx-8">
                   <div className="flex justify-center">
                     <Image
-                      className="object-contain w-auto h-24 sm:h-32 lg:h-40"
+                      className="object-contain w-auto h-32 sm:h-40 lg:h-48"
                       src={proveedor.logo}
                       alt={proveedor.alt}
-                      width={200}
-                      height={120}
+                      width={250}
+                      height={150}
                       loading="lazy"
                     />
                   </div>

@@ -83,15 +83,6 @@ export default function FavoriteProducts() {
       </div>
 
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
-        {/* Título de la sección */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Productos Favoritos
-          </h2>
-          <p className="text-lg text-gray-300">
-            Las cervezas más populares de nuestros clientes
-          </p>
-        </div>
 
         {/* Grid de productos favoritos */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

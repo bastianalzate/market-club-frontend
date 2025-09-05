@@ -75,18 +75,9 @@ export default function ProductSlider() {
   return (
     <section className="py-12 bg-black sm:py-16 lg:py-20">
       <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
-        <div className="max-w-md mx-auto text-center">
-          <h2 className="text-2xl font-bold text-white sm:text-3xl">
-            Cervezas Destacadas
-          </h2>
-          <p className="mt-4 text-base font-normal leading-7 text-gray-300">
-            Descubre nuestra selección premium de cervezas artesanales e
-            importadas
-          </p>
-        </div>
 
         {/* Carrusel de productos */}
-        <div className="relative mt-12 sm:mt-16">
+        <div className="relative">
           <div className="overflow-hidden">
             <div
               className="flex transition-transform duration-300 ease-in-out"

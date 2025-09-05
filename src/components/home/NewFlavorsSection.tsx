@@ -3,8 +3,6 @@
 export default function NewFlavorsSection() {
   return (
     <section className="relative py-16 bg-black overflow-hidden">
-      {/* Gradiente sutil en la parte inferior */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-400 via-pink-400 via-yellow-400 via-green-400 via-blue-400 to-purple-400 opacity-30"></div>
 
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
