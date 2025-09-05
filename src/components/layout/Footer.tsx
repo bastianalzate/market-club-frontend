@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   Facebook,
   Instagram,
@@ -13,14 +14,17 @@ export default function Footer() {
     <footer className="py-12 bg-white sm:pt-16 lg:pt-20">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Logo */}
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 border-2 border-black rounded-sm flex items-center justify-center">
-            <div className="w-4 h-4 border-2 border-black rounded-sm"></div>
-          </div>
-          <div className="w-px h-8 bg-black"></div>
-          <span className="text-2xl font-bold text-black uppercase tracking-wide">
-            Market Club
-          </span>
+        <div className="flex items-center">
+          <Link href="/" title="Market Club">
+            <Image
+              src="/images/logo/logo.png"
+              alt="Market Club Logo"
+              width={200}
+              height={0}
+              className="h-auto"
+              priority
+            />
+          </Link>
         </div>
 
         <div className="grid grid-cols-2 mt-16 sm:grid-cols-3 gap-y-16 lg:grid-cols-6 gap-x-16">
