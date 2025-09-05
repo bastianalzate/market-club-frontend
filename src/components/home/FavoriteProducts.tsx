@@ -88,7 +88,7 @@ export default function FavoriteProducts() {
             >
               {/* Imagen del producto con botón de favorito */}
               <div className="relative">
-                <div className="aspect-w-1 aspect-h-1 overflow-hidden">
+                <div className="aspect-w-1 aspect-h-1 overflow-hidden pt-4">
                   <img
                     className="object-cover w-full h-full transition-all duration-300 hover:scale-105"
                     src={product.image}

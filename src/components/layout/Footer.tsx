@@ -231,13 +231,20 @@ export default function Footer() {
 
         <hr className="mt-16 border-gray-200" />
 
-        {/* Aviso legal */}
+        {/* Aviso legal - Antes del copyright con ancho completo */}
         <div
-          className="mt-8 flex items-center justify-center"
-          style={{ height: "52px" }}
+          className="mt-8 flex items-center justify-center w-full"
+          style={{
+            height: "52px",
+            backgroundColor: "#000000",
+            marginLeft: "-1.5rem",
+            marginRight: "-1.5rem",
+            paddingLeft: "1.5rem",
+            paddingRight: "1.5rem",
+          }}
         >
           <p
-            className="text-center"
+            className="text-center text-white"
             style={{
               fontFamily: "var(--font-inter)",
               fontWeight: 400,

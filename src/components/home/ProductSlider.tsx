@@ -45,7 +45,7 @@ export default function ProductSlider() {
   };
 
   const getCardsPerView = () => {
-    if (typeof window === 'undefined') return 3;
+    if (typeof window === "undefined") return 3;
     const width = window.innerWidth;
     if (width < 640) return 1; // sm: 1 tarjeta
     if (width < 768) return 2; // md: 2 tarjetas
@@ -61,12 +61,12 @@ export default function ProductSlider() {
       const currentScrollLeft = sliderRef.current.scrollLeft;
       const currentIndex = Math.round(currentScrollLeft / cardWidth);
       const nextIndex = (currentIndex + 1) % products.length;
-      
+
       sliderRef.current.scrollTo({
         left: nextIndex * cardWidth,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
-      
+
       setCurrentSlide(nextIndex);
     }
   };
@@ -79,12 +79,12 @@ export default function ProductSlider() {
       const currentScrollLeft = sliderRef.current.scrollLeft;
       const currentIndex = Math.round(currentScrollLeft / cardWidth);
       const prevIndex = (currentIndex - 1 + products.length) % products.length;
-      
+
       sliderRef.current.scrollTo({
         left: prevIndex * cardWidth,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
-      
+
       setCurrentSlide(prevIndex);
     }
   };
@@ -104,51 +104,51 @@ export default function ProductSlider() {
 
   const handleMouseUp = () => {
     if (!isDragging || !sliderRef.current) return;
-    
+
     setIsDragging(false);
-    
+
     // Scroll suave al soltar el mouse
     const containerWidth = sliderRef.current.clientWidth;
     const cardsPerView = getCardsPerView();
     const cardWidth = containerWidth / cardsPerView;
     const currentScrollLeft = sliderRef.current.scrollLeft;
     const targetIndex = Math.round(currentScrollLeft / cardWidth);
-    
+
     sliderRef.current.scrollTo({
       left: targetIndex * cardWidth,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
-    
+
     setCurrentSlide(targetIndex % products.length);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !sliderRef.current) return;
     e.preventDefault();
-    
+
     const currentX = e.pageX - (sliderRef.current.offsetLeft || 0);
     const diffX = currentX - startX;
     const newScrollLeft = scrollLeft - diffX * 1.5;
-    
+
     // Aplicar el scroll directamente para movimiento fluido
     sliderRef.current.scrollLeft = newScrollLeft;
   };
 
-
   return (
     <section className="py-12 bg-black sm:py-16 lg:py-20">
       <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
-
         {/* Carrusel de productos */}
-        <div className="relative px-4 lg:px-16"> {/* Responsive padding: no margin on small screens, margin on large screens */}
-          <div 
+        <div className="relative px-4 lg:px-16">
+          {" "}
+          {/* Responsive padding: no margin on small screens, margin on large screens */}
+          <div
             ref={sliderRef}
             className="flex overflow-x-auto snap-x snap-mandatory"
-            style={{ 
-              scrollbarWidth: 'none', 
-              msOverflowStyle: 'none',
-              WebkitScrollbar: { display: 'none' },
-              scrollSnapType: 'x mandatory'
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              WebkitScrollbar: { display: "none" },
+              scrollSnapType: "x mandatory",
             }}
             onMouseDown={handleMouseDown}
             onMouseLeave={handleMouseLeave}
@@ -156,50 +156,61 @@ export default function ProductSlider() {
             onMouseMove={handleMouseMove}
           >
             {infiniteProducts.map((product, index) => (
-              <div key={`${product.id}-${index}`} className="w-full sm:w-1/2 md:w-1/3 xl:w-1/4 flex-shrink-0 px-2 snap-start">
-                  <div className="bg-white rounded-lg shadow-lg overflow-hidden h-full flex flex-col">
-                    {/* Sección superior - Imagen de la botella */}
-                    <div className="relative bg-white min-h-[220px] overflow-hidden">
-                      <img
-                        className="w-full h-full object-cover"
-                        src={product.image}
-                        alt={product.name}
-                      />
-                    </div>
-                    
-                    {/* Sección inferior - Información del producto */}
-                    <div className="bg-white p-6 flex flex-col justify-between flex-grow">
-                      <div>
-                        <h3 className="text-gray-900 uppercase tracking-wide" style={{ 
-                          fontFamily: 'var(--font-oswald)',
+              <div
+                key={`${product.id}-${index}`}
+                className="w-full sm:w-1/2 md:w-1/3 xl:w-1/4 flex-shrink-0 px-2 snap-start"
+              >
+                <div className="bg-white rounded-lg shadow-lg overflow-hidden h-full flex flex-col">
+                  {/* Sección superior - Imagen de la botella */}
+                  <div className="relative bg-white min-h-[220px] overflow-hidden pt-4">
+                    <img
+                      className="w-full h-full object-cover"
+                      src={product.image}
+                      alt={product.name}
+                    />
+                  </div>
+
+                  {/* Sección inferior - Información del producto */}
+                  <div className="bg-white p-6 flex flex-col justify-between flex-grow">
+                    <div>
+                      <h3
+                        className="text-gray-900 uppercase tracking-wide"
+                        style={{
+                          fontFamily: "var(--font-oswald)",
                           fontSize: "24px",
                           marginBottom: "-8px",
-                          fontWeight: "700"
-                        }}>
-                          {product.name}
-                        </h3>
-                        <p className="text-gray-900 mb-2 uppercase tracking-wide" style={{ 
-                          fontFamily: 'var(--font-oswald)',
+                          fontWeight: "700",
+                        }}
+                      >
+                        {product.name}
+                      </h3>
+                      <p
+                        className="text-gray-900 mb-2 uppercase tracking-wide"
+                        style={{
+                          fontFamily: "var(--font-oswald)",
                           fontSize: "24px",
-                          fontWeight: "300"
-                        }}>
-                          {product.volume}
-                        </p>
-                      </div>
-                      <div className="mt-2">
-                        <p className="text-gray-900 uppercase tracking-wide" style={{ 
-                          fontFamily: 'var(--font-plus-jakarta-sans)',
-                          fontSize: "24px"
-                        }}>
-                          {product.price}
-                        </p>
-                      </div>
+                          fontWeight: "300",
+                        }}
+                      >
+                        {product.volume}
+                      </p>
+                    </div>
+                    <div className="mt-2">
+                      <p
+                        className="text-gray-900 uppercase tracking-wide"
+                        style={{
+                          fontFamily: "var(--font-plus-jakarta-sans)",
+                          fontSize: "24px",
+                        }}
+                      >
+                        {product.price}
+                      </p>
                     </div>
                   </div>
                 </div>
-              ))}
+              </div>
+            ))}
           </div>
-
           {/* Botones de navegación */}
           <button
             onClick={prevSlide}
@@ -251,12 +262,12 @@ export default function ProductSlider() {
                   const containerWidth = sliderRef.current.clientWidth;
                   const cardsPerView = getCardsPerView();
                   const cardWidth = containerWidth / cardsPerView;
-                  
+
                   sliderRef.current.scrollTo({
                     left: index * cardWidth,
-                    behavior: 'smooth'
+                    behavior: "smooth",
                   });
-                  
+
                   setCurrentSlide(index);
                 }
               }}
@@ -265,10 +276,10 @@ export default function ProductSlider() {
                   ? "border-gray-400 bg-transparent"
                   : "border-white bg-transparent"
               }`}
-              style={{ 
-                width: '37.67px', 
-                height: '37.67px',
-                borderWidth: '5px'
+              style={{
+                width: "37.67px",
+                height: "37.67px",
+                borderWidth: "5px",
               }}
               aria-label={`Ir a slide ${index + 1}`}
             />
