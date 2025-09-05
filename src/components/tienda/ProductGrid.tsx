@@ -102,78 +102,90 @@ export default function ProductGrid({ products }: ProductGridProps) {
         {currentProducts.map((product) => (
           <div
             key={product.id}
-            className={`bg-white rounded-lg shadow-sm border overflow-hidden ${
+            className={`bg-white rounded-lg overflow-hidden shadow-lg ${
               viewMode === "list" ? "flex" : ""
             }`}
           >
             {/* Imagen del producto */}
             <div
-              className={`${
+              className={`relative ${
                 viewMode === "list" ? "w-48 flex-shrink-0" : "w-full"
               }`}
             >
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-48 object-cover"
-              />
+              <div className="aspect-w-1 aspect-h-1 overflow-hidden pt-4">
+                <img
+                  className="object-cover w-full h-full transition-all duration-300 hover:scale-105"
+                  src={product.image}
+                  alt={product.name}
+                />
+              </div>
             </div>
 
             {/* Información del producto */}
-            <div className={`p-4 ${viewMode === "list" ? "flex-1" : ""}`}>
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <h3 className="font-semibold text-gray-900">
-                    {product.name}
-                  </h3>
-                  <p className="text-sm text-gray-600">{product.brand}</p>
-                </div>
-                <span className="text-lg font-bold text-amber-600">
+            <div className={`p-6 ${viewMode === "list" ? "flex-1" : ""}`}>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-gray-600 font-medium">
+                  {product.category}
+                </span>
+                <span className="text-lg font-bold text-gray-900">
                   {formatPrice(product.price)}
                 </span>
               </div>
 
-              <div className="flex items-center space-x-2 mb-3">
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className={`w-4 h-4 ${
-                        i < Math.floor(product.rating)
-                          ? "text-yellow-400"
-                          : "text-gray-300"
-                      }`}
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <span className="text-sm text-gray-500">
-                  ({product.reviewCount})
-                </span>
-              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">
+                {product.name}
+              </h3>
 
-              <div className="flex items-center justify-between">
-                <span
-                  className={`text-sm px-2 py-1 rounded-full ${
-                    product.inStock
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {product.inStock ? "En stock" : "Agotado"}
-                </span>
+              {/* Botones de acción */}
+              <div className="flex items-center space-x-3">
+                {/* Botón de carrito cuadrado */}
                 <button
                   disabled={!product.inStock}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  className={`p-3 rounded-lg transition-colors ${
                     product.inStock
-                      ? "bg-amber-600 text-white hover:bg-amber-700"
+                      ? "bg-gray-100 hover:bg-gray-200"
+                      : "bg-gray-300 cursor-not-allowed"
+                  }`}
+                  aria-label="Agregar al carrito"
+                >
+                  <svg
+                    className="w-5 h-5 text-gray-700"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"
+                    />
+                  </svg>
+                </button>
+
+                {/* Botón principal "Añadir al carrito" */}
+                <button
+                  disabled={!product.inStock}
+                  className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-lg font-medium transition-colors ${
+                    product.inStock
+                      ? "bg-amber-600 hover:bg-amber-700 text-white"
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
                 >
-                  Agregar al carrito
+                  <span>Añadir al carrito</span>
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
                 </button>
               </div>
             </div>
