@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Search, Menu, X, ShoppingCart, User } from "lucide-react";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
@@ -24,18 +25,15 @@ export default function Header() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="shrink-0">
-            <Link
-              href="/"
-              title="Market Club"
-              className="flex items-center space-x-3"
-            >
-              <div className="w-8 h-8 bg-black rounded-sm flex items-center justify-center">
-                <span className="text-white text-lg font-bold">■</span>
-              </div>
-              <div className="w-px h-8 bg-gray-300"></div>
-              <span className="text-2xl font-bold text-black uppercase tracking-wide">
-                MARKET CLUB
-              </span>
+            <Link href="/" title="Market Club" className="flex items-center">
+              <Image
+                src="/images/logo/logo.png"
+                alt="Market Club Logo"
+                width={200}
+                height={0}
+                className="h-auto"
+                priority
+              />
             </Link>
           </div>
 
