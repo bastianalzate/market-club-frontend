@@ -231,6 +231,27 @@ export default function Footer() {
 
         <hr className="mt-16 border-gray-200" />
 
+        {/* Aviso legal */}
+        <div
+          className="mt-8 flex items-center justify-center"
+          style={{ height: "52px" }}
+        >
+          <p
+            className="text-center"
+            style={{
+              fontFamily: "var(--font-inter)",
+              fontWeight: 400,
+              fontSize: "16px",
+              lineHeight: "100%",
+              letterSpacing: "0%",
+            }}
+          >
+            El exceso de alcohol es perjudicial para la salud. Ley 30 de 1986.
+            Prohíbase el expendio de bebidas embriagantes a menores de edad y
+            mujeres embarazadas. <strong>Ley 124 de 1994.</strong>
+          </p>
+        </div>
+
         <div className="mt-8 sm:flex sm:items-center sm:justify-between">
           <ul className="flex items-center justify-start space-x-3 sm:order-2 sm:justify-end">
             <li>

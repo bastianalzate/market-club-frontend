@@ -17,38 +17,34 @@ export default function FavoriteProducts() {
   const products = [
     {
       id: 1,
-      name: "Peroni Nastro Azzurro",
-      image:
-        "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-1.png",
-      volume: "Botella 330ML",
-      price: "$25.000",
+      name: "PAULANER WEISSBIER",
+      image: "/images/cervezas/bottella-06.png",
+      volume: "BOTELLA 500ML",
+      price: "$17.000",
       colors: ["green-400", "blue-400"],
     },
     {
       id: 2,
-      name: "Bitburger 0.0",
-      image:
-        "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-2.png",
-      volume: "Botella 330ML",
+      name: "ERDINGER",
+      image: "/images/cervezas/bottella-07.png",
+      volume: "BOTELLA 330ML",
       price: "$19.000",
       colors: ["amber-400", "red-400"],
     },
     {
       id: 3,
-      name: "Asahi Super Dry",
-      image:
-        "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-3.png",
-      volume: "Botella 330ML",
-      price: "$19.000",
+      name: "LIEFMANS FRUITESSE",
+      image: "/images/cervezas/bottella-08.png",
+      volume: "BOTELLA 250ML",
+      price: "$23.000",
       colors: ["amber-400", "red-400"],
     },
     {
       id: 4,
-      name: "Stella Artois",
-      image:
-        "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-4.png",
-      volume: "Botella 330ML",
-      price: "$22.000",
+      name: "PAULANER WEISSBIER",
+      image: "/images/cervezas/bottella-06.png",
+      volume: "BOTELLA 500ML",
+      price: "$17.000",
       colors: ["amber-400", "white"],
     },
   ];
@@ -83,7 +79,6 @@ export default function FavoriteProducts() {
       </div>
 
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
-
         {/* Grid de productos favoritos */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product) => (

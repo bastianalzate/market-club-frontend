@@ -113,7 +113,7 @@ export default function HomePage() {
       <MarketClubBanner backgroundColor="#FFFFFF" textColor="#000000" />
       <BeerClubSection />
       <MarketClubBanner backgroundColor="#000000" textColor="#FFFFFF" />
-      <BeerCarousel />
+      {/* <BeerCarousel /> */}
       <ServicesBanner />
 
       {/* Featured Products Section */}
