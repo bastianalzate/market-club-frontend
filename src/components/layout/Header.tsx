@@ -29,26 +29,48 @@ export default function Header() {
               <Image
                 src="/images/logo/logo.png"
                 alt="Market Club Logo"
-                width={200}
+                width={120}
                 height={0}
-                className="h-auto"
+                className="h-auto sm:w-[150px] md:w-[200px]"
                 priority
               />
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex md:hidden">
+          {/* Mobile Actions */}
+          <div className="flex items-center space-x-2 md:hidden">
+            {/* Search */}
+            <button className="p-2 text-gray-700 hover:text-gray-900 transition-colors">
+              <Search className="w-5 h-5" />
+            </button>
+
+            {/* Cart */}
+            <Link
+              href="/cart"
+              className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+            >
+              <ShoppingCart className="w-5 h-5" />
+            </Link>
+
+            {/* User Profile */}
+            <Link
+              href="/profile"
+              className="p-2 bg-gray-100 text-gray-700 hover:text-gray-900 hover:bg-gray-200 rounded-full transition-colors border border-gray-300"
+            >
+              <User className="w-5 h-5" />
+            </Link>
+
+            {/* Mobile Menu Button */}
             <button
               type="button"
-              className="text-gray-700"
+              className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
               onClick={toggleMenu}
               aria-expanded={isMenuOpen}
             >
               {!isMenuOpen ? (
-                <Menu className="w-7 h-7" />
+                <Menu className="w-6 h-6" />
               ) : (
-                <X className="w-7 h-7" />
+                <X className="w-6 h-6" />
               )}
             </button>
           </div>
@@ -197,87 +219,119 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <nav>
-            <div className="flex flex-col pt-8 pb-4 space-y-6">
-              <Link
-                href="/"
-                title="Inicio"
-                className={`text-base font-normal transition-all duration-200 ${
-                  isActive("/")
-                    ? "text-amber-600"
-                    : "text-gray-900 hover:text-gray-600"
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Inicio
-              </Link>
+          <div className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+            <nav className="px-4 py-4">
+              <div className="flex flex-col space-y-4">
+                <Link
+                  href="/"
+                  title="Inicio"
+                  className={`text-base font-medium transition-all duration-200 py-2 ${
+                    isActive("/")
+                      ? "text-amber-600"
+                      : "text-gray-900 hover:text-gray-600"
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                  style={{
+                    fontFamily: "var(--font-oswald)",
+                    fontWeight: 700,
+                    fontSize: "16px",
+                  }}
+                >
+                  Inicio
+                </Link>
 
-              <Link
-                href="/tienda"
-                title="Tienda"
-                className={`text-base font-normal transition-all duration-200 ${
-                  isActive("/tienda")
-                    ? "text-amber-600"
-                    : "text-gray-900 hover:text-gray-600"
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Tienda
-              </Link>
+                <Link
+                  href="/tienda"
+                  title="Tienda"
+                  className={`text-base font-medium transition-all duration-200 py-2 ${
+                    isActive("/tienda")
+                      ? "text-amber-600"
+                      : "text-gray-900 hover:text-gray-600"
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                  style={{
+                    fontFamily: "var(--font-oswald)",
+                    fontWeight: 700,
+                    fontSize: "16px",
+                  }}
+                >
+                  Tienda
+                </Link>
 
-              <Link
-                href="/gifts"
-                title="Armá tu regalo"
-                className={`text-base font-normal transition-all duration-200 ${
-                  isActive("/gifts")
-                    ? "text-amber-600"
-                    : "text-gray-900 hover:text-gray-600"
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Armá tu regalo
-              </Link>
+                <Link
+                  href="/gifts"
+                  title="Armá tu regalo"
+                  className={`text-base font-medium transition-all duration-200 py-2 ${
+                    isActive("/gifts")
+                      ? "text-amber-600"
+                      : "text-gray-900 hover:text-gray-600"
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                  style={{
+                    fontFamily: "var(--font-oswald)",
+                    fontWeight: 700,
+                    fontSize: "16px",
+                  }}
+                >
+                  Armá tu regalo
+                </Link>
 
-              <Link
-                href="/kits"
-                title="Kits"
-                className={`text-base font-normal transition-all duration-200 ${
-                  isActive("/kits")
-                    ? "text-amber-600"
-                    : "text-gray-900 hover:text-gray-600"
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Kits
-              </Link>
+                <Link
+                  href="/kits"
+                  title="Kits"
+                  className={`text-base font-medium transition-all duration-200 py-2 ${
+                    isActive("/kits")
+                      ? "text-amber-600"
+                      : "text-gray-900 hover:text-gray-600"
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                  style={{
+                    fontFamily: "var(--font-oswald)",
+                    fontWeight: 700,
+                    fontSize: "16px",
+                  }}
+                >
+                  Kits
+                </Link>
 
-              <Link
-                href="/about"
-                title="Market Club"
-                className={`text-base font-normal transition-all duration-200 ${
-                  isActive("/about")
-                    ? "text-amber-600"
-                    : "text-gray-900 hover:text-gray-600"
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Market Club
-              </Link>
+                <Link
+                  href="/about"
+                  title="Market Club"
+                  className={`text-base font-medium transition-all duration-200 py-2 ${
+                    isActive("/about")
+                      ? "text-amber-600"
+                      : "text-gray-900 hover:text-gray-600"
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                  style={{
+                    fontFamily: "var(--font-oswald)",
+                    fontWeight: 700,
+                    fontSize: "16px",
+                  }}
+                >
+                  Market Club
+                </Link>
 
-              <Link
-                href="/contact"
-                title="Contacto"
-                className={`text-base font-normal transition-all duration-200 ${
-                  isActive("/contact")
-                    ? "text-amber-600"
-                    : "text-gray-900 hover:text-gray-600"
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Contacto
-              </Link>
-            </div>
-          </nav>
+                <Link
+                  href="/contact"
+                  title="Contacto"
+                  className={`text-base font-medium transition-all duration-200 py-2 ${
+                    isActive("/contact")
+                      ? "text-amber-600"
+                      : "text-gray-900 hover:text-gray-600"
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                  style={{
+                    fontFamily: "var(--font-oswald)",
+                    fontWeight: 700,
+                    fontSize: "16px",
+                  }}
+                >
+                  Contacto
+                </Link>
+              </div>
+            </nav>
+          </div>
         )}
       </div>
     </header>
