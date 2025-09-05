@@ -54,15 +54,22 @@ export default function Header() {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden ml-10 mr-auto space-x-10 lg:ml-20 lg:space-x-12 md:flex md:items-center md:justify-start">
+          <nav className="hidden ml-20 mr-auto space-x-[30px] lg:ml-32 md:flex md:items-center md:justify-center">
             <Link
               href="/"
               title="Inicio"
-              className={`text-base font-normal transition-all duration-200 ${
+              className={`transition-all duration-200 ${
                 isActive("/")
                   ? "text-amber-600"
                   : "text-gray-900 hover:text-gray-600"
               }`}
+              style={{
+                fontFamily: "var(--font-oswald)",
+                fontWeight: 700,
+                fontSize: "14px",
+                lineHeight: "100%",
+                letterSpacing: "0.2px",
+              }}
             >
               Inicio
             </Link>
@@ -70,11 +77,18 @@ export default function Header() {
             <Link
               href="/tienda"
               title="Tienda"
-              className={`text-base font-normal transition-all duration-200 ${
+              className={`transition-all duration-200 ${
                 isActive("/tienda")
                   ? "text-amber-600"
                   : "text-gray-900 hover:text-gray-600"
               }`}
+              style={{
+                fontFamily: "var(--font-oswald)",
+                fontWeight: 700,
+                fontSize: "14px",
+                lineHeight: "100%",
+                letterSpacing: "0.2px",
+              }}
             >
               Tienda
             </Link>
@@ -82,11 +96,18 @@ export default function Header() {
             <Link
               href="/gifts"
               title="Armá tu regalo"
-              className={`text-base font-normal transition-all duration-200 ${
+              className={`transition-all duration-200 ${
                 isActive("/gifts")
                   ? "text-amber-600"
                   : "text-gray-900 hover:text-gray-600"
               }`}
+              style={{
+                fontFamily: "var(--font-oswald)",
+                fontWeight: 700,
+                fontSize: "14px",
+                lineHeight: "100%",
+                letterSpacing: "0.2px",
+              }}
             >
               Armá tu regalo
             </Link>
@@ -94,11 +115,18 @@ export default function Header() {
             <Link
               href="/kits"
               title="Kit"
-              className={`text-base font-normal transition-all duration-200 ${
+              className={`transition-all duration-200 ${
                 isActive("/kits")
                   ? "text-amber-600"
                   : "text-gray-900 hover:text-gray-600"
               }`}
+              style={{
+                fontFamily: "var(--font-oswald)",
+                fontWeight: 700,
+                fontSize: "14px",
+                lineHeight: "100%",
+                letterSpacing: "0.2px",
+              }}
             >
               Kit
             </Link>
@@ -106,11 +134,18 @@ export default function Header() {
             <Link
               href="/about"
               title="Market Club"
-              className={`text-base font-normal transition-all duration-200 ${
+              className={`transition-all duration-200 ${
                 isActive("/about")
                   ? "text-amber-600"
                   : "text-gray-900 hover:text-gray-600"
               }`}
+              style={{
+                fontFamily: "var(--font-oswald)",
+                fontWeight: 700,
+                fontSize: "14px",
+                lineHeight: "100%",
+                letterSpacing: "0.2px",
+              }}
             >
               Market Club
             </Link>
@@ -118,11 +153,18 @@ export default function Header() {
             <Link
               href="/contact"
               title="Contacto"
-              className={`text-base font-normal transition-all duration-200 ${
+              className={`transition-all duration-200 ${
                 isActive("/contact")
                   ? "text-amber-600"
                   : "text-gray-900 hover:text-gray-600"
               }`}
+              style={{
+                fontFamily: "var(--font-oswald)",
+                fontWeight: 700,
+                fontSize: "14px",
+                lineHeight: "100%",
+                letterSpacing: "0.2px",
+              }}
             >
               Contacto
             </Link>
