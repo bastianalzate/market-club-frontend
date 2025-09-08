@@ -8,7 +8,7 @@ import MarketClubBanner from "@/components/home/MarketClubBanner";
 import ServicesBanner from "@/components/home/ServicesBanner";
 import CountriesBanner from "./CountriesBanner";
 
-// Mock data para productos - Expandido para validar paginación
+// Mock data para productos - Solo cervezas con duplicados para mostrar más cantidad
 const products = [
   {
     id: 1,
@@ -78,230 +78,211 @@ const products = [
   },
   {
     id: 7,
-    name: "Budweiser",
-    brand: "Anheuser-Busch",
-    price: 16000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-1.png",
-    category: "Lager",
+    name: "PAULANER WEISSBIER",
+    brand: "Paulaner",
+    price: 17000,
+    image: "/images/cervezas/bottella-06.png",
+    category: "Wheat Beer",
     inStock: true,
-    rating: 3.8,
+    rating: 4.6,
     reviewCount: 98,
   },
   {
     id: 8,
-    name: "Miller Lite",
-    brand: "MillerCoors",
-    price: 17000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-2.png",
-    category: "Lager",
+    name: "ERDINGER",
+    brand: "Erdinger",
+    price: 19000,
+    image: "/images/cervezas/bottella-07.png",
+    category: "Wheat Beer",
     inStock: true,
-    rating: 3.9,
+    rating: 4.0,
     reviewCount: 76,
   },
   {
     id: 9,
-    name: "Coors Light",
-    brand: "Molson Coors",
-    price: 17500,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-3.png",
-    category: "Lager",
+    name: "LIEFMANS FRUITESSE",
+    brand: "Liefmans",
+    price: 23000,
+    image: "/images/cervezas/bottella-08.png",
+    category: "Fruit Beer",
     inStock: true,
-    rating: 3.7,
+    rating: 4.8,
     reviewCount: 65,
   },
   {
     id: 10,
-    name: "Guinness Draught",
-    brand: "Diageo",
-    price: 28000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-4.png",
-    category: "Stout",
+    name: "PAULANER WEISSBIER",
+    brand: "Paulaner",
+    price: 17000,
+    image: "/images/cervezas/bottella-06.png",
+    category: "Wheat Beer",
     inStock: true,
-    rating: 4.8,
+    rating: 4.2,
     reviewCount: 234,
   },
   {
     id: 11,
-    name: "Sierra Nevada Pale Ale",
-    brand: "Sierra Nevada",
-    price: 32000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-5.png",
-    category: "IPA",
+    name: "ERDINGER",
+    brand: "Erdinger",
+    price: 19000,
+    image: "/images/cervezas/bottella-07.png",
+    category: "Wheat Beer",
     inStock: true,
-    rating: 4.6,
+    rating: 4.4,
     reviewCount: 189,
   },
   {
     id: 12,
-    name: "Blue Moon Belgian White",
-    brand: "Molson Coors",
-    price: 26000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-6.png",
-    category: "Wheat Beer",
+    name: "LIEFMANS FRUITESSE",
+    brand: "Liefmans",
+    price: 23000,
+    image: "/images/cervezas/bottella-08.png",
+    category: "Fruit Beer",
     inStock: false,
-    rating: 4.2,
+    rating: 4.1,
     reviewCount: 112,
   },
   {
     id: 13,
-    name: "Samuel Adams Boston Lager",
-    brand: "Boston Beer Company",
-    price: 24000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-1.png",
-    category: "Lager",
+    name: "PAULANER WEISSBIER",
+    brand: "Paulaner",
+    price: 17000,
+    image: "/images/cervezas/bottella-06.png",
+    category: "Wheat Beer",
     inStock: true,
-    rating: 4.3,
+    rating: 4.7,
     reviewCount: 145,
   },
   {
     id: 14,
-    name: "Newcastle Brown Ale",
-    brand: "Heineken",
-    price: 29000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-2.png",
-    category: "Brown Ale",
+    name: "ERDINGER",
+    brand: "Erdinger",
+    price: 19000,
+    image: "/images/cervezas/bottella-07.png",
+    category: "Wheat Beer",
     inStock: true,
-    rating: 4.1,
+    rating: 4.3,
     reviewCount: 87,
   },
   {
     id: 15,
-    name: "Bass Pale Ale",
-    brand: "Anheuser-Busch",
-    price: 25000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-3.png",
-    category: "Pale Ale",
+    name: "LIEFMANS FRUITESSE",
+    brand: "Liefmans",
+    price: 23000,
+    image: "/images/cervezas/bottella-08.png",
+    category: "Fruit Beer",
     inStock: true,
-    rating: 4.0,
+    rating: 4.5,
     reviewCount: 73,
   },
   {
     id: 16,
-    name: "Harp Lager",
-    brand: "Diageo",
-    price: 23000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-4.png",
-    category: "Lager",
+    name: "PAULANER WEISSBIER",
+    brand: "Paulaner",
+    price: 17000,
+    image: "/images/cervezas/bottella-06.png",
+    category: "Wheat Beer",
     inStock: true,
-    rating: 3.9,
+    rating: 4.1,
     reviewCount: 56,
   },
   {
     id: 17,
-    name: "Killian's Irish Red",
-    brand: "Molson Coors",
-    price: 27000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-5.png",
-    category: "Red Ale",
+    name: "ERDINGER",
+    brand: "Erdinger",
+    price: 19000,
+    image: "/images/cervezas/bottella-07.png",
+    category: "Wheat Beer",
     inStock: true,
-    rating: 4.2,
+    rating: 4.6,
     reviewCount: 94,
   },
   {
     id: 18,
-    name: "Leinenkugel's Summer Shandy",
-    brand: "Molson Coors",
-    price: 31000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-6.png",
-    category: "Shandy",
+    name: "LIEFMANS FRUITESSE",
+    brand: "Liefmans",
+    price: 23000,
+    image: "/images/cervezas/bottella-08.png",
+    category: "Fruit Beer",
     inStock: true,
-    rating: 4.4,
+    rating: 4.2,
     reviewCount: 128,
   },
   {
     id: 19,
-    name: "Shock Top Belgian White",
-    brand: "Anheuser-Busch",
-    price: 22000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-1.png",
+    name: "PAULANER WEISSBIER",
+    brand: "Paulaner",
+    price: 17000,
+    image: "/images/cervezas/bottella-06.png",
     category: "Wheat Beer",
     inStock: true,
-    rating: 3.8,
+    rating: 4.4,
     reviewCount: 67,
   },
   {
     id: 20,
-    name: "Michelob Ultra",
-    brand: "Anheuser-Busch",
-    price: 20000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-2.png",
-    category: "Light Beer",
+    name: "ERDINGER",
+    brand: "Erdinger",
+    price: 19000,
+    image: "/images/cervezas/bottella-07.png",
+    category: "Wheat Beer",
     inStock: true,
-    rating: 3.6,
+    rating: 4.0,
     reviewCount: 89,
   },
   {
     id: 21,
-    name: "Amstel Light",
-    brand: "Heineken",
-    price: 21000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-3.png",
-    category: "Light Beer",
+    name: "LIEFMANS FRUITESSE",
+    brand: "Liefmans",
+    price: 23000,
+    image: "/images/cervezas/bottella-08.png",
+    category: "Fruit Beer",
     inStock: true,
-    rating: 3.9,
+    rating: 4.3,
     reviewCount: 78,
   },
   {
     id: 22,
-    name: "Beck's",
-    brand: "Anheuser-Busch",
-    price: 24000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-4.png",
-    category: "Lager",
+    name: "PAULANER WEISSBIER",
+    brand: "Paulaner",
+    price: 17000,
+    image: "/images/cervezas/bottella-06.png",
+    category: "Wheat Beer",
     inStock: true,
-    rating: 4.0,
+    rating: 4.5,
     reviewCount: 103,
   },
   {
     id: 23,
-    name: "Foster's",
-    brand: "Heineken",
+    name: "ERDINGER",
+    brand: "Erdinger",
     price: 19000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-5.png",
-    category: "Lager",
+    image: "/images/cervezas/bottella-07.png",
+    category: "Wheat Beer",
     inStock: true,
-    rating: 3.7,
+    rating: 4.2,
     reviewCount: 82,
   },
   {
     id: 24,
-    name: "Dos Equis Lager",
-    brand: "Heineken",
+    name: "LIEFMANS FRUITESSE",
+    brand: "Liefmans",
     price: 23000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-6.png",
-    category: "Lager",
+    image: "/images/cervezas/bottella-08.png",
+    category: "Fruit Beer",
     inStock: true,
-    rating: 4.1,
+    rating: 4.7,
     reviewCount: 95,
   },
   {
     id: 25,
-    name: "Tecate",
-    brand: "Heineken",
-    price: 18000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-1.png",
-    category: "Lager",
+    name: "PAULANER WEISSBIER",
+    brand: "Paulaner",
+    price: 17000,
+    image: "/images/cervezas/bottella-06.png",
+    category: "Wheat Beer",
     inStock: true,
-    rating: 3.8,
+    rating: 4.1,
     reviewCount: 71,
   },
 ];
@@ -310,31 +291,37 @@ export default function TiendaContent() {
   const [searchTerm, setSearchTerm] = useState("");
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Iconos de categorías */}
-      <CategoryIcons />
+    <div className="min-h-screen">
+      {/* Sección con fondo negro hasta el MarketClubBanner */}
+      <div className="bg-black">
+        {/* Iconos de categorías */}
+        <CategoryIcons />
 
-      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar de filtros */}
-          <ProductFilters
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-          />
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Sidebar de filtros */}
+            <ProductFilters
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+            />
 
-          {/* Contenido principal */}
-          <ProductGrid products={products} />
+            {/* Contenido principal */}
+            <ProductGrid products={products} />
+          </div>
         </div>
+
+        {/* Market Club Banner */}
+        <MarketClubBanner />
       </div>
 
-      {/* Market Club Banner */}
-      <MarketClubBanner />
+      {/* Sección con fondo gris después del MarketClubBanner */}
+      <div className="bg-gray-50">
+        {/* Countries Banner */}
+        <CountriesBanner />
 
-      {/* Countries Banner */}
-      <CountriesBanner />
-
-      {/* Services Banner */}
-      <ServicesBanner />
+        {/* Services Banner */}
+        <ServicesBanner />
+      </div>
     </div>
   );
 }
