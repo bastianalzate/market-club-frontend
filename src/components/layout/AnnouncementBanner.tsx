@@ -1,6 +1,18 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 export default function AnnouncementBanner() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null;
+  }
+
   return (
     <div
       className="w-full flex items-center justify-center"

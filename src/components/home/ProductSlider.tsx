@@ -137,6 +137,37 @@ export default function ProductSlider() {
   return (
     <section className="py-12 bg-black sm:py-16 lg:py-20">
       <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
+        {/* Header con título y botón */}
+        <div className="flex items-center justify-center lg:justify-between mb-8">
+          <h2 className="text-2xl font-bold text-white sm:text-3xl">
+            Nuevos lanzamientos
+          </h2>
+
+          <div className="hidden lg:flex">
+            <a
+              href="/tienda"
+              title=""
+              className="inline-flex items-center justify-center p-1 -m-1 text-sm font-bold text-gray-300 transition-all duration-200 rounded-md focus:text-white focus:ring-white focus:ring-2 focus:ring-offset-2 focus:outline-none hover:text-white"
+            >
+              Ver todas las cervezas
+              <svg
+                className="w-5 h-5 ml-2 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+
         {/* Carrusel de productos */}
         <div className="relative px-4 lg:px-16">
           {" "}

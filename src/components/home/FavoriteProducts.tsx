@@ -79,6 +79,37 @@ export default function FavoriteProducts() {
       </div>
 
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
+        {/* Header con título y botón */}
+        <div className="flex items-center justify-center lg:justify-between mb-8">
+          <h2 className="text-2xl font-bold text-white sm:text-3xl">
+            Cervezas Premium
+          </h2>
+
+          <div className="hidden lg:flex">
+            <a
+              href="/tienda"
+              title=""
+              className="inline-flex items-center justify-center p-1 -m-1 text-sm font-bold text-gray-300 transition-all duration-200 rounded-md focus:text-white focus:ring-white focus:ring-2 focus:ring-offset-2 focus:outline-none hover:text-white"
+            >
+              Ver todas las cervezas
+              <svg
+                className="w-5 h-5 ml-2 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+
         {/* Grid de productos favoritos */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product) => (
@@ -132,24 +163,31 @@ export default function FavoriteProducts() {
                   <button
                     onClick={() => handleAddToCart(product.id)}
                     className="p-3 rounded-lg transition-colors hover:bg-gray-50"
-                    style={{ 
-                      backgroundColor: 'transparent',
-                      borderColor: '#D0D5DD',
-                      borderWidth: '1px',
-                      borderStyle: 'solid'
+                    style={{
+                      backgroundColor: "transparent",
+                      borderColor: "#D0D5DD",
+                      borderWidth: "1px",
+                      borderStyle: "solid",
                     }}
                     aria-label="Agregar al carrito"
                   >
-                    <ShoppingCart className="w-5 h-5" style={{ color: '#B58E31' }} />
+                    <ShoppingCart
+                      className="w-5 h-5"
+                      style={{ color: "#B58E31" }}
+                    />
                   </button>
 
                   {/* Botón principal "Añadir al carrito" */}
                   <button
                     onClick={() => handleAddToCart(product.id)}
                     className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors"
-                    style={{ backgroundColor: '#B58E31' }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A07D2A'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B58E31'}
+                    style={{ backgroundColor: "#B58E31" }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#A07D2A")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#B58E31")
+                    }
                   >
                     <span>Añadir al carrito</span>
                     <ArrowRight className="w-4 h-4" />
