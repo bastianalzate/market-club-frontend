@@ -217,7 +217,12 @@ export default function SuggestedProducts() {
                   </div>
 
                   {/* Botón de agregar al carrito */}
-                  <button className="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2">
+                  <button 
+                    className="w-full text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+                    style={{ backgroundColor: '#B58E31' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A07D2A'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B58E31'}
+                  >
                     <ShoppingCart className="w-5 h-5" />
                     <span>Añadir al carrito</span>
                     <ChevronRight className="w-4 h-4" />
