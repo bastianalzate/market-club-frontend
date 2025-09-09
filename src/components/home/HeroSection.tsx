@@ -118,10 +118,10 @@ export default function HeroSection() {
               {/* Fondo con texto PAULANER repetido en toda la sección derecha */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <Image
-                  src="/images/banner/fondo-banner.png?v=4"
+                  src="/images/banner/fondo-banner.png?v=7"
                   alt="Fondo PAULANER"
                   fill
-                  className="object-contain"
+                  className="object-contain paulaner-sparkle"
                   priority
                 />
               </div>

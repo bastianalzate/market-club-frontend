@@ -87,10 +87,11 @@ export default function CategoryIcons() {
                     relative p-4 rounded-xl transition-all duration-200 group
                     ${
                       isActive
-                        ? "bg-amber-600 text-white shadow-lg scale-105"
+                        ? "text-white shadow-lg scale-105"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105"
                     }
                   `}
+                  style={isActive ? { backgroundColor: "#B58E31" } : {}}
                   title={category.description}
                 >
                   <IconComponent className="w-8 h-8" />
@@ -114,7 +115,7 @@ export default function CategoryIcons() {
         <div className="text-center mt-6">
           <span className="text-sm text-gray-500">
             Categoría seleccionada:{" "}
-            <span className="font-medium text-amber-600">
+            <span className="font-medium" style={{ color: "#B58E31" }}>
               {categories[activeCategory].name}
             </span>
           </span>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Grid, List, ChevronLeft, ChevronRight } from "lucide-react";
+import { Grid, List, ChevronLeft, ChevronRight, Heart, ShoppingCart, ArrowRight } from "lucide-react";
 
 interface Product {
   id: number;
@@ -22,6 +22,20 @@ interface ProductGridProps {
 export default function ProductGrid({ products }: ProductGridProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(1);
+  const [favorites, setFavorites] = useState<number[]>([]);
+
+  const toggleFavorite = (productId: number) => {
+    setFavorites((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId]
+    );
+  };
+
+  const handleAddToCart = (productId: number) => {
+    console.log("Agregar al carrito:", productId);
+    // Aquí puedes implementar la lógica del carrito
+  };
 
   // Configuración de paginación
   const productsPerPage = 9;
@@ -67,9 +81,10 @@ export default function ProductGrid({ products }: ProductGridProps) {
             onClick={() => setViewMode("grid")}
             className={`p-2 rounded-lg ${
               viewMode === "grid"
-                ? "bg-amber-100 text-amber-600"
+                ? ""
                 : "text-gray-400 hover:text-gray-600"
             }`}
+            style={viewMode === "grid" ? { backgroundColor: "#B58E31", color: "white" } : {}}
           >
             <Grid className="w-5 h-5" />
           </button>
@@ -77,9 +92,10 @@ export default function ProductGrid({ products }: ProductGridProps) {
             onClick={() => setViewMode("list")}
             className={`p-2 rounded-lg ${
               viewMode === "list"
-                ? "bg-amber-100 text-amber-600"
+                ? ""
                 : "text-gray-400 hover:text-gray-600"
             }`}
+            style={viewMode === "list" ? { backgroundColor: "#B58E31", color: "white" } : {}}
           >
             <List className="w-5 h-5" />
           </button>
@@ -106,99 +122,82 @@ export default function ProductGrid({ products }: ProductGridProps) {
               viewMode === "list" ? "flex" : ""
             }`}
           >
-            {/* Imagen del producto */}
-            <div
-              className={`relative ${
-                viewMode === "list" ? "w-48 flex-shrink-0" : "w-full"
-              }`}
-            >
-              <div className="aspect-w-1 aspect-h-1 overflow-hidden pt-4">
+            {/* Imagen del producto con botón de favorito */}
+            <div className={`relative ${viewMode === "list" ? "w-48 flex-shrink-0" : "w-full"}`}>
+              <div className={`${viewMode === "list" ? "aspect-w-1 aspect-h-1" : "aspect-w-1 aspect-h-1"} overflow-hidden pt-4`}>
                 <img
                   className="object-cover w-full h-full transition-all duration-300 hover:scale-105"
                   src={product.image}
                   alt={product.name}
                 />
               </div>
+              {/* Botón de corazón (favorito) */}
+              <button
+                onClick={() => toggleFavorite(product.id)}
+                className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors"
+                aria-label="Agregar a favoritos"
+              >
+                <Heart
+                  className={`w-5 h-5 ${
+                    favorites.includes(product.id)
+                      ? "fill-red-500 text-red-500"
+                      : "text-gray-600"
+                  }`}
+                />
+              </button>
             </div>
 
             {/* Información del producto */}
-            <div className={`p-6 ${viewMode === "list" ? "flex-1" : ""}`}>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm text-gray-600 font-medium">
-                  {product.category}
-                </span>
-                <span className="text-lg font-bold text-gray-900">
-                  {formatPrice(product.price)}
-                </span>
-              </div>
+            <div className={`p-6 ${viewMode === "list" ? "flex-1 flex flex-col justify-between" : ""}`}>
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm text-gray-600 font-medium">
+                    BOTELLA 500ML
+                  </span>
+                  <span className="text-lg font-bold text-gray-900">
+                    {formatPrice(product.price)}
+                  </span>
+                </div>
 
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
-                {product.name}
-              </h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-4">
+                  {product.name}
+                </h3>
+              </div>
 
               {/* Botones de acción */}
               <div className="flex items-center space-x-3">
                 {/* Botón de carrito cuadrado */}
                 <button
-                  disabled={!product.inStock}
-                  className={`p-3 rounded-lg transition-colors ${
-                    product.inStock
-                      ? "bg-gray-100 hover:bg-gray-200"
-                      : "bg-gray-300 cursor-not-allowed"
-                  }`}
+                  onClick={() => handleAddToCart(product.id)}
+                  className="p-3 rounded-lg transition-colors hover:bg-gray-50"
+                  style={{
+                    backgroundColor: "transparent",
+                    borderColor: "#D0D5DD",
+                    borderWidth: "1px",
+                    borderStyle: "solid",
+                  }}
                   aria-label="Agregar al carrito"
                 >
-                  <svg
-                    className="w-5 h-5 text-gray-700"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"
-                    />
-                  </svg>
+                  <ShoppingCart
+                    className="w-5 h-5"
+                    style={{ color: "#B58E31" }}
+                  />
                 </button>
 
                 {/* Botón principal "Añadir al carrito" */}
                 <button
-                  disabled={!product.inStock}
-                  className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-lg font-medium transition-colors ${
-                    product.inStock
-                      ? "bg-amber-600 hover:bg-amber-700 text-white"
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  }`}
-                  style={product.inStock ? { backgroundColor: "#B58E31" } : {}}
-                  onMouseEnter={
-                    product.inStock
-                      ? (e) =>
-                          (e.currentTarget.style.backgroundColor = "#A07D2A")
-                      : undefined
+                  onClick={() => handleAddToCart(product.id)}
+                  className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+                  style={{ backgroundColor: "#B58E31" }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#A07D2A")
                   }
-                  onMouseLeave={
-                    product.inStock
-                      ? (e) =>
-                          (e.currentTarget.style.backgroundColor = "#B58E31")
-                      : undefined
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#B58E31")
                   }
                 >
                   <span>Añadir al carrito</span>
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -239,9 +238,10 @@ export default function ProductGrid({ products }: ProductGridProps) {
                         onClick={() => goToPage(page)}
                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                           page === currentPage
-                            ? "bg-amber-600 text-white"
+                            ? "text-white"
                             : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                         }`}
+                        style={page === currentPage ? { backgroundColor: "#B58E31" } : {}}
                       >
                         {page}
                       </button>

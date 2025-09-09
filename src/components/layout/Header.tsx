@@ -82,7 +82,7 @@ export default function Header() {
               title="Inicio"
               className={`transition-all duration-200 ${
                 isActive("/")
-                  ? "text-amber-600"
+                  ? ""
                   : "text-gray-900 hover:text-gray-600"
               }`}
               style={{
@@ -91,6 +91,7 @@ export default function Header() {
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "0.2px",
+                color: isActive("/") ? "#B58E31" : undefined,
               }}
             >
               Inicio
@@ -101,7 +102,7 @@ export default function Header() {
               title="Tienda"
               className={`transition-all duration-200 ${
                 isActive("/tienda")
-                  ? "text-amber-600"
+                  ? ""
                   : "text-gray-900 hover:text-gray-600"
               }`}
               style={{
@@ -110,6 +111,7 @@ export default function Header() {
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "0.2px",
+                color: isActive("/tienda") ? "#B58E31" : undefined,
               }}
             >
               Tienda
@@ -120,7 +122,7 @@ export default function Header() {
               title="Armá tu regalo"
               className={`transition-all duration-200 ${
                 isActive("/gifts")
-                  ? "text-amber-600"
+                  ? ""
                   : "text-gray-900 hover:text-gray-600"
               }`}
               style={{
@@ -129,6 +131,7 @@ export default function Header() {
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "0.2px",
+                color: isActive("/gifts") ? "#B58E31" : undefined,
               }}
             >
               Armá tu regalo
@@ -139,7 +142,7 @@ export default function Header() {
               title="Kit"
               className={`transition-all duration-200 ${
                 isActive("/kits")
-                  ? "text-amber-600"
+                  ? ""
                   : "text-gray-900 hover:text-gray-600"
               }`}
               style={{
@@ -148,6 +151,7 @@ export default function Header() {
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "0.2px",
+                color: isActive("/kits") ? "#B58E31" : undefined,
               }}
             >
               Kit
@@ -158,7 +162,7 @@ export default function Header() {
               title="Market Club"
               className={`transition-all duration-200 ${
                 isActive("/about")
-                  ? "text-amber-600"
+                  ? ""
                   : "text-gray-900 hover:text-gray-600"
               }`}
               style={{
@@ -167,6 +171,7 @@ export default function Header() {
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "0.2px",
+                color: isActive("/about") ? "#B58E31" : undefined,
               }}
             >
               Market Club
@@ -177,7 +182,7 @@ export default function Header() {
               title="Contacto"
               className={`transition-all duration-200 ${
                 isActive("/contact")
-                  ? "text-amber-600"
+                  ? ""
                   : "text-gray-900 hover:text-gray-600"
               }`}
               style={{
@@ -186,6 +191,7 @@ export default function Header() {
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "0.2px",
+                color: isActive("/contact") ? "#B58E31" : undefined,
               }}
             >
               Contacto
@@ -227,7 +233,7 @@ export default function Header() {
                   title="Inicio"
                   className={`text-base font-medium transition-all duration-200 py-2 ${
                     isActive("/")
-                      ? "text-amber-600"
+                      ? ""
                       : "text-gray-900 hover:text-gray-600"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
@@ -235,6 +241,7 @@ export default function Header() {
                     fontFamily: "var(--font-oswald)",
                     fontWeight: 700,
                     fontSize: "16px",
+                    color: isActive("/") ? "#B58E31" : undefined,
                   }}
                 >
                   Inicio
@@ -245,7 +252,7 @@ export default function Header() {
                   title="Tienda"
                   className={`text-base font-medium transition-all duration-200 py-2 ${
                     isActive("/tienda")
-                      ? "text-amber-600"
+                      ? ""
                       : "text-gray-900 hover:text-gray-600"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
@@ -253,6 +260,7 @@ export default function Header() {
                     fontFamily: "var(--font-oswald)",
                     fontWeight: 700,
                     fontSize: "16px",
+                    color: isActive("/tienda") ? "#B58E31" : undefined,
                   }}
                 >
                   Tienda
@@ -263,7 +271,7 @@ export default function Header() {
                   title="Armá tu regalo"
                   className={`text-base font-medium transition-all duration-200 py-2 ${
                     isActive("/gifts")
-                      ? "text-amber-600"
+                      ? ""
                       : "text-gray-900 hover:text-gray-600"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
@@ -271,6 +279,7 @@ export default function Header() {
                     fontFamily: "var(--font-oswald)",
                     fontWeight: 700,
                     fontSize: "16px",
+                    color: isActive("/gifts") ? "#B58E31" : undefined,
                   }}
                 >
                   Armá tu regalo
@@ -281,7 +290,7 @@ export default function Header() {
                   title="Kits"
                   className={`text-base font-medium transition-all duration-200 py-2 ${
                     isActive("/kits")
-                      ? "text-amber-600"
+                      ? ""
                       : "text-gray-900 hover:text-gray-600"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
@@ -289,6 +298,7 @@ export default function Header() {
                     fontFamily: "var(--font-oswald)",
                     fontWeight: 700,
                     fontSize: "16px",
+                    color: isActive("/kits") ? "#B58E31" : undefined,
                   }}
                 >
                   Kits
@@ -299,7 +309,7 @@ export default function Header() {
                   title="Market Club"
                   className={`text-base font-medium transition-all duration-200 py-2 ${
                     isActive("/about")
-                      ? "text-amber-600"
+                      ? ""
                       : "text-gray-900 hover:text-gray-600"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
@@ -307,6 +317,7 @@ export default function Header() {
                     fontFamily: "var(--font-oswald)",
                     fontWeight: 700,
                     fontSize: "16px",
+                    color: isActive("/about") ? "#B58E31" : undefined,
                   }}
                 >
                   Market Club
@@ -317,7 +328,7 @@ export default function Header() {
                   title="Contacto"
                   className={`text-base font-medium transition-all duration-200 py-2 ${
                     isActive("/contact")
-                      ? "text-amber-600"
+                      ? ""
                       : "text-gray-900 hover:text-gray-600"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
@@ -325,6 +336,7 @@ export default function Header() {
                     fontFamily: "var(--font-oswald)",
                     fontWeight: 700,
                     fontSize: "16px",
+                    color: isActive("/contact") ? "#B58E31" : undefined,
                   }}
                 >
                   Contacto

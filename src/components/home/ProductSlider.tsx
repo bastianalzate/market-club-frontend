@@ -178,9 +178,8 @@ export default function ProductSlider() {
             style={{
               scrollbarWidth: "none",
               msOverflowStyle: "none",
-              WebkitScrollbar: { display: "none" },
               scrollSnapType: "x mandatory",
-            }}
+            } as React.CSSProperties}
             onMouseDown={handleMouseDown}
             onMouseLeave={handleMouseLeave}
             onMouseUp={handleMouseUp}

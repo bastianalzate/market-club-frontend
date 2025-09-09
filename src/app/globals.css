@@ -63,3 +63,17 @@ body {
   -webkit-text-stroke: 2px white;
   text-stroke: 2px white;
 }
+
+/* Efecto de destello interno simple para las letras PAULANER */
+@keyframes inner-sparkle {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.3);
+  }
+}
+
+.paulaner-sparkle {
+  animation: inner-sparkle 3s ease-in-out infinite;
+}
