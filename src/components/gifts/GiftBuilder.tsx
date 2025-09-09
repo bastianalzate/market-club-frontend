@@ -307,437 +307,456 @@ export default function GiftBuilder() {
     giftBuilder.selectedBeers.length < giftBuilder.selectedBox.maxBeers;
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Panel Principal - Selección */}
-        <div className="lg:col-span-3 space-y-8">
-          {/* Paso 1: Selección de Caja */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-            <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-[#B58E31] to-[#D4A853] rounded-full flex items-center justify-center text-white font-bold mr-4 shadow-lg">
-                1
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">
-                  Elige tu Caja
-                </h2>
-                <p className="text-sm text-gray-600">
-                  Selecciona el tamaño perfecto para tu regalo
-                </p>
-              </div>
-            </div>
+    <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-16">
+      <div className="max-w-7xl mx-auto">
+        {/* Título y Descripción */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-6">
+            Construí tu Regalo Perfecto
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Elige tu caja favorita y personalízala con las cervezas que más te
+            gusten. Crea un regalo único y especial.
+          </p>
+        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-              {giftBoxes.map((box) => (
-                <div
-                  key={box.id}
-                  onClick={() => selectBox(box)}
-                  className={`border-2 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg group relative ${
-                    giftBuilder.selectedBox?.id === box.id
-                      ? "border-[#B58E31] bg-[#B58E31]/5 shadow-lg"
-                      : "border-gray-200 hover:border-[#B58E31]"
-                  }`}
-                >
-                  {box.recommended && (
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                      <span className="bg-gradient-to-r from-[#B58E31] to-[#D4A853] text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg border-2 border-white whitespace-nowrap">
-                        ⭐ Recomendada
-                      </span>
-                    </div>
-                  )}
-
-                  {giftBuilder.selectedBox?.id === box.id && (
-                    <div className="absolute top-4 right-4">
-                      <div className="w-6 h-6 bg-[#B58E31] rounded-full flex items-center justify-center">
-                        <Check className="w-4 h-4 text-white" />
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="text-center">
-                    <div
-                      className={`w-20 h-20 rounded-xl mx-auto mb-4 flex items-center justify-center transition-all duration-300 ${
-                        giftBuilder.selectedBox?.id === box.id
-                          ? "bg-gradient-to-r from-[#B58E31] to-[#D4A853] shadow-lg"
-                          : "bg-gray-100 group-hover:bg-[#B58E31]"
-                      }`}
-                    >
-                      <Gift
-                        className={`w-10 h-10 transition-colors ${
-                          giftBuilder.selectedBox?.id === box.id
-                            ? "text-white"
-                            : "text-gray-600 group-hover:text-white"
-                        }`}
-                      />
-                    </div>
-
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {box.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-2">
-                      {box.description}
-                    </p>
-                    <p className="text-sm text-gray-500 mb-3">
-                      Hasta {box.maxBeers} cervezas
-                    </p>
-                    <p className="text-sm text-gray-500 mb-3">
-                      {box.dimensions}
-                    </p>
-                    <div className="flex items-center justify-center text-xs text-gray-500 mb-3">
-                      <Clock className="w-4 h-4 mr-1" />
-                      {box.deliveryTime}
-                    </div>
-                    <p className="text-2xl font-bold text-[#B58E31]">
-                      ${box.price.toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Paso 2: Selección de Cervezas */}
-          {giftBuilder.selectedBox && (
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Panel Principal - Selección */}
+          <div className="lg:col-span-3 space-y-8">
+            {/* Paso 1: Selección de Caja */}
             <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
               <div className="flex items-center mb-6">
                 <div className="w-10 h-10 bg-gradient-to-r from-[#B58E31] to-[#D4A853] rounded-full flex items-center justify-center text-white font-bold mr-4 shadow-lg">
-                  2
+                  1
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">
-                    Elige tus Cervezas
+                    Elige tu Caja
                   </h2>
                   <p className="text-sm text-gray-600">
-                    Personaliza tu regalo con las cervezas que más te gusten
+                    Selecciona el tamaño perfecto para tu regalo
                   </p>
                 </div>
               </div>
 
-              {/* Barra de Búsqueda y Filtros */}
-              <div className="mb-6 space-y-4">
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                      type="text"
-                      placeholder="Buscar cervezas por nombre o marca..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-gray-900 placeholder-gray-500"
-                    />
-                  </div>
-                  <button
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="flex items-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700"
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+                {giftBoxes.map((box) => (
+                  <div
+                    key={box.id}
+                    onClick={() => selectBox(box)}
+                    className={`border-2 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg group relative ${
+                      giftBuilder.selectedBox?.id === box.id
+                        ? "border-[#B58E31] bg-[#B58E31]/5 shadow-lg"
+                        : "border-gray-200 hover:border-[#B58E31]"
+                    }`}
                   >
-                    <Filter className="w-5 h-5 mr-2" />
-                    Filtros
-                  </button>
+                    {box.recommended && (
+                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                        <span className="bg-gradient-to-r from-[#B58E31] to-[#D4A853] text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg border-2 border-white whitespace-nowrap">
+                          ⭐ Recomendada
+                        </span>
+                      </div>
+                    )}
+
+                    {giftBuilder.selectedBox?.id === box.id && (
+                      <div className="absolute top-4 right-4">
+                        <div className="w-6 h-6 bg-[#B58E31] rounded-full flex items-center justify-center">
+                          <Check className="w-4 h-4 text-white" />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="text-center">
+                      <div
+                        className={`w-20 h-20 rounded-xl mx-auto mb-4 flex items-center justify-center transition-all duration-300 ${
+                          giftBuilder.selectedBox?.id === box.id
+                            ? "bg-gradient-to-r from-[#B58E31] to-[#D4A853] shadow-lg"
+                            : "bg-gray-100 group-hover:bg-[#B58E31]"
+                        }`}
+                      >
+                        <Gift
+                          className={`w-10 h-10 transition-colors ${
+                            giftBuilder.selectedBox?.id === box.id
+                              ? "text-white"
+                              : "text-gray-600 group-hover:text-white"
+                          }`}
+                        />
+                      </div>
+
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        {box.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-2">
+                        {box.description}
+                      </p>
+                      <p className="text-sm text-gray-500 mb-3">
+                        Hasta {box.maxBeers} cervezas
+                      </p>
+                      <p className="text-sm text-gray-500 mb-3">
+                        {box.dimensions}
+                      </p>
+                      <div className="flex items-center justify-center text-xs text-gray-500 mb-3">
+                        <Clock className="w-4 h-4 mr-1" />
+                        {box.deliveryTime}
+                      </div>
+                      <p className="text-2xl font-bold text-[#B58E31]">
+                        ${box.price.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Paso 2: Selección de Cervezas */}
+            {giftBuilder.selectedBox && (
+              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+                <div className="flex items-center mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-r from-[#B58E31] to-[#D4A853] rounded-full flex items-center justify-center text-white font-bold mr-4 shadow-lg">
+                    2
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">
+                      Elige tus Cervezas
+                    </h2>
+                    <p className="text-sm text-gray-600">
+                      Personaliza tu regalo con las cervezas que más te gusten
+                    </p>
+                  </div>
                 </div>
 
-                {/* Panel de Filtros */}
-                {showFilters && (
-                  <div className="bg-gray-50 rounded-lg p-4 space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Categoría
-                        </label>
-                        <select
-                          value={selectedCategory}
-                          onChange={(e) => setSelectedCategory(e.target.value)}
-                          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900"
-                        >
-                          {categories.map((category) => (
-                            <option key={category} value={category}>
-                              {category === "all"
-                                ? "Todas las categorías"
-                                : category}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Nacionalidad
-                        </label>
-                        <select
-                          value={selectedNationality}
-                          onChange={(e) =>
-                            setSelectedNationality(e.target.value)
-                          }
-                          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900"
-                        >
-                          {nationalities.map((nationality) => (
-                            <option key={nationality} value={nationality}>
-                              {nationality === "all"
-                                ? "Todas las nacionalidades"
-                                : nationality}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Rango de Precio
-                        </label>
-                        <select
-                          value={priceRange}
-                          onChange={(e) => setPriceRange(e.target.value)}
-                          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900"
-                        >
-                          {priceRanges.map((range) => (
-                            <option key={range.value} value={range.value}>
-                              {range.label}
-                            </option>
-                          ))}
-                        </select>
+                {/* Barra de Búsqueda y Filtros */}
+                <div className="mb-6 space-y-4">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <input
+                        type="text"
+                        placeholder="Buscar cervezas por nombre o marca..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-gray-900 placeholder-gray-500"
+                      />
+                    </div>
+                    <button
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="flex items-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700"
+                    >
+                      <Filter className="w-5 h-5 mr-2" />
+                      Filtros
+                    </button>
+                  </div>
+
+                  {/* Panel de Filtros */}
+                  {showFilters && (
+                    <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Categoría
+                          </label>
+                          <select
+                            value={selectedCategory}
+                            onChange={(e) =>
+                              setSelectedCategory(e.target.value)
+                            }
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900"
+                          >
+                            {categories.map((category) => (
+                              <option key={category} value={category}>
+                                {category === "all"
+                                  ? "Todas las categorías"
+                                  : category}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Nacionalidad
+                          </label>
+                          <select
+                            value={selectedNationality}
+                            onChange={(e) =>
+                              setSelectedNationality(e.target.value)
+                            }
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900"
+                          >
+                            {nationalities.map((nationality) => (
+                              <option key={nationality} value={nationality}>
+                                {nationality === "all"
+                                  ? "Todas las nacionalidades"
+                                  : nationality}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Rango de Precio
+                          </label>
+                          <select
+                            value={priceRange}
+                            onChange={(e) => setPriceRange(e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900"
+                          >
+                            {priceRanges.map((range) => (
+                              <option key={range.value} value={range.value}>
+                                {range.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
                     </div>
+                  )}
+                </div>
+
+                {/* Contador de Progreso */}
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-medium text-gray-700">
+                      Progreso
+                    </span>
+                    <span className="text-sm font-medium text-[#B58E31]">
+                      {giftBuilder.selectedBeers.length} de{" "}
+                      {giftBuilder.selectedBox.maxBeers} cervezas
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-3">
+                    <div
+                      className="bg-gradient-to-r from-[#B58E31] to-[#D4A853] h-3 rounded-full transition-all duration-500"
+                      style={{
+                        width: `${
+                          (giftBuilder.selectedBeers.length /
+                            giftBuilder.selectedBox.maxBeers) *
+                          100
+                        }%`,
+                      }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Grid de Cervezas */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {filteredBeers.map((beer) => {
+                    const isSelected = isBeerSelected(beer.id);
+                    const canSelect = canAddMore && !isSelected;
+
+                    return (
+                      <div
+                        key={beer.id}
+                        onClick={() =>
+                          canSelect
+                            ? addBeer(beer)
+                            : isSelected
+                            ? removeBeer(beer.id)
+                            : null
+                        }
+                        className={`border rounded-lg p-4 transition-all duration-300 cursor-pointer group relative ${
+                          isSelected
+                            ? "border-[#B58E31] bg-[#B58E31]/5 shadow-lg"
+                            : canSelect
+                            ? "border-gray-200 hover:border-[#B58E31] hover:shadow-md"
+                            : "border-gray-200 opacity-50 cursor-not-allowed"
+                        }`}
+                      >
+                        {isSelected && (
+                          <div className="absolute top-2 right-2">
+                            <div className="w-6 h-6 bg-[#B58E31] rounded-full flex items-center justify-center">
+                              <Check className="w-4 h-4 text-white" />
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="aspect-square bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                          <img
+                            src={beer.image}
+                            alt={beer.name}
+                            className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                          />
+                        </div>
+
+                        <h4 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2">
+                          {beer.name}
+                        </h4>
+                        <p className="text-xs text-gray-600 mb-1">
+                          {beer.brand}
+                        </p>
+                        <p className="text-xs text-gray-500 mb-1">
+                          {beer.volume}
+                        </p>
+                        <p className="text-xs text-[#B58E31] font-medium mb-2">
+                          {beer.nationality}
+                        </p>
+
+                        <div className="flex items-center mb-2">
+                          <div className="flex items-center">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`w-3 h-3 ${
+                                  i < Math.floor(beer.rating)
+                                    ? "text-yellow-400 fill-current"
+                                    : "text-gray-300"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          <span className="text-xs text-gray-500 ml-1">
+                            ({beer.rating})
+                          </span>
+                        </div>
+
+                        <p className="text-sm font-bold text-[#B58E31]">
+                          ${beer.price.toLocaleString()}
+                        </p>
+
+                        {!canSelect && !isSelected && (
+                          <div className="absolute inset-0 bg-white/50 rounded-lg flex items-center justify-center">
+                            <span className="text-xs text-gray-500 font-medium">
+                              {giftBuilder.selectedBeers.length >=
+                              giftBuilder.selectedBox.maxBeers
+                                ? "Límite alcanzado"
+                                : "Agotado"}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {filteredBeers.length === 0 && (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">
+                      No se encontraron cervezas con los filtros seleccionados
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Panel Lateral - Resumen */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-lg p-6 sticky top-6 border border-gray-100">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                <Gift className="w-6 h-6 mr-2 text-[#B58E31]" />
+                Resumen de tu Regalo
+              </h3>
+
+              {/* Caja Seleccionada */}
+              {giftBuilder.selectedBox ? (
+                <div className="mb-6">
+                  <h4 className="font-medium text-gray-700 mb-2">Caja</h4>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-900 font-medium">
+                        {giftBuilder.selectedBox.name}
+                      </span>
+                      <span className="font-bold text-[#B58E31]">
+                        ${giftBuilder.selectedBox.price.toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {giftBuilder.selectedBox.description}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-6">
+                  <h4 className="font-medium text-gray-700 mb-2">Caja</h4>
+                  <div className="text-sm text-gray-500">
+                    Selecciona una caja para continuar
+                  </div>
+                </div>
+              )}
+
+              {/* Cervezas Seleccionadas */}
+              <div className="mb-6">
+                <h4 className="font-medium text-gray-700 mb-2">
+                  Cervezas ({giftBuilder.selectedBeers.length}/
+                  {giftBuilder.selectedBox?.maxBeers || 0})
+                </h4>
+                {giftBuilder.selectedBeers.length > 0 ? (
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {giftBuilder.selectedBeers.map((beer) => (
+                      <div
+                        key={beer.id}
+                        className="flex items-center justify-between bg-gray-50 rounded-lg p-2"
+                      >
+                        <div className="flex items-center">
+                          <img
+                            src={beer.image}
+                            alt={beer.name}
+                            className="w-8 h-8 object-contain mr-2"
+                          />
+                          <div>
+                            <p className="text-xs font-medium text-gray-900">
+                              {beer.name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {beer.volume}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="text-xs font-bold text-[#B58E31] mr-2">
+                            ${beer.price.toLocaleString()}
+                          </span>
+                          <button
+                            onClick={() => removeBeer(beer.id)}
+                            className="w-5 h-5 bg-red-100 hover:bg-red-200 rounded-full flex items-center justify-center transition-colors"
+                          >
+                            <X className="w-3 h-3 text-red-600" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-sm text-gray-500">
+                    Selecciona cervezas para ver el detalle
                   </div>
                 )}
               </div>
 
-              {/* Contador de Progreso */}
-              <div className="mb-6">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium text-gray-700">
-                    Progreso
-                  </span>
-                  <span className="text-sm font-medium text-[#B58E31]">
-                    {giftBuilder.selectedBeers.length} de{" "}
-                    {giftBuilder.selectedBox.maxBeers} cervezas
+              {/* Total */}
+              <div className="border-t pt-4 mb-6">
+                <div className="flex items-center justify-between">
+                  <span className="text-lg font-bold text-gray-900">Total</span>
+                  <span className="text-2xl font-bold text-[#B58E31]">
+                    ${giftBuilder.totalPrice.toLocaleString()}
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    className="bg-gradient-to-r from-[#B58E31] to-[#D4A853] h-3 rounded-full transition-all duration-500"
-                    style={{
-                      width: `${
-                        (giftBuilder.selectedBeers.length /
-                          giftBuilder.selectedBox.maxBeers) *
-                        100
-                      }%`,
-                    }}
-                  ></div>
-                </div>
               </div>
 
-              {/* Grid de Cervezas */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {filteredBeers.map((beer) => {
-                  const isSelected = isBeerSelected(beer.id);
-                  const canSelect = canAddMore && !isSelected;
+              {/* Botón de Acción */}
+              <button
+                className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 ${
+                  giftBuilder.isComplete
+                    ? "bg-gradient-to-r from-[#B58E31] to-[#D4A853] text-white hover:shadow-lg transform hover:-translate-y-0.5"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+                disabled={!giftBuilder.isComplete}
+              >
+                {giftBuilder.isComplete
+                  ? "🎉 Agregar al Carrito"
+                  : "Completa tu selección"}
+              </button>
 
-                  return (
-                    <div
-                      key={beer.id}
-                      onClick={() =>
-                        canSelect
-                          ? addBeer(beer)
-                          : isSelected
-                          ? removeBeer(beer.id)
-                          : null
-                      }
-                      className={`border rounded-lg p-4 transition-all duration-300 cursor-pointer group relative ${
-                        isSelected
-                          ? "border-[#B58E31] bg-[#B58E31]/5 shadow-lg"
-                          : canSelect
-                          ? "border-gray-200 hover:border-[#B58E31] hover:shadow-md"
-                          : "border-gray-200 opacity-50 cursor-not-allowed"
-                      }`}
-                    >
-                      {isSelected && (
-                        <div className="absolute top-2 right-2">
-                          <div className="w-6 h-6 bg-[#B58E31] rounded-full flex items-center justify-center">
-                            <Check className="w-4 h-4 text-white" />
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="aspect-square bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
-                        <img
-                          src={beer.image}
-                          alt={beer.name}
-                          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                        />
-                      </div>
-
-                      <h4 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2">
-                        {beer.name}
-                      </h4>
-                      <p className="text-xs text-gray-600 mb-1">{beer.brand}</p>
-                      <p className="text-xs text-gray-500 mb-1">
-                        {beer.volume}
-                      </p>
-                      <p className="text-xs text-[#B58E31] font-medium mb-2">
-                        {beer.nationality}
-                      </p>
-
-                      <div className="flex items-center mb-2">
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-3 h-3 ${
-                                i < Math.floor(beer.rating)
-                                  ? "text-yellow-400 fill-current"
-                                  : "text-gray-300"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <span className="text-xs text-gray-500 ml-1">
-                          ({beer.rating})
-                        </span>
-                      </div>
-
-                      <p className="text-sm font-bold text-[#B58E31]">
-                        ${beer.price.toLocaleString()}
-                      </p>
-
-                      {!canSelect && !isSelected && (
-                        <div className="absolute inset-0 bg-white/50 rounded-lg flex items-center justify-center">
-                          <span className="text-xs text-gray-500 font-medium">
-                            {giftBuilder.selectedBeers.length >=
-                            giftBuilder.selectedBox.maxBeers
-                              ? "Límite alcanzado"
-                              : "Agotado"}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-
-              {filteredBeers.length === 0 && (
-                <div className="text-center py-8">
-                  <p className="text-gray-500">
-                    No se encontraron cervezas con los filtros seleccionados
-                  </p>
-                </div>
+              {!giftBuilder.isComplete && (
+                <p className="text-xs text-gray-500 text-center mt-3">
+                  {giftBuilder.selectedBox
+                    ? `Faltan ${
+                        giftBuilder.selectedBox.maxBeers -
+                        giftBuilder.selectedBeers.length
+                      } cervezas`
+                    : "Selecciona una caja para comenzar"}
+                </p>
               )}
             </div>
-          )}
-        </div>
-
-        {/* Panel Lateral - Resumen */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl shadow-lg p-6 sticky top-6 border border-gray-100">
-            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
-              <Gift className="w-6 h-6 mr-2 text-[#B58E31]" />
-              Resumen de tu Regalo
-            </h3>
-
-            {/* Caja Seleccionada */}
-            {giftBuilder.selectedBox ? (
-              <div className="mb-6">
-                <h4 className="font-medium text-gray-700 mb-2">Caja</h4>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-900 font-medium">
-                      {giftBuilder.selectedBox.name}
-                    </span>
-                    <span className="font-bold text-[#B58E31]">
-                      ${giftBuilder.selectedBox.price.toLocaleString()}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {giftBuilder.selectedBox.description}
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="mb-6">
-                <h4 className="font-medium text-gray-700 mb-2">Caja</h4>
-                <div className="text-sm text-gray-500">
-                  Selecciona una caja para continuar
-                </div>
-              </div>
-            )}
-
-            {/* Cervezas Seleccionadas */}
-            <div className="mb-6">
-              <h4 className="font-medium text-gray-700 mb-2">
-                Cervezas ({giftBuilder.selectedBeers.length}/
-                {giftBuilder.selectedBox?.maxBeers || 0})
-              </h4>
-              {giftBuilder.selectedBeers.length > 0 ? (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {giftBuilder.selectedBeers.map((beer) => (
-                    <div
-                      key={beer.id}
-                      className="flex items-center justify-between bg-gray-50 rounded-lg p-2"
-                    >
-                      <div className="flex items-center">
-                        <img
-                          src={beer.image}
-                          alt={beer.name}
-                          className="w-8 h-8 object-contain mr-2"
-                        />
-                        <div>
-                          <p className="text-xs font-medium text-gray-900">
-                            {beer.name}
-                          </p>
-                          <p className="text-xs text-gray-500">{beer.volume}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="text-xs font-bold text-[#B58E31] mr-2">
-                          ${beer.price.toLocaleString()}
-                        </span>
-                        <button
-                          onClick={() => removeBeer(beer.id)}
-                          className="w-5 h-5 bg-red-100 hover:bg-red-200 rounded-full flex items-center justify-center transition-colors"
-                        >
-                          <X className="w-3 h-3 text-red-600" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-sm text-gray-500">
-                  Selecciona cervezas para ver el detalle
-                </div>
-              )}
-            </div>
-
-            {/* Total */}
-            <div className="border-t pt-4 mb-6">
-              <div className="flex items-center justify-between">
-                <span className="text-lg font-bold text-gray-900">Total</span>
-                <span className="text-2xl font-bold text-[#B58E31]">
-                  ${giftBuilder.totalPrice.toLocaleString()}
-                </span>
-              </div>
-            </div>
-
-            {/* Botón de Acción */}
-            <button
-              className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 ${
-                giftBuilder.isComplete
-                  ? "bg-gradient-to-r from-[#B58E31] to-[#D4A853] text-white hover:shadow-lg transform hover:-translate-y-0.5"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
-              disabled={!giftBuilder.isComplete}
-            >
-              {giftBuilder.isComplete
-                ? "🎉 Agregar al Carrito"
-                : "Completa tu selección"}
-            </button>
-
-            {!giftBuilder.isComplete && (
-              <p className="text-xs text-gray-500 text-center mt-3">
-                {giftBuilder.selectedBox
-                  ? `Faltan ${
-                      giftBuilder.selectedBox.maxBeers -
-                      giftBuilder.selectedBeers.length
-                    } cervezas`
-                  : "Selecciona una caja para comenzar"}
-              </p>
-            )}
           </div>
         </div>
       </div>

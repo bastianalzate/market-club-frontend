@@ -18,19 +18,7 @@ export default function GiftsPage() {
       <GiftProcessSteps />
 
       {/* Constructor de Regalos */}
-      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-6">
-            Construí tu Regalo Perfecto
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Elige tu caja favorita y personalízala con las cervezas que más te
-            gusten. Crea un regalo único y especial.
-          </p>
-        </div>
-
-        <GiftBuilder />
-      </div>
+      <GiftBuilder />
     </div>
   );
 }
