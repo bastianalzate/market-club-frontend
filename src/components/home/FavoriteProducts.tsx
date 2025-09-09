@@ -1,10 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, ShoppingCart, ArrowRight } from "lucide-react";
+import { Heart, ShoppingCart, ArrowRight, Plus, Minus } from "lucide-react";
+import { useCart } from "@/hooks/useCart";
+import { Product } from "@/features/products/types/product";
 
 export default function FavoriteProducts() {
   const [favorites, setFavorites] = useState<number[]>([1, 2, 3, 4]);
+  const [addingToCart, setAddingToCart] = useState<number | null>(null);
+  const { addToCart, updateQuantity, removeFromCart, items } = useCart();
 
   const toggleFavorite = (productId: number) => {
     setFavorites((prev) =>
@@ -12,6 +16,43 @@ export default function FavoriteProducts() {
         ? prev.filter((id) => id !== productId)
         : [...prev, productId]
     );
+  };
+
+  // Obtener la cantidad de un producto en el carrito
+  const getProductQuantity = (productId: number) => {
+    const cartItem = items.find((item) => item.product.id === productId);
+    return cartItem ? cartItem.quantity : 0;
+  };
+
+  // Verificar si un producto está en el carrito
+  const isInCart = (productId: number) => {
+    return items.some((item) => item.product.id === productId);
+  };
+
+  // Convertir producto de home al formato del store
+  const convertToStoreProduct = (homeProduct: any): Product => {
+    return {
+      id: homeProduct.id,
+      name: homeProduct.name,
+      description: `Cerveza premium - ${homeProduct.volume}`,
+      price: parseInt(homeProduct.price.replace(/[^0-9]/g, "")), // Convertir "$17.000" a 17000
+      image: homeProduct.image,
+      images: [homeProduct.image],
+      category: "Cerveza Premium",
+      brand: homeProduct.name.split(" ")[0], // Tomar la primera palabra como marca
+      alcoholContent: 5.0,
+      volume: parseInt(homeProduct.volume.match(/\d+/)?.[0] || "500"), // Extraer número del volumen
+      style: "Premium",
+      origin: "Importada",
+      inStock: true,
+      stockQuantity: 100,
+      rating: 4.5,
+      reviewCount: 128,
+      tags: ["premium", "cerveza"],
+      featured: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
   };
 
   const products = [
@@ -49,9 +90,16 @@ export default function FavoriteProducts() {
     },
   ];
 
-  const handleAddToCart = (productId: number) => {
-    console.log("Agregar al carrito:", productId);
-    // TODO: Implementar lógica del carrito
+  const handleAddToCart = async (homeProduct: any) => {
+    setAddingToCart(homeProduct.id);
+
+    const product = convertToStoreProduct(homeProduct);
+    addToCart(product, 1);
+
+    // Simular una pequeña animación
+    setTimeout(() => {
+      setAddingToCart(null);
+    }, 500);
   };
 
   return (
@@ -159,10 +207,11 @@ export default function FavoriteProducts() {
 
                 {/* Botones de acción */}
                 <div className="flex items-center space-x-3">
-                  {/* Botón de carrito cuadrado */}
+                  {/* Botón de carrito cuadrado con contador */}
                   <button
-                    onClick={() => handleAddToCart(product.id)}
-                    className="p-3 rounded-lg transition-colors hover:bg-gray-50"
+                    onClick={() => handleAddToCart(product)}
+                    disabled={addingToCart === product.id}
+                    className="relative p-3 rounded-lg transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       backgroundColor: "transparent",
                       borderColor: "#D0D5DD",
@@ -175,22 +224,39 @@ export default function FavoriteProducts() {
                       className="w-5 h-5"
                       style={{ color: "#B58E31" }}
                     />
+                    {/* Contador en el ícono del carrito */}
+                    {isInCart(product.id) && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                        {getProductQuantity(product.id)}
+                      </span>
+                    )}
                   </button>
 
                   {/* Botón principal "Añadir al carrito" */}
                   <button
-                    onClick={() => handleAddToCart(product.id)}
-                    className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+                    onClick={() => handleAddToCart(product)}
+                    disabled={addingToCart === product.id}
+                    className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{ backgroundColor: "#B58E31" }}
                     onMouseEnter={(e) =>
+                      !e.currentTarget.disabled &&
                       (e.currentTarget.style.backgroundColor = "#A07D2A")
                     }
                     onMouseLeave={(e) =>
+                      !e.currentTarget.disabled &&
                       (e.currentTarget.style.backgroundColor = "#B58E31")
                     }
                   >
-                    <span>Añadir al carrito</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <span>
+                      {addingToCart === product.id
+                        ? "Agregando..."
+                        : isInCart(product.id)
+                        ? "Agregar más"
+                        : "Añadir al carrito"}
+                    </span>
+                    {addingToCart !== product.id && (
+                      <ArrowRight className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
               </div>

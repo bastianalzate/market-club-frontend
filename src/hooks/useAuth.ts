@@ -1,83 +1,70 @@
-"use client";
-
-import { useState, useCallback } from "react";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-}
-
-interface AuthState {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
-}
-
-interface LoginModalState {
-  isOpen: boolean;
-}
+import { useCallback } from 'react';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import {
+  openLoginModal,
+  closeLoginModal,
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  registerStart,
+  registerSuccess,
+  registerFailure,
+  guestCheckoutStart,
+  guestCheckoutSuccess,
+  guestCheckoutFailure,
+  logout,
+  clearError,
+  selectUser,
+  selectIsAuthenticated,
+  selectAuthLoading,
+  selectAuthError,
+  selectLoginModalOpen,
+  selectIsGuest,
+} from '../store/slices/authSlice';
 
 export function useAuth() {
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    isAuthenticated: false,
-    isLoading: false,
-    error: null,
-  });
+  const dispatch = useAppDispatch();
+  
+  // Selectores
+  const user = useAppSelector(selectUser);
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const isLoading = useAppSelector(selectAuthLoading);
+  const error = useAppSelector(selectAuthError);
+  const isLoginModalOpen = useAppSelector(selectLoginModalOpen);
+  const isGuest = useAppSelector(selectIsGuest);
 
-  const [loginModalState, setLoginModalState] = useState<LoginModalState>({
-    isOpen: false,
-  });
+  // Acciones del modal
+  const openLoginModalAction = useCallback(() => {
+    dispatch(openLoginModal());
+  }, [dispatch]);
 
-  // Abrir modal de login
-  const openLoginModal = useCallback(() => {
-    setLoginModalState({ isOpen: true });
-  }, []);
-
-  // Cerrar modal de login
-  const closeLoginModal = useCallback(() => {
-    setLoginModalState({ isOpen: false });
-  }, []);
+  const closeLoginModalAction = useCallback(() => {
+    dispatch(closeLoginModal());
+  }, [dispatch]);
 
   // Login
   const login = useCallback(async (email: string, password: string) => {
-    setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
+    dispatch(loginStart());
     
     try {
       // Simular llamada a API
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Mock de usuario logueado
-      const user: User = {
+      const user = {
         id: "1",
         name: "Usuario Demo",
         email: email,
         phone: "+57 300 123 4567",
+        isGuest: false,
       };
       
-      setAuthState({
-        user,
-        isAuthenticated: true,
-        isLoading: false,
-        error: null,
-      });
-      
-      closeLoginModal();
-      
-      // Aquí podrías mostrar una notificación de éxito
-      console.log("Login exitoso:", user);
+      dispatch(loginSuccess(user));
       
     } catch (error) {
-      setAuthState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: "Error al iniciar sesión. Verifica tus credenciales.",
-      }));
+      dispatch(loginFailure("Error al iniciar sesión. Verifica tus credenciales."));
     }
-  }, [closeLoginModal]);
+  }, [dispatch]);
 
   // Registro
   const register = useCallback(async (data: {
@@ -86,40 +73,27 @@ export function useAuth() {
     password: string;
     phone: string;
   }) => {
-    setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
+    dispatch(registerStart());
     
     try {
       // Simular llamada a API
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Mock de usuario registrado
-      const user: User = {
+      const user = {
         id: "1",
         name: data.name,
         email: data.email,
         phone: data.phone,
+        isGuest: false,
       };
       
-      setAuthState({
-        user,
-        isAuthenticated: true,
-        isLoading: false,
-        error: null,
-      });
-      
-      closeLoginModal();
-      
-      // Aquí podrías mostrar una notificación de éxito
-      console.log("Registro exitoso:", user);
+      dispatch(registerSuccess(user));
       
     } catch (error) {
-      setAuthState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: "Error al crear la cuenta. Intenta de nuevo.",
-      }));
+      dispatch(registerFailure("Error al crear la cuenta. Intenta de nuevo."));
     }
-  }, [closeLoginModal]);
+  }, [dispatch]);
 
   // Checkout como invitado
   const guestCheckout = useCallback(async (data: {
@@ -128,67 +102,59 @@ export function useAuth() {
     phone: string;
     address: string;
   }) => {
-    setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
+    dispatch(guestCheckoutStart());
     
     try {
       // Simular procesamiento
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Crear usuario temporal para el checkout
-      const guestUser: User = {
+      const guestUser = {
         id: "guest-" + Date.now(),
         name: data.name,
         email: data.email,
         phone: data.phone,
+        isGuest: true,
       };
       
-      setAuthState({
-        user: guestUser,
-        isAuthenticated: false, // No está realmente autenticado
-        isLoading: false,
-        error: null,
-      });
-      
-      closeLoginModal();
+      dispatch(guestCheckoutSuccess(guestUser));
       
       // Aquí podrías proceder al checkout
       console.log("Checkout como invitado:", { user: guestUser, address: data.address });
       
     } catch (error) {
-      setAuthState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: "Error al procesar la información. Intenta de nuevo.",
-      }));
+      dispatch(guestCheckoutFailure("Error al procesar la información. Intenta de nuevo."));
     }
-  }, [closeLoginModal]);
+  }, [dispatch]);
 
   // Logout
-  const logout = useCallback(() => {
-    setAuthState({
-      user: null,
-      isAuthenticated: false,
-      isLoading: false,
-      error: null,
-    });
-  }, []);
+  const logoutAction = useCallback(() => {
+    dispatch(logout());
+  }, [dispatch]);
+
+  // Limpiar errores
+  const clearErrorAction = useCallback(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
   return {
-    // Estado de autenticación
-    user: authState.user,
-    isAuthenticated: authState.isAuthenticated,
-    isLoading: authState.isLoading,
-    error: authState.error,
+    // Estado
+    user,
+    isAuthenticated,
+    isLoading,
+    error,
+    isLoginModalOpen,
+    isGuest,
     
-    // Estado del modal
-    isLoginModalOpen: loginModalState.isOpen,
+    // Acciones del modal
+    openLoginModal: openLoginModalAction,
+    closeLoginModal: closeLoginModalAction,
     
-    // Acciones
-    openLoginModal,
-    closeLoginModal,
+    // Acciones de autenticación
     login,
     register,
     guestCheckout,
-    logout,
+    logout: logoutAction,
+    clearError: clearErrorAction,
   };
 }

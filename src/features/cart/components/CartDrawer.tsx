@@ -1,8 +1,8 @@
 "use client";
 
-import { X, Trash2 } from "lucide-react";
+import { X, Trash2, Plus, Minus } from "lucide-react";
 import { useState, useEffect } from "react";
-import { CartItem } from "../types/cart";
+import { CartItem } from "@/store/slices/cartSlice";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -25,9 +25,10 @@ export default function CartDrawer({
   const [shouldRender, setShouldRender] = useState(false);
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("es-ES", {
+    return new Intl.NumberFormat("es-CO", {
       style: "currency",
-      currency: "USD",
+      currency: "COP",
+      minimumFractionDigits: 0,
     }).format(price);
   };
 
@@ -128,7 +129,7 @@ export default function CartDrawer({
             <div className="flex-shrink-0 px-4 py-5">
               <div className="flex items-center justify-between">
                 <p className="text-base font-bold text-gray-900">
-                  Shopping Cart
+                  Carrito de Compras
                 </p>
                 <button
                   type="button"
@@ -168,9 +169,42 @@ export default function CartDrawer({
                               <p className="text-sm font-bold text-gray-900">
                                 {item.product.name}
                               </p>
-                              <p className="mt-1.5 text-sm font-medium text-gray-500">
-                                Qty: {item.quantity}
-                              </p>
+
+                              {/* Controles de cantidad */}
+                              <div className="mt-2 flex items-center space-x-2">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (item.quantity > 1) {
+                                      onUpdateQuantity(
+                                        item.id,
+                                        item.quantity - 1
+                                      );
+                                    } else {
+                                      onRemoveItem(item.id);
+                                    }
+                                  }}
+                                  className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                                  aria-label="Disminuir cantidad"
+                                >
+                                  <Minus className="w-4 h-4 text-gray-600" />
+                                </button>
+
+                                <span className="text-sm font-bold text-gray-800 min-w-[20px] text-center">
+                                  {item.quantity}
+                                </span>
+
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    onUpdateQuantity(item.id, item.quantity + 1)
+                                  }
+                                  className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                                  aria-label="Aumentar cantidad"
+                                >
+                                  <Plus className="w-4 h-4 text-gray-600" />
+                                </button>
+                              </div>
                             </div>
 
                             <div className="flex flex-col items-end justify-between">
@@ -203,7 +237,7 @@ export default function CartDrawer({
                 <ul className="space-y-4">
                   <li className="flex items-center justify-between">
                     <p className="text-sm font-medium text-gray-600">
-                      Sub total
+                      Subtotal
                     </p>
                     <p className="text-sm font-medium text-gray-600">
                       {formatPrice(subtotal)}
@@ -224,7 +258,7 @@ export default function CartDrawer({
                     onClick={onCheckout}
                     className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white transition-all duration-200 bg-gray-900 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 hover:bg-gray-700"
                   >
-                    Checkout
+                    Ir a Pagar
                   </button>
 
                   <button
@@ -232,7 +266,7 @@ export default function CartDrawer({
                     onClick={handleClose}
                     className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-gray-900 transition-all duration-200 bg-transparent border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 hover:bg-gray-200 focus:bg-gray-200"
                   >
-                    Continue Shopping
+                    Continuar Comprando
                   </button>
                 </div>
               </div>

@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Oswald, Inter, Plus_Jakarta_Sans } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Oswald,
+  Inter,
+  Plus_Jakarta_Sans,
+} from "next/font/google";
 import "./globals.css";
 import MainLayout from "@/components/layout/MainLayout";
+import ReduxProvider from "@/providers/ReduxProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,7 +63,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${inter.variable} ${plusJakartaSans.variable} antialiased`}
       >
-        <MainLayout>{children}</MainLayout>
+        <ReduxProvider>
+          <MainLayout>{children}</MainLayout>
+        </ReduxProvider>
       </body>
     </html>
   );

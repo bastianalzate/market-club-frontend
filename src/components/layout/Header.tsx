@@ -6,9 +6,9 @@ import { Search, Menu, X, ShoppingCart, User } from "lucide-react";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import CartDrawer from "../../features/cart/components/CartDrawer";
-import { useCart } from "../../features/cart/hooks/useCart";
+import { useCart } from "@/hooks/useCart";
 import LoginModal from "../auth/LoginModal";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

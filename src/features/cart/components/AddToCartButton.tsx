@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Product } from "../../products/types/product";
-import { useCart } from "../hooks/useCart";
+import { useCart } from "@/hooks/useCart";
 
 interface AddToCartButtonProps {
   product: Product;
