@@ -1,6 +1,7 @@
 "use client";
 
 import { X, Trash2 } from "lucide-react";
+import { useState, useEffect } from "react";
 import { CartItem } from "../types/cart";
 
 interface CartDrawerProps {
@@ -20,6 +21,9 @@ export default function CartDrawer({
   onRemoveItem,
   onCheckout,
 }: CartDrawerProps) {
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("es-ES", {
       style: "currency",
@@ -33,19 +37,91 @@ export default function CartDrawer({
   );
   const total = subtotal;
 
-  if (!isOpen) return null;
+  // Manejar la animación de entrada
+  useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
+      setIsAnimating(true);
+    }
+  }, [isOpen]);
+
+  // Manejar la animación de salida
+  const handleClose = () => {
+    setIsAnimating(false);
+    setTimeout(() => {
+      setShouldRender(false);
+      onClose();
+    }, 300); // Duración de la animación
+  };
+
+  if (!shouldRender) return null;
 
   return (
     <>
+      {/* CSS Animations */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideInFromRight {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes fadeOut {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+          }
+        }
+
+        @keyframes slideOutToRight {
+          from {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+        }
+      `}</style>
+
       {/* Backdrop/Overlay */}
       <div
         className="fixed inset-0 z-40"
-        style={{ backgroundColor: "#00000091" }}
-        onClick={onClose}
+        style={{
+          backgroundColor: "#00000091",
+          animation: isAnimating
+            ? "fadeIn 0.3s ease-in-out"
+            : "fadeOut 0.3s ease-in-out",
+        }}
+        onClick={handleClose}
       />
 
       {/* Cart Drawer */}
-      <div className="fixed inset-y-0 right-0 w-full h-full max-w-xs sm:max-w-sm z-50">
+      <div
+        className="fixed inset-y-0 right-0 w-full h-full max-w-xs sm:max-w-sm z-50"
+        style={{
+          animation: isAnimating
+            ? "slideInFromRight 0.3s ease-in-out"
+            : "slideOutToRight 0.3s ease-in-out",
+        }}
+      >
         <div className="h-full overflow-hidden bg-white">
           <div className="flex flex-col h-full">
             {/* Header */}
@@ -56,7 +132,7 @@ export default function CartDrawer({
                 </p>
                 <button
                   type="button"
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="p-2 -m-2 text-gray-500 transition-all duration-200 bg-transparent rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
                 >
                   <X className="w-5 h-5" />
@@ -153,7 +229,7 @@ export default function CartDrawer({
 
                   <button
                     type="button"
-                    onClick={onClose}
+                    onClick={handleClose}
                     className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-gray-900 transition-all duration-200 bg-transparent border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 hover:bg-gray-200 focus:bg-gray-200"
                   >
                     Continue Shopping
