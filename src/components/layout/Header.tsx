@@ -7,6 +7,8 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import CartDrawer from "../../features/cart/components/CartDrawer";
 import { useCart } from "../../features/cart/hooks/useCart";
+import LoginModal from "../auth/LoginModal";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -21,6 +23,18 @@ export default function Header() {
     checkout,
     totalItems,
   } = useCart();
+
+  const {
+    user,
+    isAuthenticated,
+    isLoginModalOpen,
+    openLoginModal,
+    closeLoginModal,
+    login,
+    register,
+    guestCheckout,
+    logout,
+  } = useAuth();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -70,12 +84,12 @@ export default function Header() {
             </button>
 
             {/* User Profile */}
-            <Link
-              href="/profile"
+            <button
+              onClick={openLoginModal}
               className="p-2 bg-gray-100 text-gray-700 hover:text-gray-900 hover:bg-gray-200 rounded-full transition-colors border border-gray-300"
             >
               <User className="w-5 h-5" />
-            </Link>
+            </button>
 
             {/* Mobile Menu Button */}
             <button
@@ -224,12 +238,12 @@ export default function Header() {
             </button>
 
             {/* User Profile */}
-            <Link
-              href="/profile"
+            <button
+              onClick={openLoginModal}
               className="p-2 bg-gray-100 text-gray-700 hover:text-gray-900 hover:bg-gray-200 rounded-full transition-colors border border-gray-300"
             >
               <User className="w-5 h-5" />
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -361,6 +375,15 @@ export default function Header() {
         onUpdateQuantity={updateQuantity}
         onRemoveItem={removeFromCart}
         onCheckout={checkout}
+      />
+
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={closeLoginModal}
+        onLogin={login}
+        onRegister={register}
+        onGuestCheckout={guestCheckout}
       />
     </header>
   );

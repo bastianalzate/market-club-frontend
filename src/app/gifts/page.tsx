@@ -26,7 +26,7 @@ export default function GiftsPage() {
       <MarketClubBanner />
 
       {/* Sección de Banderas de Países */}
-      <CountriesSlider />
+      {/* <CountriesSlider /> */}
     </div>
   );
 }
