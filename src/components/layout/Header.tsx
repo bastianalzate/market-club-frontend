@@ -5,10 +5,22 @@ import Image from "next/image";
 import { Search, Menu, X, ShoppingCart, User } from "lucide-react";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import CartDrawer from "../../features/cart/components/CartDrawer";
+import { useCart } from "../../features/cart/hooks/useCart";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const {
+    items,
+    isOpen,
+    openCart,
+    closeCart,
+    updateQuantity,
+    removeFromCart,
+    checkout,
+    totalItems,
+  } = useCart();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -45,12 +57,17 @@ export default function Header() {
             </button>
 
             {/* Cart */}
-            <Link
-              href="/cart"
-              className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+            <button
+              onClick={openCart}
+              className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative"
             >
               <ShoppingCart className="w-5 h-5" />
-            </Link>
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </button>
 
             {/* User Profile */}
             <Link
@@ -81,9 +98,7 @@ export default function Header() {
               href="/"
               title="Inicio"
               className={`transition-all duration-200 ${
-                isActive("/")
-                  ? ""
-                  : "text-gray-900 hover:text-gray-600"
+                isActive("/") ? "" : "text-gray-900 hover:text-gray-600"
               }`}
               style={{
                 fontFamily: "var(--font-oswald)",
@@ -101,9 +116,7 @@ export default function Header() {
               href="/tienda"
               title="Tienda"
               className={`transition-all duration-200 ${
-                isActive("/tienda")
-                  ? ""
-                  : "text-gray-900 hover:text-gray-600"
+                isActive("/tienda") ? "" : "text-gray-900 hover:text-gray-600"
               }`}
               style={{
                 fontFamily: "var(--font-oswald)",
@@ -121,9 +134,7 @@ export default function Header() {
               href="/gifts"
               title="Armá tu regalo"
               className={`transition-all duration-200 ${
-                isActive("/gifts")
-                  ? ""
-                  : "text-gray-900 hover:text-gray-600"
+                isActive("/gifts") ? "" : "text-gray-900 hover:text-gray-600"
               }`}
               style={{
                 fontFamily: "var(--font-oswald)",
@@ -141,9 +152,7 @@ export default function Header() {
               href="/kits"
               title="Kit"
               className={`transition-all duration-200 ${
-                isActive("/kits")
-                  ? ""
-                  : "text-gray-900 hover:text-gray-600"
+                isActive("/kits") ? "" : "text-gray-900 hover:text-gray-600"
               }`}
               style={{
                 fontFamily: "var(--font-oswald)",
@@ -161,9 +170,7 @@ export default function Header() {
               href="/about"
               title="Market Club"
               className={`transition-all duration-200 ${
-                isActive("/about")
-                  ? ""
-                  : "text-gray-900 hover:text-gray-600"
+                isActive("/about") ? "" : "text-gray-900 hover:text-gray-600"
               }`}
               style={{
                 fontFamily: "var(--font-oswald)",
@@ -181,9 +188,7 @@ export default function Header() {
               href="/contact"
               title="Contacto"
               className={`transition-all duration-200 ${
-                isActive("/contact")
-                  ? ""
-                  : "text-gray-900 hover:text-gray-600"
+                isActive("/contact") ? "" : "text-gray-900 hover:text-gray-600"
               }`}
               style={{
                 fontFamily: "var(--font-oswald)",
@@ -206,12 +211,17 @@ export default function Header() {
             </button>
 
             {/* Cart */}
-            <Link
-              href="/cart"
-              className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+            <button
+              onClick={openCart}
+              className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative"
             >
               <ShoppingCart className="w-5 h-5" />
-            </Link>
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </button>
 
             {/* User Profile */}
             <Link
@@ -232,9 +242,7 @@ export default function Header() {
                   href="/"
                   title="Inicio"
                   className={`text-base font-medium transition-all duration-200 py-2 ${
-                    isActive("/")
-                      ? ""
-                      : "text-gray-900 hover:text-gray-600"
+                    isActive("/") ? "" : "text-gray-900 hover:text-gray-600"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                   style={{
@@ -289,9 +297,7 @@ export default function Header() {
                   href="/kits"
                   title="Kits"
                   className={`text-base font-medium transition-all duration-200 py-2 ${
-                    isActive("/kits")
-                      ? ""
-                      : "text-gray-900 hover:text-gray-600"
+                    isActive("/kits") ? "" : "text-gray-900 hover:text-gray-600"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                   style={{
@@ -346,6 +352,16 @@ export default function Header() {
           </div>
         )}
       </div>
+
+      {/* Cart Drawer */}
+      <CartDrawer
+        isOpen={isOpen}
+        onClose={closeCart}
+        items={items}
+        onUpdateQuantity={updateQuantity}
+        onRemoveItem={removeFromCart}
+        onCheckout={checkout}
+      />
     </header>
   );
 }
