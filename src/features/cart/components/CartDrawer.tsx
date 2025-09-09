@@ -156,9 +156,20 @@ export default function CartDrawer({
                     <ul className="-my-5 divide-y divide-gray-200 divide-dotted">
                       {items.map((item) => (
                         <li key={item.id} className="flex py-5">
-                          <div className="flex-shrink-0">
+                          <div 
+                            className={`flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center ${
+                              item.product.category === "Regalo Personalizado" 
+                                ? "" 
+                                : "bg-gray-100"
+                            }`}
+                            style={item.product.category === "Regalo Personalizado" ? { backgroundColor: '#B58E31' } : {}}
+                          >
                             <img
-                              className="object-cover w-16 h-16 rounded-lg"
+                              className={`object-cover ${
+                                item.product.category === "Regalo Personalizado" 
+                                  ? "w-8 h-8" 
+                                  : "w-16 h-16 rounded-lg"
+                              }`}
                               src={item.product.image}
                               alt={item.product.name}
                             />
@@ -256,7 +267,8 @@ export default function CartDrawer({
                   <button
                     type="button"
                     onClick={onCheckout}
-                    className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white transition-all duration-200 bg-gray-900 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 hover:bg-gray-700"
+                    className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white transition-all duration-200 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 hover:opacity-90"
+                    style={{ backgroundColor: '#B58E31' }}
                   >
                     Ir a Pagar
                   </button>

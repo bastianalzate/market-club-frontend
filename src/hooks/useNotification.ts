@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 interface NotificationState {
   isVisible: boolean;
@@ -16,20 +16,41 @@ export function useNotification() {
     message: "",
     type: "success",
   });
+  
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const showNotification = useCallback(
     (title: string, message: string, type: "success" | "error" | "info" = "success") => {
+      // Limpiar timeout anterior si existe
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      
       setNotification({
         isVisible: true,
         title,
         message,
         type,
       });
+
+      // Auto-dismiss después de 4 segundos
+      timeoutRef.current = setTimeout(() => {
+        setNotification((prev) => ({
+          ...prev,
+          isVisible: false,
+        }));
+      }, 4000);
     },
     []
   );
 
   const hideNotification = useCallback(() => {
+    // Limpiar timeout si existe
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    
     setNotification((prev) => ({
       ...prev,
       isVisible: false,
@@ -56,6 +77,15 @@ export function useNotification() {
     },
     [showNotification]
   );
+
+  // Limpiar timeout al desmontar el componente
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return {
     notification,
