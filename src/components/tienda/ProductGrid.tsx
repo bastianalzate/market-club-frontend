@@ -108,14 +108,20 @@ export default function ProductGrid({ products }: ProductGridProps) {
       </div>
 
       {/* Grid de productos */}
-      <div
-        className={`grid gap-6 ${
-          viewMode === "grid"
-            ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-            : "grid-cols-1"
-        }`}
-      >
-        {currentProducts.map((product) => (
+      {currentProducts.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="text-gray-500 text-lg mb-2">No se encontraron productos</div>
+          <div className="text-gray-400 text-sm">Intenta con otros términos de búsqueda</div>
+        </div>
+      ) : (
+        <div
+          className={`grid gap-6 ${
+            viewMode === "grid"
+              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+              : "grid-cols-1"
+          }`}
+        >
+          {currentProducts.map((product) => (
           <div
             key={product.id}
             className={`bg-white rounded-lg overflow-hidden shadow-lg ${
@@ -203,7 +209,8 @@ export default function ProductGrid({ products }: ProductGridProps) {
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
 
       {/* Paginación */}
       {totalPages > 1 && (

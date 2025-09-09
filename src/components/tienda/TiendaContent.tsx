@@ -290,6 +290,18 @@ const products = [
 export default function TiendaContent() {
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Filtrar productos basándose en el término de búsqueda
+  const filteredProducts = products.filter((product) => {
+    if (!searchTerm.trim()) return true;
+    
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      product.name.toLowerCase().includes(searchLower) ||
+      product.brand.toLowerCase().includes(searchLower) ||
+      product.category.toLowerCase().includes(searchLower)
+    );
+  });
+
   return (
     <div className="min-h-screen">
       {/* Sección con fondo negro hasta el MarketClubBanner */}
@@ -306,7 +318,7 @@ export default function TiendaContent() {
             />
 
             {/* Contenido principal */}
-            <ProductGrid products={products} />
+            <ProductGrid products={filteredProducts} />
           </div>
         </div>
 
