@@ -11,7 +11,12 @@ import {
   Star,
   Clock,
   Gift,
+  ShoppingCart,
 } from "lucide-react";
+import { useCart } from "@/hooks/useCart";
+import { Product } from "@/features/products/types/product";
+import { useNotification } from "@/hooks/useNotification";
+import NotificationToast from "@/components/shared/NotificationToast";
 
 interface GiftBox {
   id: string;
@@ -53,7 +58,7 @@ const giftBoxes: GiftBox[] = [
     description: "Perfecta para una sorpresa especial",
     maxBeers: 4,
     price: 5000,
-    image: "/images/gift-boxes/small.jpg",
+    image: "/images/logo/logo.png",
     dimensions: "20x15x10 cm",
     deliveryTime: "1-2 días",
   },
@@ -63,7 +68,7 @@ const giftBoxes: GiftBox[] = [
     description: "Ideal para compartir con amigos",
     maxBeers: 8,
     price: 8000,
-    image: "/images/gift-boxes/medium.jpg",
+    image: "/images/logo/logo.png",
     recommended: true,
     dimensions: "25x20x15 cm",
     deliveryTime: "1-2 días",
@@ -74,7 +79,7 @@ const giftBoxes: GiftBox[] = [
     description: "Para las ocasiones más especiales",
     maxBeers: 12,
     price: 12000,
-    image: "/images/gift-boxes/large.jpg",
+    image: "/images/logo/logo.png",
     dimensions: "30x25x20 cm",
     deliveryTime: "2-3 días",
   },
@@ -191,6 +196,13 @@ export default function GiftBuilder() {
   // Seleccionar la caja recomendada por defecto
   const defaultBox = giftBoxes.find((box) => box.recommended) || giftBoxes[0];
 
+  // Hook del carrito
+  const { addToCart } = useCart();
+
+  // Hook de notificaciones
+  const { notification, showSuccess, showError, hideNotification } =
+    useNotification();
+
   const [giftBuilder, setGiftBuilder] = useState<GiftBuilderState>({
     selectedBox: defaultBox,
     selectedBeers: [],
@@ -305,6 +317,71 @@ export default function GiftBuilder() {
   const canAddMore =
     giftBuilder.selectedBox &&
     giftBuilder.selectedBeers.length < giftBuilder.selectedBox.maxBeers;
+
+  // Función para crear un producto de regalo personalizado
+  const createGiftProduct = (): Product => {
+    if (!giftBuilder.selectedBox || giftBuilder.selectedBeers.length === 0) {
+      throw new Error("Regalo incompleto");
+    }
+
+    const beerNames = giftBuilder.selectedBeers
+      .map((beer) => beer.name)
+      .join(", ");
+    const giftName = `Regalo Personalizado - ${giftBuilder.selectedBox.name}`;
+    const giftDescription = `Caja ${giftBuilder.selectedBox.name} con ${giftBuilder.selectedBeers.length} cervezas: ${beerNames}`;
+
+    return {
+      id: `gift-${Date.now()}`, // ID único para cada regalo
+      name: giftName,
+      description: giftDescription,
+      price: giftBuilder.totalPrice,
+      image:
+        "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSI4IiBmaWxsPSIjQjU4RTMxIi8+PHJlY3QgeD0iMyIgeT0iOCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMiA4djEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxMnY3YTIgMiAwIDAgMS0yIDJIN2EyIDIgMCAwIDEtMi0ydi03IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik03LjUgOGEyLjUgMi41IDAgMCAxIDAtNUE0LjggOCAwIDAgMSAxMiA4YTQuOCA4IDAgMCAxIDQuNS01IDIuNSAyLjUgMCAwIDEgMCA1IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=",
+      images: ["/images/logo/logo.png"],
+      category: "Regalo Personalizado",
+      brand: "Market Club",
+      alcoholContent: 0, // No aplica para el paquete completo
+      volume: 0, // No aplica para el paquete completo
+      style: "Gift Box",
+      origin: "Colombia",
+      inStock: true,
+      stockQuantity: 1,
+      rating: 5.0,
+      reviewCount: 0,
+      tags: ["regalo", "personalizado", "cerveza", "gift-box"],
+      featured: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+  };
+
+  // Función para agregar el regalo al carrito
+  const handleAddGiftToCart = () => {
+    try {
+      const giftProduct = createGiftProduct();
+      addToCart(giftProduct, 1);
+
+      // Mostrar notificación de éxito
+      showSuccess(
+        "¡Regalo agregado! 🎉",
+        `Tu regalo personalizado "${giftBuilder.selectedBox?.name}" se agregó al carrito exitosamente.`
+      );
+
+      // Opcional: Resetear el builder después de agregar
+      // setGiftBuilder({
+      //   selectedBox: defaultBox,
+      //   selectedBeers: [],
+      //   totalPrice: defaultBox.price,
+      //   isComplete: false,
+      // });
+    } catch (error) {
+      console.error("Error al agregar regalo al carrito:", error);
+      showError(
+        "Error al agregar regalo",
+        "Por favor, completa tu selección antes de agregar al carrito."
+      );
+    }
+  };
 
   return (
     <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-16">
@@ -613,13 +690,21 @@ export default function GiftBuilder() {
                         </p>
 
                         {!canSelect && !isSelected && (
-                          <div className="absolute inset-0 bg-white/50 rounded-lg flex items-center justify-center">
-                            <span className="text-xs text-gray-500 font-medium">
-                              {giftBuilder.selectedBeers.length >=
-                              giftBuilder.selectedBox.maxBeers
-                                ? "Límite alcanzado"
-                                : "Agotado"}
-                            </span>
+                          <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 to-gray-800/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                            <div className="text-center">
+                              <div
+                                className="w-8 h-8 mx-auto mb-2 rounded-full flex items-center justify-center"
+                                style={{ backgroundColor: "rgb(181, 142, 49)" }}
+                              >
+                                <X className="w-4 h-4 text-white" />
+                              </div>
+                              <span className="text-xs font-bold text-white drop-shadow-lg">
+                                {giftBuilder.selectedBeers.length >=
+                                giftBuilder.selectedBox.maxBeers
+                                  ? "Límite alcanzado"
+                                  : "Agotado"}
+                              </span>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -734,16 +819,22 @@ export default function GiftBuilder() {
 
               {/* Botón de Acción */}
               <button
-                className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 ${
+                onClick={handleAddGiftToCart}
+                className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 flex items-center justify-center space-x-2 ${
                   giftBuilder.isComplete
                     ? "bg-gradient-to-r from-[#B58E31] to-[#D4A853] text-white hover:shadow-lg transform hover:-translate-y-0.5"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
                 disabled={!giftBuilder.isComplete}
               >
-                {giftBuilder.isComplete
-                  ? "🎉 Agregar al Carrito"
-                  : "Completa tu selección"}
+                {giftBuilder.isComplete ? (
+                  <>
+                    <ShoppingCart className="w-5 h-5" />
+                    <span>Agregar al Carrito</span>
+                  </>
+                ) : (
+                  <span>Completa tu selección</span>
+                )}
               </button>
 
               {!giftBuilder.isComplete && (
@@ -760,6 +851,16 @@ export default function GiftBuilder() {
           </div>
         </div>
       </div>
+
+      {/* Notificación Toast */}
+      <NotificationToast
+        isVisible={notification.isVisible}
+        onClose={hideNotification}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+        duration={4000}
+      />
     </div>
   );
 }
