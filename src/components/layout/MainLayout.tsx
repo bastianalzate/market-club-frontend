@@ -4,6 +4,7 @@ import AnnouncementBanner from "./AnnouncementBanner";
 import AgeVerificationWrapper from "@/components/shared/AgeVerificationWrapper";
 import LegalWarning from "./LegalWarning";
 import Copyright from "./Copyright";
+import CountriesCarousel from "@/components/shared/CountriesCarousel";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -16,6 +17,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <AnnouncementBanner />
       <Header />
       <main className="flex-1">{children}</main>
+      <CountriesCarousel />
       <Footer />
       <LegalWarning />
       <Copyright />
