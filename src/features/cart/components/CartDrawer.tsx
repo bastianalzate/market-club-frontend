@@ -3,25 +3,15 @@
 import { X, Trash2, Plus, Minus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CartItem } from "@/store/slices/cartSlice";
+import { useCart } from "@/hooks/useCart";
 
 interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  items: CartItem[];
-  onUpdateQuantity: (itemId: string, quantity: number) => void;
-  onRemoveItem: (itemId: string) => void;
-  onCheckout: () => void;
 }
 
-export default function CartDrawer({
-  isOpen,
-  onClose,
-  items,
-  onUpdateQuantity,
-  onRemoveItem,
-  onCheckout,
-}: CartDrawerProps) {
+export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
+  const { items, updateQuantity, removeFromCart } = useCart();
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const router = useRouter();
@@ -58,7 +48,7 @@ export default function CartDrawer({
   };
 
   const handleCheckout = () => {
-    onClose();
+    handleClose();
     router.push("/checkout");
   };
 
@@ -198,12 +188,12 @@ export default function CartDrawer({
                                   type="button"
                                   onClick={() => {
                                     if (item.quantity > 1) {
-                                      onUpdateQuantity(
+                                      updateQuantity(
                                         item.id,
                                         item.quantity - 1
                                       );
                                     } else {
-                                      onRemoveItem(item.id);
+                                      removeFromCart(item.id);
                                     }
                                   }}
                                   className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
@@ -219,7 +209,7 @@ export default function CartDrawer({
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    onUpdateQuantity(item.id, item.quantity + 1)
+                                    updateQuantity(item.id, item.quantity + 1)
                                   }
                                   className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                                   aria-label="Aumentar cantidad"
@@ -238,7 +228,7 @@ export default function CartDrawer({
 
                               <button
                                 type="button"
-                                onClick={() => onRemoveItem(item.id)}
+                                onClick={() => removeFromCart(item.id)}
                                 className="inline-flex p-2 -m-2 text-gray-400 transition-all duration-200 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 hover:text-gray-900"
                               >
                                 <Trash2 className="w-5 h-5" />
@@ -277,7 +267,7 @@ export default function CartDrawer({
                 <div className="mt-5 space-y-3">
                   <button
                     type="button"
-                    onClick={onCheckout}
+                    onClick={handleCheckout}
                     className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white transition-all duration-200 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 hover:opacity-90"
                     style={{ backgroundColor: "#B58E31" }}
                   >
