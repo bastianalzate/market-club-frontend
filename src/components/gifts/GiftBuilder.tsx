@@ -367,13 +367,13 @@ export default function GiftBuilder() {
         `Tu regalo personalizado "${giftBuilder.selectedBox?.name}" se agregó al carrito exitosamente.`
       );
 
-      // Opcional: Resetear el builder después de agregar
-      // setGiftBuilder({
-      //   selectedBox: defaultBox,
-      //   selectedBeers: [],
-      //   totalPrice: defaultBox.price,
-      //   isComplete: false,
-      // });
+      // Resetear el builder después de agregar para crear otro regalo
+      setGiftBuilder({
+        selectedBox: defaultBox,
+        selectedBeers: [],
+        totalPrice: defaultBox.price,
+        isComplete: false,
+      });
     } catch (error) {
       console.error("Error al agregar regalo al carrito:", error);
       showError(

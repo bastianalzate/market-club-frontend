@@ -11,10 +11,11 @@ import {
   ArrowRight,
   Plus,
   Minus,
-  Check,
 } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
+import { useNotification } from "@/hooks/useNotification";
 import { Product } from "@/features/products/types/product";
+import NotificationToast from "@/components/shared/NotificationToast";
 
 interface TiendaProduct {
   id: number;
@@ -39,6 +40,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
   const [justAdded, setJustAdded] = useState<number | null>(null);
   const { addToCart, updateQuantity, removeFromCart, items } = useCart();
+  const { notification, showSuccess, hideNotification } = useNotification();
 
   const toggleFavorite = (productId: number) => {
     setFavorites((prev) =>
@@ -112,6 +114,12 @@ export default function ProductGrid({ products }: ProductGridProps) {
     setTimeout(() => {
       setAddingToCart(null);
       setJustAdded(tiendaProduct.id);
+
+      // Mostrar notificación de éxito
+      showSuccess(
+        "¡Producto agregado! 🍺",
+        `"${tiendaProduct.name}" se agregó al carrito exitosamente.`
+      );
 
       // Limpiar el estado de "just added" después de 2 segundos
       setTimeout(() => {
@@ -279,18 +287,16 @@ export default function ProductGrid({ products }: ProductGridProps) {
 
                 {/* Botones de acción */}
                 <div className="flex items-center space-x-3">
-                  {/* Botón de carrito cuadrado con contador */}
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    disabled={addingToCart === product.id || !product.inStock}
-                    className="relative p-3 rounded-lg transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  {/* Botón de carrito cuadrado con contador - Solo visual */}
+                  <div
+                    className="relative p-3 rounded-lg"
                     style={{
                       backgroundColor: "transparent",
                       borderColor: "#D0D5DD",
                       borderWidth: "1px",
                       borderStyle: "solid",
                     }}
-                    aria-label="Agregar al carrito"
+                    aria-label="Contador del carrito"
                   >
                     <ShoppingCart
                       className="w-5 h-5"
@@ -302,13 +308,13 @@ export default function ProductGrid({ products }: ProductGridProps) {
                         {getProductQuantity(product.id)}
                       </span>
                     )}
-                  </button>
+                  </div>
 
                   {/* Botón principal "Añadir al carrito" */}
                   <button
                     onClick={() => handleAddToCart(product)}
                     disabled={addingToCart === product.id || !product.inStock}
-                    className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     style={{ backgroundColor: "#B58E31" }}
                     onMouseEnter={(e) =>
                       !e.currentTarget.disabled &&
@@ -414,6 +420,16 @@ export default function ProductGrid({ products }: ProductGridProps) {
           </div>
         </div>
       )}
+
+      {/* Notificación Toast */}
+      <NotificationToast
+        isVisible={notification.isVisible}
+        onClose={hideNotification}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+        duration={4000}
+      />
     </div>
   );
 }

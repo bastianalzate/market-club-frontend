@@ -3,12 +3,15 @@
 import { useState } from "react";
 import { Heart, ShoppingCart, ArrowRight, Plus, Minus } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
+import { useNotification } from "@/hooks/useNotification";
 import { Product } from "@/features/products/types/product";
+import NotificationToast from "@/components/shared/NotificationToast";
 
 export default function FavoriteProducts() {
   const [favorites, setFavorites] = useState<number[]>([1, 2, 3, 4]);
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
   const { addToCart, updateQuantity, removeFromCart, items } = useCart();
+  const { notification, showSuccess, hideNotification } = useNotification();
 
   const toggleFavorite = (productId: number) => {
     setFavorites((prev) =>
@@ -99,6 +102,12 @@ export default function FavoriteProducts() {
     // Simular una pequeña animación
     setTimeout(() => {
       setAddingToCart(null);
+
+      // Mostrar notificación de éxito
+      showSuccess(
+        "¡Producto agregado! 🍺",
+        `"${homeProduct.name}" se agregó al carrito exitosamente.`
+      );
     }, 500);
   };
 
@@ -264,6 +273,16 @@ export default function FavoriteProducts() {
           ))}
         </div>
       </div>
+
+      {/* Notificación Toast */}
+      <NotificationToast
+        isVisible={notification.isVisible}
+        onClose={hideNotification}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+        duration={4000}
+      />
     </section>
   );
 }
