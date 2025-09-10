@@ -2,6 +2,7 @@
 
 import { X, Trash2, Plus, Minus } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { CartItem } from "@/store/slices/cartSlice";
 
 interface CartDrawerProps {
@@ -23,6 +24,7 @@ export default function CartDrawer({
 }: CartDrawerProps) {
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
+  const router = useRouter();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("es-CO", {
@@ -53,6 +55,11 @@ export default function CartDrawer({
       setShouldRender(false);
       onClose();
     }, 300); // Duración de la animación
+  };
+
+  const handleCheckout = () => {
+    onClose();
+    router.push("/checkout");
   };
 
   if (!shouldRender) return null;
@@ -255,7 +262,7 @@ export default function CartDrawer({
                 <div className="mt-5 space-y-3">
                   <button
                     type="button"
-                    onClick={onCheckout}
+                    onClick={handleCheckout}
                     className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white transition-all duration-200 bg-gray-900 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 hover:bg-gray-700"
                   >
                     Ir a Pagar
