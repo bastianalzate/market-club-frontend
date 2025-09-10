@@ -2,6 +2,7 @@
 
 import { X, Trash2, Plus, Minus } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { CartItem } from "@/store/slices/cartSlice";
 
 interface CartDrawerProps {
@@ -23,6 +24,7 @@ export default function CartDrawer({
 }: CartDrawerProps) {
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
+  const router = useRouter();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("es-CO", {
@@ -53,6 +55,11 @@ export default function CartDrawer({
       setShouldRender(false);
       onClose();
     }, 300); // Duración de la animación
+  };
+
+  const handleCheckout = () => {
+    onClose();
+    router.push("/checkout");
   };
 
   if (!shouldRender) return null;
@@ -156,18 +163,22 @@ export default function CartDrawer({
                     <ul className="-my-5 divide-y divide-gray-200 divide-dotted">
                       {items.map((item) => (
                         <li key={item.id} className="flex py-5">
-                          <div 
+                          <div
                             className={`flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center ${
-                              item.product.category === "Regalo Personalizado" 
-                                ? "" 
+                              item.product.category === "Regalo Personalizado"
+                                ? ""
                                 : "bg-gray-100"
                             }`}
-                            style={item.product.category === "Regalo Personalizado" ? { backgroundColor: '#B58E31' } : {}}
+                            style={
+                              item.product.category === "Regalo Personalizado"
+                                ? { backgroundColor: "#B58E31" }
+                                : {}
+                            }
                           >
                             <img
                               className={`object-cover ${
-                                item.product.category === "Regalo Personalizado" 
-                                  ? "w-8 h-8" 
+                                item.product.category === "Regalo Personalizado"
+                                  ? "w-8 h-8"
                                   : "w-16 h-16 rounded-lg"
                               }`}
                               src={item.product.image}
@@ -268,7 +279,7 @@ export default function CartDrawer({
                     type="button"
                     onClick={onCheckout}
                     className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white transition-all duration-200 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 hover:opacity-90"
-                    style={{ backgroundColor: '#B58E31' }}
+                    style={{ backgroundColor: "#B58E31" }}
                   >
                     Ir a Pagar
                   </button>
