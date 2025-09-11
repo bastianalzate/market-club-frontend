@@ -5,24 +5,52 @@ import { constants } from '@/config/constants';
 export interface Product {
   id: number;
   name: string;
-  brand: string;
-  price: number;
-  image: string;
-  category: string;
-  inStock: boolean;
-  rating?: number;
-  reviewCount?: number;
-  description?: string;
-  volume?: string;
-  alcoholContent?: string;
-  country?: string;
+  slug: string;
+  description: string;
+  price: string; // La API devuelve string
+  sale_price: string | null;
+  sku: string;
+  stock_quantity: number;
+  image: string | null;
+  gallery: string | null;
+  is_active: boolean;
+  is_featured: boolean;
+  category_id: number;
+  attributes: any;
+  created_at: string;
+  updated_at: string;
+  category: {
+    id: number;
+    name: string;
+    slug: string;
+    description: string;
+    image: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+  };
 }
 
-// Tipo para la respuesta de la API
+// Tipo para la respuesta de la API de Laravel (con paginación)
 interface ProductsResponse {
-  success: boolean;
+  current_page: number;
   data: Product[];
-  message?: string;
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  links: Array<{
+    url: string | null;
+    label: string;
+    page: number | null;
+    active: boolean;
+  }>;
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number;
+  total: number;
 }
 
 // Hook para manejar productos desde la API
@@ -51,10 +79,21 @@ export const useProducts = () => {
 
       const data: ProductsResponse = await response.json();
       
-      if (data.success && data.data) {
-        setProducts(data.data);
+      if (data.data && Array.isArray(data.data)) {
+        // Transformar los productos para que coincidan con la interfaz esperada
+        const transformedProducts = data.data.map(product => ({
+          ...product,
+          // Agregar campos que faltan con valores por defecto
+          brand: product.category.name, // Usar el nombre de la categoría como marca
+          rating: 4.5, // Valor por defecto
+          reviewCount: Math.floor(Math.random() * 200) + 50, // Valor aleatorio
+          inStock: product.stock_quantity > 0,
+          image: product.image || '/images/products/placeholder.jpg', // Imagen por defecto
+          category: product.category.name,
+        }));
+        setProducts(transformedProducts);
       } else {
-        throw new Error(data.message || 'Error al obtener los productos');
+        throw new Error('No se encontraron productos en la respuesta');
       }
     } catch (err) {
       console.error('Error fetching products:', err);
@@ -92,10 +131,21 @@ export const useProducts = () => {
 
       const data: ProductsResponse = await response.json();
       
-      if (data.success && data.data) {
-        setProducts(data.data);
+      if (data.data && Array.isArray(data.data)) {
+        // Transformar los productos para que coincidan con la interfaz esperada
+        const transformedProducts = data.data.map(product => ({
+          ...product,
+          // Agregar campos que faltan con valores por defecto
+          brand: product.category.name, // Usar el nombre de la categoría como marca
+          rating: 4.5, // Valor por defecto
+          reviewCount: Math.floor(Math.random() * 200) + 50, // Valor aleatorio
+          inStock: product.stock_quantity > 0,
+          image: product.image || '/images/products/placeholder.jpg', // Imagen por defecto
+          category: product.category.name,
+        }));
+        setProducts(transformedProducts);
       } else {
-        throw new Error(data.message || 'Error al buscar productos');
+        throw new Error('No se encontraron productos en la búsqueda');
       }
     } catch (err) {
       console.error('Error searching products:', err);
@@ -175,6 +225,39 @@ function getMockProducts(): Product[] {
       volume: "250ml",
       alcoholContent: "3.8%",
       country: "Bélgica",
+    },
+    {
+      id: 4,
+      name: "PAULANER WEISSBIER",
+      brand: "Paulaner",
+      price: 17000,
+      image: "/images/cervezas/bottella-06.png",
+      category: "Wheat Beer",
+      inStock: true,
+      rating: 4.3,
+      reviewCount: 203,
+    },
+    {
+      id: 5,
+      name: "ERDINGER",
+      brand: "Erdinger",
+      price: 19000,
+      image: "/images/cervezas/bottella-07.png",
+      category: "Wheat Beer",
+      inStock: true,
+      rating: 4.1,
+      reviewCount: 167,
+    },
+    {
+      id: 6,
+      name: "LIEFMANS FRUITESSE",
+      brand: "Liefmans",
+      price: 23000,
+      image: "/images/cervezas/bottella-08.png",
+      category: "Fruit Beer",
+      inStock: true,
+      rating: 4.4,
+      reviewCount: 134,
     },
   ];
 }
