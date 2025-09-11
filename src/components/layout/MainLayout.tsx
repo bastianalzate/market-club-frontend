@@ -5,6 +5,7 @@ import AgeVerificationWrapper from "@/components/shared/AgeVerificationWrapper";
 import LegalWarning from "./LegalWarning";
 import Copyright from "./Copyright";
 import CountriesCarousel from "@/components/shared/CountriesCarousel";
+import ServicesBanner from "@/components/home/ServicesBanner";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -18,6 +19,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <Header />
       <main className="flex-1">{children}</main>
       <CountriesCarousel />
+      <ServicesBanner />
       <Footer />
       <LegalWarning />
       <Copyright />

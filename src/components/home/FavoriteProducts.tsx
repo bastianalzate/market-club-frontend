@@ -216,18 +216,16 @@ export default function FavoriteProducts() {
 
                 {/* Botones de acción */}
                 <div className="flex items-center space-x-3">
-                  {/* Botón de carrito cuadrado con contador */}
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    disabled={addingToCart === product.id}
-                    className="relative p-3 rounded-lg transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  {/* Ícono de carrito cuadrado con contador - Solo visual */}
+                  <div
+                    className="relative p-3 rounded-lg"
                     style={{
                       backgroundColor: "transparent",
                       borderColor: "#D0D5DD",
                       borderWidth: "1px",
                       borderStyle: "solid",
                     }}
-                    aria-label="Agregar al carrito"
+                    aria-label="Contador del carrito"
                   >
                     <ShoppingCart
                       className="w-5 h-5"
@@ -239,13 +237,13 @@ export default function FavoriteProducts() {
                         {getProductQuantity(product.id)}
                       </span>
                     )}
-                  </button>
+                  </div>
 
                   {/* Botón principal "Añadir al carrito" */}
                   <button
                     onClick={() => handleAddToCart(product)}
                     disabled={addingToCart === product.id}
-                    className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     style={{ backgroundColor: "#B58E31" }}
                     onMouseEnter={(e) =>
                       !e.currentTarget.disabled &&

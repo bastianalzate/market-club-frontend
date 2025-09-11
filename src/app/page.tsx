@@ -8,7 +8,6 @@ import FavoriteProducts from "@/components/home/FavoriteProducts";
 import MarketClubBanner from "@/components/home/MarketClubBanner";
 import BeerClubSection from "@/components/home/BeerClubSection";
 import BeerCarousel from "@/components/home/BeerCarousel";
-import ServicesBanner from "@/components/home/ServicesBanner";
 import ProductCard from "@/features/products/components/ProductCard";
 import AddToCartButton from "@/features/cart/components/AddToCartButton";
 import { Product } from "@/features/products/types/product";
@@ -31,7 +30,6 @@ export default function HomePage() {
       <BeerClubSection />
       <MarketClubBanner backgroundColor="#000000" textColor="#FFFFFF" />
       {/* <BeerCarousel /> */}
-      <ServicesBanner />
     </div>
   );
 }

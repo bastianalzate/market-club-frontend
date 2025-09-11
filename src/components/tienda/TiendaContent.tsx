@@ -5,8 +5,6 @@ import CategoryIcons from "./CategoryIcons";
 import ProductFilters from "./ProductFilters";
 import ProductGrid from "./ProductGrid";
 import MarketClubBanner from "@/components/home/MarketClubBanner";
-import ServicesBanner from "@/components/home/ServicesBanner";
-import CountriesBanner from "./CountriesBanner";
 
 // Mock data para productos - Solo cervezas con duplicados para mostrar más cantidad
 const products = [
@@ -328,11 +326,6 @@ export default function TiendaContent() {
 
       {/* Sección con fondo gris después del MarketClubBanner */}
       <div className="bg-gray-50">
-        {/* Countries Banner */}
-        <CountriesBanner />
-
-        {/* Services Banner */}
-        <ServicesBanner />
       </div>
     </div>
   );

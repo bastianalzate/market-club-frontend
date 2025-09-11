@@ -77,17 +77,23 @@ export default function CountriesCarousel() {
   const itemsPerView = 6; // Mostrar 6 banderas a la vez
   const totalItems = countries.length;
   
-  // Calcular el ancho de cada elemento
-  const itemWidth = 100 / itemsPerView;
+  // Calcular el ancho de cada elemento (100% dividido entre 6 elementos)
+  const itemWidth = 74 / itemsPerView;
   
   // Calcular el índice máximo para que se vean todas las banderas
+  // Con 11 países y 6 por vista: 0,1,2,3,4,5 (6 páginas total)
   const maxIndex = Math.max(0, totalItems - itemsPerView);
 
-  // Auto-play del carrusel infinito
+  // Auto-play del carrusel
   useEffect(() => {
     if (isAutoPlaying) {
       intervalRef.current = setInterval(() => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % (maxIndex + 1));
+        setCurrentIndex((prevIndex) => {
+          if (prevIndex >= maxIndex) {
+            return 0; // Volver al inicio cuando llegue al final
+          }
+          return prevIndex + 1;
+        });
       }, 3000); // Cambiar cada 3 segundos
     }
 
@@ -108,11 +114,21 @@ export default function CountriesCarousel() {
   };
 
   const goToPrevious = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + (maxIndex + 1)) % (maxIndex + 1));
+    setCurrentIndex((prevIndex) => {
+      if (prevIndex <= 0) {
+        return maxIndex; // Ir al final si está en el inicio
+      }
+      return prevIndex - 1;
+    });
   };
 
   const goToNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % (maxIndex + 1));
+    setCurrentIndex((prevIndex) => {
+      if (prevIndex >= maxIndex) {
+        return 0; // Volver al inicio si está en el final
+      }
+      return prevIndex + 1;
+    });
   };
 
   return (
@@ -144,7 +160,7 @@ export default function CountriesCarousel() {
           </button>
 
           {/* Contenedor del carrusel */}
-          <div ref={sliderRef} className="overflow-hidden mx-8">
+          <div ref={sliderRef} className="overflow-hidden">
             <div
               className="flex transition-transform duration-500 ease-in-out"
               style={{ 
@@ -155,12 +171,12 @@ export default function CountriesCarousel() {
               {countries.map((country, index) => (
                 <div
                   key={country.id}
-                  className="flex-shrink-0 px-0"
+                  className="flex-shrink-0 px-2"
                   style={{ width: `${itemWidth}%` }}
                 >
                   <div className="hover:scale-105 transition-transform duration-300">
                     {/* Solo la imagen de la bandera */}
-                    <div className="aspect-square w-48 h-48 mx-auto">
+                    <div className="aspect-square w-40 h-40 mx-auto">
                       <img
                         src={country.flag}
                         alt={`Bandera de ${country.name}`}
