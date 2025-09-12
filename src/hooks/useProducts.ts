@@ -16,7 +16,16 @@ export interface Product {
   is_active: boolean;
   is_featured: boolean;
   category_id: number;
+  product_type_id: number;
   attributes: any;
+  product_specific_data: {
+    alcohol_content?: string | number;
+    beer_style?: string;
+    brewery?: string;
+    country_of_origin?: string;
+    volume_ml?: string;
+    packaging_type?: string;
+  } | null;
   created_at: string;
   updated_at: string;
   category: {
@@ -53,11 +62,25 @@ interface ProductsResponse {
   total: number;
 }
 
+// Tipo para productos transformados
+export interface TransformedProduct extends Product {
+  brand: string;
+  rating: number;
+  reviewCount: number;
+  inStock: boolean;
+}
+
 // Hook para manejar productos desde la API
 export const useProducts = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<TransformedProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+    perPage: 15,
+  });
 
   // Función para obtener productos desde la API
   const fetchProducts = async () => {
@@ -65,7 +88,8 @@ export const useProducts = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${constants.api_url}/products`, {
+      // Primero obtener la primera página para saber cuántas páginas hay
+      const firstPageResponse = await fetch(`${constants.api_url}/products?page=1`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -73,28 +97,73 @@ export const useProducts = () => {
         },
       });
 
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      if (!firstPageResponse.ok) {
+        throw new Error(`Error ${firstPageResponse.status}: ${firstPageResponse.statusText}`);
       }
 
-      const data: ProductsResponse = await response.json();
+      const firstPageData: ProductsResponse = await firstPageResponse.json();
       
-      if (data.data && Array.isArray(data.data)) {
-        // Transformar los productos para que coincidan con la interfaz esperada
-        const transformedProducts = data.data.map(product => ({
-          ...product,
-          // Agregar campos que faltan con valores por defecto
-          brand: product.category.name, // Usar el nombre de la categoría como marca
-          rating: 4.5, // Valor por defecto
-          reviewCount: Math.floor(Math.random() * 200) + 50, // Valor aleatorio
-          inStock: product.stock_quantity > 0,
-          image: product.image || '/images/products/placeholder.jpg', // Imagen por defecto
-          category: product.category.name,
-        }));
-        setProducts(transformedProducts);
-      } else {
+      if (!firstPageData.data || !Array.isArray(firstPageData.data)) {
         throw new Error('No se encontraron productos en la respuesta');
       }
+
+      // Actualizar información de paginación
+      setPagination({
+        currentPage: firstPageData.current_page,
+        lastPage: firstPageData.last_page,
+        total: firstPageData.total,
+        perPage: firstPageData.per_page,
+      });
+
+      // Si solo hay una página, usar esos productos
+      if (firstPageData.last_page === 1) {
+        const transformedProducts = firstPageData.data.map(transformProduct);
+        setProducts(transformedProducts);
+        setLoading(false);
+        return;
+      }
+
+      // Si hay múltiples páginas, cargar todas
+      const allProducts: Product[] = [...firstPageData.data];
+      
+      // Crear array de promesas para cargar todas las páginas restantes
+      const pagePromises = [];
+      for (let page = 2; page <= firstPageData.last_page; page++) {
+        pagePromises.push(
+          fetch(`${constants.api_url}/products?page=${page}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+          })
+        );
+      }
+
+      // Esperar a que todas las páginas se carguen
+      const responses = await Promise.all(pagePromises);
+      
+      // Verificar que todas las respuestas sean exitosas
+      for (const response of responses) {
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+      }
+
+      // Procesar todas las respuestas
+      const allResponses = await Promise.all(responses.map(r => r.json()));
+      
+      // Agregar productos de todas las páginas
+      for (const pageData of allResponses) {
+        if (pageData.data && Array.isArray(pageData.data)) {
+          allProducts.push(...pageData.data);
+        }
+      }
+
+      // Transformar todos los productos
+      const transformedProducts = allProducts.map(transformProduct);
+      setProducts(transformedProducts);
+
     } catch (err) {
       console.error('Error fetching products:', err);
       setError(err instanceof Error ? err.message : 'Error desconocido');
@@ -105,6 +174,18 @@ export const useProducts = () => {
       setLoading(false);
     }
   };
+
+  // Función helper para transformar un producto
+  const transformProduct = (product: Product): TransformedProduct => ({
+    ...product,
+    // Agregar campos que faltan con valores por defecto
+    brand: product.product_specific_data?.brewery || product.category.name,
+    rating: 4.5, // Valor por defecto
+    reviewCount: Math.floor(Math.random() * 200) + 50, // Valor aleatorio
+    inStock: product.stock_quantity > 0,
+    image: product.image ? `${constants.api_url.replace('/api', '')}/storage/${product.image}` : '/images/products/placeholder.jpg',
+    category: product.category.name,
+  });
 
   // Función para buscar productos
   const searchProducts = async (searchTerm: string) => {
@@ -133,16 +214,7 @@ export const useProducts = () => {
       
       if (data.data && Array.isArray(data.data)) {
         // Transformar los productos para que coincidan con la interfaz esperada
-        const transformedProducts = data.data.map(product => ({
-          ...product,
-          // Agregar campos que faltan con valores por defecto
-          brand: product.category.name, // Usar el nombre de la categoría como marca
-          rating: 4.5, // Valor por defecto
-          reviewCount: Math.floor(Math.random() * 200) + 50, // Valor aleatorio
-          inStock: product.stock_quantity > 0,
-          image: product.image || '/images/products/placeholder.jpg', // Imagen por defecto
-          category: product.category.name,
-        }));
+        const transformedProducts = data.data.map(transformProduct);
         setProducts(transformedProducts);
       } else {
         throw new Error('No se encontraron productos en la búsqueda');
@@ -173,6 +245,7 @@ export const useProducts = () => {
     products,
     loading,
     error,
+    pagination,
     fetchProducts,
     searchProducts,
   };
