@@ -15,11 +15,6 @@ import {
 import { useCart } from "@/hooks/useCart";
 import { useNotification } from "@/hooks/useNotification";
 import { Product } from "@/features/products/types/product";
-<<<<<<< HEAD
-import { TiendaProduct } from "@/hooks/useProducts";
-import NotificationToast from "@/components/shared/NotificationToast";
-
-=======
 import { TransformedProduct } from "@/hooks/useProducts";
 import NotificationToast from "@/components/shared/NotificationToast";
 
@@ -66,7 +61,6 @@ interface TiendaProduct {
   inStock: boolean;
 }
 
->>>>>>> 6b688373283fe824e4be8854842007eabd4bb539
 interface ProductGridProps {
   products: TransformedProduct[];
   loading?: boolean;
