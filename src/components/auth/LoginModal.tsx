@@ -47,6 +47,15 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     address: "",
   });
 
+  // Manejar la animación de salida
+  const handleClose = useCallback(() => {
+    setIsAnimating(false);
+    setTimeout(() => {
+      setShouldRender(false);
+      onClose();
+    }, 300);
+  }, [onClose]);
+
   // Manejar la animación de entrada
   useEffect(() => {
     if (isOpen) {
@@ -57,15 +66,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   }, [isOpen]);
 
 
-  // Manejar la animación de salida
-  const handleClose = useCallback(() => {
-    setIsAnimating(false);
-    setTimeout(() => {
-      setShouldRender(false);
-      onClose();
-    }, 300);
-  }, [onClose]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearError(); // Limpiar errores previos
@@ -74,23 +74,26 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       switch (mode) {
         case "login":
           await login(loginData.email, loginData.password);
-          // Cerrar modal después del login exitoso
+          // Si llegamos aquí, el login fue exitoso
+          console.log('Login exitoso, cerrando modal...');
           handleClose();
           break;
         case "register":
           await register(registerData);
-          // Cerrar modal después del registro exitoso
+          // Si llegamos aquí, el registro fue exitoso
+          console.log('Registro exitoso, cerrando modal...');
           handleClose();
           break;
         case "guest":
           await guestCheckout(guestData);
-          // Cerrar modal después del checkout como invitado
+          // Si llegamos aquí, el checkout fue exitoso
+          console.log('Checkout exitoso, cerrando modal...');
           handleClose();
           break;
       }
     } catch (error) {
-      // Los errores ya se manejan en el hook useAuth
-      console.error('Error en handleSubmit:', error);
+      // Si hay error, el modal permanece abierto para mostrar el mensaje
+      console.log('Error en autenticación, modal permanece abierto:', error);
     }
   };
 
