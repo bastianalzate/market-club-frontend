@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Menu, X, ShoppingCart, User } from "lucide-react";
+import { Search, Menu, X, ShoppingCart, User, LogOut } from "lucide-react";
 import { useState, useMemo, useCallback, memo } from "react";
 import { usePathname } from "next/navigation";
 import CartDrawer from "../../features/cart/components/CartDrawer";
@@ -87,7 +87,14 @@ export default function Header() {
   const pathname = usePathname();
   // Solo obtener lo que necesitamos del carrito para evitar re-renders innecesarios
   const { isOpen, openCart, closeCart, totalItems } = useCart();
-  const { isLoginModalOpen, openLoginModal, closeLoginModal } = useAuth();
+  const { 
+    isLoginModalOpen, 
+    openLoginModal, 
+    closeLoginModal, 
+    user, 
+    isAuthenticated, 
+    logout 
+  } = useAuth();
 
   const toggleMenu = useCallback(
     () => setIsMenuOpen(!isMenuOpen),
@@ -143,6 +150,41 @@ export default function Header() {
 
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
 
+  // Componente para el perfil del usuario
+  const UserProfile = memo(() => {
+    if (!isAuthenticated || !user) {
+      return (
+        <button
+          onClick={openLoginModal}
+          className="p-2 bg-gray-100 text-gray-700 hover:text-gray-900 hover:bg-gray-200 rounded-full transition-colors border border-gray-300"
+          aria-label="Iniciar sesión"
+        >
+          <User className="w-5 h-5" />
+        </button>
+      );
+    }
+
+    return (
+      <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 rounded-full">
+          <User className="w-4 h-4 text-gray-600" />
+          <span className="text-sm font-medium text-gray-900">
+            {user.name}
+          </span>
+        </div>
+        <button
+          onClick={logout}
+          className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+          title="Cerrar sesión"
+        >
+          <LogOut className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  });
+
+  UserProfile.displayName = "UserProfile";
+
   return (
     <header className="py-4 bg-white shadow-sm border-b sm:py-6">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -164,7 +206,10 @@ export default function Header() {
           {/* Mobile Actions */}
           <div className="flex items-center space-x-2 md:hidden">
             {/* Search */}
-            <button className="p-2 text-gray-700 hover:text-gray-900 transition-colors">
+            <button 
+              className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+              aria-label="Buscar"
+            >
               <Search className="w-5 h-5" />
             </button>
 
@@ -182,19 +227,14 @@ export default function Header() {
             </button>
 
             {/* User Profile */}
-            <button
-              onClick={openLoginModal}
-              className="p-2 bg-gray-100 text-gray-700 hover:text-gray-900 hover:bg-gray-200 rounded-full transition-colors border border-gray-300"
-            >
-              <User className="w-5 h-5" />
-            </button>
+            <UserProfile />
 
             {/* Mobile Menu Button */}
             <button
               type="button"
               className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
               onClick={toggleMenu}
-              aria-expanded={isMenuOpen}
+              aria-expanded={isMenuOpen ? "true" : "false"}
             >
               {!isMenuOpen ? (
                 <Menu className="w-6 h-6" />
@@ -270,7 +310,10 @@ export default function Header() {
           {/* Desktop Actions */}
           <div className="hidden md:flex md:items-center md:space-x-4">
             {/* Search */}
-            <button className="p-2 text-gray-700 hover:text-gray-900 transition-colors">
+            <button 
+              className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+              aria-label="Buscar"
+            >
               <Search className="w-5 h-5" />
             </button>
 
@@ -288,12 +331,7 @@ export default function Header() {
             </button>
 
             {/* User Profile */}
-            <button
-              onClick={openLoginModal}
-              className="p-2 bg-gray-100 text-gray-700 hover:text-gray-900 hover:bg-gray-200 rounded-full transition-colors border border-gray-300"
-            >
-              <User className="w-5 h-5" />
-            </button>
+            <UserProfile />
           </div>
         </div>
 

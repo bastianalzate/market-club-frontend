@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X, Mail, Lock, User, Phone, MapPin, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -56,29 +56,41 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     }
   }, [isOpen]);
 
+
   // Manejar la animación de salida
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setIsAnimating(false);
     setTimeout(() => {
       setShouldRender(false);
       onClose();
     }, 300);
-  };
+  }, [onClose]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearError(); // Limpiar errores previos
     
-    switch (mode) {
-      case "login":
-        login(loginData.email, loginData.password);
-        break;
-      case "register":
-        register(registerData);
-        break;
-      case "guest":
-        guestCheckout(guestData);
-        break;
+    try {
+      switch (mode) {
+        case "login":
+          await login(loginData.email, loginData.password);
+          // Cerrar modal después del login exitoso
+          handleClose();
+          break;
+        case "register":
+          await register(registerData);
+          // Cerrar modal después del registro exitoso
+          handleClose();
+          break;
+        case "guest":
+          await guestCheckout(guestData);
+          // Cerrar modal después del checkout como invitado
+          handleClose();
+          break;
+      }
+    } catch (error) {
+      // Los errores ya se manejan en el hook useAuth
+      console.error('Error en handleSubmit:', error);
     }
   };
 
