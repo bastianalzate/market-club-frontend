@@ -152,6 +152,8 @@ export function useAuth() {
     email: string;
     password: string;
     phone: string;
+    country: string;
+    isWholesaler: boolean;
   }) => {
     dispatch(registerStart());
     
@@ -166,6 +168,9 @@ export function useAuth() {
           name: data.name,
           email: data.email,
           password: data.password,
+          phone: data.phone,
+          country: data.country,
+          is_wholesaler: data.isWholesaler,
         }),
       });
 

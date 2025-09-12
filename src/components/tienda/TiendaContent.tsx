@@ -92,8 +92,7 @@ export default function TiendaContent() {
       </div>
 
       {/* Sección con fondo gris después del MarketClubBanner */}
-      <div className="bg-gray-50">
-      </div>
+      <div className="bg-gray-50"></div>
     </div>
   );
 }
