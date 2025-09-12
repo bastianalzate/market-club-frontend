@@ -13,8 +13,16 @@ export default function TiendaContent() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Hook para obtener productos desde la API
-  const { products, loading, error, pagination, searchProducts } =
-    useProducts();
+  const {
+    products,
+    loading,
+    error,
+    pagination,
+    searchProducts,
+    goToPage,
+    nextPage,
+    prevPage,
+  } = useProducts();
 
   // Función para manejar cambios en la búsqueda
   const handleSearchChange = useCallback(
@@ -34,8 +42,8 @@ export default function TiendaContent() {
           <p className="text-gray-600">Cargando productos...</p>
           {pagination.total > 0 && (
             <p className="text-sm text-gray-500 mt-2">
-              Cargando {pagination.total} productos desde {pagination.lastPage}{" "}
-              páginas
+              Página {pagination.currentPage} de {pagination.lastPage} -{" "}
+              {pagination.total} productos total
             </p>
           )}
         </div>
@@ -83,6 +91,10 @@ export default function TiendaContent() {
               products={products}
               loading={loading}
               totalProducts={pagination.total}
+              pagination={pagination}
+              onPageChange={goToPage}
+              onNextPage={nextPage}
+              onPrevPage={prevPage}
             />
           </div>
         </div>
@@ -92,8 +104,7 @@ export default function TiendaContent() {
       </div>
 
       {/* Sección con fondo gris después del MarketClubBanner */}
-      <div className="bg-gray-50">
-      </div>
+      <div className="bg-gray-50"></div>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { X, Mail, Lock, User, Phone, MapPin, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import SuccessModal from "@/components/shared/SuccessModal";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -13,7 +14,10 @@ interface RegisterData {
   name: string;
   email: string;
   password: string;
+  confirmPassword: string;
   phone: string;
+  country: string;
+  isWholesaler: boolean;
 }
 
 interface GuestData {
@@ -26,11 +30,18 @@ interface GuestData {
 type ModalMode = "options" | "login" | "register" | "guest";
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
-  const { login, register, guestCheckout, isLoading, error, clearError } = useAuth();
+  const { login, register, guestCheckout, isLoading, error, clearError } =
+    useAuth();
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const [mode, setMode] = useState<ModalMode>("options");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Estados para formularios
   const [loginData, setLoginData] = useState({ email: "", password: "" });
@@ -38,7 +49,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     phone: "",
+    country: "Colombia",
+    isWholesaler: false,
   });
   const [guestData, setGuestData] = useState({
     name: "",
@@ -56,44 +70,154 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     }, 300);
   }, [onClose]);
 
+  // Función para limpiar el formulario de registro
+  const clearRegisterForm = () => {
+    setRegisterData({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      phone: "",
+      country: "Colombia",
+      isWholesaler: false,
+    });
+    setValidationErrors({});
+    setSuccessMessage("");
+  };
+
   // Manejar la animación de entrada
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
       setIsAnimating(true);
       setMode("options");
+      setValidationErrors({});
+      setSuccessMessage("");
+      setShowSuccessModal(false);
     }
   }, [isOpen]);
 
+  // Función para validar contraseña
+  const validatePassword = (password: string): string[] => {
+    const errors: string[] = [];
+
+    if (password.length < 8) {
+      errors.push("La contraseña debe tener al menos 8 caracteres");
+    }
+
+    if (!/[A-Z]/.test(password)) {
+      errors.push("La contraseña debe contener al menos una letra mayúscula");
+    }
+
+    if (!/[a-z]/.test(password)) {
+      errors.push("La contraseña debe contener al menos una letra minúscula");
+    }
+
+    if (!/\d/.test(password)) {
+      errors.push("La contraseña debe contener al menos un número");
+    }
+
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      errors.push("La contraseña debe contener al menos un carácter especial");
+    }
+
+    return errors;
+  };
+
+  // Función para validar el formulario de registro
+  const validateRegisterForm = (): boolean => {
+    const errors: Record<string, string> = {};
+
+    // Validar nombre
+    if (!registerData.name.trim()) {
+      errors.name = "El nombre es obligatorio";
+    } else if (registerData.name.trim().length < 2) {
+      errors.name = "El nombre debe tener al menos 2 caracteres";
+    }
+
+    // Validar email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!registerData.email.trim()) {
+      errors.email = "El email es obligatorio";
+    } else if (!emailRegex.test(registerData.email)) {
+      errors.email = "El email no es válido";
+    }
+
+    // Validar contraseña
+    const passwordErrors = validatePassword(registerData.password);
+    if (passwordErrors.length > 0) {
+      errors.password = passwordErrors[0]; // Mostrar solo el primer error
+    }
+
+    // Validar confirmación de contraseña
+    if (!registerData.confirmPassword) {
+      errors.confirmPassword = "Debes confirmar tu contraseña";
+    } else if (registerData.password !== registerData.confirmPassword) {
+      errors.confirmPassword = "Las contraseñas no coinciden";
+    }
+
+    // Validar teléfono
+    if (!registerData.phone.trim()) {
+      errors.phone = "El teléfono es obligatorio";
+    } else if (registerData.phone.trim().length < 10) {
+      errors.phone = "El teléfono debe tener al menos 10 dígitos";
+    }
+
+    // Validar país
+    if (!registerData.country.trim()) {
+      errors.country = "El país es obligatorio";
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearError(); // Limpiar errores previos
-    
+    setValidationErrors({}); // Limpiar errores de validación
+    setSuccessMessage(""); // Limpiar mensaje de éxito
+
     try {
       switch (mode) {
         case "login":
           await login(loginData.email, loginData.password);
           // Si llegamos aquí, el login fue exitoso
-          console.log('Login exitoso, cerrando modal...');
+          console.log("Login exitoso, cerrando modal...");
           handleClose();
           break;
         case "register":
-          await register(registerData);
+          // Validar formulario antes de enviar
+          if (!validateRegisterForm()) {
+            return; // No continuar si hay errores de validación
+          }
+
+          await register({
+            name: registerData.name,
+            email: registerData.email,
+            password: registerData.password,
+            phone: registerData.phone,
+            country: registerData.country,
+            isWholesaler: registerData.isWholesaler,
+          });
+
           // Si llegamos aquí, el registro fue exitoso
-          console.log('Registro exitoso, cerrando modal...');
-          handleClose();
+          // Limpiar el formulario
+          clearRegisterForm();
+
+          // Mostrar modal de éxito
+          setShowSuccessModal(true);
           break;
         case "guest":
           await guestCheckout(guestData);
           // Si llegamos aquí, el checkout fue exitoso
-          console.log('Checkout exitoso, cerrando modal...');
+          console.log("Checkout exitoso, cerrando modal...");
           handleClose();
           break;
       }
     } catch (error) {
       // Si hay error, el modal permanece abierto para mostrar el mensaje
-      console.log('Error en autenticación, modal permanece abierto:', error);
+      console.log("Error en autenticación, modal permanece abierto:", error);
     }
   };
 
@@ -166,7 +290,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         }}
       >
         <div
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
+          className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden"
           style={{
             animation: isAnimating
               ? "slideInFromBottom 0.3s ease-in-out"
@@ -201,7 +325,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           </div>
 
           {/* Content */}
-          <div className="p-6">
+          <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
             {mode === "options" && (
               <div className="space-y-4">
                 <button
@@ -293,10 +417,19 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             });
                           }
                         }}
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900"
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900 ${
+                          validationErrors.name
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
                         placeholder="Tu nombre completo"
                       />
                     </div>
+                    {validationErrors.name && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {validationErrors.name}
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -329,10 +462,19 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                           setGuestData({ ...guestData, email: e.target.value });
                         }
                       }}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900"
+                      className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900 ${
+                        validationErrors.email
+                          ? "border-red-300"
+                          : "border-gray-300"
+                      }`}
                       placeholder="tu@email.com"
                     />
                   </div>
+                  {validationErrors.email && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {validationErrors.email}
+                    </p>
+                  )}
                 </div>
 
                 {/* Password field (login and register) */}
@@ -364,7 +506,11 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             });
                           }
                         }}
-                        className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900"
+                        className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900 ${
+                          validationErrors.password
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
                         placeholder="Tu contraseña"
                       />
                       <button
@@ -379,6 +525,133 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         )}
                       </button>
                     </div>
+                    {validationErrors.password && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {validationErrors.password}
+                      </p>
+                    )}
+                    {mode === "register" && registerData.password && (
+                      <div className="mt-2">
+                        <div className="text-xs text-gray-600 mb-1">
+                          Requisitos de contraseña:
+                        </div>
+                        <div className="space-y-1 text-xs">
+                          <div
+                            className={`flex items-center ${
+                              registerData.password.length >= 8
+                                ? "text-green-600"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            <span className="mr-1">
+                              {registerData.password.length >= 8 ? "✓" : "○"}
+                            </span>
+                            Al menos 8 caracteres
+                          </div>
+                          <div
+                            className={`flex items-center ${
+                              /[A-Z]/.test(registerData.password)
+                                ? "text-green-600"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            <span className="mr-1">
+                              {/[A-Z]/.test(registerData.password) ? "✓" : "○"}
+                            </span>
+                            Una letra mayúscula
+                          </div>
+                          <div
+                            className={`flex items-center ${
+                              /[a-z]/.test(registerData.password)
+                                ? "text-green-600"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            <span className="mr-1">
+                              {/[a-z]/.test(registerData.password) ? "✓" : "○"}
+                            </span>
+                            Una letra minúscula
+                          </div>
+                          <div
+                            className={`flex items-center ${
+                              /\d/.test(registerData.password)
+                                ? "text-green-600"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            <span className="mr-1">
+                              {/\d/.test(registerData.password) ? "✓" : "○"}
+                            </span>
+                            Un número
+                          </div>
+                          <div
+                            className={`flex items-center ${
+                              /[!@#$%^&*(),.?":{}|<>]/.test(
+                                registerData.password
+                              )
+                                ? "text-green-600"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            <span className="mr-1">
+                              {/[!@#$%^&*(),.?":{}|<>]/.test(
+                                registerData.password
+                              )
+                                ? "✓"
+                                : "○"}
+                            </span>
+                            Un carácter especial
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Confirm Password field (register only) */}
+                {mode === "register" && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Confirmar Contraseña
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        required
+                        value={registerData.confirmPassword}
+                        onChange={(e) => {
+                          setRegisterData({
+                            ...registerData,
+                            confirmPassword: e.target.value,
+                          });
+                        }}
+                        className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900 ${
+                          validationErrors.confirmPassword
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
+                        placeholder="Confirma tu contraseña"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+                    {validationErrors.confirmPassword && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {validationErrors.confirmPassword}
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -411,9 +684,97 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             });
                           }
                         }}
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900"
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900 ${
+                          validationErrors.phone
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
                         placeholder="+57 300 123 4567"
                       />
+                    </div>
+                    {validationErrors.phone && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {validationErrors.phone}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Country field (register only) */}
+                {mode === "register" && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      País
+                    </label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <select
+                        required
+                        value={registerData.country}
+                        onChange={(e) => {
+                          setRegisterData({
+                            ...registerData,
+                            country: e.target.value,
+                          });
+                        }}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900 ${
+                          validationErrors.country
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        <option value="Colombia">Colombia</option>
+                        <option value="México">México</option>
+                        <option value="Argentina">Argentina</option>
+                        <option value="Chile">Chile</option>
+                        <option value="Perú">Perú</option>
+                        <option value="Ecuador">Ecuador</option>
+                        <option value="Venezuela">Venezuela</option>
+                        <option value="Brasil">Brasil</option>
+                        <option value="Estados Unidos">Estados Unidos</option>
+                        <option value="España">España</option>
+                        <option value="Otro">Otro</option>
+                      </select>
+                    </div>
+                    {validationErrors.country && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {validationErrors.country}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Wholesaler checkbox (register only) */}
+                {mode === "register" && (
+                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                    <div className="flex items-start space-x-3">
+                      <div className="flex items-center h-5">
+                        <input
+                          id="isWholesaler"
+                          type="checkbox"
+                          checked={registerData.isWholesaler}
+                          onChange={(e) => {
+                            setRegisterData({
+                              ...registerData,
+                              isWholesaler: e.target.checked,
+                            });
+                          }}
+                          className="w-4 h-4 text-amber-600 bg-gray-100 border-gray-300 rounded focus:ring-amber-500 focus:ring-2"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <label
+                          htmlFor="isWholesaler"
+                          className="text-sm font-medium text-gray-900 cursor-pointer"
+                        >
+                          Soy mayorista
+                        </label>
+                        <p className="text-xs text-gray-600 mt-1">
+                          Marca esta opción si eres un distribuidor o compras en
+                          grandes cantidades. Tendrás acceso a precios
+                          especiales y descuentos por volumen.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -458,12 +819,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   style={{ backgroundColor: "rgb(181, 142, 49)" }}
                   onMouseEnter={(e) => {
                     if (!isLoading) {
-                      e.currentTarget.style.backgroundColor = "rgb(160, 120, 23)";
+                      e.currentTarget.style.backgroundColor =
+                        "rgb(160, 120, 23)";
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!isLoading) {
-                      e.currentTarget.style.backgroundColor = "rgb(181, 142, 49)";
+                      e.currentTarget.style.backgroundColor =
+                        "rgb(181, 142, 49)";
                     }
                   }}
                 >
@@ -485,6 +848,19 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           </div>
         </div>
       </div>
+
+      {/* Modal de éxito */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => {
+          setShowSuccessModal(false);
+          handleClose(); // Cerrar el modal principal también
+        }}
+        title="¡Cuenta Creada Exitosamente!"
+        message="Bienvenido a Market Club. Tu cuenta ha sido creada correctamente y ya puedes disfrutar de todos nuestros productos y servicios."
+        autoClose={true}
+        autoCloseDelay={4000}
+      />
     </>
   );
 }

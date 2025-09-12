@@ -79,7 +79,7 @@ export interface TransformedProduct extends Product {
   inStock: boolean;
 }
 
-// Hook para manejar productos desde la API
+// Hook para manejar productos desde la API con paginación real
 export const useProducts = () => {
   const [products, setProducts] = useState<TransformedProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,14 +91,24 @@ export const useProducts = () => {
     perPage: 15,
   });
 
-  // Función para obtener productos desde la API
-  const fetchProducts = async () => {
+  // Función helper para transformar un producto
+  const transformProduct = (product: Product): TransformedProduct => ({
+    ...product,
+    // Agregar campos que faltan con valores por defecto
+    brand: product.product_specific_data?.brewery || product.category.name,
+    rating: 4.5, // Valor por defecto
+    reviewCount: Math.floor(Math.random() * 200) + 50, // Valor aleatorio
+    inStock: product.stock_quantity > 0,
+    image: product.image ? `${constants.api_url.replace('/api', '')}/storage/${product.image}` : null,
+  });
+
+  // Función para obtener productos de una página específica
+  const fetchProducts = async (page: number = 1) => {
     try {
       setLoading(true);
       setError(null);
 
-      // Primero obtener la primera página para saber cuántas páginas hay
-      const firstPageResponse = await fetch(`${constants.api_url}/products?page=1`, {
+      const response = await fetch(`${constants.api_url}/products?page=${page}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -106,12 +116,13 @@ export const useProducts = () => {
         },
       });
 
-      if (!firstPageResponse.ok) {
-        throw new Error(`Error ${firstPageResponse.status}: ${firstPageResponse.statusText}`);
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
 
-      const firstPageData: ProductsResponse = await firstPageResponse.json();
+      const data: ProductsResponse = await response.json();
       
+      if (!data.data || !Array.isArray(data.data)) {
       if (data.data && Array.isArray(data.data)) {
         // Transformar los productos para que coincidan con la interfaz esperada
         const transformedProducts = data.data.map(product => ({
@@ -131,88 +142,50 @@ export const useProducts = () => {
 
       // Actualizar información de paginación
       setPagination({
-        currentPage: firstPageData.current_page,
-        lastPage: firstPageData.last_page,
-        total: firstPageData.total,
-        perPage: firstPageData.per_page,
+        currentPage: data.current_page,
+        lastPage: data.last_page,
+        total: data.total,
+        perPage: data.per_page,
       });
 
-      // Si solo hay una página, usar esos productos
-      if (firstPageData.last_page === 1) {
-        const transformedProducts = firstPageData.data.map(transformProduct);
-        setProducts(transformedProducts);
-        setLoading(false);
-        return;
-      }
-
-      // Si hay múltiples páginas, cargar todas
-      const allProducts: Product[] = [...firstPageData.data];
-      
-      // Crear array de promesas para cargar todas las páginas restantes
-      const pagePromises = [];
-      for (let page = 2; page <= firstPageData.last_page; page++) {
-        pagePromises.push(
-          fetch(`${constants.api_url}/products?page=${page}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-            },
-          })
-        );
-      }
-
-      // Esperar a que todas las páginas se carguen
-      const responses = await Promise.all(pagePromises);
-      
-      // Verificar que todas las respuestas sean exitosas
-      for (const response of responses) {
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}: ${response.statusText}`);
-        }
-      }
-
-      // Procesar todas las respuestas
-      const allResponses = await Promise.all(responses.map(r => r.json()));
-      
-      // Agregar productos de todas las páginas
-      for (const pageData of allResponses) {
-        if (pageData.data && Array.isArray(pageData.data)) {
-          allProducts.push(...pageData.data);
-        }
-      }
-
-      // Transformar todos los productos
-      const transformedProducts = allProducts.map(transformProduct);
+      // Transformar solo los productos de la página actual
+      const transformedProducts = data.data.map(transformProduct);
       setProducts(transformedProducts);
-
+      
     } catch (err) {
       console.error('Error fetching products:', err);
-      setError(err instanceof Error ? err.message : 'Error desconocido');
-      
-      // En caso de error, usar datos mock como fallback
-      setProducts(getMockProducts());
+      setError(err instanceof Error ? err.message : 'Error desconocido al cargar productos');
+      setProducts([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Función helper para transformar un producto
-  const transformProduct = (product: Product): TransformedProduct => ({
-    ...product,
-    // Agregar campos que faltan con valores por defecto
-    brand: product.product_specific_data?.brewery || product.category.name,
-    rating: 4.5, // Valor por defecto
-    reviewCount: Math.floor(Math.random() * 200) + 50, // Valor aleatorio
-    inStock: product.stock_quantity > 0,
-    image: product.image ? `${constants.api_url.replace('/api', '')}/storage/${product.image}` : '/images/products/placeholder.jpg',
-    category: product.category.name,
-  });
+  // Función para cambiar de página
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= pagination.lastPage) {
+      fetchProducts(page);
+    }
+  };
+
+  // Función para ir a la página siguiente
+  const nextPage = () => {
+    if (pagination.currentPage < pagination.lastPage) {
+      goToPage(pagination.currentPage + 1);
+    }
+  };
+
+  // Función para ir a la página anterior
+  const prevPage = () => {
+    if (pagination.currentPage > 1) {
+      goToPage(pagination.currentPage - 1);
+    }
+  };
 
   // Función para buscar productos
   const searchProducts = async (searchTerm: string) => {
     if (!searchTerm.trim()) {
-      fetchProducts();
+      fetchProducts(1);
       return;
     }
 
@@ -247,21 +220,21 @@ export const useProducts = () => {
           category: product.category.name,
         }));
         setProducts(transformedProducts);
+        
+        // Actualizar paginación para búsqueda
+        setPagination({
+          currentPage: data.current_page,
+          lastPage: data.last_page,
+          total: data.total,
+          perPage: data.per_page,
+        });
       } else {
         throw new Error('No se encontraron productos en la búsqueda');
       }
     } catch (err) {
       console.error('Error searching products:', err);
       setError(err instanceof Error ? err.message : 'Error en la búsqueda');
-      
-      // Fallback: filtrar productos mock localmente
-      const mockProducts = getMockProducts();
-      const filtered = mockProducts.filter((product) =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setProducts(filtered);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -269,7 +242,7 @@ export const useProducts = () => {
 
   // Cargar productos al montar el componente
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(1);
   }, []);
 
   return {
@@ -279,89 +252,8 @@ export const useProducts = () => {
     pagination,
     fetchProducts,
     searchProducts,
+    goToPage,
+    nextPage,
+    prevPage,
   };
 };
-
-// Datos mock como fallback
-function getMockProducts(): Product[] {
-  return [
-    {
-      id: 1,
-      name: "PAULANER WEISSBIER",
-      brand: "Paulaner",
-      price: 17000,
-      image: "/images/cervezas/bottella-06.png",
-      category: "Wheat Beer",
-      inStock: true,
-      rating: 4.5,
-      reviewCount: 128,
-      description: "Cerveza de trigo alemana tradicional",
-      volume: "500ml",
-      alcoholContent: "5.5%",
-      country: "Alemania",
-    },
-    {
-      id: 2,
-      name: "ERDINGER",
-      brand: "Erdinger",
-      price: 19000,
-      image: "/images/cervezas/bottella-07.png",
-      category: "Wheat Beer",
-      inStock: true,
-      rating: 4.2,
-      reviewCount: 89,
-      description: "Cerveza de trigo bávara",
-      volume: "500ml",
-      alcoholContent: "5.3%",
-      country: "Alemania",
-    },
-    {
-      id: 3,
-      name: "LIEFMANS FRUITESSE",
-      brand: "Liefmans",
-      price: 23000,
-      image: "/images/cervezas/bottella-08.png",
-      category: "Fruit Beer",
-      inStock: true,
-      rating: 4.7,
-      reviewCount: 156,
-      description: "Cerveza de frutas belga",
-      volume: "250ml",
-      alcoholContent: "3.8%",
-      country: "Bélgica",
-    },
-    {
-      id: 4,
-      name: "PAULANER WEISSBIER",
-      brand: "Paulaner",
-      price: 17000,
-      image: "/images/cervezas/bottella-06.png",
-      category: "Wheat Beer",
-      inStock: true,
-      rating: 4.3,
-      reviewCount: 203,
-    },
-    {
-      id: 5,
-      name: "ERDINGER",
-      brand: "Erdinger",
-      price: 19000,
-      image: "/images/cervezas/bottella-07.png",
-      category: "Wheat Beer",
-      inStock: true,
-      rating: 4.1,
-      reviewCount: 167,
-    },
-    {
-      id: 6,
-      name: "LIEFMANS FRUITESSE",
-      brand: "Liefmans",
-      price: 23000,
-      image: "/images/cervezas/bottella-08.png",
-      category: "Fruit Beer",
-      inStock: true,
-      rating: 4.4,
-      reviewCount: 134,
-    },
-  ];
-}
