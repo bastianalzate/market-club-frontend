@@ -1,0 +1,75 @@
+"use client";
+
+import { User, MapPin, Phone, Mail, Crown } from "lucide-react";
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  isGuest: boolean;
+}
+
+interface PerfilHeaderProps {
+  user: User;
+}
+
+export default function PerfilHeader({ user }: PerfilHeaderProps) {
+  return (
+    <div className="bg-white shadow-sm border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+          {/* Avatar */}
+          <div className="relative">
+            <div className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg">
+              <User className="w-12 h-12 text-white" />
+            </div>
+            {user.isGuest && (
+              <div className="absolute -bottom-1 -right-1 bg-gray-600 rounded-full p-1">
+                <Crown className="w-4 h-4 text-white" />
+              </div>
+            )}
+          </div>
+
+          {/* Información del usuario */}
+          <div className="flex-1">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  {user.name}
+                </h1>
+                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    <span>{user.email}</span>
+                  </div>
+                  {user.phone && (
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-4 h-4" />
+                      <span>{user.phone}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Badge de tipo de usuario */}
+              <div className="flex items-center gap-2">
+                {user.isGuest ? (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    <Crown className="w-3 h-3 mr-1" />
+                    Usuario Invitado
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    <User className="w-3 h-3 mr-1" />
+                    Miembro
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

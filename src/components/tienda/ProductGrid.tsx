@@ -17,6 +17,7 @@ import { useNotification } from "@/hooks/useNotification";
 import { Product } from "@/features/products/types/product";
 import { TransformedProduct } from "@/hooks/useProducts";
 import NotificationToast from "@/components/shared/NotificationToast";
+import ProductSkeleton from "@/components/shared/ProductSkeleton";
 
 interface TiendaProduct {
   id: number;
@@ -290,11 +291,34 @@ export default function ProductGrid({
                       : "aspect-w-1 aspect-h-1"
                   } overflow-hidden pt-4`}
                 >
-                  <img
-                    className="object-cover w-full h-full transition-all duration-300 hover:scale-105"
-                    src={product.image || "/images/products/placeholder.jpg"}
-                    alt={product.name}
-                  />
+                  {product.image ? (
+                    <img
+                      className="object-cover w-full h-full transition-all duration-300 hover:scale-105"
+                      src={product.image}
+                      alt={product.name}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center mx-auto mb-2">
+                          <svg
+                            className="w-8 h-8 text-gray-500"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                        <p className="text-xs text-gray-500 font-medium">
+                          Sin imagen
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {/* Botón de corazón (favorito) */}
                 <button

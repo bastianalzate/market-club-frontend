@@ -87,13 +87,13 @@ export default function Header() {
   const pathname = usePathname();
   // Solo obtener lo que necesitamos del carrito para evitar re-renders innecesarios
   const { isOpen, openCart, closeCart, totalItems } = useCart();
-  const { 
-    isLoginModalOpen, 
-    openLoginModal, 
-    closeLoginModal, 
-    user, 
-    isAuthenticated, 
-    logout 
+  const {
+    isLoginModalOpen,
+    openLoginModal,
+    closeLoginModal,
+    user,
+    isAuthenticated,
+    logout,
   } = useAuth();
 
   const toggleMenu = useCallback(
@@ -166,12 +166,14 @@ export default function Header() {
 
     return (
       <div className="flex items-center space-x-2">
-        <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 rounded-full">
+        <Link
+          href="/perfil"
+          className="flex items-center space-x-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+          aria-label="Ver perfil"
+        >
           <User className="w-4 h-4 text-gray-600" />
-          <span className="text-sm font-medium text-gray-900">
-            {user.name}
-          </span>
-        </div>
+          <span className="text-sm font-medium text-gray-900">{user.name}</span>
+        </Link>
         <button
           onClick={logout}
           className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
@@ -206,7 +208,7 @@ export default function Header() {
           {/* Mobile Actions */}
           <div className="flex items-center space-x-2 md:hidden">
             {/* Search */}
-            <button 
+            <button
               className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
               aria-label="Buscar"
             >
@@ -310,7 +312,7 @@ export default function Header() {
           {/* Desktop Actions */}
           <div className="hidden md:flex md:items-center md:space-x-4">
             {/* Search */}
-            <button 
+            <button
               className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
               aria-label="Buscar"
             >
