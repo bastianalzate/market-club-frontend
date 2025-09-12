@@ -7,13 +7,14 @@ import ProductGrid from "./ProductGrid";
 import MarketClubBanner from "@/components/home/MarketClubBanner";
 import ServicesBanner from "@/components/home/ServicesBanner";
 import CountriesBanner from "./CountriesBanner";
-import { useProducts } from "@/hooks/useProducts";
+import { useProducts, TransformedProduct } from "@/hooks/useProducts";
 
 export default function TiendaContent() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Hook para obtener productos desde la API
-  const { products, loading, error, searchProducts } = useProducts();
+  const { products, loading, error, pagination, searchProducts } =
+    useProducts();
 
   // Función para manejar cambios en la búsqueda
   const handleSearchChange = useCallback(
@@ -31,6 +32,12 @@ export default function TiendaContent() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-500 mx-auto mb-4"></div>
           <p className="text-gray-600">Cargando productos...</p>
+          {pagination.total > 0 && (
+            <p className="text-sm text-gray-500 mt-2">
+              Cargando {pagination.total} productos desde {pagination.lastPage}{" "}
+              páginas
+            </p>
+          )}
         </div>
       </div>
     );
@@ -72,7 +79,11 @@ export default function TiendaContent() {
             />
 
             {/* Contenido principal */}
-            <ProductGrid products={products} loading={loading} />
+            <ProductGrid
+              products={products}
+              loading={loading}
+              totalProducts={pagination.total}
+            />
           </div>
         </div>
 
