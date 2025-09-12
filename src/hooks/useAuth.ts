@@ -14,6 +14,7 @@ import {
   guestCheckoutFailure,
   logout,
   clearError,
+  restoreUser as restoreUserAction,
   selectUser,
   selectIsAuthenticated,
   selectAuthLoading,
@@ -21,6 +22,7 @@ import {
   selectLoginModalOpen,
   selectIsGuest,
 } from '../store/slices/authSlice';
+import { constants } from '../config/constants';
 
 export function useAuth() {
   const dispatch = useAppDispatch();
@@ -47,22 +49,49 @@ export function useAuth() {
     dispatch(loginStart());
     
     try {
-      // Simular llamada a API
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await fetch(`${constants.api_url}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        
+        // Manejar errores de validación específicos
+        if (errorData.errors && errorData.errors.email) {
+          throw new Error(errorData.errors.email[0] || 'Credenciales incorrectas');
+        }
+        
+        throw new Error(errorData.message || 'Error al iniciar sesión');
+      }
+
+      const result = await response.json();
       
-      // Mock de usuario logueado
+      // Mapear la respuesta del backend al formato del frontend
       const user = {
-        id: "1",
-        name: "Usuario Demo",
-        email: email,
-        phone: "+57 300 123 4567",
+        id: result.user.id.toString(),
+        name: result.user.name,
+        email: result.user.email,
+        phone: "+57 300 123 4567", // El backend no devuelve phone, usar valor por defecto
         isGuest: false,
       };
+
+      // Guardar el token en localStorage
+      localStorage.setItem('auth_token', result.token);
+      localStorage.setItem('user', JSON.stringify(user));
       
       dispatch(loginSuccess(user));
       
     } catch (error) {
-      dispatch(loginFailure("Error al iniciar sesión. Verifica tus credenciales."));
+      const errorMessage = error instanceof Error ? error.message : "Error al iniciar sesión. Verifica tus credenciales.";
+      dispatch(loginFailure(errorMessage));
     }
   }, [dispatch]);
 
@@ -76,22 +105,54 @@ export function useAuth() {
     dispatch(registerStart());
     
     try {
-      // Simular llamada a API
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await fetch(`${constants.api_url}/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          password: data.password,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        
+        // Manejar errores de validación específicos
+        if (errorData.errors) {
+          const firstError = Object.values(errorData.errors)[0];
+          if (Array.isArray(firstError) && firstError.length > 0) {
+            throw new Error(firstError[0]);
+          }
+        }
+        
+        throw new Error(errorData.message || 'Error al crear la cuenta');
+      }
+
+      const result = await response.json();
       
-      // Mock de usuario registrado
+      // Mapear la respuesta del backend al formato del frontend
       const user = {
-        id: "1",
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
+        id: result.user.id.toString(),
+        name: result.user.name,
+        email: result.user.email,
+        phone: data.phone, // El backend no devuelve phone, lo mantenemos del formulario
         isGuest: false,
       };
+
+      // Guardar el token en localStorage
+      localStorage.setItem('auth_token', result.token);
+      localStorage.setItem('user', JSON.stringify(user));
       
-      dispatch(registerSuccess(user));
+      // Usar loginSuccess en lugar de registerSuccess para que se loguee automáticamente
+      dispatch(loginSuccess(user));
       
     } catch (error) {
-      dispatch(registerFailure("Error al crear la cuenta. Intenta de nuevo."));
+      const errorMessage = error instanceof Error ? error.message : "Error al crear la cuenta. Intenta de nuevo.";
+      dispatch(registerFailure(errorMessage));
     }
   }, [dispatch]);
 
@@ -129,7 +190,28 @@ export function useAuth() {
 
   // Logout
   const logoutAction = useCallback(() => {
+    // Limpiar localStorage
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user');
     dispatch(logout());
+  }, [dispatch]);
+
+  // Restaurar usuario desde localStorage
+  const restoreUser = useCallback(() => {
+    try {
+      const storedUser = localStorage.getItem('user');
+      const storedToken = localStorage.getItem('auth_token');
+      
+      if (storedUser && storedToken) {
+        const user = JSON.parse(storedUser);
+        dispatch(restoreUserAction(user));
+      }
+    } catch (error) {
+      console.error('Error al restaurar usuario:', error);
+      // Limpiar datos corruptos
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
+    }
   }, [dispatch]);
 
   // Limpiar errores
@@ -155,6 +237,7 @@ export function useAuth() {
     register,
     guestCheckout,
     logout: logoutAction,
+    restoreUser,
     clearError: clearErrorAction,
   };
 }

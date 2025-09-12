@@ -26,7 +26,7 @@ interface GuestData {
 type ModalMode = "options" | "login" | "register" | "guest";
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
-  const { login, register, guestCheckout } = useAuth();
+  const { login, register, guestCheckout, isLoading, error, clearError } = useAuth();
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const [mode, setMode] = useState<ModalMode>("options");
@@ -67,15 +67,17 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    clearError(); // Limpiar errores previos
+    
     switch (mode) {
       case "login":
-        onLogin(loginData.email, loginData.password);
+        login(loginData.email, loginData.password);
         break;
       case "register":
-        onRegister(registerData);
+        register(registerData);
         break;
       case "guest":
-        onGuestCheckout(guestData);
+        guestCheckout(guestData);
         break;
     }
   };
@@ -177,6 +179,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             <button
               onClick={handleClose}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              aria-label="Cerrar modal"
             >
               <X className="w-5 h-5 text-gray-500" />
             </button>
@@ -275,7 +278,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             });
                           }
                         }}
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500"
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900"
                         placeholder="Tu nombre completo"
                       />
                     </div>
@@ -311,7 +314,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                           setGuestData({ ...guestData, email: e.target.value });
                         }
                       }}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900"
                       placeholder="tu@email.com"
                     />
                   </div>
@@ -346,7 +349,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             });
                           }
                         }}
-                        className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500"
+                        className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900"
                         placeholder="Tu contraseña"
                       />
                       <button
@@ -393,7 +396,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             });
                           }
                         }}
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500"
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900"
                         placeholder="+57 300 123 4567"
                       />
                     </div>
@@ -417,7 +420,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             address: e.target.value,
                           })
                         }
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none placeholder-gray-500"
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none placeholder-gray-500 text-gray-900"
                         rows={3}
                         placeholder="Calle 123 #45-67, Medellín"
                       />
@@ -425,21 +428,42 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   </div>
                 )}
 
+                {/* Error message */}
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                    {error}
+                  </div>
+                )}
+
                 {/* Submit button */}
                 <button
                   type="submit"
-                  className="w-full text-white py-3 px-6 rounded-xl font-semibold transition-colors"
+                  disabled={isLoading}
+                  className="w-full text-white py-3 px-6 rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ backgroundColor: "rgb(181, 142, 49)" }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgb(160, 120, 23)";
+                    if (!isLoading) {
+                      e.currentTarget.style.backgroundColor = "rgb(160, 120, 23)";
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgb(181, 142, 49)";
+                    if (!isLoading) {
+                      e.currentTarget.style.backgroundColor = "rgb(181, 142, 49)";
+                    }
                   }}
                 >
-                  {mode === "login" && "Iniciar Sesión"}
-                  {mode === "register" && "Crear Cuenta"}
-                  {mode === "guest" && "Continuar al Checkout"}
+                  {isLoading ? (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      Procesando...
+                    </div>
+                  ) : (
+                    <>
+                      {mode === "login" && "Iniciar Sesión"}
+                      {mode === "register" && "Crear Cuenta"}
+                      {mode === "guest" && "Continuar al Checkout"}
+                    </>
+                  )}
                 </button>
               </form>
             )}
