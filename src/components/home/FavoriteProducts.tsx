@@ -12,6 +12,7 @@ import { Product } from "@/features/products/types/product";
 import NotificationToast from "@/components/shared/NotificationToast";
 import FeaturedProductSkeleton from "@/components/shared/FeaturedProductSkeleton";
 import LazyImage from "@/components/shared/LazyImage";
+import ProductCarousel from "@/components/shared/ProductCarousel";
 
 export default function FavoriteProducts() {
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -92,6 +93,114 @@ export default function FavoriteProducts() {
     }, 500);
   };
 
+  // Función para renderizar cada producto del carrusel
+  const renderProduct = (product: FeaturedProduct) => (
+    <div className="bg-white rounded-lg overflow-hidden shadow-lg h-full">
+      {/* Imagen del producto con botón de favorito */}
+      <div className="relative">
+        <div
+          className="aspect-w-1 aspect-h-1 overflow-hidden pt-4"
+          style={{ height: "400px" }}
+        >
+          <LazyImage
+            src={product.image_url}
+            alt={product.name}
+            className="w-full h-full"
+          />
+        </div>
+        {/* Botón de corazón (favorito) */}
+        <button
+          onClick={() => toggleFavorite(product.id)}
+          className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors"
+          aria-label="Agregar a favoritos"
+        >
+          <Heart
+            className={`w-5 h-5 ${
+              favorites.includes(product.id)
+                ? "fill-red-500 text-red-500"
+                : "text-gray-600"
+            }`}
+          />
+        </button>
+      </div>
+
+      {/* Información del producto */}
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-sm text-gray-600 font-medium">
+            BOTELLA 500ML
+          </span>
+          <div className="text-right">
+            {product.sale_price && product.sale_price < product.price ? (
+              <div>
+                <span className="text-sm text-gray-500 line-through">
+                  {formatPrice(product.price)}
+                </span>
+                <span className="text-lg font-bold text-gray-900 ml-2">
+                  {formatPrice(product.sale_price)}
+                </span>
+              </div>
+            ) : (
+              <span className="text-lg font-bold text-gray-900">
+                {formatPrice(product.current_price)}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <h3 className="text-lg font-bold text-gray-900 mb-4">{product.name}</h3>
+
+        {/* Botones de acción */}
+        <div className="flex items-center space-x-3">
+          {/* Ícono de carrito cuadrado con contador - Solo visual */}
+          <div
+            className="relative p-3 rounded-lg"
+            style={{
+              backgroundColor: "transparent",
+              borderColor: "#D0D5DD",
+              borderWidth: "1px",
+              borderStyle: "solid",
+            }}
+            aria-label="Contador del carrito"
+          >
+            <ShoppingCart className="w-5 h-5" style={{ color: "#B58E31" }} />
+            {/* Contador en el ícono del carrito */}
+            {isInCart(product.id) && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                {getProductQuantity(product.id)}
+              </span>
+            )}
+          </div>
+
+          {/* Botón principal "Añadir al carrito" */}
+          <button
+            onClick={() => handleAddToCart(product)}
+            disabled={addingToCart === product.id}
+            className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            style={{ backgroundColor: "#B58E31" }}
+            onMouseEnter={(e) =>
+              !e.currentTarget.disabled &&
+              (e.currentTarget.style.backgroundColor = "#A07D2A")
+            }
+            onMouseLeave={(e) =>
+              !e.currentTarget.disabled &&
+              (e.currentTarget.style.backgroundColor = "#B58E31")
+            }
+          >
+            <span>
+              {addingToCart === product.id
+                ? "Agregando..."
+                : isInCart(product.id)
+                ? "Agregar más"
+                : "Añadir al carrito"}
+            </span>
+            {addingToCart !== product.id && <ArrowRight className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <section className="py-16 bg-black relative overflow-hidden">
       {/* Watermark de MARKET CLUB */}
@@ -148,10 +257,10 @@ export default function FavoriteProducts() {
           </div>
         </div>
 
-        {/* Grid de productos destacados */}
+        {/* Carrusel de productos destacados */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {Array.from({ length: 4 }, (_, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 3 }, (_, index) => (
               <FeaturedProductSkeleton key={index} />
             ))}
           </div>
@@ -169,125 +278,9 @@ export default function FavoriteProducts() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product) => (
-              <div
-                key={product.id}
-                className="bg-white rounded-lg overflow-hidden shadow-lg"
-              >
-                {/* Imagen del producto con botón de favorito */}
-                <div className="relative">
-                  <div
-                    className="aspect-w-1 aspect-h-1 overflow-hidden pt-4"
-                    style={{ height: "300px" }}
-                  >
-                    <LazyImage
-                      src={product.image_url}
-                      alt={product.name}
-                      className="w-full h-full"
-                    />
-                  </div>
-                  {/* Botón de corazón (favorito) */}
-                  <button
-                    onClick={() => toggleFavorite(product.id)}
-                    className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors"
-                    aria-label="Agregar a favoritos"
-                  >
-                    <Heart
-                      className={`w-5 h-5 ${
-                        favorites.includes(product.id)
-                          ? "fill-red-500 text-red-500"
-                          : "text-gray-600"
-                      }`}
-                    />
-                  </button>
-                </div>
-
-                {/* Información del producto */}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm text-gray-600 font-medium">
-                      BOTELLA 500ML
-                    </span>
-                    <div className="text-right">
-                      {product.sale_price &&
-                      product.sale_price < product.price ? (
-                        <div>
-                          <span className="text-sm text-gray-500 line-through">
-                            {formatPrice(product.price)}
-                          </span>
-                          <span className="text-lg font-bold text-gray-900 ml-2">
-                            {formatPrice(product.sale_price)}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-lg font-bold text-gray-900">
-                          {formatPrice(product.current_price)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">
-                    {product.name}
-                  </h3>
-
-                  {/* Botones de acción */}
-                  <div className="flex items-center space-x-3">
-                    {/* Ícono de carrito cuadrado con contador - Solo visual */}
-                    <div
-                      className="relative p-3 rounded-lg"
-                      style={{
-                        backgroundColor: "transparent",
-                        borderColor: "#D0D5DD",
-                        borderWidth: "1px",
-                        borderStyle: "solid",
-                      }}
-                      aria-label="Contador del carrito"
-                    >
-                      <ShoppingCart
-                        className="w-5 h-5"
-                        style={{ color: "#B58E31" }}
-                      />
-                      {/* Contador en el ícono del carrito */}
-                      {isInCart(product.id) && (
-                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                          {getProductQuantity(product.id)}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Botón principal "Añadir al carrito" */}
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      disabled={addingToCart === product.id}
-                      className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                      style={{ backgroundColor: "#B58E31" }}
-                      onMouseEnter={(e) =>
-                        !e.currentTarget.disabled &&
-                        (e.currentTarget.style.backgroundColor = "#A07D2A")
-                      }
-                      onMouseLeave={(e) =>
-                        !e.currentTarget.disabled &&
-                        (e.currentTarget.style.backgroundColor = "#B58E31")
-                      }
-                    >
-                      <span>
-                        {addingToCart === product.id
-                          ? "Agregando..."
-                          : isInCart(product.id)
-                          ? "Agregar más"
-                          : "Añadir al carrito"}
-                      </span>
-                      {addingToCart !== product.id && (
-                        <ArrowRight className="w-4 h-4" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <ProductCarousel itemsPerView={3} className="px-8">
+            {featuredProducts.map((product) => renderProduct(product))}
+          </ProductCarousel>
         )}
       </div>
 

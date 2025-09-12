@@ -1,138 +1,202 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useLatestBeers, LatestBeer } from "@/hooks/useLatestBeers";
+import { useCart } from "@/hooks/useCart";
+import { useNotification } from "@/hooks/useNotification";
+import { Product } from "@/features/products/types/product";
+import NotificationToast from "@/components/shared/NotificationToast";
+import ProductCarousel from "@/components/shared/ProductCarousel";
+import FeaturedProductSkeleton from "@/components/shared/FeaturedProductSkeleton";
+import LazyImage from "@/components/shared/LazyImage";
+import { Heart, ShoppingCart, ArrowRight } from "lucide-react";
 
 export default function ProductSlider() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const [translateX, setTranslateX] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [lastMoveTime, setLastMoveTime] = useState(0);
-  const [lastMoveX, setLastMoveX] = useState(0);
-  const sliderRef = useRef<HTMLDivElement>(null);
+  const [favorites, setFavorites] = useState<number[]>([]);
+  const [addingToCart, setAddingToCart] = useState<number | null>(null);
+  const { addToCart, updateQuantity, removeFromCart, items } = useCart();
+  const { notification, showSuccess, hideNotification } = useNotification();
+  const { beers: latestBeers, loading, error } = useLatestBeers();
 
-  const products = [
-    {
-      id: 1,
-      name: "PAULANER WEISSBIER",
-      image: "/images/cervezas/bottella-06.png",
-      volume: "BOTELLA 500ML",
-      price: "$17.000",
-    },
-    {
-      id: 2,
-      name: "ERDINGER",
-      image: "/images/cervezas/bottella-07.png",
-      volume: "BOTELLA 330ML",
-      price: "$19.000",
-    },
-    {
-      id: 3,
-      name: "LIEFMANS FRUITESSE",
-      image: "/images/cervezas/bottella-08.png",
-      volume: "BOTELLA 250ML",
-      price: "$23.000",
-    },
-  ];
-
-  // Duplicar productos para scroll infinito
-  const infiniteProducts = [...products, ...products, ...products];
-
-  const goToSlide = (slideIndex: number) => {
-    setCurrentSlide(slideIndex);
+  const toggleFavorite = (productId: number) => {
+    setFavorites((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId]
+    );
   };
 
-  const getCardsPerView = () => {
-    if (typeof window === "undefined") return 3;
-    const width = window.innerWidth;
-    if (width < 640) return 1; // sm: 1 tarjeta
-    if (width < 768) return 2; // md: 2 tarjetas
-    if (width < 1280) return 3; // lg: 3 tarjetas (hasta 1280px)
-    return 4; // xl: 4 tarjetas (1280px+)
+  // Obtener la cantidad de un producto en el carrito
+  const getProductQuantity = (productId: number) => {
+    const cartItem = items.find((item) => item.product.id === productId);
+    return cartItem ? cartItem.quantity : 0;
   };
 
-  const nextSlide = () => {
-    if (sliderRef.current) {
-      const containerWidth = sliderRef.current.clientWidth;
-      const cardsPerView = getCardsPerView();
-      const cardWidth = containerWidth / cardsPerView;
-      const currentScrollLeft = sliderRef.current.scrollLeft;
-      const currentIndex = Math.round(currentScrollLeft / cardWidth);
-      const nextIndex = (currentIndex + 1) % products.length;
-
-      sliderRef.current.scrollTo({
-        left: nextIndex * cardWidth,
-        behavior: "smooth",
-      });
-
-      setCurrentSlide(nextIndex);
-    }
+  // Verificar si un producto está en el carrito
+  const isInCart = (productId: number) => {
+    return items.some((item) => item.product.id === productId);
   };
 
-  const prevSlide = () => {
-    if (sliderRef.current) {
-      const containerWidth = sliderRef.current.clientWidth;
-      const cardsPerView = getCardsPerView();
-      const cardWidth = containerWidth / cardsPerView;
-      const currentScrollLeft = sliderRef.current.scrollLeft;
-      const currentIndex = Math.round(currentScrollLeft / cardWidth);
-      const prevIndex = (currentIndex - 1 + products.length) % products.length;
-
-      sliderRef.current.scrollTo({
-        left: prevIndex * cardWidth,
-        behavior: "smooth",
-      });
-
-      setCurrentSlide(prevIndex);
-    }
+  // Convertir producto del API al formato del store
+  const convertToStoreProduct = (latestBeer: LatestBeer): Product => {
+    return {
+      id: latestBeer.id,
+      name: latestBeer.name,
+      description: `Cerveza reciente - Premium`,
+      price: latestBeer.current_price,
+      image: latestBeer.image_url,
+      images: [latestBeer.image_url],
+      category: "Cerveza Reciente",
+      brand: latestBeer.name.split(" ")[0],
+      alcoholContent: 5.0,
+      volume: 500,
+      style: "Reciente",
+      origin: "Importada",
+      inStock: true,
+      stockQuantity: 100,
+      rating: 4.5,
+      reviewCount: 128,
+      tags: ["reciente", "cerveza"],
+      featured: true,
+      createdAt: latestBeer.created_at,
+      updatedAt: latestBeer.created_at,
+    };
   };
 
-  // Funciones de arrastre del mouse
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setStartX(e.pageX - (sliderRef.current?.offsetLeft || 0));
-    setScrollLeft(sliderRef.current?.scrollLeft || 0);
+  // Función para formatear precio en pesos colombianos
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      minimumFractionDigits: 0,
+    }).format(price);
   };
 
-  const handleMouseLeave = () => {
-    if (isDragging) {
-      handleMouseUp();
-    }
+  const handleAddToCart = async (latestBeer: LatestBeer) => {
+    setAddingToCart(latestBeer.id);
+
+    const product = convertToStoreProduct(latestBeer);
+    addToCart(product, 1);
+
+    // Simular una pequeña animación
+    setTimeout(() => {
+      setAddingToCart(null);
+
+      // Mostrar notificación de éxito
+      showSuccess(
+        "¡Producto agregado! 🍺",
+        `"${latestBeer.name}" se agregó al carrito exitosamente.`
+      );
+    }, 500);
   };
 
-  const handleMouseUp = () => {
-    if (!isDragging || !sliderRef.current) return;
+  // Función para renderizar cada producto del carrusel
+  const renderProduct = (beer: LatestBeer) => (
+    <div className="bg-white rounded-lg overflow-hidden shadow-lg h-full">
+      {/* Imagen del producto con botón de favorito */}
+      <div className="relative">
+        <div
+          className="aspect-w-1 aspect-h-1 overflow-hidden pt-4"
+          style={{ height: "400px" }}
+        >
+          <LazyImage
+            src={beer.image_url}
+            alt={beer.name}
+            className="w-full h-full"
+          />
+        </div>
+        {/* Botón de corazón (favorito) */}
+        <button
+          onClick={() => toggleFavorite(beer.id)}
+          className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors"
+          aria-label="Agregar a favoritos"
+        >
+          <Heart
+            className={`w-5 h-5 ${
+              favorites.includes(beer.id)
+                ? "fill-red-500 text-red-500"
+                : "text-gray-600"
+            }`}
+          />
+        </button>
+      </div>
 
-    setIsDragging(false);
+      {/* Información del producto */}
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-sm text-gray-600 font-medium">
+            BOTELLA 500ML
+          </span>
+          <div className="text-right">
+            {beer.sale_price && beer.sale_price < beer.price ? (
+              <div>
+                <span className="text-sm text-gray-500 line-through">
+                  {formatPrice(beer.price)}
+                </span>
+                <span className="text-lg font-bold text-gray-900 ml-2">
+                  {formatPrice(beer.sale_price)}
+                </span>
+              </div>
+            ) : (
+              <span className="text-lg font-bold text-gray-900">
+                {formatPrice(beer.current_price)}
+              </span>
+            )}
+          </div>
+        </div>
 
-    // Scroll suave al soltar el mouse
-    const containerWidth = sliderRef.current.clientWidth;
-    const cardsPerView = getCardsPerView();
-    const cardWidth = containerWidth / cardsPerView;
-    const currentScrollLeft = sliderRef.current.scrollLeft;
-    const targetIndex = Math.round(currentScrollLeft / cardWidth);
+        <h3 className="text-lg font-bold text-gray-900 mb-4">{beer.name}</h3>
 
-    sliderRef.current.scrollTo({
-      left: targetIndex * cardWidth,
-      behavior: "smooth",
-    });
+        {/* Botones de acción */}
+        <div className="flex items-center space-x-3">
+          {/* Ícono de carrito cuadrado con contador - Solo visual */}
+          <div
+            className="relative p-3 rounded-lg"
+            style={{
+              backgroundColor: "transparent",
+              borderColor: "#D0D5DD",
+              borderWidth: "1px",
+              borderStyle: "solid",
+            }}
+            aria-label="Contador del carrito"
+          >
+            <ShoppingCart className="w-5 h-5" style={{ color: "#B58E31" }} />
+            {/* Contador en el ícono del carrito */}
+            {isInCart(beer.id) && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                {getProductQuantity(beer.id)}
+              </span>
+            )}
+          </div>
 
-    setCurrentSlide(targetIndex % products.length);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !sliderRef.current) return;
-    e.preventDefault();
-
-    const currentX = e.pageX - (sliderRef.current.offsetLeft || 0);
-    const diffX = currentX - startX;
-    const newScrollLeft = scrollLeft - diffX * 1.5;
-
-    // Aplicar el scroll directamente para movimiento fluido
-    sliderRef.current.scrollLeft = newScrollLeft;
-  };
+          {/* Botón principal "Añadir al carrito" */}
+          <button
+            onClick={() => handleAddToCart(beer)}
+            disabled={addingToCart === beer.id}
+            className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            style={{ backgroundColor: "#B58E31" }}
+            onMouseEnter={(e) =>
+              !e.currentTarget.disabled &&
+              (e.currentTarget.style.backgroundColor = "#A07D2A")
+            }
+            onMouseLeave={(e) =>
+              !e.currentTarget.disabled &&
+              (e.currentTarget.style.backgroundColor = "#B58E31")
+            }
+          >
+            <span>
+              {addingToCart === beer.id
+                ? "Agregando..."
+                : isInCart(beer.id)
+                ? "Agregar más"
+                : "Añadir al carrito"}
+            </span>
+            {addingToCart !== beer.id && <ArrowRight className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <section className="py-12 bg-black sm:py-16 lg:py-20">
@@ -140,7 +204,7 @@ export default function ProductSlider() {
         {/* Header con título y botón */}
         <div className="flex items-center justify-center lg:justify-between mb-8">
           <h2 className="text-2xl font-bold text-white sm:text-3xl">
-            Nuevos lanzamientos
+            Últimas Cervezas
           </h2>
 
           <div className="hidden lg:flex">
@@ -168,156 +232,42 @@ export default function ProductSlider() {
           </div>
         </div>
 
-        {/* Carrusel de productos */}
-        <div className="relative px-4 lg:px-16">
-          {" "}
-          {/* Responsive padding: no margin on small screens, margin on large screens */}
-          <div
-            ref={sliderRef}
-            className="flex overflow-x-auto snap-x snap-mandatory"
-            style={
-              {
-                scrollbarWidth: "none",
-                msOverflowStyle: "none",
-                scrollSnapType: "x mandatory",
-              } as React.CSSProperties
-            }
-            onMouseDown={handleMouseDown}
-            onMouseLeave={handleMouseLeave}
-            onMouseUp={handleMouseUp}
-            onMouseMove={handleMouseMove}
-          >
-            {infiniteProducts.map((product, index) => (
-              <div
-                key={`${product.id}-${index}`}
-                className="w-full sm:w-1/2 md:w-1/3 xl:w-1/4 flex-shrink-0 px-2 snap-start"
-              >
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden h-full flex flex-col">
-                  {/* Sección superior - Imagen de la botella */}
-                  <div className="relative bg-white min-h-[220px] overflow-hidden pt-4">
-                    <img
-                      className="w-full h-full object-cover"
-                      src={product.image}
-                      alt={product.name}
-                    />
-                  </div>
-
-                  {/* Sección inferior - Información del producto */}
-                  <div className="bg-white p-6 flex flex-col justify-between flex-grow">
-                    <div>
-                      <h3
-                        className="text-gray-900 uppercase tracking-wide"
-                        style={{
-                          fontFamily: "var(--font-oswald)",
-                          fontSize: "24px",
-                          marginBottom: "-8px",
-                          fontWeight: "700",
-                        }}
-                      >
-                        {product.name}
-                      </h3>
-                      <p
-                        className="text-gray-900 mb-2 uppercase tracking-wide"
-                        style={{
-                          fontFamily: "var(--font-oswald)",
-                          fontSize: "24px",
-                          fontWeight: "300",
-                        }}
-                      >
-                        {product.volume}
-                      </p>
-                    </div>
-                    <div className="mt-2">
-                      <p
-                        className="text-gray-900 uppercase tracking-wide"
-                        style={{
-                          fontFamily: "var(--font-plus-jakarta-sans)",
-                          fontSize: "24px",
-                        }}
-                      >
-                        {product.price}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        {/* Carrusel de últimas cervezas */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 3 }, (_, index) => (
+              <FeaturedProductSkeleton key={index} />
             ))}
           </div>
-          {/* Botones de navegación */}
-          <button
-            onClick={prevSlide}
-            className="hidden lg:block absolute left-0 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-colors z-10"
-            aria-label="Anterior"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-          <button
-            onClick={nextSlide}
-            className="hidden lg:block absolute right-0 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-colors z-10"
-            aria-label="Siguiente"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
-        </div>
-
-        {/* Indicadores de paginación */}
-        <div className="flex justify-center items-center mt-12 space-x-3">
-          {Array.from({ length: products.length }, (_, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                if (sliderRef.current) {
-                  const containerWidth = sliderRef.current.clientWidth;
-                  const cardsPerView = getCardsPerView();
-                  const cardWidth = containerWidth / cardsPerView;
-
-                  sliderRef.current.scrollTo({
-                    left: index * cardWidth,
-                    behavior: "smooth",
-                  });
-
-                  setCurrentSlide(index);
-                }
-              }}
-              className={`rounded-full transition-all duration-300 ${
-                currentSlide === index
-                  ? "border-gray-400 bg-transparent"
-                  : "border-white bg-transparent"
-              }`}
-              style={{
-                width: "37.67px",
-                height: "37.67px",
-                borderWidth: "5px",
-              }}
-              aria-label={`Ir a slide ${index + 1}`}
-            />
-          ))}
-        </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <div className="text-red-400 text-lg mb-2">
+              Error al cargar últimas cervezas
+            </div>
+            <div className="text-gray-400 text-sm">{error}</div>
+          </div>
+        ) : latestBeers.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-gray-400 text-lg mb-2">
+              No hay cervezas recientes disponibles
+            </div>
+          </div>
+        ) : (
+          <ProductCarousel itemsPerView={3} className="px-8">
+            {latestBeers.map((beer) => renderProduct(beer))}
+          </ProductCarousel>
+        )}
       </div>
+
+      {/* Notificación Toast */}
+      <NotificationToast
+        isVisible={notification.isVisible}
+        onClose={hideNotification}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+        duration={4000}
+      />
     </section>
   );
 }

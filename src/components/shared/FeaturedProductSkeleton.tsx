@@ -4,7 +4,10 @@ export default function FeaturedProductSkeleton() {
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-lg animate-pulse">
       {/* Imagen skeleton */}
-      <div className="aspect-w-1 aspect-h-1 overflow-hidden pt-4">
+      <div
+        className="aspect-w-1 aspect-h-1 overflow-hidden pt-4"
+        style={{ height: "400px" }}
+      >
         <div className="w-full h-full bg-gray-200 relative">
           <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer"></div>
         </div>

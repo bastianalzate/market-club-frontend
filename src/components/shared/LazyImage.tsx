@@ -92,7 +92,7 @@ export default function LazyImage({
         <img
           src={src}
           alt={alt}
-          className={`w-full h-full object-cover transition-all duration-300 hover:scale-105 ${
+          className={`w-full h-full object-contain transition-all duration-300 hover:scale-105 ${
             isLoading ? "opacity-0" : "opacity-100"
           }`}
           onLoad={handleLoad}
