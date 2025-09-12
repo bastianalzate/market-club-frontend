@@ -15,17 +15,68 @@ import {
 import { useCart } from "@/hooks/useCart";
 import { useNotification } from "@/hooks/useNotification";
 import { Product } from "@/features/products/types/product";
+<<<<<<< HEAD
 import { TiendaProduct } from "@/hooks/useProducts";
 import NotificationToast from "@/components/shared/NotificationToast";
 
+=======
+import { TransformedProduct } from "@/hooks/useProducts";
+import NotificationToast from "@/components/shared/NotificationToast";
+
+interface TiendaProduct {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  price: string;
+  sale_price: string | null;
+  sku: string;
+  stock_quantity: number;
+  image: string | null;
+  gallery: string | null;
+  is_active: boolean;
+  is_featured: boolean;
+  category_id: number;
+  product_type_id: number;
+  attributes: any;
+  product_specific_data: {
+    alcohol_content?: string | number;
+    beer_style?: string;
+    brewery?: string;
+    country_of_origin?: string;
+    volume_ml?: string;
+    packaging_type?: string;
+  } | null;
+  created_at: string;
+  updated_at: string;
+  category: {
+    id: number;
+    name: string;
+    slug: string;
+    description: string;
+    image: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+  };
+  // Campos agregados por la transformación
+  brand: string;
+  rating: number;
+  reviewCount: number;
+  inStock: boolean;
+}
+
+>>>>>>> 6b688373283fe824e4be8854842007eabd4bb539
 interface ProductGridProps {
-  products: TiendaProduct[];
+  products: TransformedProduct[];
   loading?: boolean;
+  totalProducts?: number;
 }
 
 export default function ProductGrid({
   products,
   loading = false,
+  totalProducts = 0,
 }: ProductGridProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,7 +106,7 @@ export default function ProductGrid({
   };
 
   // Manejar incremento de cantidad
-  const handleIncreaseQuantity = (tiendaProduct: TiendaProduct) => {
+  const handleIncreaseQuantity = (tiendaProduct: TransformedProduct) => {
     const product: Product = convertToStoreProduct(tiendaProduct);
     const currentQuantity = getProductQuantity(tiendaProduct.id);
     updateQuantity(tiendaProduct.id.toString(), currentQuantity + 1);
@@ -72,7 +123,9 @@ export default function ProductGrid({
   };
 
   // Convertir producto de tienda al formato del store
-  const convertToStoreProduct = (tiendaProduct: TiendaProduct): Product => {
+  const convertToStoreProduct = (
+    tiendaProduct: TransformedProduct
+  ): Product => {
     return {
       id: tiendaProduct.id,
       name: tiendaProduct.name,
@@ -99,7 +152,7 @@ export default function ProductGrid({
     };
   };
 
-  const handleAddToCart = async (tiendaProduct: TiendaProduct) => {
+  const handleAddToCart = async (tiendaProduct: TransformedProduct) => {
     setAddingToCart(tiendaProduct.id);
 
     const product = convertToStoreProduct(tiendaProduct);
@@ -194,7 +247,7 @@ export default function ProductGrid({
 
         <div className="text-sm text-gray-500">
           Mostrando {startIndex + 1}-{Math.min(endIndex, products.length)} de{" "}
-          {products.length} productos
+          {totalProducts > 0 ? totalProducts : products.length} productos
         </div>
       </div>
 
