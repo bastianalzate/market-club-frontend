@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Grid,
   List,
@@ -90,6 +90,13 @@ export default function ProductGrid({
 }: ProductGridProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(pagination?.currentPage || 1);
+
+  // Sincronizar currentPage con la paginación del servidor
+  useEffect(() => {
+    if (pagination?.currentPage) {
+      setCurrentPage(pagination.currentPage);
+    }
+  }, [pagination?.currentPage]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
   const [justAdded, setJustAdded] = useState<number | null>(null);
@@ -441,9 +448,9 @@ export default function ProductGrid({
             {/* Botón anterior */}
             <button
               onClick={goToPrevPage}
-              disabled={currentPage === 1}
+              disabled={(pagination?.currentPage || currentPage) === 1}
               className={`p-2 rounded-lg transition-colors ${
-                currentPage === 1
+                (pagination?.currentPage || currentPage) === 1
                   ? "text-gray-300 cursor-not-allowed"
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               }`}
@@ -455,23 +462,25 @@ export default function ProductGrid({
             <div className="flex items-center space-x-1">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                 (page) => {
+                  const activePage = pagination?.currentPage || currentPage;
+
                   // Mostrar solo algunas páginas para evitar demasiados botones
                   if (
                     page === 1 ||
                     page === totalPages ||
-                    (page >= currentPage - 1 && page <= currentPage + 1)
+                    (page >= activePage - 1 && page <= activePage + 1)
                   ) {
                     return (
                       <button
                         key={page}
                         onClick={() => goToPage(page)}
                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                          page === currentPage
+                          page === activePage
                             ? "text-white"
                             : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                         }`}
                         style={
-                          page === currentPage
+                          page === activePage
                             ? { backgroundColor: "#B58E31" }
                             : {}
                         }
@@ -480,8 +489,8 @@ export default function ProductGrid({
                       </button>
                     );
                   } else if (
-                    page === currentPage - 2 ||
-                    page === currentPage + 2
+                    page === activePage - 2 ||
+                    page === activePage + 2
                   ) {
                     return (
                       <span key={page} className="px-2 text-gray-400">
@@ -497,9 +506,9 @@ export default function ProductGrid({
             {/* Botón siguiente */}
             <button
               onClick={goToNextPage}
-              disabled={currentPage === totalPages}
+              disabled={(pagination?.currentPage || currentPage) === totalPages}
               className={`p-2 rounded-lg transition-colors ${
-                currentPage === totalPages
+                (pagination?.currentPage || currentPage) === totalPages
                   ? "text-gray-300 cursor-not-allowed"
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               }`}

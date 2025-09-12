@@ -175,11 +175,13 @@ export default function ProductSlider() {
           <div
             ref={sliderRef}
             className="flex overflow-x-auto snap-x snap-mandatory"
-            style={{
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-              scrollSnapType: "x mandatory",
-            } as React.CSSProperties}
+            style={
+              {
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                scrollSnapType: "x mandatory",
+              } as React.CSSProperties
+            }
             onMouseDown={handleMouseDown}
             onMouseLeave={handleMouseLeave}
             onMouseUp={handleMouseUp}
