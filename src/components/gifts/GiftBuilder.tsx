@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Search,
   Filter,
@@ -121,8 +121,15 @@ export default function GiftBuilder() {
   const { notification, showSuccess, showError, hideNotification } =
     useNotification();
 
-  // Hook de productos del backend
-  const { products: backendProducts, loading: productsLoading } = useProducts();
+  // Hook de productos del backend con paginación
+  const {
+    products: backendProducts,
+    loading: productsLoading,
+    pagination,
+    goToPage,
+    nextPage,
+    prevPage,
+  } = useProducts();
 
   const [giftBuilder, setGiftBuilder] = useState<GiftBuilderState>({
     selectedBox: defaultBox,
@@ -136,6 +143,9 @@ export default function GiftBuilder() {
   const [selectedNationality, setSelectedNationality] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+
+  // Referencia para el scroll al título de cervezas
+  const cervezasTitleRef = useRef<HTMLDivElement>(null);
 
   // Convertir productos del backend a formato Beer
   const availableBeers = backendProducts.map(transformToBeer);
@@ -238,6 +248,38 @@ export default function GiftBuilder() {
   const canAddMore =
     giftBuilder.selectedBox &&
     giftBuilder.selectedBeers.length < giftBuilder.selectedBox.maxBeers;
+
+  // Funciones de paginación con scroll suave al título de cervezas
+  const handleGoToPage = (page: number) => {
+    goToPage(page);
+    // Scroll suave al título de cervezas
+    setTimeout(() => {
+      cervezasTitleRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
+
+  const handleGoToNextPage = () => {
+    nextPage();
+    setTimeout(() => {
+      cervezasTitleRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
+
+  const handleGoToPrevPage = () => {
+    prevPage();
+    setTimeout(() => {
+      cervezasTitleRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
 
   // Función para crear un producto de regalo personalizado
   const createGiftProduct = (): Product => {
@@ -409,7 +451,7 @@ export default function GiftBuilder() {
             {/* Paso 2: Selección de Cervezas */}
             {giftBuilder.selectedBox && (
               <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                <div className="flex items-center mb-6">
+                <div ref={cervezasTitleRef} className="flex items-center mb-6">
                   <div className="w-10 h-10 bg-gradient-to-r from-[#B58E31] to-[#D4A853] rounded-full flex items-center justify-center text-white font-bold mr-4 shadow-lg">
                     2
                   </div>
@@ -535,6 +577,18 @@ export default function GiftBuilder() {
                   </div>
                 </div>
 
+                {/* Información de Paginación */}
+                {pagination && (
+                  <div className="mb-6">
+                    <div className="flex justify-between items-center text-sm text-gray-600">
+                      <span>
+                        Página {pagination.currentPage} de {pagination.lastPage}{" "}
+                        - {pagination.total} productos total
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Grid de Cervezas */}
                 {productsLoading ? (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -659,6 +713,77 @@ export default function GiftBuilder() {
                     <p className="text-gray-500">
                       No se encontraron cervezas con los filtros seleccionados
                     </p>
+                  </div>
+                )}
+
+                {/* Controles de Paginación */}
+                {pagination && pagination.lastPage > 1 && (
+                  <div className="mt-8 flex justify-center">
+                    <div className="flex items-center space-x-2">
+                      {/* Botón Anterior */}
+                      <button
+                        onClick={handleGoToPrevPage}
+                        disabled={pagination.currentPage === 1}
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          pagination.currentPage === 1
+                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+                        }`}
+                      >
+                        Anterior
+                      </button>
+
+                      {/* Números de página */}
+                      <div className="flex items-center space-x-1">
+                        {Array.from(
+                          { length: Math.min(5, pagination.lastPage) },
+                          (_, i) => {
+                            let pageNumber;
+                            if (pagination.lastPage <= 5) {
+                              pageNumber = i + 1;
+                            } else if (pagination.currentPage <= 3) {
+                              pageNumber = i + 1;
+                            } else if (
+                              pagination.currentPage >=
+                              pagination.lastPage - 2
+                            ) {
+                              pageNumber = pagination.lastPage - 4 + i;
+                            } else {
+                              pageNumber = pagination.currentPage - 2 + i;
+                            }
+
+                            return (
+                              <button
+                                key={pageNumber}
+                                onClick={() => handleGoToPage(pageNumber)}
+                                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                  pageNumber === pagination.currentPage
+                                    ? "bg-[#B58E31] text-white"
+                                    : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+                                }`}
+                              >
+                                {pageNumber}
+                              </button>
+                            );
+                          }
+                        )}
+                      </div>
+
+                      {/* Botón Siguiente */}
+                      <button
+                        onClick={handleGoToNextPage}
+                        disabled={
+                          pagination.currentPage === pagination.lastPage
+                        }
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          pagination.currentPage === pagination.lastPage
+                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+                        }`}
+                      >
+                        Siguiente
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
