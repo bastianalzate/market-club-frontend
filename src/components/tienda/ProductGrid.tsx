@@ -20,20 +20,46 @@ import NotificationToast from "@/components/shared/NotificationToast";
 interface TiendaProduct {
   id: number;
   name: string;
+  slug: string;
+  description: string;
+  price: string;
+  sale_price: string | null;
+  sku: string;
+  stock_quantity: number;
+  image: string | null;
+  gallery: string | null;
+  is_active: boolean;
+  is_featured: boolean;
+  category_id: number;
+  attributes: any;
+  created_at: string;
+  updated_at: string;
+  category: {
+    id: number;
+    name: string;
+    slug: string;
+    description: string;
+    image: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+  };
+  // Campos agregados por la transformación
   brand: string;
-  price: number;
-  image: string;
-  category: string;
-  inStock: boolean;
   rating: number;
   reviewCount: number;
+  inStock: boolean;
 }
 
 interface ProductGridProps {
   products: TiendaProduct[];
+  loading?: boolean;
 }
 
-export default function ProductGrid({ products }: ProductGridProps) {
+export default function ProductGrid({
+  products,
+  loading = false,
+}: ProductGridProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -83,24 +109,26 @@ export default function ProductGrid({ products }: ProductGridProps) {
     return {
       id: tiendaProduct.id,
       name: tiendaProduct.name,
-      description: `${tiendaProduct.brand} - ${tiendaProduct.category}`,
-      price: tiendaProduct.price,
-      image: tiendaProduct.image,
-      images: [tiendaProduct.image],
-      category: tiendaProduct.category,
+      description:
+        tiendaProduct.description ||
+        `${tiendaProduct.brand} - ${tiendaProduct.category.name}`,
+      price: parseFloat(tiendaProduct.price),
+      image: tiendaProduct.image || "/images/products/placeholder.jpg",
+      images: [tiendaProduct.image || "/images/products/placeholder.jpg"],
+      category: tiendaProduct.category.name,
       brand: tiendaProduct.brand,
       alcoholContent: 5.0,
       volume: 500,
-      style: tiendaProduct.category,
+      style: tiendaProduct.category.name,
       origin: "Importada",
       inStock: tiendaProduct.inStock,
-      stockQuantity: 100,
+      stockQuantity: tiendaProduct.stock_quantity,
       rating: tiendaProduct.rating,
       reviewCount: tiendaProduct.reviewCount,
-      tags: [tiendaProduct.category.toLowerCase()],
-      featured: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      tags: [tiendaProduct.category.name.toLowerCase()],
+      featured: tiendaProduct.is_featured,
+      createdAt: tiendaProduct.created_at,
+      updatedAt: tiendaProduct.updated_at,
     };
   };
 
@@ -137,12 +165,13 @@ export default function ProductGrid({ products }: ProductGridProps) {
   const endIndex = startIndex + productsPerPage;
   const currentProducts = products.slice(startIndex, endIndex);
 
-  const formatPrice = (price: number) => {
+  const formatPrice = (price: string | number) => {
+    const numericPrice = typeof price === "string" ? parseFloat(price) : price;
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
       minimumFractionDigits: 0,
-    }).format(price);
+    }).format(numericPrice);
   };
 
   const goToPage = (page: number) => {
@@ -203,7 +232,14 @@ export default function ProductGrid({ products }: ProductGridProps) {
       </div>
 
       {/* Grid de productos */}
-      {currentProducts.length === 0 ? (
+      {loading ? (
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-yellow-500 mx-auto mb-4"></div>
+          <div className="text-gray-500 text-lg mb-2">
+            Cargando productos...
+          </div>
+        </div>
+      ) : currentProducts.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-gray-500 text-lg mb-2">
             No se encontraron productos
@@ -242,7 +278,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
                 >
                   <img
                     className="object-cover w-full h-full transition-all duration-300 hover:scale-105"
-                    src={product.image}
+                    src={product.image || "/images/products/placeholder.jpg"}
                     alt={product.name}
                   />
                 </div>

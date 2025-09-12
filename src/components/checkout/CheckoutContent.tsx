@@ -95,9 +95,14 @@ export default function CheckoutContent() {
                         step < currentStep
                           ? "bg-black text-white shadow-lg"
                           : step === currentStep
-                          ? "bg-yellow-600 text-white shadow-lg ring-4 ring-yellow-100"
+                          ? "text-white shadow-lg ring-4 ring-yellow-100"
                           : "bg-gray-200 text-gray-500"
                       }`}
+                      style={
+                        step === currentStep
+                          ? { backgroundColor: "rgb(180, 140, 43)" }
+                          : {}
+                      }
                     >
                       {step < currentStep ? (
                         <svg
@@ -166,12 +171,35 @@ export default function CheckoutContent() {
                         <div className="flex items-stretch flex-1">
                           <div className="flex-shrink-0">
                             <div className="relative">
-                              <img
-                                className="w-20 h-20 border border-gray-200 rounded-xl object-cover shadow-sm"
-                                src={item.product.image}
-                                alt={item.product.name}
-                              />
-                              <div className="absolute -top-2 -right-2 bg-yellow-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                              <div
+                                className={`flex items-center justify-center ${
+                                  item.product.category ===
+                                  "Regalo Personalizado"
+                                    ? "w-8 h-8 rounded-lg"
+                                    : "w-20 h-20"
+                                }`}
+                                style={
+                                  item.product.category ===
+                                  "Regalo Personalizado"
+                                    ? { backgroundColor: "#B58E31" }
+                                    : {}
+                                }
+                              >
+                                <img
+                                  className={`border border-gray-200 rounded-xl object-cover shadow-sm ${
+                                    item.product.category ===
+                                    "Regalo Personalizado"
+                                      ? "w-8 h-8"
+                                      : "w-20 h-20"
+                                  }`}
+                                  src={item.product.image}
+                                  alt={item.product.name}
+                                />
+                              </div>
+                              <div
+                                className="absolute -top-2 -right-2 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center"
+                                style={{ backgroundColor: "rgb(180, 140, 43)" }}
+                              >
                                 {item.quantity}
                               </div>
                             </div>
@@ -229,7 +257,8 @@ export default function CheckoutContent() {
                       />
                       <button
                         type="submit"
-                        className="px-4 py-2 text-sm font-medium text-white bg-yellow-600 rounded-lg hover:bg-yellow-700 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors duration-200"
+                        className="px-4 py-2 text-sm font-medium text-white rounded-lg focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors duration-200"
+                        style={{ backgroundColor: "rgb(180, 140, 43)" }}
                       >
                         Aplicar
                       </button>
@@ -277,9 +306,14 @@ export default function CheckoutContent() {
                           <div
                             className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                               currentStep >= 1
-                                ? "bg-yellow-600 text-white"
+                                ? "text-white"
                                 : "bg-gray-200 text-gray-500"
                             }`}
+                            style={
+                              currentStep >= 1
+                                ? { backgroundColor: "rgb(180, 140, 43)" }
+                                : {}
+                            }
                           >
                             1
                           </div>
@@ -338,7 +372,10 @@ export default function CheckoutContent() {
                               <div className="pt-4">
                                 <button
                                   type="submit"
-                                  className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white bg-yellow-600 rounded-lg hover:bg-yellow-700 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl"
+                                  className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white rounded-lg focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl"
+                                  style={{
+                                    backgroundColor: "rgb(180, 140, 43)",
+                                  }}
                                 >
                                   Continuar al Siguiente Paso
                                   <ChevronRight className="w-5 h-5 ml-2" />
@@ -355,9 +392,14 @@ export default function CheckoutContent() {
                           <div
                             className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                               currentStep >= 2
-                                ? "bg-yellow-600 text-white"
+                                ? "text-white"
                                 : "bg-gray-200 text-gray-500"
                             }`}
+                            style={
+                              currentStep >= 2
+                                ? { backgroundColor: "rgb(180, 140, 43)" }
+                                : {}
+                            }
                           >
                             2
                           </div>
@@ -465,7 +507,10 @@ export default function CheckoutContent() {
 
                                 <button
                                   type="submit"
-                                  className="inline-flex items-center px-6 py-3 text-sm font-bold text-white bg-yellow-600 rounded-lg hover:bg-yellow-700 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl"
+                                  className="inline-flex items-center px-6 py-3 text-sm font-bold text-white rounded-lg focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl"
+                                  style={{
+                                    backgroundColor: "rgb(180, 140, 43)",
+                                  }}
                                 >
                                   Continuar al Siguiente Paso
                                   <ChevronRight className="w-5 h-5 ml-2" />
@@ -482,9 +527,14 @@ export default function CheckoutContent() {
                           <div
                             className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                               currentStep >= 3
-                                ? "bg-yellow-600 text-white"
+                                ? "text-white"
                                 : "bg-gray-200 text-gray-500"
                             }`}
+                            style={
+                              currentStep >= 3
+                                ? { backgroundColor: "rgb(180, 140, 43)" }
+                                : {}
+                            }
                           >
                             3
                           </div>
@@ -579,7 +629,10 @@ export default function CheckoutContent() {
 
                                 <button
                                   type="submit"
-                                  className="inline-flex items-center px-6 py-3 text-sm font-bold text-white transition-all duration-200 bg-gray-900 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 hover:bg-gray-700"
+                                  className="inline-flex items-center px-6 py-3 text-sm font-bold text-white transition-all duration-200 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                                  style={{
+                                    backgroundColor: "rgb(180, 140, 43)",
+                                  }}
                                 >
                                   Continuar al Siguiente Paso
                                   <ChevronRight className="w-4 h-4 ml-2" />
@@ -596,9 +649,14 @@ export default function CheckoutContent() {
                           <div
                             className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                               currentStep >= 4
-                                ? "bg-yellow-600 text-white"
+                                ? "text-white"
                                 : "bg-gray-200 text-gray-500"
                             }`}
+                            style={
+                              currentStep >= 4
+                                ? { backgroundColor: "rgb(180, 140, 43)" }
+                                : {}
+                            }
                           >
                             4
                           </div>
@@ -734,7 +792,10 @@ export default function CheckoutContent() {
 
                                 <button
                                   type="submit"
-                                  className="inline-flex items-center px-6 py-3 text-sm font-bold text-white transition-all duration-200 bg-gray-900 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 hover:bg-gray-700"
+                                  className="inline-flex items-center px-6 py-3 text-sm font-bold text-white transition-all duration-200 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                                  style={{
+                                    backgroundColor: "rgb(180, 140, 43)",
+                                  }}
                                 >
                                   Procesar Pago
                                 </button>

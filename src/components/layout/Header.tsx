@@ -3,47 +3,145 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Search, Menu, X, ShoppingCart, User } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo, useCallback, memo } from "react";
 import { usePathname } from "next/navigation";
 import CartDrawer from "../../features/cart/components/CartDrawer";
 import { useCart } from "@/hooks/useCart";
 import LoginModal from "../auth/LoginModal";
 import { useAuth } from "@/hooks/useAuth";
 
+// Componente memoizado para los links de navegación
+const NavLink = memo(
+  ({
+    href,
+    title,
+    children,
+    isActive,
+    baseStyle,
+    activeStyle,
+    onClick,
+  }: {
+    href: string;
+    title: string;
+    children: React.ReactNode;
+    isActive: boolean;
+    baseStyle: React.CSSProperties;
+    activeStyle: React.CSSProperties;
+    onClick?: () => void;
+  }) => (
+    <Link
+      href={href}
+      title={title}
+      className={`transition-all duration-200 ${
+        isActive ? "" : "text-gray-900 hover:text-gray-600"
+      }`}
+      style={isActive ? activeStyle : baseStyle}
+      onClick={onClick}
+      prefetch={true}
+    >
+      {children}
+    </Link>
+  )
+);
+
+NavLink.displayName = "NavLink";
+
+// Componente memoizado para los links de navegación móvil
+const MobileNavLink = memo(
+  ({
+    href,
+    title,
+    children,
+    isActive,
+    baseStyle,
+    activeStyle,
+    onClick,
+  }: {
+    href: string;
+    title: string;
+    children: React.ReactNode;
+    isActive: boolean;
+    baseStyle: React.CSSProperties;
+    activeStyle: React.CSSProperties;
+    onClick?: () => void;
+  }) => (
+    <Link
+      href={href}
+      title={title}
+      className={`text-base font-medium transition-all duration-200 py-2 ${
+        isActive ? "" : "text-gray-900 hover:text-gray-600"
+      }`}
+      style={isActive ? activeStyle : baseStyle}
+      onClick={onClick}
+      prefetch={true}
+    >
+      {children}
+    </Link>
+  )
+);
+
+MobileNavLink.displayName = "MobileNavLink";
+
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-  const {
-    items,
-    isOpen,
-    openCart,
-    closeCart,
-    updateQuantity,
-    removeFromCart,
-    checkout,
-    totalItems,
-  } = useCart();
+  // Solo obtener lo que necesitamos del carrito para evitar re-renders innecesarios
+  const { isOpen, openCart, closeCart, totalItems } = useCart();
+  const { isLoginModalOpen, openLoginModal, closeLoginModal } = useAuth();
 
-  const {
-    user,
-    isAuthenticated,
-    isLoginModalOpen,
-    openLoginModal,
-    closeLoginModal,
-    login,
-    register,
-    guestCheckout,
-    logout,
-  } = useAuth();
+  const toggleMenu = useCallback(
+    () => setIsMenuOpen(!isMenuOpen),
+    [isMenuOpen]
+  );
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const isActive = useCallback(
+    (path: string) => {
+      if (path === "/") {
+        return pathname === "/";
+      }
+      return pathname.startsWith(path);
+    },
+    [pathname]
+  );
 
-  const isActive = (path: string) => {
-    if (path === "/") {
-      return pathname === "/";
-    }
-    return pathname.startsWith(path);
-  };
+  // Memoizar estilos base para evitar recálculos
+  const baseLinkStyle = useMemo(
+    () => ({
+      fontFamily: "var(--font-oswald)",
+      fontWeight: 700,
+      fontSize: "14px",
+      lineHeight: "100%",
+      letterSpacing: "0.2px",
+    }),
+    []
+  );
+
+  const activeLinkStyle = useMemo(
+    () => ({
+      ...baseLinkStyle,
+      color: "#B58E31",
+    }),
+    [baseLinkStyle]
+  );
+
+  const mobileLinkStyle = useMemo(
+    () => ({
+      fontFamily: "var(--font-oswald)",
+      fontWeight: 700,
+      fontSize: "16px",
+    }),
+    []
+  );
+
+  const mobileActiveLinkStyle = useMemo(
+    () => ({
+      ...mobileLinkStyle,
+      color: "#B58E31",
+    }),
+    [mobileLinkStyle]
+  );
+
+  const closeMenu = useCallback(() => setIsMenuOpen(false), []);
 
   return (
     <header className="py-4 bg-white shadow-sm border-b sm:py-6">
@@ -108,113 +206,65 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden ml-20 mr-auto space-x-[30px] lg:ml-32 md:flex md:items-center md:justify-center">
-            <Link
+            <NavLink
               href="/"
               title="Inicio"
-              className={`transition-all duration-200 ${
-                isActive("/") ? "" : "text-gray-900 hover:text-gray-600"
-              }`}
-              style={{
-                fontFamily: "var(--font-oswald)",
-                fontWeight: 700,
-                fontSize: "14px",
-                lineHeight: "100%",
-                letterSpacing: "0.2px",
-                color: isActive("/") ? "#B58E31" : undefined,
-              }}
+              isActive={isActive("/")}
+              baseStyle={baseLinkStyle}
+              activeStyle={activeLinkStyle}
             >
               Inicio
-            </Link>
+            </NavLink>
 
-            <Link
+            <NavLink
               href="/tienda"
               title="Tienda"
-              className={`transition-all duration-200 ${
-                isActive("/tienda") ? "" : "text-gray-900 hover:text-gray-600"
-              }`}
-              style={{
-                fontFamily: "var(--font-oswald)",
-                fontWeight: 700,
-                fontSize: "14px",
-                lineHeight: "100%",
-                letterSpacing: "0.2px",
-                color: isActive("/tienda") ? "#B58E31" : undefined,
-              }}
+              isActive={isActive("/tienda")}
+              baseStyle={baseLinkStyle}
+              activeStyle={activeLinkStyle}
             >
               Tienda
-            </Link>
+            </NavLink>
 
-            <Link
+            <NavLink
               href="/gifts"
               title="Armá tu regalo"
-              className={`transition-all duration-200 ${
-                isActive("/gifts") ? "" : "text-gray-900 hover:text-gray-600"
-              }`}
-              style={{
-                fontFamily: "var(--font-oswald)",
-                fontWeight: 700,
-                fontSize: "14px",
-                lineHeight: "100%",
-                letterSpacing: "0.2px",
-                color: isActive("/gifts") ? "#B58E31" : undefined,
-              }}
+              isActive={isActive("/gifts")}
+              baseStyle={baseLinkStyle}
+              activeStyle={activeLinkStyle}
             >
               Armá tu regalo
-            </Link>
+            </NavLink>
 
-            <Link
+            <NavLink
               href="/kits"
               title="Kit"
-              className={`transition-all duration-200 ${
-                isActive("/kits") ? "" : "text-gray-900 hover:text-gray-600"
-              }`}
-              style={{
-                fontFamily: "var(--font-oswald)",
-                fontWeight: 700,
-                fontSize: "14px",
-                lineHeight: "100%",
-                letterSpacing: "0.2px",
-                color: isActive("/kits") ? "#B58E31" : undefined,
-              }}
+              isActive={isActive("/kits")}
+              baseStyle={baseLinkStyle}
+              activeStyle={activeLinkStyle}
             >
               Kit
-            </Link>
+            </NavLink>
 
-            <Link
+            <NavLink
               href="/about"
               title="Market Club"
-              className={`transition-all duration-200 ${
-                isActive("/about") ? "" : "text-gray-900 hover:text-gray-600"
-              }`}
-              style={{
-                fontFamily: "var(--font-oswald)",
-                fontWeight: 700,
-                fontSize: "14px",
-                lineHeight: "100%",
-                letterSpacing: "0.2px",
-                color: isActive("/about") ? "#B58E31" : undefined,
-              }}
+              isActive={isActive("/about")}
+              baseStyle={baseLinkStyle}
+              activeStyle={activeLinkStyle}
             >
               Market Club
-            </Link>
+            </NavLink>
 
-            <Link
+            <NavLink
               href="/contact"
               title="Contacto"
-              className={`transition-all duration-200 ${
-                isActive("/contact") ? "" : "text-gray-900 hover:text-gray-600"
-              }`}
-              style={{
-                fontFamily: "var(--font-oswald)",
-                fontWeight: 700,
-                fontSize: "14px",
-                lineHeight: "100%",
-                letterSpacing: "0.2px",
-                color: isActive("/contact") ? "#B58E31" : undefined,
-              }}
+              isActive={isActive("/contact")}
+              baseStyle={baseLinkStyle}
+              activeStyle={activeLinkStyle}
             >
               Contacto
-            </Link>
+            </NavLink>
           </nav>
 
           {/* Desktop Actions */}
@@ -252,115 +302,71 @@ export default function Header() {
           <div className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
             <nav className="px-4 py-4">
               <div className="flex flex-col space-y-4">
-                <Link
+                <MobileNavLink
                   href="/"
                   title="Inicio"
-                  className={`text-base font-medium transition-all duration-200 py-2 ${
-                    isActive("/") ? "" : "text-gray-900 hover:text-gray-600"
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                  style={{
-                    fontFamily: "var(--font-oswald)",
-                    fontWeight: 700,
-                    fontSize: "16px",
-                    color: isActive("/") ? "#B58E31" : undefined,
-                  }}
+                  isActive={isActive("/")}
+                  baseStyle={mobileLinkStyle}
+                  activeStyle={mobileActiveLinkStyle}
+                  onClick={closeMenu}
                 >
                   Inicio
-                </Link>
+                </MobileNavLink>
 
-                <Link
+                <MobileNavLink
                   href="/tienda"
                   title="Tienda"
-                  className={`text-base font-medium transition-all duration-200 py-2 ${
-                    isActive("/tienda")
-                      ? ""
-                      : "text-gray-900 hover:text-gray-600"
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                  style={{
-                    fontFamily: "var(--font-oswald)",
-                    fontWeight: 700,
-                    fontSize: "16px",
-                    color: isActive("/tienda") ? "#B58E31" : undefined,
-                  }}
+                  isActive={isActive("/tienda")}
+                  baseStyle={mobileLinkStyle}
+                  activeStyle={mobileActiveLinkStyle}
+                  onClick={closeMenu}
                 >
                   Tienda
-                </Link>
+                </MobileNavLink>
 
-                <Link
+                <MobileNavLink
                   href="/gifts"
                   title="Armá tu regalo"
-                  className={`text-base font-medium transition-all duration-200 py-2 ${
-                    isActive("/gifts")
-                      ? ""
-                      : "text-gray-900 hover:text-gray-600"
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                  style={{
-                    fontFamily: "var(--font-oswald)",
-                    fontWeight: 700,
-                    fontSize: "16px",
-                    color: isActive("/gifts") ? "#B58E31" : undefined,
-                  }}
+                  isActive={isActive("/gifts")}
+                  baseStyle={mobileLinkStyle}
+                  activeStyle={mobileActiveLinkStyle}
+                  onClick={closeMenu}
                 >
                   Armá tu regalo
-                </Link>
+                </MobileNavLink>
 
-                <Link
+                <MobileNavLink
                   href="/kits"
                   title="Kits"
-                  className={`text-base font-medium transition-all duration-200 py-2 ${
-                    isActive("/kits") ? "" : "text-gray-900 hover:text-gray-600"
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                  style={{
-                    fontFamily: "var(--font-oswald)",
-                    fontWeight: 700,
-                    fontSize: "16px",
-                    color: isActive("/kits") ? "#B58E31" : undefined,
-                  }}
+                  isActive={isActive("/kits")}
+                  baseStyle={mobileLinkStyle}
+                  activeStyle={mobileActiveLinkStyle}
+                  onClick={closeMenu}
                 >
                   Kits
-                </Link>
+                </MobileNavLink>
 
-                <Link
+                <MobileNavLink
                   href="/about"
                   title="Market Club"
-                  className={`text-base font-medium transition-all duration-200 py-2 ${
-                    isActive("/about")
-                      ? ""
-                      : "text-gray-900 hover:text-gray-600"
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                  style={{
-                    fontFamily: "var(--font-oswald)",
-                    fontWeight: 700,
-                    fontSize: "16px",
-                    color: isActive("/about") ? "#B58E31" : undefined,
-                  }}
+                  isActive={isActive("/about")}
+                  baseStyle={mobileLinkStyle}
+                  activeStyle={mobileActiveLinkStyle}
+                  onClick={closeMenu}
                 >
                   Market Club
-                </Link>
+                </MobileNavLink>
 
-                <Link
+                <MobileNavLink
                   href="/contact"
                   title="Contacto"
-                  className={`text-base font-medium transition-all duration-200 py-2 ${
-                    isActive("/contact")
-                      ? ""
-                      : "text-gray-900 hover:text-gray-600"
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                  style={{
-                    fontFamily: "var(--font-oswald)",
-                    fontWeight: 700,
-                    fontSize: "16px",
-                    color: isActive("/contact") ? "#B58E31" : undefined,
-                  }}
+                  isActive={isActive("/contact")}
+                  baseStyle={mobileLinkStyle}
+                  activeStyle={mobileActiveLinkStyle}
+                  onClick={closeMenu}
                 >
                   Contacto
-                </Link>
+                </MobileNavLink>
               </div>
             </nav>
           </div>
@@ -368,23 +374,10 @@ export default function Header() {
       </div>
 
       {/* Cart Drawer */}
-      <CartDrawer
-        isOpen={isOpen}
-        onClose={closeCart}
-        items={items}
-        onUpdateQuantity={updateQuantity}
-        onRemoveItem={removeFromCart}
-        onCheckout={checkout}
-      />
+      <CartDrawer isOpen={isOpen} onClose={closeCart} />
 
       {/* Login Modal */}
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={closeLoginModal}
-        onLogin={login}
-        onRegister={register}
-        onGuestCheckout={guestCheckout}
-      />
+      <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
     </header>
   );
 }

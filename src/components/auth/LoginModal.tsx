@@ -2,13 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { X, Mail, Lock, User, Phone, MapPin, Eye, EyeOff } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onLogin: (email: string, password: string) => void;
-  onRegister: (data: RegisterData) => void;
-  onGuestCheckout: (data: GuestData) => void;
 }
 
 interface RegisterData {
@@ -27,13 +25,8 @@ interface GuestData {
 
 type ModalMode = "options" | "login" | "register" | "guest";
 
-export default function LoginModal({
-  isOpen,
-  onClose,
-  onLogin,
-  onRegister,
-  onGuestCheckout,
-}: LoginModalProps) {
+export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
+  const { login, register, guestCheckout } = useAuth();
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const [mode, setMode] = useState<ModalMode>("options");
