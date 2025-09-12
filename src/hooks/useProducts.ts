@@ -31,6 +31,15 @@ export interface Product {
   };
 }
 
+// Tipo para los productos transformados que se usan en la tienda
+export interface TiendaProduct extends Product {
+  // Campos agregados por la transformación
+  brand: string;
+  rating: number;
+  reviewCount: number;
+  inStock: boolean;
+}
+
 // Tipo para la respuesta de la API de Laravel (con paginación)
 interface ProductsResponse {
   current_page: number;
@@ -55,7 +64,7 @@ interface ProductsResponse {
 
 // Hook para manejar productos desde la API
 export const useProducts = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<TiendaProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -81,7 +90,7 @@ export const useProducts = () => {
       
       if (data.data && Array.isArray(data.data)) {
         // Transformar los productos para que coincidan con la interfaz esperada
-        const transformedProducts = data.data.map(product => ({
+        const transformedProducts: TiendaProduct[] = data.data.map(product => ({
           ...product,
           // Agregar campos que faltan con valores por defecto
           brand: product.category.name, // Usar el nombre de la categoría como marca
@@ -89,7 +98,6 @@ export const useProducts = () => {
           reviewCount: Math.floor(Math.random() * 200) + 50, // Valor aleatorio
           inStock: product.stock_quantity > 0,
           image: product.image || '/images/products/placeholder.jpg', // Imagen por defecto
-          category: product.category.name,
         }));
         setProducts(transformedProducts);
       } else {
@@ -133,7 +141,7 @@ export const useProducts = () => {
       
       if (data.data && Array.isArray(data.data)) {
         // Transformar los productos para que coincidan con la interfaz esperada
-        const transformedProducts = data.data.map(product => ({
+        const transformedProducts: TiendaProduct[] = data.data.map(product => ({
           ...product,
           // Agregar campos que faltan con valores por defecto
           brand: product.category.name, // Usar el nombre de la categoría como marca
@@ -141,7 +149,6 @@ export const useProducts = () => {
           reviewCount: Math.floor(Math.random() * 200) + 50, // Valor aleatorio
           inStock: product.stock_quantity > 0,
           image: product.image || '/images/products/placeholder.jpg', // Imagen por defecto
-          category: product.category.name,
         }));
         setProducts(transformedProducts);
       } else {

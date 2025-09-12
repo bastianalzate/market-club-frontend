@@ -15,41 +15,8 @@ import {
 import { useCart } from "@/hooks/useCart";
 import { useNotification } from "@/hooks/useNotification";
 import { Product } from "@/features/products/types/product";
+import { TiendaProduct } from "@/hooks/useProducts";
 import NotificationToast from "@/components/shared/NotificationToast";
-
-interface TiendaProduct {
-  id: number;
-  name: string;
-  slug: string;
-  description: string;
-  price: string;
-  sale_price: string | null;
-  sku: string;
-  stock_quantity: number;
-  image: string | null;
-  gallery: string | null;
-  is_active: boolean;
-  is_featured: boolean;
-  category_id: number;
-  attributes: any;
-  created_at: string;
-  updated_at: string;
-  category: {
-    id: number;
-    name: string;
-    slug: string;
-    description: string;
-    image: string | null;
-    is_active: boolean;
-    created_at: string;
-    updated_at: string;
-  };
-  // Campos agregados por la transformación
-  brand: string;
-  rating: number;
-  reviewCount: number;
-  inStock: boolean;
-}
 
 interface ProductGridProps {
   products: TiendaProduct[];
