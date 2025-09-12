@@ -1,28 +1,21 @@
 "use client";
 
+import { ImageOff } from "lucide-react";
+
 export default function ProductSkeleton() {
   return (
     <div className="animate-pulse">
       {/* Imagen skeleton */}
-      <div className="w-full h-48 bg-gray-200 rounded-t-lg mb-4 relative overflow-hidden">
-        {/* Efecto de shimmer */}
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer"></div>
-
-        {/* Icono de cerveza centrado */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
-            <svg
-              className="w-8 h-8 text-gray-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                clipRule="evenodd"
-              />
-            </svg>
+      <div
+        className="w-full bg-gray-100 rounded-t-lg mb-4 relative overflow-hidden flex items-center justify-center"
+        style={{ height: "354px" }}
+      >
+        {/* Icono de sin imagen */}
+        <div className="flex flex-col items-center justify-center text-gray-400">
+          <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mb-3">
+            <ImageOff className="w-10 h-10 text-gray-500" />
           </div>
+          <p className="text-sm font-medium text-gray-500">Sin imagen</p>
         </div>
       </div>
 
@@ -45,27 +38,4 @@ export default function ProductSkeleton() {
       </div>
     </div>
   );
-}
-
-// CSS para la animación shimmer
-const shimmerStyles = `
-  @keyframes shimmer {
-    0% {
-      transform: translateX(-100%);
-    }
-    100% {
-      transform: translateX(100%);
-    }
-  }
-  
-  .animate-shimmer {
-    animation: shimmer 2s infinite;
-  }
-`;
-
-// Inyectar estilos
-if (typeof document !== "undefined") {
-  const styleSheet = document.createElement("style");
-  styleSheet.textContent = shimmerStyles;
-  document.head.appendChild(styleSheet);
 }

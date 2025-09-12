@@ -18,6 +18,8 @@ import { Product } from "@/features/products/types/product";
 import { TransformedProduct } from "@/hooks/useProducts";
 import NotificationToast from "@/components/shared/NotificationToast";
 import ProductSkeleton from "@/components/shared/ProductSkeleton";
+import ProductCardSkeleton from "@/components/shared/ProductCardSkeleton";
+import LazyImage from "@/components/shared/LazyImage";
 
 interface TiendaProduct {
   id: number;
@@ -66,15 +68,28 @@ interface ProductGridProps {
   products: TransformedProduct[];
   loading?: boolean;
   totalProducts?: number;
+  pagination?: {
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    perPage: number;
+  };
+  onPageChange?: (page: number) => void;
+  onNextPage?: () => void;
+  onPrevPage?: () => void;
 }
 
 export default function ProductGrid({
   products,
   loading = false,
   totalProducts = 0,
+  pagination,
+  onPageChange,
+  onNextPage,
+  onPrevPage,
 }: ProductGridProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(pagination?.currentPage || 1);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
   const [justAdded, setJustAdded] = useState<number | null>(null);
@@ -171,14 +186,19 @@ export default function ProductGrid({
     }, 500);
   };
 
-  // Configuración de paginación
-  const productsPerPage = 9;
-  const totalPages = Math.ceil(products.length / productsPerPage);
+  // Configuración de paginación - usar la paginación del servidor si está disponible
+  const totalPages = pagination?.lastPage || Math.ceil(products.length / 9);
+  const currentProducts = pagination
+    ? products
+    : products.slice((currentPage - 1) * 9, currentPage * 9);
 
-  // Obtener productos de la página actual
-  const startIndex = (currentPage - 1) * productsPerPage;
-  const endIndex = startIndex + productsPerPage;
-  const currentProducts = products.slice(startIndex, endIndex);
+  // Para mostrar información de paginación
+  const startIndex = pagination
+    ? (pagination.currentPage - 1) * pagination.perPage + 1
+    : (currentPage - 1) * 9 + 1;
+  const endIndex = pagination
+    ? Math.min(pagination.currentPage * pagination.perPage, pagination.total)
+    : Math.min(currentPage * 9, products.length);
 
   const formatPrice = (price: string | number) => {
     const numericPrice = typeof price === "string" ? parseFloat(price) : price;
@@ -190,19 +210,34 @@ export default function ProductGrid({
   };
 
   const goToPage = (page: number) => {
-    setCurrentPage(page);
-    // Scroll hacia arriba para ver los productos
+    // Scroll hacia arriba primero para mejor UX
     window.scrollTo({ top: 0, behavior: "smooth" });
+
+    if (onPageChange) {
+      onPageChange(page);
+    } else {
+      setCurrentPage(page);
+    }
   };
 
   const goToNextPage = () => {
-    if (currentPage < totalPages) {
+    // Scroll hacia arriba primero
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    if (onNextPage) {
+      onNextPage();
+    } else if (currentPage < totalPages) {
       goToPage(currentPage + 1);
     }
   };
 
   const goToPrevPage = () => {
-    if (currentPage > 1) {
+    // Scroll hacia arriba primero
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    if (onPrevPage) {
+      onPrevPage();
+    } else if (currentPage > 1) {
       goToPage(currentPage - 1);
     }
   };
@@ -241,18 +276,24 @@ export default function ProductGrid({
         </div>
 
         <div className="text-sm text-gray-500">
-          Mostrando {startIndex + 1}-{Math.min(endIndex, products.length)} de{" "}
-          {totalProducts > 0 ? totalProducts : products.length} productos
+          Mostrando {startIndex}-{endIndex} de{" "}
+          {pagination?.total || totalProducts || products.length} productos
         </div>
       </div>
 
       {/* Grid de productos */}
       {loading ? (
-        <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-          <div className="text-gray-500 text-lg mb-2">
-            Cargando productos...
-          </div>
+        <div
+          className={
+            viewMode === "grid"
+              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              : "space-y-4"
+          }
+        >
+          {/* Mostrar 9 skeletons para simular la carga */}
+          {Array.from({ length: 9 }, (_, index) => (
+            <ProductCardSkeleton key={index} />
+          ))}
         </div>
       ) : currentProducts.length === 0 ? (
         <div className="text-center py-12">
@@ -285,40 +326,14 @@ export default function ProductGrid({
                 }`}
               >
                 <div
-                  className={`${
-                    viewMode === "list"
-                      ? "aspect-w-1 aspect-h-1"
-                      : "aspect-w-1 aspect-h-1"
-                  } overflow-hidden pt-4`}
+                  className="overflow-hidden pt-4"
+                  style={{ height: "354px" }}
                 >
-                  {product.image ? (
-                    <img
-                      className="object-cover w-full h-full transition-all duration-300 hover:scale-105"
-                      src={product.image}
-                      alt={product.name}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                      <div className="text-center">
-                        <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center mx-auto mb-2">
-                          <svg
-                            className="w-8 h-8 text-gray-500"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </div>
-                        <p className="text-xs text-gray-500 font-medium">
-                          Sin imagen
-                        </p>
-                      </div>
-                    </div>
-                  )}
+                  <LazyImage
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full"
+                  />
                 </div>
                 {/* Botón de corazón (favorito) */}
                 <button
