@@ -1,6 +1,6 @@
 "use client";
 
-import { Filter, Search, Globe, Tag, DollarSign } from "lucide-react";
+import { Filter, Search, Globe, Tag, DollarSign, X } from "lucide-react";
 
 interface ProductFiltersProps {
   searchTerm: string;
@@ -11,6 +11,7 @@ interface ProductFiltersProps {
   onCategoryChange: (category: string) => void;
   selectedPriceRange: string;
   onPriceRangeChange: (priceRange: string) => void;
+  onClearFilters: () => void;
 }
 
 export default function ProductFilters({
@@ -22,36 +23,30 @@ export default function ProductFilters({
   onCategoryChange,
   selectedPriceRange,
   onPriceRangeChange,
+  onClearFilters,
 }: ProductFiltersProps) {
   const categories = [
     { value: "", label: "Todas" },
-    { value: "lager", label: "Lager" },
-    { value: "pilsner", label: "Pilsner" },
-    { value: "ale", label: "Ale" },
-    { value: "ipa", label: "IPA" },
-    { value: "stout", label: "Stout" },
-    { value: "porter", label: "Porter" },
-    { value: "wheat-beer", label: "Wheat Beer" },
-    { value: "pale-ale", label: "Pale Ale" },
-    { value: "amber", label: "Amber" },
-    { value: "brown-ale", label: "Brown Ale" },
-    { value: "blonde", label: "Blonde" },
-    { value: "dark-beer", label: "Dark Beer" },
-    { value: "light-beer", label: "Light Beer" },
-    { value: "craft-beer", label: "Craft Beer" },
-    { value: "imported", label: "Imported" },
-    { value: "sin-alcohol", label: "Sin Alcohol" },
+    { value: "ale", label: "Cervezas Ale" },
+    { value: "blonde", label: "Cervezas Rubias" },
+    { value: "dark", label: "Cervezas Oscuras" },
+    { value: "ipa", label: "India Pale Ale" },
+    { value: "lager", label: "Cervezas Lager" },
+    { value: "pale_ale", label: "Pale Ale" },
+    { value: "pilsner", label: "Cervezas Pilsner" },
+    { value: "porter", label: "Cervezas Porter" },
+    { value: "wheat", label: "Cervezas de Trigo" },
   ];
 
   const priceRanges = [
     { value: "", label: "Todos los precios" },
-    { value: "0-15000", label: "Menos de $15.000" },
-    { value: "15000-25000", label: "$15.000 - $25.000" },
-    { value: "25000-35000", label: "$25.000 - $35.000" },
-    { value: "35000-50000", label: "$35.000 - $50.000" },
-    { value: "50000-75000", label: "$50.000 - $75.000" },
-    { value: "75000-100000", label: "$75.000 - $100.000" },
-    { value: "100000+", label: "Más de $100.000" },
+    { value: "less_than_15000", label: "Menos de $15.000" },
+    { value: "15000_25000", label: "$15.000 - $25.000" },
+    { value: "25000_35000", label: "$25.000 - $35.000" },
+    { value: "35000_50000", label: "$35.000 - $50.000" },
+    { value: "50000_75000", label: "$50.000 - $75.000" },
+    { value: "75000_100000", label: "$75.000 - $100.000" },
+    { value: "more_than_100000", label: "Más de $100.000" },
   ];
 
   const countries = [
@@ -160,6 +155,17 @@ export default function ProductFilters({
               </option>
             ))}
           </select>
+        </div>
+
+        {/* Botón Limpiar Filtros */}
+        <div className="mt-6 pt-4 border-t border-gray-200">
+          <button
+            onClick={onClearFilters}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 hover:text-gray-900 transition-colors"
+          >
+            <X className="w-4 h-4" />
+            Limpiar filtros
+          </button>
         </div>
       </div>
     </div>

@@ -108,7 +108,7 @@ export const useProducts = () => {
         url += `&country=${encodeURIComponent(country)}`;
       }
       if (category && category.trim()) {
-        url += `&category=${encodeURIComponent(category)}`;
+        url += `&beer_style=${encodeURIComponent(category)}`;
       }
       if (priceRange && priceRange.trim()) {
         url += `&price_range=${encodeURIComponent(priceRange)}`;
@@ -192,6 +192,14 @@ export const useProducts = () => {
     fetchProducts(1, selectedCountry, selectedCategory, priceRange);
   };
 
+  // Función para limpiar todos los filtros
+  const clearAllFilters = async () => {
+    setSelectedCountry('');
+    setSelectedCategory('');
+    setSelectedPriceRange('');
+    fetchProducts(1, '', '', '');
+  };
+
   // Función para buscar productos
   const searchProducts = async (searchTerm: string) => {
     if (!searchTerm.trim()) {
@@ -259,6 +267,7 @@ export const useProducts = () => {
     filterByCountry,
     filterByCategory,
     filterByPriceRange,
+    clearAllFilters,
     goToPage,
     nextPage,
     prevPage,
