@@ -18,7 +18,9 @@ export default function TiendaContent() {
     loading,
     error,
     pagination,
+    selectedCountry,
     searchProducts,
+    filterByCountry,
     goToPage,
     nextPage,
     prevPage,
@@ -31,6 +33,14 @@ export default function TiendaContent() {
       searchProducts(term);
     },
     [searchProducts]
+  );
+
+  // Función para manejar cambios en el filtro de país
+  const handleCountryChange = useCallback(
+    (country: string) => {
+      filterByCountry(country);
+    },
+    [filterByCountry]
   );
 
   // Mostrar loading o error si es necesario
@@ -84,6 +94,8 @@ export default function TiendaContent() {
             <ProductFilters
               searchTerm={searchTerm}
               onSearchChange={handleSearchChange}
+              selectedCountry={selectedCountry}
+              onCountryChange={handleCountryChange}
             />
 
             {/* Contenido principal */}

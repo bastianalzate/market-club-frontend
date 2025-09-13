@@ -75,6 +75,7 @@ export const useProducts = () => {
   const [products, setProducts] = useState<TransformedProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<string>('');
   const [pagination, setPagination] = useState({
     currentPage: 1,
     lastPage: 1,
@@ -94,12 +95,18 @@ export const useProducts = () => {
   });
 
   // Función para obtener productos de una página específica
-  const fetchProducts = async (page: number = 1) => {
+  const fetchProducts = async (page: number = 1, country?: string) => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${constants.api_url}/products?page=${page}`, {
+      // Construir URL con filtros
+      let url = `${constants.api_url}/products?page=${page}`;
+      if (country && country.trim()) {
+        url += `&country=${encodeURIComponent(country)}`;
+      }
+
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -141,7 +148,7 @@ export const useProducts = () => {
   // Función para cambiar de página
   const goToPage = (page: number) => {
     if (page >= 1 && page <= pagination.lastPage) {
-      fetchProducts(page);
+      fetchProducts(page, selectedCountry);
     }
   };
 
@@ -159,10 +166,16 @@ export const useProducts = () => {
     }
   };
 
+  // Función para filtrar por país
+  const filterByCountry = async (country: string) => {
+    setSelectedCountry(country);
+    fetchProducts(1, country);
+  };
+
   // Función para buscar productos
   const searchProducts = async (searchTerm: string) => {
     if (!searchTerm.trim()) {
-      fetchProducts(1);
+      fetchProducts(1, selectedCountry);
       return;
     }
 
@@ -210,7 +223,7 @@ export const useProducts = () => {
 
   // Cargar productos al montar el componente
   useEffect(() => {
-    fetchProducts(1);
+    fetchProducts(1, selectedCountry);
   }, []);
 
   return {
@@ -218,8 +231,10 @@ export const useProducts = () => {
     loading,
     error,
     pagination,
+    selectedCountry,
     fetchProducts,
     searchProducts,
+    filterByCountry,
     goToPage,
     nextPage,
     prevPage,

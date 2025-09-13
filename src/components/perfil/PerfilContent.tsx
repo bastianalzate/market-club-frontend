@@ -8,8 +8,9 @@ import PerfilNavigation from "./PerfilNavigation";
 import PerfilOverview from "./PerfilOverview";
 import PerfilOrders from "./PerfilOrders";
 import PerfilFavorites from "./PerfilFavorites";
+import PerfilSettings from "./PerfilSettings";
 
-type PerfilTab = "overview" | "orders" | "favorites";
+type PerfilTab = "overview" | "orders" | "favorites" | "settings";
 
 export default function PerfilContent() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -48,6 +49,8 @@ export default function PerfilContent() {
         return <PerfilOrders user={user} />;
       case "favorites":
         return <PerfilFavorites user={user} />;
+      case "settings":
+        return <PerfilSettings user={user} />;
       default:
         return <PerfilOverview user={user} />;
     }
