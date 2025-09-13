@@ -1,12 +1,16 @@
 "use client";
 
-import { Filter, Search, Globe } from "lucide-react";
+import { Filter, Search, Globe, Tag, DollarSign } from "lucide-react";
 
 interface ProductFiltersProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   selectedCountry: string;
   onCountryChange: (country: string) => void;
+  selectedCategory: string;
+  onCategoryChange: (category: string) => void;
+  selectedPriceRange: string;
+  onPriceRangeChange: (priceRange: string) => void;
 }
 
 export default function ProductFilters({
@@ -14,14 +18,40 @@ export default function ProductFilters({
   onSearchChange,
   selectedCountry,
   onCountryChange,
+  selectedCategory,
+  onCategoryChange,
+  selectedPriceRange,
+  onPriceRangeChange,
 }: ProductFiltersProps) {
   const categories = [
-    "Todas",
-    "Lager",
-    "IPA",
-    "Stout",
-    "Sin Alcohol",
-    "Artesanal",
+    { value: "", label: "Todas" },
+    { value: "lager", label: "Lager" },
+    { value: "pilsner", label: "Pilsner" },
+    { value: "ale", label: "Ale" },
+    { value: "ipa", label: "IPA" },
+    { value: "stout", label: "Stout" },
+    { value: "porter", label: "Porter" },
+    { value: "wheat-beer", label: "Wheat Beer" },
+    { value: "pale-ale", label: "Pale Ale" },
+    { value: "amber", label: "Amber" },
+    { value: "brown-ale", label: "Brown Ale" },
+    { value: "blonde", label: "Blonde" },
+    { value: "dark-beer", label: "Dark Beer" },
+    { value: "light-beer", label: "Light Beer" },
+    { value: "craft-beer", label: "Craft Beer" },
+    { value: "imported", label: "Imported" },
+    { value: "sin-alcohol", label: "Sin Alcohol" },
+  ];
+
+  const priceRanges = [
+    { value: "", label: "Todos los precios" },
+    { value: "0-15000", label: "Menos de $15.000" },
+    { value: "15000-25000", label: "$15.000 - $25.000" },
+    { value: "25000-35000", label: "$25.000 - $35.000" },
+    { value: "35000-50000", label: "$35.000 - $50.000" },
+    { value: "50000-75000", label: "$50.000 - $75.000" },
+    { value: "75000-100000", label: "$75.000 - $100.000" },
+    { value: "100000+", label: "Más de $100.000" },
   ];
 
   const countries = [
@@ -87,45 +117,49 @@ export default function ProductFilters({
         </div>
 
         {/* Categorías */}
-        <div className="space-y-3">
-          <h4 className="text-sm font-medium text-gray-700">Categorías</h4>
-          {categories.map((category) => (
-            <label key={category} className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
-              />
-              <span className="text-sm text-gray-600">{category}</span>
-            </label>
-          ))}
+        <div className="space-y-3 mt-6">
+          <h4 className="text-sm font-medium text-gray-700 flex items-center">
+            <Tag className="w-4 h-4 mr-2" />
+            Estilo de cerveza
+          </h4>
+          <select
+            value={selectedCategory}
+            onChange={(e) => onCategoryChange(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-sm text-gray-900 bg-white"
+          >
+            {categories.map((category) => (
+              <option
+                key={category.value}
+                value={category.value}
+                className="text-gray-900 bg-white"
+              >
+                {category.label}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {/* Precio */}
-        <div className="mt-6 space-y-3">
-          <h4 className="text-sm font-medium text-gray-700">Precio</h4>
-          <div className="space-y-2">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
-              />
-              <span className="text-sm text-gray-600">Menos de $20.000</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
-              />
-              <span className="text-sm text-gray-600">$20.000 - $30.000</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
-              />
-              <span className="text-sm text-gray-600">Más de $30.000</span>
-            </label>
-          </div>
+        {/* Rango de Precios */}
+        <div className="space-y-3 mt-6">
+          <h4 className="text-sm font-medium text-gray-700 flex items-center">
+            <DollarSign className="w-4 h-4 mr-2" />
+            Rango de precios
+          </h4>
+          <select
+            value={selectedPriceRange}
+            onChange={(e) => onPriceRangeChange(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-sm text-gray-900 bg-white"
+          >
+            {priceRanges.map((range) => (
+              <option
+                key={range.value}
+                value={range.value}
+                className="text-gray-900 bg-white"
+              >
+                {range.label}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
     </div>
