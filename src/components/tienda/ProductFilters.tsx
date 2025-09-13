@@ -1,15 +1,19 @@
 "use client";
 
-import { Filter, Search } from "lucide-react";
+import { Filter, Search, Globe } from "lucide-react";
 
 interface ProductFiltersProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
+  selectedCountry: string;
+  onCountryChange: (country: string) => void;
 }
 
 export default function ProductFilters({
   searchTerm,
   onSearchChange,
+  selectedCountry,
+  onCountryChange,
 }: ProductFiltersProps) {
   const categories = [
     "Todas",
@@ -18,6 +22,24 @@ export default function ProductFilters({
     "Stout",
     "Sin Alcohol",
     "Artesanal",
+  ];
+
+  const countries = [
+    { value: "", label: "Todos" },
+    { value: "inglaterra", label: "Inglaterra" },
+    { value: "colombia", label: "Colombia" },
+    { value: "alemania", label: "Alemania" },
+    { value: "italia", label: "Italia" },
+    { value: "escocia", label: "Escocia" },
+    { value: "belgica", label: "Bélgica" },
+    { value: "espana", label: "España" },
+    { value: "paises bajos", label: "Países Bajos" },
+    { value: "japon", label: "Japón" },
+    { value: "mexico", label: "México" },
+    { value: "peru", label: "Perú" },
+    { value: "republica checa", label: "República Checa" },
+    { value: "estados unidos", label: "Estados Unidos" },
+    { value: "tailandia", label: "Tailandia" },
   ];
 
   return (
@@ -40,6 +62,29 @@ export default function ProductFilters({
           <Filter className="w-4 h-4 mr-2" />
           Filtros
         </h3>
+
+        {/* País de origen */}
+        <div className="space-y-3">
+          <h4 className="text-sm font-medium text-gray-700 flex items-center">
+            <Globe className="w-4 h-4 mr-2" />
+            País de origen
+          </h4>
+          <select
+            value={selectedCountry}
+            onChange={(e) => onCountryChange(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-sm text-gray-900 bg-white"
+          >
+            {countries.map((country) => (
+              <option
+                key={country.value}
+                value={country.value}
+                className="text-gray-900 bg-white"
+              >
+                {country.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* Categorías */}
         <div className="space-y-3">

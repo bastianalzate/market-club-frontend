@@ -445,18 +445,15 @@ export default function ProductGrid({
       {totalPages > 1 && (
         <div className="mt-12 flex items-center justify-center">
           <div className="flex items-center space-x-2">
-            {/* Botón anterior */}
-            <button
-              onClick={goToPrevPage}
-              disabled={(pagination?.currentPage || currentPage) === 1}
-              className={`p-2 rounded-lg transition-colors ${
-                (pagination?.currentPage || currentPage) === 1
-                  ? "text-gray-300 cursor-not-allowed"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              }`}
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
+            {/* Botón anterior - solo mostrar si no estamos en la página inicial */}
+            {(pagination?.currentPage || currentPage) > 1 && (
+              <button
+                onClick={goToPrevPage}
+                className="p-2 rounded-lg transition-colors text-white hover:text-gray-300 hover:bg-gray-800"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+            )}
 
             {/* Números de página */}
             <div className="flex items-center space-x-1">
@@ -477,7 +474,7 @@ export default function ProductGrid({
                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                           page === activePage
                             ? "text-white"
-                            : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                            : "text-white hover:text-gray-300 hover:bg-gray-800"
                         }`}
                         style={
                           page === activePage
@@ -493,7 +490,7 @@ export default function ProductGrid({
                     page === activePage + 2
                   ) {
                     return (
-                      <span key={page} className="px-2 text-gray-400">
+                      <span key={page} className="px-2 text-white">
                         ...
                       </span>
                     );
@@ -510,7 +507,7 @@ export default function ProductGrid({
               className={`p-2 rounded-lg transition-colors ${
                 (pagination?.currentPage || currentPage) === totalPages
                   ? "text-gray-300 cursor-not-allowed"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  : "text-white hover:text-gray-300 hover:bg-gray-800"
               }`}
             >
               <ChevronRight className="w-5 h-5" />

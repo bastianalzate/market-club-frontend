@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Search,
   Filter,
@@ -16,7 +16,9 @@ import {
 import { useCart } from "@/hooks/useCart";
 import { Product } from "@/features/products/types/product";
 import { useNotification } from "@/hooks/useNotification";
+import { useProducts, TransformedProduct } from "@/hooks/useProducts";
 import NotificationToast from "@/components/shared/NotificationToast";
+import LazyImage from "@/components/shared/LazyImage";
 
 interface GiftBox {
   id: string;
@@ -31,11 +33,11 @@ interface GiftBox {
 }
 
 interface Beer {
-  id: string;
+  id: number;
   name: string;
   brand: string;
   price: number;
-  image: string;
+  image: string | null;
   volume: string;
   category: string;
   nationality: string;
@@ -85,112 +87,28 @@ const giftBoxes: GiftBox[] = [
   },
 ];
 
-const availableBeers: Beer[] = [
-  {
-    id: "1",
-    name: "PAULANER WEISSBIER",
-    brand: "Paulaner",
-    price: 17000,
-    image: "/images/cervezas/bottella-06.png",
-    volume: "BOTELLA 500ML",
-    category: "Wheat Beer",
-    nationality: "Alemania",
-    rating: 4.5,
-    inStock: true,
-    description: "Cerveza de trigo alemana tradicional",
-  },
-  {
-    id: "2",
-    name: "ERDINGER",
-    brand: "Erdinger",
-    price: 19000,
-    image: "/images/cervezas/bottella-07.png",
-    volume: "BOTELLA 330ML",
-    category: "Wheat Beer",
-    nationality: "Alemania",
-    rating: 4.2,
-    inStock: true,
-    description: "Cerveza de trigo premium",
-  },
-  {
-    id: "3",
-    name: "LIEFMANS FRUITESSE",
-    brand: "Liefmans",
-    price: 23000,
-    image: "/images/cervezas/bottella-08.png",
-    volume: "BOTELLA 250ML",
-    category: "Fruit Beer",
-    nationality: "Bélgica",
-    rating: 4.7,
-    inStock: true,
-    description: "Cerveza de frutas belga única",
-  },
-  {
-    id: "4",
-    name: "STELLA ARTOIS",
-    brand: "Stella Artois",
-    price: 15000,
-    image: "/images/cervezas/bottella-06.png",
-    volume: "BOTELLA 330ML",
-    category: "Lager",
-    nationality: "Bélgica",
-    rating: 4.0,
-    inStock: true,
-    description: "Cerveza lager belga clásica",
-  },
-  {
-    id: "5",
-    name: "HEINEKEN",
-    brand: "Heineken",
-    price: 14000,
-    image: "/images/cervezas/bottella-07.png",
-    volume: "BOTELLA 330ML",
-    category: "Lager",
-    nationality: "Holanda",
-    rating: 3.8,
-    inStock: true,
-    description: "Cerveza lager holandesa",
-  },
-  {
-    id: "6",
-    name: "CORONA EXTRA",
-    brand: "Corona",
-    price: 16000,
-    image: "/images/cervezas/bottella-08.png",
-    volume: "BOTELLA 355ML",
-    category: "Lager",
-    nationality: "México",
-    rating: 4.1,
-    inStock: true,
-    description: "Cerveza lager mexicana refrescante",
-  },
-  {
-    id: "7",
-    name: "GUINNESS",
-    brand: "Guinness",
-    price: 18000,
-    image: "/images/cervezas/bottella-06.png",
-    volume: "BOTELLA 440ML",
-    category: "Stout",
-    nationality: "Irlanda",
-    rating: 4.3,
-    inStock: true,
-    description: "Cerveza stout irlandesa clásica",
-  },
-  {
-    id: "8",
-    name: "BUDWEISER",
-    brand: "Budweiser",
-    price: 13000,
-    image: "/images/cervezas/bottella-07.png",
-    volume: "BOTELLA 330ML",
-    category: "Lager",
-    nationality: "Estados Unidos",
-    rating: 3.5,
-    inStock: true,
-    description: "Cerveza lager americana",
-  },
-];
+// Función para convertir TransformedProduct a Beer
+const transformToBeer = (product: TransformedProduct): Beer => {
+  return {
+    id: product.id,
+    name: product.name,
+    brand: product.brand,
+    price:
+      typeof product.price === "string"
+        ? parseFloat(product.price)
+        : product.price,
+    image: product.image,
+    volume: "BOTELLA 500ML", // Valor por defecto
+    category:
+      typeof product.category === "string"
+        ? product.category
+        : product.category?.name || "Cerveza",
+    nationality: "Importada", // Valor por defecto
+    rating: product.rating,
+    inStock: product.inStock,
+    description: product.description,
+  };
+};
 
 export default function GiftBuilder() {
   // Seleccionar la caja recomendada por defecto
@@ -202,6 +120,16 @@ export default function GiftBuilder() {
   // Hook de notificaciones
   const { notification, showSuccess, showError, hideNotification } =
     useNotification();
+
+  // Hook de productos del backend con paginación
+  const {
+    products: backendProducts,
+    loading: productsLoading,
+    pagination,
+    goToPage,
+    nextPage,
+    prevPage,
+  } = useProducts();
 
   const [giftBuilder, setGiftBuilder] = useState<GiftBuilderState>({
     selectedBox: defaultBox,
@@ -216,23 +144,26 @@ export default function GiftBuilder() {
   const [priceRange, setPriceRange] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
 
+  // Referencia para el scroll al título de cervezas
+  const cervezasTitleRef = useRef<HTMLDivElement>(null);
+
+  // Convertir productos del backend a formato Beer
+  const availableBeers = backendProducts.map(transformToBeer);
+
+  // Obtener categorías únicas de los productos
   const categories = [
     "all",
-    "Wheat Beer",
-    "Lager",
-    "Fruit Beer",
-    "IPA",
-    "Stout",
+    ...Array.from(new Set(availableBeers.map((beer) => beer.category))).filter(
+      Boolean
+    ),
   ];
 
+  // Obtener nacionalidades únicas de los productos
   const nationalities = [
     "all",
-    "Alemania",
-    "Bélgica",
-    "Holanda",
-    "México",
-    "Irlanda",
-    "Estados Unidos",
+    ...Array.from(
+      new Set(availableBeers.map((beer) => beer.nationality))
+    ).filter(Boolean),
   ];
 
   const priceRanges = [
@@ -295,7 +226,7 @@ export default function GiftBuilder() {
     });
   };
 
-  const removeBeer = (beerId: string) => {
+  const removeBeer = (beerId: number) => {
     setGiftBuilder((prev) => {
       const newBeers = prev.selectedBeers.filter((b) => b.id !== beerId);
       const newTotalPrice =
@@ -310,13 +241,45 @@ export default function GiftBuilder() {
     });
   };
 
-  const isBeerSelected = (beerId: string) => {
+  const isBeerSelected = (beerId: number) => {
     return giftBuilder.selectedBeers.some((b) => b.id === beerId);
   };
 
   const canAddMore =
     giftBuilder.selectedBox &&
     giftBuilder.selectedBeers.length < giftBuilder.selectedBox.maxBeers;
+
+  // Funciones de paginación con scroll suave al título de cervezas
+  const handleGoToPage = (page: number) => {
+    goToPage(page);
+    // Scroll suave al título de cervezas
+    setTimeout(() => {
+      cervezasTitleRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
+
+  const handleGoToNextPage = () => {
+    nextPage();
+    setTimeout(() => {
+      cervezasTitleRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
+
+  const handleGoToPrevPage = () => {
+    prevPage();
+    setTimeout(() => {
+      cervezasTitleRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
 
   // Función para crear un producto de regalo personalizado
   const createGiftProduct = (): Product => {
@@ -331,7 +294,7 @@ export default function GiftBuilder() {
     const giftDescription = `Caja ${giftBuilder.selectedBox.name} con ${giftBuilder.selectedBeers.length} cervezas: ${beerNames}`;
 
     return {
-      id: `gift-${Date.now()}`, // ID único para cada regalo
+      id: Date.now(), // ID único para cada regalo
       name: giftName,
       description: giftDescription,
       price: giftBuilder.totalPrice,
@@ -488,7 +451,7 @@ export default function GiftBuilder() {
             {/* Paso 2: Selección de Cervezas */}
             {giftBuilder.selectedBox && (
               <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                <div className="flex items-center mb-6">
+                <div ref={cervezasTitleRef} className="flex items-center mb-6">
                   <div className="w-10 h-10 bg-gradient-to-r from-[#B58E31] to-[#D4A853] rounded-full flex items-center justify-center text-white font-bold mr-4 shadow-lg">
                     2
                   </div>
@@ -614,109 +577,213 @@ export default function GiftBuilder() {
                   </div>
                 </div>
 
+                {/* Información de Paginación */}
+                {pagination && (
+                  <div className="mb-6">
+                    <div className="flex justify-between items-center text-sm text-gray-600">
+                      <span>
+                        Página {pagination.currentPage} de {pagination.lastPage}{" "}
+                        - {pagination.total} productos total
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Grid de Cervezas */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {filteredBeers.map((beer) => {
-                    const isSelected = isBeerSelected(beer.id);
-                    const canSelect = canAddMore && !isSelected;
-
-                    return (
+                {productsLoading ? (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {Array.from({ length: 8 }, (_, index) => (
                       <div
-                        key={beer.id}
-                        onClick={() =>
-                          canSelect
-                            ? addBeer(beer)
-                            : isSelected
-                            ? removeBeer(beer.id)
-                            : null
-                        }
-                        className={`border rounded-lg p-4 transition-all duration-300 cursor-pointer group relative ${
-                          isSelected
-                            ? "border-[#B58E31] bg-[#B58E31]/5 shadow-lg"
-                            : canSelect
-                            ? "border-gray-200 hover:border-[#B58E31] hover:shadow-md"
-                            : "border-gray-200 opacity-50 cursor-not-allowed"
-                        }`}
+                        key={index}
+                        className="border rounded-lg p-4 animate-pulse"
                       >
-                        {isSelected && (
-                          <div className="absolute top-2 right-2">
-                            <div className="w-6 h-6 bg-[#B58E31] rounded-full flex items-center justify-center">
-                              <Check className="w-4 h-4 text-white" />
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="aspect-square bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
-                          <img
-                            src={beer.image}
-                            alt={beer.name}
-                            className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                          />
-                        </div>
-
-                        <h4 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2">
-                          {beer.name}
-                        </h4>
-                        <p className="text-xs text-gray-600 mb-1">
-                          {beer.brand}
-                        </p>
-                        <p className="text-xs text-gray-500 mb-1">
-                          {beer.volume}
-                        </p>
-                        <p className="text-xs text-[#B58E31] font-medium mb-2">
-                          {beer.nationality}
-                        </p>
-
-                        <div className="flex items-center mb-2">
-                          <div className="flex items-center">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`w-3 h-3 ${
-                                  i < Math.floor(beer.rating)
-                                    ? "text-yellow-400 fill-current"
-                                    : "text-gray-300"
-                                }`}
-                              />
-                            ))}
-                          </div>
-                          <span className="text-xs text-gray-500 ml-1">
-                            ({beer.rating})
-                          </span>
-                        </div>
-
-                        <p className="text-sm font-bold text-[#B58E31]">
-                          ${beer.price.toLocaleString()}
-                        </p>
-
-                        {!canSelect && !isSelected && (
-                          <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 to-gray-800/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                            <div className="text-center">
-                              <div
-                                className="w-8 h-8 mx-auto mb-2 rounded-full flex items-center justify-center"
-                                style={{ backgroundColor: "rgb(181, 142, 49)" }}
-                              >
-                                <X className="w-4 h-4 text-white" />
-                              </div>
-                              <span className="text-xs font-bold text-white drop-shadow-lg">
-                                {giftBuilder.selectedBeers.length >=
-                                giftBuilder.selectedBox.maxBeers
-                                  ? "Límite alcanzado"
-                                  : "Agotado"}
-                              </span>
-                            </div>
-                          </div>
-                        )}
+                        <div className="aspect-square bg-gray-200 rounded-lg mb-3"></div>
+                        <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                        <div className="h-3 bg-gray-200 rounded mb-1"></div>
+                        <div className="h-3 bg-gray-200 rounded mb-1"></div>
+                        <div className="h-3 bg-gray-200 rounded mb-2"></div>
+                        <div className="h-3 bg-gray-200 rounded mb-2"></div>
+                        <div className="h-4 bg-gray-200 rounded"></div>
                       </div>
-                    );
-                  })}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {filteredBeers.map((beer) => {
+                      const isSelected = isBeerSelected(beer.id);
+                      const canSelect = canAddMore && !isSelected;
 
-                {filteredBeers.length === 0 && (
+                      return (
+                        <div
+                          key={beer.id}
+                          onClick={() =>
+                            canSelect
+                              ? addBeer(beer)
+                              : isSelected
+                              ? removeBeer(beer.id)
+                              : null
+                          }
+                          className={`border rounded-lg p-4 transition-all duration-300 cursor-pointer group relative ${
+                            isSelected
+                              ? "border-[#B58E31] bg-[#B58E31]/5 shadow-lg"
+                              : canSelect
+                              ? "border-gray-200 hover:border-[#B58E31] hover:shadow-md"
+                              : "border-gray-200 opacity-50 cursor-not-allowed"
+                          }`}
+                        >
+                          {isSelected && (
+                            <div className="absolute top-2 right-2">
+                              <div className="w-6 h-6 bg-[#B58E31] rounded-full flex items-center justify-center">
+                                <Check className="w-4 h-4 text-white" />
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="aspect-square bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                            <LazyImage
+                              src={beer.image}
+                              alt={beer.name}
+                              className="w-full h-full"
+                            />
+                          </div>
+
+                          <h4 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2">
+                            {beer.name}
+                          </h4>
+                          <p className="text-xs text-gray-600 mb-1">
+                            {beer.brand}
+                          </p>
+                          <p className="text-xs text-gray-500 mb-1">
+                            {beer.volume}
+                          </p>
+                          <p className="text-xs text-[#B58E31] font-medium mb-2">
+                            {beer.nationality}
+                          </p>
+
+                          <div className="flex items-center mb-2">
+                            <div className="flex items-center">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`w-3 h-3 ${
+                                    i < Math.floor(beer.rating)
+                                      ? "text-yellow-400 fill-current"
+                                      : "text-gray-300"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-xs text-gray-500 ml-1">
+                              ({beer.rating})
+                            </span>
+                          </div>
+
+                          <p className="text-sm font-bold text-[#B58E31]">
+                            ${beer.price.toLocaleString()}
+                          </p>
+
+                          {!canSelect && !isSelected && (
+                            <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 to-gray-800/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                              <div className="text-center">
+                                <div
+                                  className="w-8 h-8 mx-auto mb-2 rounded-full flex items-center justify-center"
+                                  style={{
+                                    backgroundColor: "rgb(181, 142, 49)",
+                                  }}
+                                >
+                                  <X className="w-4 h-4 text-white" />
+                                </div>
+                                <span className="text-xs font-bold text-white drop-shadow-lg">
+                                  {giftBuilder.selectedBeers.length >=
+                                  (giftBuilder.selectedBox?.maxBeers || 0)
+                                    ? "Límite alcanzado"
+                                    : "Agotado"}
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {!productsLoading && filteredBeers.length === 0 && (
                   <div className="text-center py-8">
                     <p className="text-gray-500">
                       No se encontraron cervezas con los filtros seleccionados
                     </p>
+                  </div>
+                )}
+
+                {/* Controles de Paginación */}
+                {pagination && pagination.lastPage > 1 && (
+                  <div className="mt-8 flex justify-center">
+                    <div className="flex items-center space-x-2">
+                      {/* Botón Anterior */}
+                      <button
+                        onClick={handleGoToPrevPage}
+                        disabled={pagination.currentPage === 1}
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          pagination.currentPage === 1
+                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+                        }`}
+                      >
+                        Anterior
+                      </button>
+
+                      {/* Números de página */}
+                      <div className="flex items-center space-x-1">
+                        {Array.from(
+                          { length: Math.min(5, pagination.lastPage) },
+                          (_, i) => {
+                            let pageNumber;
+                            if (pagination.lastPage <= 5) {
+                              pageNumber = i + 1;
+                            } else if (pagination.currentPage <= 3) {
+                              pageNumber = i + 1;
+                            } else if (
+                              pagination.currentPage >=
+                              pagination.lastPage - 2
+                            ) {
+                              pageNumber = pagination.lastPage - 4 + i;
+                            } else {
+                              pageNumber = pagination.currentPage - 2 + i;
+                            }
+
+                            return (
+                              <button
+                                key={pageNumber}
+                                onClick={() => handleGoToPage(pageNumber)}
+                                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                  pageNumber === pagination.currentPage
+                                    ? "bg-[#B58E31] text-white"
+                                    : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+                                }`}
+                              >
+                                {pageNumber}
+                              </button>
+                            );
+                          }
+                        )}
+                      </div>
+
+                      {/* Botón Siguiente */}
+                      <button
+                        onClick={handleGoToNextPage}
+                        disabled={
+                          pagination.currentPage === pagination.lastPage
+                        }
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          pagination.currentPage === pagination.lastPage
+                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+                        }`}
+                      >
+                        Siguiente
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -772,11 +839,13 @@ export default function GiftBuilder() {
                         className="flex items-center justify-between bg-gray-50 rounded-lg p-2"
                       >
                         <div className="flex items-center">
-                          <img
-                            src={beer.image}
-                            alt={beer.name}
-                            className="w-8 h-8 object-contain mr-2"
-                          />
+                          <div className="w-8 h-8 bg-gray-100 rounded mr-2 flex items-center justify-center overflow-hidden">
+                            <LazyImage
+                              src={beer.image}
+                              alt={beer.name}
+                              className="w-full h-full"
+                            />
+                          </div>
                           <div>
                             <p className="text-xs font-medium text-gray-900">
                               {beer.name}

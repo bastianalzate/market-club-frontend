@@ -11,7 +11,7 @@ import {
   Bell,
 } from "lucide-react";
 
-type PerfilTab = "overview" | "orders" | "favorites";
+type PerfilTab = "overview" | "orders" | "favorites" | "settings";
 
 interface PerfilNavigationProps {
   activeTab: PerfilTab;
@@ -36,6 +36,12 @@ const navigationItems = [
     label: "Favoritos",
     icon: Heart,
     description: "Productos guardados",
+  },
+  {
+    id: "settings" as PerfilTab,
+    label: "Configuración",
+    icon: Settings,
+    description: "Editar perfil y configuración",
   },
 ];
 
