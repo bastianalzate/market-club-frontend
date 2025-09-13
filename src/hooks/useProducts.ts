@@ -40,6 +40,15 @@ export interface Product {
   };
 }
 
+// Tipo para los productos transformados que se usan en la tienda
+export interface TiendaProduct extends Product {
+  // Campos agregados por la transformación
+  brand: string;
+  rating: number;
+  reviewCount: number;
+  inStock: boolean;
+}
+
 // Tipo para la respuesta de la API de Laravel (con paginación)
 interface ProductsResponse {
   current_page: number;
@@ -129,6 +138,20 @@ export const useProducts = () => {
       const data: ProductsResponse = await response.json();
       
       if (!data.data || !Array.isArray(data.data)) {
+      if (data.data && Array.isArray(data.data)) {
+        // Transformar los productos para que coincidan con la interfaz esperada
+        const transformedProducts = data.data.map(product => ({
+          ...product,
+          // Agregar campos que faltan con valores por defecto
+          brand: product.category.name, // Usar el nombre de la categoría como marca
+          rating: 4.5, // Valor por defecto
+          reviewCount: Math.floor(Math.random() * 200) + 50, // Valor aleatorio
+          inStock: product.stock_quantity > 0,
+          image: product.image || '/images/products/placeholder.jpg', // Imagen por defecto
+          category: product.category.name,
+        }));
+        setProducts(transformedProducts);
+      } else {
         throw new Error('No se encontraron productos en la respuesta');
       }
 
@@ -227,7 +250,16 @@ export const useProducts = () => {
       
       if (data.data && Array.isArray(data.data)) {
         // Transformar los productos para que coincidan con la interfaz esperada
-        const transformedProducts = data.data.map(transformProduct);
+        const transformedProducts = data.data.map(product => ({
+          ...product,
+          // Agregar campos que faltan con valores por defecto
+          brand: product.category.name, // Usar el nombre de la categoría como marca
+          rating: 4.5, // Valor por defecto
+          reviewCount: Math.floor(Math.random() * 200) + 50, // Valor aleatorio
+          inStock: product.stock_quantity > 0,
+          image: product.image || '/images/products/placeholder.jpg', // Imagen por defecto
+          category: product.category.name,
+        }));
         setProducts(transformedProducts);
         
         // Actualizar paginación para búsqueda
