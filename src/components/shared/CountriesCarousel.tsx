@@ -154,6 +154,12 @@ export default function CountriesCarousel() {
     router.push(`/tienda?country=${encodeURIComponent(countryId)}`);
   };
 
+  // Función para navegar a la tienda mayorista con filtro de país
+  const handleMayoristaCountryClick = (countryId: string) => {
+    // Navegar a la tienda mayorista con el filtro de país aplicado
+    router.push(`/mayorista?country=${encodeURIComponent(countryId)}`);
+  };
+
   return (
     <section className="py-8 bg-white border-t border-gray-200">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
