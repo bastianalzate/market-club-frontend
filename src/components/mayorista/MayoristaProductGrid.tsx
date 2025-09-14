@@ -134,15 +134,6 @@ export default function MayoristaProductGrid({
               {/* Información del producto */}
               <div className="p-6">
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm text-gray-600 font-medium">
-                      BOTELLA 500ML
-                    </span>
-                    <span className="text-lg font-bold text-gray-900">
-                      {formatPrice(product.price)}
-                    </span>
-                  </div>
-
                   <h3 className="text-lg font-bold text-gray-900 mb-4">
                     {product.name}
                   </h3>
