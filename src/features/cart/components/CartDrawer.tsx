@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Trash2, Plus, Minus } from "lucide-react";
+import { X, Trash2, Plus, Minus, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCartContext } from "@/contexts/CartContext";
@@ -24,6 +24,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   } = useCartContext();
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
+  const [deletingItems, setDeletingItems] = useState<Set<number>>(new Set());
   const router = useRouter();
 
   // Log para debugging
@@ -70,6 +71,26 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
     // Construir URL completa con la base del backend
     return `http://localhost:8000/storage/${imagePath}`;
+  };
+
+  // Función para manejar la eliminación con loading
+  const handleRemoveFromCart = async (productId: number) => {
+    try {
+      // Agregar el item a la lista de items siendo eliminados
+      setDeletingItems((prev) => new Set(prev).add(productId));
+
+      // Llamar a la función de eliminación del contexto
+      await removeFromCart({ productId });
+    } catch (error) {
+      console.error("Error removing item from cart:", error);
+    } finally {
+      // Remover el item de la lista de items siendo eliminados
+      setDeletingItems((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
+    }
   };
 
   // Manejar la animación de entrada
@@ -247,9 +268,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                         quantity: item.quantity - 1,
                                       });
                                     } else {
-                                      await removeFromCart({
-                                        productId: item.product_id,
-                                      });
+                                      await handleRemoveFromCart(
+                                        item.product_id
+                                      );
                                     }
                                   }}
                                   className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
@@ -285,14 +306,21 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
                               <button
                                 type="button"
-                                onClick={async () =>
-                                  await removeFromCart({
-                                    productId: item.product_id,
-                                  })
+                                onClick={() =>
+                                  handleRemoveFromCart(item.product_id)
                                 }
-                                className="inline-flex p-2 -m-2 text-gray-400 transition-all duration-200 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 hover:text-gray-900"
+                                disabled={deletingItems.has(item.product_id)}
+                                className={`inline-flex p-2 -m-2 transition-all duration-200 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 ${
+                                  deletingItems.has(item.product_id)
+                                    ? "text-gray-300 cursor-not-allowed"
+                                    : "text-gray-400 hover:text-gray-900"
+                                }`}
                               >
-                                <Trash2 className="w-5 h-5" />
+                                {deletingItems.has(item.product_id) ? (
+                                  <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : (
+                                  <Trash2 className="w-5 h-5" />
+                                )}
                               </button>
                             </div>
                           </div>

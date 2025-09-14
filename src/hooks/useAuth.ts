@@ -134,8 +134,10 @@ export function useAuth() {
         is_wholesaler: result.user.is_wholesaler || false,
       };
 
-      // Guardar el token en localStorage
+      // Guardar el token y user_id en localStorage
       localStorage.setItem('auth_token', result.token);
+      localStorage.setItem('token', result.token); // También guardar como 'token' para compatibilidad
+      localStorage.setItem('user_id', result.user.id.toString()); // Guardar user_id por separado
       localStorage.setItem('user', JSON.stringify(user));
       
       dispatch(loginSuccess(user));
@@ -212,8 +214,10 @@ export function useAuth() {
         is_wholesaler: result.user.is_wholesaler || data.isWholesaler,
       };
 
-      // Guardar el token en localStorage
+      // Guardar el token y user_id en localStorage
       localStorage.setItem('auth_token', result.token);
+      localStorage.setItem('token', result.token); // También guardar como 'token' para compatibilidad
+      localStorage.setItem('user_id', result.user.id.toString()); // Guardar user_id por separado
       localStorage.setItem('user', JSON.stringify(user));
       
       // Usar loginSuccess en lugar de registerSuccess para que se loguee automáticamente
@@ -266,6 +270,8 @@ export function useAuth() {
   const logoutAction = useCallback(() => {
     // Limpiar localStorage
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_id');
     localStorage.removeItem('user');
     dispatch(logout());
   }, [dispatch]);
@@ -284,6 +290,8 @@ export function useAuth() {
       console.error('Error al restaurar usuario:', error);
       // Limpiar datos corruptos
       localStorage.removeItem('auth_token');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user_id');
       localStorage.removeItem('user');
     }
   }, [dispatch]);

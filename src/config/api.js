@@ -14,18 +14,15 @@ const CART_ENDPOINTS = {
 
 // Endpoints de Checkout
 const CHECKOUT_ENDPOINTS = {
-    SUMMARY: '/checkout/summary',           // Resumen del checkout
-    VALIDATE_ADDRESS: '/checkout/validate-address',  // Validar dirección
     CALCULATE_SHIPPING: '/checkout/calculate-shipping', // Calcular envío
     CREATE_ORDER: '/checkout/create-order', // Crear orden
 };
 
 // Endpoints de Pagos
 const PAYMENT_ENDPOINTS = {
-    TOKEN: '/payments/token',       // Crear token de pago
-    PROCESS: '/payments/process',   // Procesar pago
-    VERIFY: '/payments/verify',     // Verificar pago
-    METHODS: '/payments/methods',   // Métodos de pago
+    CREATE_SESSION: '/payments/wompi/create-session',    // Crear sesión de pago con Wompi
+    VERIFY: '/payments/verify',                          // Verificar pago
+    PROCESS: '/payments/process',                        // Procesar pago (alternativo)
 };
 
 export const API_CONFIG = {
