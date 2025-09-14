@@ -40,15 +40,6 @@ export interface Product {
   };
 }
 
-// Tipo para los productos transformados que se usan en la tienda
-export interface TiendaProduct extends Product {
-  // Campos agregados por la transformación
-  brand: string;
-  rating: number;
-  reviewCount: number;
-  inStock: boolean;
-}
-
 // Tipo para la respuesta de la API de Laravel (con paginación)
 interface ProductsResponse {
   current_page: number;
@@ -85,6 +76,8 @@ export const useProducts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedPriceRange, setSelectedPriceRange] = useState<string>('');
   const [pagination, setPagination] = useState({
     currentPage: 1,
     lastPage: 1,
@@ -104,7 +97,7 @@ export const useProducts = () => {
   });
 
   // Función para obtener productos de una página específica
-  const fetchProducts = async (page: number = 1, country?: string) => {
+  const fetchProducts = async (page: number = 1, country?: string, category?: string, priceRange?: string) => {
     try {
       setLoading(true);
       setError(null);
@@ -113,6 +106,12 @@ export const useProducts = () => {
       let url = `${constants.api_url}/products?page=${page}`;
       if (country && country.trim()) {
         url += `&country=${encodeURIComponent(country)}`;
+      }
+      if (category && category.trim()) {
+        url += `&beer_style=${encodeURIComponent(category)}`;
+      }
+      if (priceRange && priceRange.trim()) {
+        url += `&price_range=${encodeURIComponent(priceRange)}`;
       }
 
       const response = await fetch(url, {
@@ -157,7 +156,7 @@ export const useProducts = () => {
   // Función para cambiar de página
   const goToPage = (page: number) => {
     if (page >= 1 && page <= pagination.lastPage) {
-      fetchProducts(page, selectedCountry);
+      fetchProducts(page, selectedCountry, selectedCategory, selectedPriceRange);
     }
   };
 
@@ -178,13 +177,33 @@ export const useProducts = () => {
   // Función para filtrar por país
   const filterByCountry = async (country: string) => {
     setSelectedCountry(country);
-    fetchProducts(1, country);
+    fetchProducts(1, country, selectedCategory, selectedPriceRange);
+  };
+
+  // Función para filtrar por categoría
+  const filterByCategory = async (category: string) => {
+    setSelectedCategory(category);
+    fetchProducts(1, selectedCountry, category, selectedPriceRange);
+  };
+
+  // Función para filtrar por rango de precios
+  const filterByPriceRange = async (priceRange: string) => {
+    setSelectedPriceRange(priceRange);
+    fetchProducts(1, selectedCountry, selectedCategory, priceRange);
+  };
+
+  // Función para limpiar todos los filtros
+  const clearAllFilters = async () => {
+    setSelectedCountry('');
+    setSelectedCategory('');
+    setSelectedPriceRange('');
+    fetchProducts(1, '', '', '');
   };
 
   // Función para buscar productos
   const searchProducts = async (searchTerm: string) => {
     if (!searchTerm.trim()) {
-      fetchProducts(1, selectedCountry);
+      fetchProducts(1, selectedCountry, selectedCategory, selectedPriceRange);
       return;
     }
 
@@ -206,7 +225,19 @@ export const useProducts = () => {
 
       const data: ProductsResponse = await response.json();
       
-      if (!data.data || !Array.isArray(data.data)) {
+      if (data.data && Array.isArray(data.data)) {
+        // Transformar los productos para que coincidan con la interfaz esperada
+        const transformedProducts = data.data.map(transformProduct);
+        setProducts(transformedProducts);
+        
+        // Actualizar paginación para búsqueda
+        setPagination({
+          currentPage: data.current_page,
+          lastPage: data.last_page,
+          total: data.total,
+          perPage: data.per_page,
+        });
+      } else {
         throw new Error('No se encontraron productos en la búsqueda');
       }
 
@@ -232,7 +263,7 @@ export const useProducts = () => {
 
   // Cargar productos al montar el componente
   useEffect(() => {
-    fetchProducts(1, selectedCountry);
+    fetchProducts(1, selectedCountry, selectedCategory, selectedPriceRange);
   }, []);
 
   return {
@@ -241,9 +272,14 @@ export const useProducts = () => {
     error,
     pagination,
     selectedCountry,
+    selectedCategory,
+    selectedPriceRange,
     fetchProducts,
     searchProducts,
     filterByCountry,
+    filterByCategory,
+    filterByPriceRange,
+    clearAllFilters,
     goToPage,
     nextPage,
     prevPage,

@@ -19,8 +19,13 @@ export default function TiendaContent() {
     error,
     pagination,
     selectedCountry,
+    selectedCategory,
+    selectedPriceRange,
     searchProducts,
     filterByCountry,
+    filterByCategory,
+    filterByPriceRange,
+    clearAllFilters,
     goToPage,
     nextPage,
     prevPage,
@@ -42,6 +47,28 @@ export default function TiendaContent() {
     },
     [filterByCountry]
   );
+
+  // Función para manejar cambios en el filtro de categoría
+  const handleCategoryChange = useCallback(
+    (category: string) => {
+      filterByCategory(category);
+    },
+    [filterByCategory]
+  );
+
+  // Función para manejar cambios en el filtro de rango de precios
+  const handlePriceRangeChange = useCallback(
+    (priceRange: string) => {
+      filterByPriceRange(priceRange);
+    },
+    [filterByPriceRange]
+  );
+
+  // Función para limpiar todos los filtros
+  const handleClearFilters = useCallback(() => {
+    setSearchTerm(""); // Limpiar también la búsqueda
+    clearAllFilters();
+  }, [clearAllFilters]);
 
   // Mostrar loading o error si es necesario
   if (loading && products.length === 0) {
@@ -96,6 +123,11 @@ export default function TiendaContent() {
               onSearchChange={handleSearchChange}
               selectedCountry={selectedCountry}
               onCountryChange={handleCountryChange}
+              selectedCategory={selectedCategory}
+              onCategoryChange={handleCategoryChange}
+              selectedPriceRange={selectedPriceRange}
+              onPriceRangeChange={handlePriceRangeChange}
+              onClearFilters={handleClearFilters}
             />
 
             {/* Contenido principal */}
