@@ -130,20 +130,6 @@ export const useProducts = () => {
       const data: ProductsResponse = await response.json();
       
       if (!data.data || !Array.isArray(data.data)) {
-      if (data.data && Array.isArray(data.data)) {
-        // Transformar los productos para que coincidan con la interfaz esperada
-        const transformedProducts = data.data.map(product => ({
-          ...product,
-          // Agregar campos que faltan con valores por defecto
-          brand: product.category.name, // Usar el nombre de la categoría como marca
-          rating: 4.5, // Valor por defecto
-          reviewCount: Math.floor(Math.random() * 200) + 50, // Valor aleatorio
-          inStock: product.stock_quantity > 0,
-          image: product.image || '/images/products/placeholder.jpg', // Imagen por defecto
-          category: product.category.name,
-        }));
-        setProducts(transformedProducts);
-      } else {
         throw new Error('No se encontraron productos en la respuesta');
       }
 
@@ -220,30 +206,21 @@ export const useProducts = () => {
 
       const data: ProductsResponse = await response.json();
       
-      if (data.data && Array.isArray(data.data)) {
-        // Transformar los productos para que coincidan con la interfaz esperada
-        const transformedProducts = data.data.map(product => ({
-          ...product,
-          // Agregar campos que faltan con valores por defecto
-          brand: product.category.name, // Usar el nombre de la categoría como marca
-          rating: 4.5, // Valor por defecto
-          reviewCount: Math.floor(Math.random() * 200) + 50, // Valor aleatorio
-          inStock: product.stock_quantity > 0,
-          image: product.image || '/images/products/placeholder.jpg', // Imagen por defecto
-          category: product.category.name,
-        }));
-        setProducts(transformedProducts);
-        
-        // Actualizar paginación para búsqueda
-        setPagination({
-          currentPage: data.current_page,
-          lastPage: data.last_page,
-          total: data.total,
-          perPage: data.per_page,
-        });
-      } else {
+      if (!data.data || !Array.isArray(data.data)) {
         throw new Error('No se encontraron productos en la búsqueda');
       }
+
+      // Transformar los productos para que coincidan con la interfaz esperada
+      const transformedProducts = data.data.map(transformProduct);
+      setProducts(transformedProducts);
+      
+      // Actualizar paginación para búsqueda
+      setPagination({
+        currentPage: data.current_page,
+        lastPage: data.last_page,
+        total: data.total,
+        perPage: data.per_page,
+      });
     } catch (err) {
       console.error('Error searching products:', err);
       setError(err instanceof Error ? err.message : 'Error en la búsqueda');

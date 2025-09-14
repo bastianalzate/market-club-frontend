@@ -1,0 +1,428 @@
+"use client";
+
+import React, { useState } from 'react';
+import Image from 'next/image';
+import { ChevronDown } from 'lucide-react';
+
+export default function ContactoPage() {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    message: '',
+    acceptPrivacy: false
+  });
+
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const [countryCode, setCountryCode] = useState('COP');
+
+  // Función de validación
+  const validateForm = () => {
+    const newErrors: {[key: string]: string} = {};
+
+    // Validar primer nombre
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'El primer nombre es requerido';
+    } else if (formData.firstName.trim().length < 2) {
+      newErrors.firstName = 'El primer nombre debe tener al menos 2 caracteres';
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.firstName.trim())) {
+      newErrors.firstName = 'El primer nombre solo puede contener letras';
+    }
+
+    // Validar apellidos
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Los apellidos son requeridos';
+    } else if (formData.lastName.trim().length < 2) {
+      newErrors.lastName = 'Los apellidos deben tener al menos 2 caracteres';
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(formData.lastName.trim())) {
+      newErrors.lastName = 'Los apellidos solo pueden contener letras';
+    }
+
+    // Validar email
+    if (!formData.email.trim()) {
+      newErrors.email = 'El email es requerido';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      newErrors.email = 'Por favor ingresa un email válido';
+    }
+
+    // Validar teléfono
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'El número de teléfono es requerido';
+    } else if (!/^[\d\s\-\+\(\)]+$/.test(formData.phone.trim())) {
+      newErrors.phone = 'El número de teléfono contiene caracteres inválidos';
+    } else if (formData.phone.replace(/\D/g, '').length < 10) {
+      newErrors.phone = 'El número de teléfono debe tener al menos 10 dígitos';
+    }
+
+    // Validar mensaje
+    if (!formData.message.trim()) {
+      newErrors.message = 'El mensaje es requerido';
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = 'El mensaje debe tener al menos 10 caracteres';
+    } else if (formData.message.trim().length > 1000) {
+      newErrors.message = 'El mensaje no puede exceder 1000 caracteres';
+    }
+
+    // Validar política de privacidad
+    if (!formData.acceptPrivacy) {
+      newErrors.acceptPrivacy = 'Debes aceptar la política de privacidad';
+    }
+
+    return newErrors;
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+    }));
+
+    // Validar en tiempo real
+    validateField(name, type === 'checkbox' ? (e.target as HTMLInputElement).checked : value);
+  };
+
+  // Función para validar un campo específico en tiempo real
+  const validateField = (fieldName: string, value: any) => {
+    const newErrors = { ...errors };
+    
+    switch (fieldName) {
+      case 'firstName':
+        if (!value.trim()) {
+          newErrors.firstName = 'El primer nombre es requerido';
+        } else if (value.trim().length < 2) {
+          newErrors.firstName = 'El primer nombre debe tener al menos 2 caracteres';
+        } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value.trim())) {
+          newErrors.firstName = 'El primer nombre solo puede contener letras';
+        } else {
+          delete newErrors.firstName;
+        }
+        break;
+
+      case 'lastName':
+        if (!value.trim()) {
+          newErrors.lastName = 'Los apellidos son requeridos';
+        } else if (value.trim().length < 2) {
+          newErrors.lastName = 'Los apellidos deben tener al menos 2 caracteres';
+        } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value.trim())) {
+          newErrors.lastName = 'Los apellidos solo pueden contener letras';
+        } else {
+          delete newErrors.lastName;
+        }
+        break;
+
+      case 'email':
+        if (!value.trim()) {
+          newErrors.email = 'El email es requerido';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) {
+          newErrors.email = 'Por favor ingresa un email válido';
+        } else {
+          delete newErrors.email;
+        }
+        break;
+
+      case 'phone':
+        if (!value.trim()) {
+          newErrors.phone = 'El número de teléfono es requerido';
+        } else if (!/^[\d\s\-\+\(\)]+$/.test(value.trim())) {
+          newErrors.phone = 'El número de teléfono contiene caracteres inválidos';
+        } else if (value.replace(/\D/g, '').length < 10) {
+          newErrors.phone = 'El número de teléfono debe tener al menos 10 dígitos';
+        } else {
+          delete newErrors.phone;
+        }
+        break;
+
+      case 'message':
+        if (!value.trim()) {
+          newErrors.message = 'El mensaje es requerido';
+        } else if (value.trim().length < 10) {
+          newErrors.message = 'El mensaje debe tener al menos 10 caracteres';
+        } else if (value.trim().length > 1000) {
+          newErrors.message = 'El mensaje no puede exceder 1000 caracteres';
+        } else {
+          delete newErrors.message;
+        }
+        break;
+
+      case 'acceptPrivacy':
+        if (!value) {
+          newErrors.acceptPrivacy = 'Debes aceptar la política de privacidad';
+        } else {
+          delete newErrors.acceptPrivacy;
+        }
+        break;
+    }
+
+    setErrors(newErrors);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validar formulario
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      // Simular envío del formulario (aquí conectarías con tu API)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      console.log('Formulario enviado:', formData);
+      setSubmitStatus('success');
+      
+      // Limpiar formulario después del envío exitoso
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        message: '',
+        acceptPrivacy: false
+      });
+      setErrors({});
+      
+    } catch (error) {
+      console.error('Error al enviar formulario:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      <style jsx>{`
+        input::placeholder,
+        textarea::placeholder {
+          color: #667085 !important;
+        }
+        input,
+        textarea {
+          color: #667085 !important;
+        }
+      `}</style>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          {/* Formulario de Contacto */}
+          <div className="space-y-8">
+            <div>
+              <h1 className="text-black mb-4" style={{ fontFamily: 'var(--font-oswald)', fontWeight: 700, fontSize: '64px' }}>
+                Contáctenos
+              </h1>
+              <p className="text-gray-600" style={{ fontFamily: 'var(--font-text)', fontWeight: 400, fontSize: '20px', color: '#667085' }}>
+                Estamos felices de estar en contacto contigo y brindarte las respuestas que necesites.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Nombre y Apellido */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="firstName" className="block text-gray-700 mb-2" style={{ fontFamily: 'var(--font-text)', fontWeight: 500, fontSize: '20px' }}>
+                    Primer nombre
+                  </label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    placeholder="Escribe tu nombre"
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none transition-all duration-200 ${
+                      errors.firstName ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    style={{ fontFamily: 'var(--font-text)', fontWeight: 400, fontSize: '16px' }}
+                  />
+                  {errors.firstName && (
+                    <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
+                  )}
+                </div>
+                <div>
+                  <label htmlFor="lastName" className="block text-gray-700 mb-2" style={{ fontFamily: 'var(--font-text)', fontWeight: 500, fontSize: '20px' }}>
+                    Apellidos
+                  </label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    placeholder="Escribe tu apellido"
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none transition-all duration-200 ${
+                      errors.lastName ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    style={{ fontFamily: 'var(--font-text)', fontWeight: 400, fontSize: '16px' }}
+                  />
+                  {errors.lastName && (
+                    <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className="block text-gray-700 mb-2" style={{ fontFamily: 'var(--font-text)', fontWeight: 500, fontSize: '20px' }}>
+                  Email
+                </label>
+                <input
+                  type="text"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="info@marketclub.com.co"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none transition-all duration-200 ${
+                    errors.email ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  style={{ fontFamily: 'var(--font-text)', fontWeight: 400, fontSize: '16px' }}
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                )}
+              </div>
+
+              {/* Teléfono */}
+              <div>
+                <label htmlFor="phone" className="block text-gray-700 mb-2" style={{ fontFamily: 'var(--font-text)', fontWeight: 500, fontSize: '20px' }}>
+                  Número celular
+                </label>
+                <div className="flex">
+                  <div className="relative">
+                    <select
+                      value={countryCode}
+                      onChange={(e) => setCountryCode(e.target.value)}
+                      className="px-4 py-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none appearance-none bg-white pr-8"
+                      style={{ fontFamily: 'var(--font-text)', fontWeight: 400, fontSize: '16px', color: '#667085' }}
+                    >
+                      <option value="COP">COP</option>
+                      <option value="USD">USD</option>
+                      <option value="EUR">EUR</option>
+                    </select>
+                    <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                  </div>
+                  <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder="+57 (300) 000-0000"
+                    className={`flex-1 px-4 py-3 border rounded-r-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none transition-all duration-200 ${
+                      errors.phone ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    style={{ fontFamily: 'var(--font-text)', fontWeight: 400, fontSize: '16px' }}
+                  />
+                </div>
+                {errors.phone && (
+                  <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+                )}
+              </div>
+
+              {/* Mensaje */}
+              <div>
+                <label htmlFor="message" className="block text-gray-700 mb-2" style={{ fontFamily: 'var(--font-text)', fontWeight: 500, fontSize: '20px' }}>
+                  Mensaje
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  rows={6}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none transition-all duration-200 resize-none ${
+                    errors.message ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="Escribe tu mensaje aquí..."
+                  style={{ fontFamily: 'var(--font-text)', fontWeight: 400, fontSize: '16px' }}
+                />
+                {errors.message && (
+                  <p className="mt-1 text-sm text-red-600">{errors.message}</p>
+                )}
+                <div className="text-right text-sm text-gray-500 mt-1">
+                  {formData.message.length}/1000 caracteres
+                </div>
+              </div>
+
+              {/* Checkbox de privacidad */}
+              <div className="flex items-start">
+                <input
+                  type="checkbox"
+                  id="acceptPrivacy"
+                  name="acceptPrivacy"
+                  checked={formData.acceptPrivacy}
+                  onChange={handleInputChange}
+                  className={`mt-1 h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded ${
+                    errors.acceptPrivacy ? 'border-red-500' : ''
+                  }`}
+                />
+                <label htmlFor="acceptPrivacy" className="ml-3 text-sm text-gray-700">
+                  Acepta nuestras{' '}
+                  <a href="#" className="text-yellow-600 hover:text-yellow-700 underline">
+                    política de privacidad
+                  </a>
+                  .
+                </label>
+              </div>
+              {errors.acceptPrivacy && (
+                <p className="mt-1 text-sm text-red-600">{errors.acceptPrivacy}</p>
+              )}
+
+              {/* Mensajes de estado */}
+              {submitStatus === 'success' && (
+                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-green-800 text-center">
+                    ¡Mensaje enviado correctamente! Te contactaremos pronto.
+                  </p>
+                </div>
+              )}
+
+              {submitStatus === 'error' && (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-red-800 text-center">
+                    Hubo un error al enviar el mensaje. Por favor intenta nuevamente.
+                  </p>
+                </div>
+              )}
+
+              {/* Botón de envío */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`w-full font-semibold py-4 px-6 rounded-lg transition-colors duration-200 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 outline-none ${
+                  isSubmitting
+                    ? 'bg-gray-400 cursor-not-allowed text-white'
+                    : 'bg-yellow-600 hover:bg-yellow-700 text-white'
+                }`}
+              >
+                {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
+              </button>
+            </form>
+          </div>
+
+          {/* Imagen */}
+          <div className="relative">
+            <Image
+              src="/images/contact/contacto-banner.png"
+              alt="Personas brindando con cervezas"
+              width={600}
+              height={800}
+              className="w-full h-auto rounded-lg object-cover"
+              priority
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

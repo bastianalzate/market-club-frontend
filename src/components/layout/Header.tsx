@@ -299,9 +299,9 @@ export default function Header() {
             </NavLink>
 
             <NavLink
-              href="/contact"
+              href="/contacto"
               title="Contacto"
-              isActive={isActive("/contact")}
+              isActive={isActive("/contacto")}
               baseStyle={baseLinkStyle}
               activeStyle={activeLinkStyle}
             >
@@ -398,9 +398,9 @@ export default function Header() {
                 </MobileNavLink>
 
                 <MobileNavLink
-                  href="/contact"
+                  href="/contacto"
                   title="Contacto"
-                  isActive={isActive("/contact")}
+                  isActive={isActive("/contacto")}
                   baseStyle={mobileLinkStyle}
                   activeStyle={mobileActiveLinkStyle}
                   onClick={closeMenu}
