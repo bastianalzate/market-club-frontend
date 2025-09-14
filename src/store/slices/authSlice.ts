@@ -7,6 +7,7 @@ export interface User {
   email: string;
   phone: string;
   isGuest?: boolean; // Para distinguir usuarios invitados
+  is_wholesaler?: boolean; // Para distinguir usuarios mayoristas
 }
 
 interface AuthState {

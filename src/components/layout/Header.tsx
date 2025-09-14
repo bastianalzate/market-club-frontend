@@ -278,15 +278,17 @@ export default function Header() {
               Armá tu regalo
             </NavLink>
 
-            <NavLink
-              href="/kits"
-              title="Kit"
-              isActive={isActive("/kits")}
-              baseStyle={baseLinkStyle}
-              activeStyle={activeLinkStyle}
-            >
-              Kit
-            </NavLink>
+            {isAuthenticated && user?.is_wholesaler && (
+              <NavLink
+                href="/mayorista"
+                title="Mayorista"
+                isActive={isActive("/mayorista")}
+                baseStyle={baseLinkStyle}
+                activeStyle={activeLinkStyle}
+              >
+                Mayorista
+              </NavLink>
+            )}
 
             <NavLink
               href="/about"
@@ -375,16 +377,18 @@ export default function Header() {
                   Armá tu regalo
                 </MobileNavLink>
 
-                <MobileNavLink
-                  href="/kits"
-                  title="Kits"
-                  isActive={isActive("/kits")}
-                  baseStyle={mobileLinkStyle}
-                  activeStyle={mobileActiveLinkStyle}
-                  onClick={closeMenu}
-                >
-                  Kits
-                </MobileNavLink>
+                {isAuthenticated && user?.is_wholesaler && (
+                  <MobileNavLink
+                    href="/mayorista"
+                    title="Mayorista"
+                    isActive={isActive("/mayorista")}
+                    baseStyle={mobileLinkStyle}
+                    activeStyle={mobileActiveLinkStyle}
+                    onClick={closeMenu}
+                  >
+                    Mayorista
+                  </MobileNavLink>
+                )}
 
                 <MobileNavLink
                   href="/about"
