@@ -1,11 +1,12 @@
 "use client";
 
-import { useCart } from "@/hooks/useCart";
+import { useCartContext } from "@/contexts/CartContext";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 export default function CheckoutContent() {
-  const { items, totalItems, removeFromCart } = useCart();
+  const { cart, itemsCount, removeFromCart, subtotal, totalAmount } =
+    useCartContext();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -23,19 +24,16 @@ export default function CheckoutContent() {
     cvv: "",
   });
 
-  const formatPrice = (price: number) => {
+  const formatPrice = (price: number | string) => {
+    const numPrice = typeof price === "string" ? parseFloat(price) : price;
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
       minimumFractionDigits: 0,
-    }).format(price);
+    }).format(numPrice);
   };
 
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
-  const total = subtotal;
+  const total = totalAmount;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -77,7 +75,7 @@ export default function CheckoutContent() {
           <p className="text-gray-600">Completa tu pedido de forma segura</p>
           <div className="inline-flex items-center mt-4 px-4 py-2 bg-white rounded-full shadow-sm border">
             <span className="text-sm font-medium text-gray-700">
-              {totalItems} {totalItems === 1 ? "producto" : "productos"} en tu
+              {itemsCount} {itemsCount === 1 ? "producto" : "productos"} en tu
               carrito
             </span>
           </div>
@@ -163,7 +161,7 @@ export default function CheckoutContent() {
               <div className="px-6 py-8 bg-gradient-to-br from-gray-50 to-gray-100 md:px-8">
                 <div className="flow-root">
                   <ul className="divide-y divide-gray-200 -my-7">
-                    {items.map((item) => (
+                    {cart?.items?.map((item) => (
                       <li
                         key={item.id}
                         className="flex items-stretch justify-between space-x-5 py-6 hover:bg-white/50 transition-colors duration-200 rounded-lg px-3 -mx-3"
@@ -173,26 +171,23 @@ export default function CheckoutContent() {
                             <div className="relative">
                               <div
                                 className={`flex items-center justify-center ${
-                                  item.product.category ===
-                                  "Regalo Personalizado"
+                                  item.product.name.includes("Regalo")
                                     ? "w-8 h-8 rounded-lg"
                                     : "w-20 h-20"
                                 }`}
                                 style={
-                                  item.product.category ===
-                                  "Regalo Personalizado"
+                                  item.product.name.includes("Regalo")
                                     ? { backgroundColor: "#B58E31" }
                                     : {}
                                 }
                               >
                                 <img
                                   className={`border border-gray-200 rounded-xl object-cover shadow-sm ${
-                                    item.product.category ===
-                                    "Regalo Personalizado"
+                                    item.product.name.includes("Regalo")
                                       ? "w-8 h-8"
                                       : "w-20 h-20"
                                   }`}
-                                  src={item.product.image}
+                                  src={item.product.image_url}
                                   alt={item.product.name}
                                 />
                               </div>
@@ -211,10 +206,10 @@ export default function CheckoutContent() {
                                 {item.product.name}
                               </p>
                               <p className="mt-1 text-sm text-gray-500">
-                                {item.product.brand}
+                                {item.product.name.split(" ")[0]}
                               </p>
                               <p className="mt-1 text-xs text-gray-400">
-                                {formatPrice(item.product.price)} c/u
+                                {formatPrice(item.unit_price)} c/u
                               </p>
                             </div>
                           </div>
@@ -222,12 +217,14 @@ export default function CheckoutContent() {
 
                         <div className="flex flex-col items-end justify-between ml-auto">
                           <p className="text-sm font-bold text-right text-gray-900">
-                            {formatPrice(item.product.price * item.quantity)}
+                            {formatPrice(item.total_price)}
                           </p>
 
                           <button
                             type="button"
-                            onClick={() => removeFromCart(item.id)}
+                            onClick={() =>
+                              removeFromCart({ productId: item.product_id })
+                            }
                             className="inline-flex p-2 -m-2 text-gray-400 transition-all duration-200 rounded-lg hover:bg-red-50 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                             title="Eliminar producto"
                           >

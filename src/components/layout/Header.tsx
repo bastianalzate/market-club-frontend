@@ -6,7 +6,7 @@ import { Search, Menu, X, ShoppingCart, User, LogOut } from "lucide-react";
 import { useState, useMemo, useCallback, memo } from "react";
 import { usePathname } from "next/navigation";
 import CartDrawer from "../../features/cart/components/CartDrawer";
-import { useCart } from "@/hooks/useCart";
+import { useCartContext } from "@/contexts/CartContext";
 import LoginModal from "../auth/LoginModal";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -86,7 +86,23 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   // Solo obtener lo que necesitamos del carrito para evitar re-renders innecesarios
-  const { isOpen, openCart, closeCart, totalItems } = useCart();
+  const { itemsCount } = useCartContext();
+
+  // Log para debugging
+  console.log("🛒 Header render:", { itemsCount });
+
+  // Estado local para el carrito drawer
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Función optimizada para abrir el carrito
+  const handleOpenCart = useCallback(() => {
+    setIsCartOpen(true);
+  }, []);
+
+  // Función optimizada para cerrar el carrito
+  const handleCloseCart = useCallback(() => {
+    setIsCartOpen(false);
+  }, []);
   const {
     isLoginModalOpen,
     openLoginModal,
@@ -217,13 +233,13 @@ export default function Header() {
 
             {/* Cart */}
             <button
-              onClick={openCart}
+              onClick={handleOpenCart}
               className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative"
             >
               <ShoppingCart className="w-5 h-5" />
-              {totalItems > 0 && (
+              {itemsCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {totalItems}
+                  {itemsCount}
                 </span>
               )}
             </button>
@@ -323,13 +339,13 @@ export default function Header() {
 
             {/* Cart */}
             <button
-              onClick={openCart}
+              onClick={handleOpenCart}
               className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative"
             >
               <ShoppingCart className="w-5 h-5" />
-              {totalItems > 0 && (
+              {itemsCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {totalItems}
+                  {itemsCount}
                 </span>
               )}
             </button>
@@ -418,7 +434,7 @@ export default function Header() {
       </div>
 
       {/* Cart Drawer */}
-      <CartDrawer isOpen={isOpen} onClose={closeCart} />
+      <CartDrawer isOpen={isCartOpen} onClose={handleCloseCart} />
 
       {/* Login Modal */}
       <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />

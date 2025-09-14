@@ -10,6 +10,7 @@ import BeerClubSection from "@/components/home/BeerClubSection";
 import BeerCarousel from "@/components/home/BeerCarousel";
 import ProductCard from "@/features/products/components/ProductCard";
 import AddToCartButton from "@/features/cart/components/AddToCartButton";
+// import CartDebugger from "@/components/debug/CartDebugger";
 import { Product } from "@/features/products/types/product";
 import { mockProducts } from "@/features/products/data/mockProducts";
 
@@ -30,6 +31,9 @@ export default function HomePage() {
       <BeerClubSection />
       <MarketClubBanner backgroundColor="#000000" textColor="#FFFFFF" />
       {/* <BeerCarousel /> */}
+
+      {/* Debug component - solo en desarrollo */}
+      {/* <CartDebugger /> */}
     </div>
   );
 }

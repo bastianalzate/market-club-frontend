@@ -12,14 +12,14 @@ import {
   Plus,
   Minus,
 } from "lucide-react";
-import { useCart } from "@/hooks/useCart";
-import { useNotification } from "@/hooks/useNotification";
+import { useCartContext } from "@/contexts/CartContext";
+import { useToast } from "@/hooks/useToast";
 import { Product } from "@/features/products/types/product";
 import { TransformedProduct } from "@/hooks/useProducts";
-import NotificationToast from "@/components/shared/NotificationToast";
 import ProductSkeleton from "@/components/shared/ProductSkeleton";
 import ProductCardSkeleton from "@/components/shared/ProductCardSkeleton";
 import LazyImage from "@/components/shared/LazyImage";
+import Toast from "@/components/shared/Toast";
 
 interface TiendaProduct {
   id: number;
@@ -100,8 +100,15 @@ export default function ProductGrid({
   const [favorites, setFavorites] = useState<number[]>([]);
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
   const [justAdded, setJustAdded] = useState<number | null>(null);
-  const { addToCart, updateQuantity, removeFromCart, items } = useCart();
-  const { notification, showSuccess, hideNotification } = useNotification();
+  const {
+    addToCart,
+    updateQuantity,
+    removeFromCart,
+    getProductQuantity,
+    isInCart,
+    loading: cartLoading,
+  } = useCartContext();
+  const { toast, showSuccess, showError, hideToast } = useToast();
 
   const toggleFavorite = (productId: number) => {
     setFavorites((prev) =>
@@ -111,31 +118,24 @@ export default function ProductGrid({
     );
   };
 
-  // Obtener la cantidad de un producto en el carrito
-  const getProductQuantity = (productId: number) => {
-    const cartItem = items.find((item) => item.product.id === productId);
-    return cartItem ? cartItem.quantity : 0;
-  };
-
-  // Verificar si un producto está en el carrito
-  const isInCart = (productId: number) => {
-    return items.some((item) => item.product.id === productId);
-  };
+  // Las funciones getProductQuantity e isInCart ahora vienen del hook useCart
 
   // Manejar incremento de cantidad
-  const handleIncreaseQuantity = (tiendaProduct: TransformedProduct) => {
-    const product: Product = convertToStoreProduct(tiendaProduct);
+  const handleIncreaseQuantity = async (tiendaProduct: TransformedProduct) => {
     const currentQuantity = getProductQuantity(tiendaProduct.id);
-    updateQuantity(tiendaProduct.id.toString(), currentQuantity + 1);
+    await updateQuantity({
+      productId: tiendaProduct.id,
+      quantity: currentQuantity + 1,
+    });
   };
 
   // Manejar decremento de cantidad
-  const handleDecreaseQuantity = (productId: number) => {
+  const handleDecreaseQuantity = async (productId: number) => {
     const currentQuantity = getProductQuantity(productId);
     if (currentQuantity > 1) {
-      updateQuantity(productId.toString(), currentQuantity - 1);
+      await updateQuantity({ productId, quantity: currentQuantity - 1 });
     } else {
-      removeFromCart(productId.toString());
+      await removeFromCart({ productId });
     }
   };
 
@@ -172,25 +172,37 @@ export default function ProductGrid({
   const handleAddToCart = async (tiendaProduct: TransformedProduct) => {
     setAddingToCart(tiendaProduct.id);
 
-    const product = convertToStoreProduct(tiendaProduct);
-    addToCart(product, 1);
+    try {
+      const result = await addToCart({
+        productId: tiendaProduct.id,
+        quantity: 1,
+      });
 
-    // Simular una pequeña animación
-    setTimeout(() => {
-      setAddingToCart(null);
-      setJustAdded(tiendaProduct.id);
-
-      // Mostrar notificación de éxito
-      showSuccess(
-        "¡Producto agregado! 🍺",
-        `"${tiendaProduct.name}" se agregó al carrito exitosamente.`
+      if (result.success) {
+        setJustAdded(tiendaProduct.id);
+        showSuccess(
+          "¡Producto agregado! 🍺",
+          `"${tiendaProduct.name}" se agregó al carrito exitosamente.`
+        );
+        // Limpiar el estado de "just added" después de 2 segundos
+        setTimeout(() => {
+          setJustAdded(null);
+        }, 2000);
+      } else {
+        showError(
+          "Error al agregar producto",
+          result.message || "No se pudo agregar el producto al carrito"
+        );
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      showError(
+        "Error al agregar producto",
+        "Ocurrió un error inesperado. Intenta nuevamente."
       );
-
-      // Limpiar el estado de "just added" después de 2 segundos
-      setTimeout(() => {
-        setJustAdded(null);
-      }, 2000);
-    }, 500);
+    } finally {
+      setAddingToCart(null);
+    }
   };
 
   // Configuración de paginación - usar la paginación del servidor si está disponible
@@ -516,14 +528,13 @@ export default function ProductGrid({
         </div>
       )}
 
-      {/* Notificación Toast */}
-      <NotificationToast
-        isVisible={notification.isVisible}
-        onClose={hideNotification}
-        title={notification.title}
-        message={notification.message}
-        type={notification.type}
-        duration={4000}
+      {/* Toast de notificaciones */}
+      <Toast
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+        title={toast.title}
+        message={toast.message}
+        type={toast.type}
       />
     </div>
   );

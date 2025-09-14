@@ -9,6 +9,8 @@ import {
 import "./globals.css";
 import MainLayout from "@/components/layout/MainLayout";
 import ReduxProvider from "@/providers/ReduxProvider";
+import SuppressHydrationWarning from "@/components/shared/SuppressHydrationWarning";
+import { CartProvider } from "@/contexts/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,6 +40,16 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
+// Constante estática para evitar errores de hidratación
+const FONT_CLASSES = [
+  geistSans.variable,
+  geistMono.variable,
+  oswald.variable,
+  inter.variable,
+  plusJakartaSans.variable,
+  "antialiased",
+].join(" ");
+
 export const metadata: Metadata = {
   title: "Market Club - Tu Destino para las Mejores Cervezas",
   description:
@@ -60,11 +72,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${inter.variable} ${plusJakartaSans.variable} antialiased`}
-      >
+      <body className={FONT_CLASSES}>
+        <SuppressHydrationWarning />
         <ReduxProvider>
-          <MainLayout>{children}</MainLayout>
+          <CartProvider>
+            <MainLayout>{children}</MainLayout>
+          </CartProvider>
         </ReduxProvider>
       </body>
     </html>

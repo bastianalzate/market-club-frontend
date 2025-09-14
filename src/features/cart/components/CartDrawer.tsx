@@ -3,7 +3,7 @@
 import { X, Trash2, Plus, Minus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useCart } from "@/hooks/useCart";
+import { useCartContext } from "@/contexts/CartContext";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -11,24 +11,66 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const { items, updateQuantity, removeFromCart } = useCart();
+  const {
+    cart,
+    itemsCount,
+    subtotal,
+    taxAmount,
+    shippingAmount,
+    totalAmount,
+    updateQuantity,
+    removeFromCart,
+    loading,
+  } = useCartContext();
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const router = useRouter();
 
-  const formatPrice = (price: number) => {
+  // Log para debugging
+  console.log("🛒 CartDrawer render:", {
+    itemsCount,
+    cartItems: cart?.items?.length || 0,
+    isOpen,
+    loading,
+  });
+
+  // Log de los items del carrito para debugging de imágenes
+  if (cart?.items) {
+    console.log(
+      "🛒 Cart items with image data:",
+      cart.items.map((item) => ({
+        id: item.product_id,
+        name: item.product.name,
+        image: item.product.image,
+        image_url: item.product.image_url,
+        hasImage: !!(item.product.image || item.product.image_url),
+      }))
+    );
+  }
+
+  const formatPrice = (price: number | string) => {
+    const numPrice = typeof price === "string" ? parseFloat(price) : price;
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
       minimumFractionDigits: 0,
-    }).format(price);
+    }).format(numPrice);
   };
 
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
-  const total = subtotal;
+  // Función para construir la URL completa de la imagen
+  const getImageUrl = (product: { image?: string; image_url?: string }) => {
+    // Priorizar image_url si existe, sino usar image
+    const imagePath = product.image_url || product.image;
+    if (!imagePath) return "/images/cervezas/bottella-01.png";
+
+    // Si ya es una URL completa, devolverla tal como está
+    if (imagePath.startsWith("http")) {
+      return imagePath;
+    }
+
+    // Construir URL completa con la base del backend
+    return `http://localhost:8000/storage/${imagePath}`;
+  };
 
   // Manejar la animación de entrada
   useEffect(() => {
@@ -142,7 +184,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             <div className="flex-1 overflow-y-auto">
               <div className="px-4 py-2 sm:px-6">
                 <div className="flow-root">
-                  {items.length === 0 ? (
+                  {!cart || cart.items.length === 0 ? (
                     <div className="text-center py-8">
                       <p className="text-gray-500">Tu carrito está vacío</p>
                       <p className="text-sm text-gray-400">
@@ -151,28 +193,40 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     </div>
                   ) : (
                     <ul className="-my-5 divide-y divide-gray-200 divide-dotted">
-                      {items.map((item) => (
+                      {cart.items.map((item) => (
                         <li key={item.id} className="flex py-5">
                           <div
-                            className={`flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center ${
-                              item.product.category === "Regalo Personalizado"
-                                ? ""
-                                : "bg-gray-100"
-                            }`}
-                            style={
-                              item.product.category === "Regalo Personalizado"
-                                ? { backgroundColor: "#B58E31" }
-                                : {}
-                            }
+                            className="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center bg-gray-100"
+                            style={{
+                              backgroundColor: item.product.name.includes(
+                                "Regalo"
+                              )
+                                ? "#B58E31"
+                                : undefined,
+                            }}
                           >
                             <img
                               className={`object-cover ${
-                                item.product.category === "Regalo Personalizado"
+                                item.product.name.includes("Regalo")
                                   ? "w-8 h-8"
                                   : "w-16 h-16 rounded-lg"
                               }`}
-                              src={item.product.image}
+                              src={getImageUrl(item.product)}
                               alt={item.product.name}
+                              onError={(e) => {
+                                console.log(
+                                  "🛒 Image failed to load:",
+                                  getImageUrl(item.product)
+                                );
+                                const target = e.target as HTMLImageElement;
+                                target.src = "/images/cervezas/bottella-01.png";
+                              }}
+                              onLoad={() => {
+                                console.log(
+                                  "🛒 Image loaded successfully:",
+                                  getImageUrl(item.product)
+                                );
+                              }}
                             />
                           </div>
 
@@ -186,14 +240,16 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                               <div className="mt-2 flex items-center space-x-2">
                                 <button
                                   type="button"
-                                  onClick={() => {
+                                  onClick={async () => {
                                     if (item.quantity > 1) {
-                                      updateQuantity(
-                                        item.id,
-                                        item.quantity - 1
-                                      );
+                                      await updateQuantity({
+                                        productId: item.product_id,
+                                        quantity: item.quantity - 1,
+                                      });
                                     } else {
-                                      removeFromCart(item.id);
+                                      await removeFromCart({
+                                        productId: item.product_id,
+                                      });
                                     }
                                   }}
                                   className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
@@ -208,8 +264,11 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
                                 <button
                                   type="button"
-                                  onClick={() =>
-                                    updateQuantity(item.id, item.quantity + 1)
+                                  onClick={async () =>
+                                    await updateQuantity({
+                                      productId: item.product_id,
+                                      quantity: item.quantity + 1,
+                                    })
                                   }
                                   className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                                   aria-label="Aumentar cantidad"
@@ -221,14 +280,16 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
                             <div className="flex flex-col items-end justify-between">
                               <p className="flex-shrink-0 w-20 text-sm font-bold text-right text-gray-600">
-                                {formatPrice(
-                                  item.product.price * item.quantity
-                                )}
+                                {formatPrice(item.total_price)}
                               </p>
 
                               <button
                                 type="button"
-                                onClick={() => removeFromCart(item.id)}
+                                onClick={async () =>
+                                  await removeFromCart({
+                                    productId: item.product_id,
+                                  })
+                                }
                                 className="inline-flex p-2 -m-2 text-gray-400 transition-all duration-200 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 hover:text-gray-900"
                               >
                                 <Trash2 className="w-5 h-5" />
@@ -244,7 +305,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             </div>
 
             {/* Footer */}
-            {items.length > 0 && (
+            {itemsCount > 0 && (
               <div className="px-4 py-5 border-t border-gray-200 sm:p-6">
                 <ul className="space-y-4">
                   <li className="flex items-center justify-between">
@@ -259,7 +320,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   <li className="flex items-center justify-between">
                     <p className="text-sm font-medium text-gray-900">Total</p>
                     <p className="text-sm font-bold text-gray-900">
-                      {formatPrice(total)}
+                      {formatPrice(totalAmount)}
                     </p>
                   </li>
                 </ul>

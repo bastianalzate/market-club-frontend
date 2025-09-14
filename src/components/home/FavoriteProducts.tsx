@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { Heart, ShoppingCart, ArrowRight, Plus, Minus } from "lucide-react";
-import { useCart } from "@/hooks/useCart";
-import { useNotification } from "@/hooks/useNotification";
+import { useCartContext } from "@/contexts/CartContext";
+import { useToast } from "@/hooks/useToast";
 import {
   useFeaturedProducts,
   FeaturedProduct,
 } from "@/hooks/useFeaturedProducts";
 import { Product } from "@/features/products/types/product";
-import NotificationToast from "@/components/shared/NotificationToast";
+import Toast from "@/components/shared/Toast";
 import FeaturedProductSkeleton from "@/components/shared/FeaturedProductSkeleton";
 import LazyImage from "@/components/shared/LazyImage";
 import ProductCarousel from "@/components/shared/ProductCarousel";
@@ -17,8 +17,14 @@ import ProductCarousel from "@/components/shared/ProductCarousel";
 export default function FavoriteProducts() {
   const [favorites, setFavorites] = useState<number[]>([]);
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
-  const { addToCart, updateQuantity, removeFromCart, items } = useCart();
-  const { notification, showSuccess, hideNotification } = useNotification();
+  const {
+    addToCart,
+    updateQuantity,
+    removeFromCart,
+    getProductQuantity,
+    isInCart,
+  } = useCartContext();
+  const { toast, showSuccess, showError, hideToast } = useToast();
   const { products: featuredProducts, loading, error } = useFeaturedProducts();
 
   const toggleFavorite = (productId: number) => {
@@ -29,16 +35,7 @@ export default function FavoriteProducts() {
     );
   };
 
-  // Obtener la cantidad de un producto en el carrito
-  const getProductQuantity = (productId: number) => {
-    const cartItem = items.find((item) => item.product.id === productId);
-    return cartItem ? cartItem.quantity : 0;
-  };
-
-  // Verificar si un producto está en el carrito
-  const isInCart = (productId: number) => {
-    return items.some((item) => item.product.id === productId);
-  };
+  // Las funciones getProductQuantity e isInCart ahora vienen del hook useCart
 
   // Convertir producto destacado del API al formato del store
   const convertToStoreProduct = (featuredProduct: FeaturedProduct): Product => {
@@ -78,19 +75,30 @@ export default function FavoriteProducts() {
   const handleAddToCart = async (featuredProduct: FeaturedProduct) => {
     setAddingToCart(featuredProduct.id);
 
-    const product = convertToStoreProduct(featuredProduct);
-    addToCart(product, 1);
+    try {
+      const result = await addToCart({
+        productId: featuredProduct.id,
+        quantity: 1,
+      });
 
-    // Simular una pequeña animación
-    setTimeout(() => {
+      // Simular una pequeña animación
+      setTimeout(() => {
+        setAddingToCart(null);
+
+        // Mostrar notificación de éxito
+        if (result.success) {
+          showSuccess(
+            "¡Producto agregado! 🍺",
+            `"${featuredProduct.name}" se agregó al carrito exitosamente.`
+          );
+        } else {
+          showError("Error", result.message || "Error al agregar producto");
+        }
+      }, 500);
+    } catch (error) {
       setAddingToCart(null);
-
-      // Mostrar notificación de éxito
-      showSuccess(
-        "¡Producto agregado! 🍺",
-        `"${featuredProduct.name}" se agregó al carrito exitosamente.`
-      );
-    }, 500);
+      showError("Error", "Error al agregar producto al carrito");
+    }
   };
 
   // Función para renderizar cada producto del carrusel
@@ -285,13 +293,12 @@ export default function FavoriteProducts() {
       </div>
 
       {/* Notificación Toast */}
-      <NotificationToast
-        isVisible={notification.isVisible}
-        onClose={hideNotification}
-        title={notification.title}
-        message={notification.message}
-        type={notification.type}
-        duration={4000}
+      <Toast
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+        title={toast.title}
+        message={toast.message}
+        type={toast.type}
       />
     </section>
   );

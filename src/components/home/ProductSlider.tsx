@@ -2,10 +2,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useLatestBeers, LatestBeer } from "@/hooks/useLatestBeers";
-import { useCart } from "@/hooks/useCart";
-import { useNotification } from "@/hooks/useNotification";
+import { useCartContext } from "@/contexts/CartContext";
+import { useToast } from "@/hooks/useToast";
 import { Product } from "@/features/products/types/product";
-import NotificationToast from "@/components/shared/NotificationToast";
+import Toast from "@/components/shared/Toast";
 import ProductCarousel from "@/components/shared/ProductCarousel";
 import FeaturedProductSkeleton from "@/components/shared/FeaturedProductSkeleton";
 import LazyImage from "@/components/shared/LazyImage";
@@ -14,8 +14,14 @@ import { Heart, ShoppingCart, ArrowRight } from "lucide-react";
 export default function ProductSlider() {
   const [favorites, setFavorites] = useState<number[]>([]);
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
-  const { addToCart, updateQuantity, removeFromCart, items } = useCart();
-  const { notification, showSuccess, hideNotification } = useNotification();
+  const {
+    addToCart,
+    updateQuantity,
+    removeFromCart,
+    getProductQuantity,
+    isInCart,
+  } = useCartContext();
+  const { toast, showSuccess, showError, hideToast } = useToast();
   const { beers: latestBeers, loading, error } = useLatestBeers();
 
   const toggleFavorite = (productId: number) => {
@@ -26,16 +32,7 @@ export default function ProductSlider() {
     );
   };
 
-  // Obtener la cantidad de un producto en el carrito
-  const getProductQuantity = (productId: number) => {
-    const cartItem = items.find((item) => item.product.id === productId);
-    return cartItem ? cartItem.quantity : 0;
-  };
-
-  // Verificar si un producto está en el carrito
-  const isInCart = (productId: number) => {
-    return items.some((item) => item.product.id === productId);
-  };
+  // Las funciones getProductQuantity e isInCart ahora vienen del hook useCart
 
   // Convertir producto del API al formato del store
   const convertToStoreProduct = (latestBeer: LatestBeer): Product => {
@@ -75,19 +72,27 @@ export default function ProductSlider() {
   const handleAddToCart = async (latestBeer: LatestBeer) => {
     setAddingToCart(latestBeer.id);
 
-    const product = convertToStoreProduct(latestBeer);
-    addToCart(product, 1);
+    try {
+      const result = await addToCart({ productId: latestBeer.id, quantity: 1 });
 
-    // Simular una pequeña animación
-    setTimeout(() => {
+      // Simular una pequeña animación
+      setTimeout(() => {
+        setAddingToCart(null);
+
+        // Mostrar notificación de éxito
+        if (result.success) {
+          showSuccess(
+            "¡Producto agregado! 🍺",
+            `"${latestBeer.name}" se agregó al carrito exitosamente.`
+          );
+        } else {
+          showError("Error", result.message || "Error al agregar producto");
+        }
+      }, 500);
+    } catch (error) {
       setAddingToCart(null);
-
-      // Mostrar notificación de éxito
-      showSuccess(
-        "¡Producto agregado! 🍺",
-        `"${latestBeer.name}" se agregó al carrito exitosamente.`
-      );
-    }, 500);
+      showError("Error", "Error al agregar producto al carrito");
+    }
   };
 
   // Función para renderizar cada producto del carrusel
@@ -260,13 +265,12 @@ export default function ProductSlider() {
       </div>
 
       {/* Notificación Toast */}
-      <NotificationToast
-        isVisible={notification.isVisible}
-        onClose={hideNotification}
-        title={notification.title}
-        message={notification.message}
-        type={notification.type}
-        duration={4000}
+      <Toast
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+        title={toast.title}
+        message={toast.message}
+        type={toast.type}
       />
     </section>
   );

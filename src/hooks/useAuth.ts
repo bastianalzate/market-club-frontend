@@ -23,6 +23,7 @@ import {
   selectIsGuest,
 } from '../store/slices/authSlice';
 import { constants } from '../config/constants';
+import { syncCartAfterLogin } from '../utils/cartUtils';
 
 // Traducciones de mensajes de error del servidor
 const errorTranslations: Record<string, string> = {
@@ -138,6 +139,15 @@ export function useAuth() {
       localStorage.setItem('user', JSON.stringify(user));
       
       dispatch(loginSuccess(user));
+      
+      // Sincronizar carrito después del login exitoso
+      try {
+        await syncCartAfterLogin();
+        console.log('Carrito sincronizado exitosamente después del login');
+      } catch (cartError) {
+        console.warn('Error al sincronizar carrito después del login:', cartError);
+        // No fallar el login por error de sincronización del carrito
+      }
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Error al iniciar sesión. Verifica tus credenciales.";
