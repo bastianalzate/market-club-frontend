@@ -20,6 +20,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     totalAmount,
     updateQuantity,
     removeFromCart,
+    loadCart,
     loading,
   } = useCartContext();
   const [isAnimating, setIsAnimating] = useState(false);
@@ -33,20 +34,42 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     cartItems: cart?.items?.length || 0,
     isOpen,
     loading,
+    cartSubtotal: cart?.subtotal,
+    cartTotalAmount: cart?.total_amount,
+    contextSubtotal: subtotal,
+    contextTotalAmount: totalAmount,
   });
 
-  // Log de los items del carrito para debugging de imágenes
+  // Log de los items del carrito para debugging detallado
   if (cart?.items) {
     console.log(
-      "🛒 Cart items with image data:",
+      "🛒 Cart items detailed debug:",
       cart.items.map((item) => ({
-        id: item.product_id,
+        id: item.id,
+        product_id: item.product_id,
         name: item.product.name,
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+        total_price: item.total_price,
+        calculated_total: parseFloat(String(item.unit_price)) * item.quantity,
         image: item.product.image,
         image_url: item.product.image_url,
         hasImage: !!(item.product.image || item.product.image_url),
       }))
     );
+
+    // Calcular subtotal manualmente
+    const manualSubtotal = cart.items.reduce((sum, item) => {
+      const itemTotal = parseFloat(String(item.unit_price)) * item.quantity;
+      console.log(
+        `🛒 Item calculation: ${item.product.name} - ${item.unit_price} × ${item.quantity} = ${itemTotal}`
+      );
+      return sum + itemTotal;
+    }, 0);
+
+    console.log("🛒 Manual subtotal calculation:", manualSubtotal);
+    console.log("🛒 Backend subtotal:", cart.subtotal);
+    console.log("🛒 Backend total_amount:", cart.total_amount);
   }
 
   const formatPrice = (price: number | string) => {
@@ -335,20 +358,75 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             {/* Footer */}
             {itemsCount > 0 && (
               <div className="px-4 py-5 border-t border-gray-200 sm:p-6">
-                <ul className="space-y-4">
-                  <li className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-gray-600">
-                      Subtotal
-                    </p>
-                    <p className="text-sm font-medium text-gray-600">
-                      {formatPrice(subtotal)}
-                    </p>
-                  </li>
+                {/* Debug section - Solo en desarrollo */}
+                {process.env.NODE_ENV === "development" && (
+                  <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-xs">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="font-bold text-yellow-800">
+                        🔧 Debug Info:
+                      </div>
+                      <button
+                        onClick={() => {
+                          console.log("🔄 Forcing cart reload...");
+                          loadCart();
+                        }}
+                        className="bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600"
+                      >
+                        Reload Cart
+                      </button>
+                    </div>
+                    <div className="space-y-1 text-yellow-700">
+                      {cart?.items?.map((item, index) => (
+                        <div key={index}>
+                          {item.product.name}: ${item.unit_price} ×{" "}
+                          {item.quantity} = $
+                          {(
+                            parseFloat(String(item.unit_price)) * item.quantity
+                          ).toLocaleString()}
+                        </div>
+                      ))}
+                      <div className="font-bold border-t pt-1 mt-2">
+                        Manual Total: $
+                        {cart?.items
+                          ?.reduce(
+                            (sum, item) =>
+                              sum +
+                              parseFloat(String(item.unit_price)) *
+                                item.quantity,
+                            0
+                          )
+                          .toLocaleString()}
+                      </div>
+                      <div>Backend Subtotal: ${cart?.subtotal}</div>
+                      <div>Backend Total: ${cart?.total_amount}</div>
+                      <div className="text-xs text-gray-600 mt-2">
+                        Cart ID: {cart?.id} | Session:{" "}
+                        {cart?.session_id?.substring(0, 20)}...
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        Last Updated:{" "}
+                        {(cart as any)?.updated_at
+                          ? new Date(
+                              (cart as any).updated_at
+                            ).toLocaleTimeString()
+                          : "N/A"}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
+                <ul className="space-y-4">
                   <li className="flex items-center justify-between">
                     <p className="text-sm font-medium text-gray-900">Total</p>
                     <p className="text-sm font-bold text-gray-900">
-                      {formatPrice(totalAmount)}
+                      {formatPrice(
+                        cart?.items?.reduce(
+                          (sum, item) =>
+                            sum +
+                            parseFloat(String(item.unit_price)) * item.quantity,
+                          0
+                        ) || 0
+                      )}
                     </p>
                   </li>
                 </ul>

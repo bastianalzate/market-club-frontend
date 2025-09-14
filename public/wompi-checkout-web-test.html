@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test Wompi Checkout Web</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .test-section {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+      }
+      button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      .log {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        font-family: monospace;
+        white-space: pre-wrap;
+      }
+      .success {
+        background: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+      }
+      .error {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🧪 Test Wompi Checkout Web</h1>
+
+    <div class="test-section">
+      <h2>Test Checkout Web</h2>
+      <p>
+        Este test usa el Checkout Web de Wompi que es más confiable que el
+        Widget.
+      </p>
+
+      <div>
+        <label for="orderId">Order ID:</label>
+        <input
+          type="number"
+          id="orderId"
+          value="13"
+          style="margin: 0 10px; padding: 5px"
+        />
+      </div>
+
+      <button onclick="testCheckoutWeb()">Test Checkout Web</button>
+      <div id="log" class="log"></div>
+    </div>
+
+    <script>
+      function log(message, type = "info") {
+        const logElement = document.getElementById("log");
+        const timestamp = new Date().toLocaleTimeString();
+        const className =
+          type === "success" ? "success" : type === "error" ? "error" : "";
+        logElement.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+      }
+
+      async function testCheckoutWeb() {
+        const orderId = document.getElementById("orderId").value;
+        log("🧪 Testing Checkout Web for order: " + orderId);
+
+        try {
+          // Obtener datos del backend para Checkout Web
+          log("📡 Fetching checkout data from backend...");
+          const response = await fetch(
+            "http://localhost:8000/api/payments/wompi/create-checkout",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify({
+                order_id: parseInt(orderId),
+                redirect_url:
+                  "http://localhost:3000/checkout/success?order_id=" + orderId,
+              }),
+            }
+          );
+
+          log("📡 Response status: " + response.status);
+
+          // Verificar si la respuesta es JSON
+          const contentType = response.headers.get("content-type");
+          if (!contentType || !contentType.includes("application/json")) {
+            const textResponse = await response.text();
+            log("❌ Non-JSON response: " + textResponse, "error");
+            return;
+          }
+
+          const result = await response.json();
+          log("📡 Backend response: " + JSON.stringify(result, null, 2));
+
+          if (result.success) {
+            log("✅ Backend data received successfully", "success");
+
+            // Crear formulario para Checkout Web
+            log("🎯 Creating Checkout Web form...");
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = "https://checkout.wompi.co/l/checkout";
+            form.target = "_blank";
+
+            // Agregar campos
+            const fields = {
+              "public-key": result.data.publicKey,
+              currency: result.data.currency,
+              "amount-in-cents": result.data.amount,
+              reference: result.data.reference,
+              signature: result.data.signature,
+              "redirect-url": result.data.redirectUrl,
+              "customer-data": JSON.stringify(result.data.customerData),
+              "shipping-address": JSON.stringify(result.data.shippingAddress),
+            };
+
+            log("🎯 Form fields: " + JSON.stringify(fields, null, 2));
+
+            Object.keys(fields).forEach((key) => {
+              const input = document.createElement("input");
+              input.type = "hidden";
+              input.name = key;
+              input.value = fields[key];
+              form.appendChild(input);
+            });
+
+            // Enviar formulario
+            document.body.appendChild(form);
+            log("🚀 Submitting Checkout Web form...", "success");
+            form.submit();
+            document.body.removeChild(form);
+
+            log("✅ Checkout Web opened in new window", "success");
+          } else {
+            log("❌ Backend error: " + result.message, "error");
+          }
+        } catch (error) {
+          log("❌ Error: " + error.message, "error");
+          console.error("Error:", error);
+        }
+      }
+
+      // Log when page loads
+      window.addEventListener("load", () => {
+        log("🧪 Wompi Checkout Web Test Page Loaded");
+      });
+    </script>
+  </body>
+</html>

@@ -206,21 +206,74 @@ export default function CheckoutFlow() {
                 </div>
 
                 {checkoutState.orderId && cart ? (
-                  <PaymentStep
-                    orderId={checkoutState.orderId}
-                    totalAmount={parseFloat(String(cart.total_amount))}
-                    customerEmail={
-                      shippingAddress?.phone ? undefined : undefined
-                    } // Se puede obtener del usuario logueado
-                    customerName={
-                      shippingAddress
-                        ? `${shippingAddress.first_name} ${shippingAddress.last_name}`
-                        : undefined
-                    }
-                    customerMobile={shippingAddress?.phone}
-                    onBack={() => handleStepChange(2)}
-                    onSuccess={handlePaymentSuccess}
-                  />
+                  <>
+                    {/* Debug info para el carrito */}
+                    <div className="mb-4 p-3 bg-yellow-100 border border-yellow-300 rounded-lg text-sm">
+                      <div className="flex justify-between items-center mb-2">
+                        <p>
+                          <strong>🛒 Cart Debug Info:</strong>
+                        </p>
+                        <button
+                          onClick={() => {
+                            console.log("🔄 Reloading cart...");
+                            loadCart();
+                          }}
+                          className="bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600"
+                        >
+                          Reload Cart
+                        </button>
+                      </div>
+                      <p>
+                        Cart total_amount: {cart.total_amount} (Type:{" "}
+                        {typeof cart.total_amount})
+                      </p>
+                      <p>
+                        Parsed totalAmount:{" "}
+                        {parseFloat(String(cart.total_amount))}
+                      </p>
+                      <p>Cart items count: {cart.items?.length || 0}</p>
+                      <p>Cart ID: {cart.id}</p>
+                      <p>Cart Session ID: {cart.session_id}</p>
+                      <div className="mt-2">
+                        <p>
+                          <strong>Items breakdown:</strong>
+                        </p>
+                        {cart.items?.map((item, index) => (
+                          <div key={index} className="ml-2 text-xs">
+                            {index + 1}. {item.product.name} - $
+                            {item.product.price} x {item.quantity} = $
+                            {item.product.price * item.quantity}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-2">
+                        <p>
+                          <strong>Backend totals:</strong>
+                        </p>
+                        <p>Subtotal: ${cart.subtotal}</p>
+                        <p>Tax: ${cart.tax_amount}</p>
+                        <p>Shipping: ${cart.shipping_amount}</p>
+                        <p>
+                          <strong>Total: ${cart.total_amount}</strong>
+                        </p>
+                      </div>
+                    </div>
+                    <PaymentStep
+                      orderId={checkoutState.orderId}
+                      totalAmount={parseFloat(String(cart.total_amount))}
+                      customerEmail={
+                        shippingAddress?.email || "usuario@ejemplo.com"
+                      } // Email requerido por Wompi
+                      customerName={
+                        shippingAddress
+                          ? `${shippingAddress.first_name} ${shippingAddress.last_name}`
+                          : undefined
+                      }
+                      customerMobile={shippingAddress?.phone}
+                      onBack={() => handleStepChange(2)}
+                      onSuccess={handlePaymentSuccess}
+                    />
+                  </>
                 ) : (
                   <div className="bg-white rounded-lg shadow-sm border p-6">
                     <div className="text-center">

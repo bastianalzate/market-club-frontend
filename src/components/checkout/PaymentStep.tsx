@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCheckout } from "@/hooks/useCheckout";
 import { useToast } from "@/hooks/useToast";
 import WompiWidget from "@/components/payment/WompiWidget";
 import Toast from "@/components/shared/Toast";
 import { WOMPI_CONFIG } from "@/config/wompi";
+import { PaymentService } from "@/services/paymentService";
 
 interface PaymentStepProps {
   orderId: string;
@@ -31,13 +32,32 @@ export default function PaymentStep({
 
   const [showWompiWidget, setShowWompiWidget] = useState(false);
   const [paymentSession, setPaymentSession] = useState<any>(null);
+  const [wompiScriptLoaded, setWompiScriptLoaded] = useState(false);
 
   // Configuración de Wompi
   const { PUBLIC_KEY: WOMPI_PUBLIC_KEY } = WOMPI_CONFIG;
 
+  // Verificar si el script de Wompi está cargado
+  useEffect(() => {
+    const checkWompiScript = () => {
+      if (typeof (window as any).WidgetCheckout !== "undefined") {
+        console.log("✅ Wompi script loaded successfully");
+        setWompiScriptLoaded(true);
+      } else {
+        console.log("⏳ Wompi script not loaded yet, retrying...");
+        setTimeout(checkWompiScript, 1000);
+      }
+    };
+
+    checkWompiScript();
+  }, []);
+
   const handleStartPayment = async () => {
     try {
+      console.log("🚀 Starting payment process...");
+
       const redirectUrl = WOMPI_CONFIG.getRedirectUrl(orderId);
+      console.log("🔗 Redirect URL:", redirectUrl);
 
       // Preparar datos del cliente (opcional - el backend los obtiene automáticamente)
       const customerData = {
@@ -48,29 +68,41 @@ export default function PaymentStep({
 
       console.log("👤 Customer data (optional):", customerData);
       console.log("📦 Order ID being sent:", orderId);
+      console.log("💰 Total amount:", totalAmount);
 
-      const sessionResponse = await createPaymentSession(
-        orderId,
-        totalAmount,
-        redirectUrl,
-        customerData
+      // Verificar que Wompi esté cargado antes de continuar
+      console.log("🔍 Checking Wompi script status...");
+      console.log("  - wompiScriptLoaded:", wompiScriptLoaded);
+      console.log(
+        "  - WidgetCheckout available:",
+        typeof (window as any).WidgetCheckout !== "undefined"
       );
 
-      if (sessionResponse.success && sessionResponse.data.payment_url) {
-        // Redirigir directamente a Wompi
-        console.log(
-          "🚀 Redirecting to Wompi:",
-          sessionResponse.data.payment_url
+      if (!wompiScriptLoaded) {
+        console.warn("⚠️ Wompi script not loaded, waiting...");
+        showError(
+          "Error",
+          "Wompi no está cargado. Por favor, espera un momento y vuelve a intentar."
         );
-        window.location.href = sessionResponse.data.payment_url;
-      } else {
-        throw new Error(
-          sessionResponse.message || "No se obtuvo la URL de pago"
-        );
+        return;
       }
+
+      if (typeof (window as any).WidgetCheckout === "undefined") {
+        console.error("❌ WidgetCheckout not available");
+        showError(
+          "Error",
+          "Widget de Wompi no está disponible. Por favor, recarga la página."
+        );
+        return;
+      }
+
+      console.log("✅ Wompi ready, opening widget...");
+
+      // Abrir Widget de Wompi (configuración mínima que funciona)
+      await openWompiWidget();
     } catch (error) {
-      console.error("Error creating payment session:", error);
-      showError("Error", "No se pudo inicializar el pago");
+      console.error("❌ Error opening Wompi checkout:", error);
+      showError("Error", "No se pudo inicializar el pago: " + error.message);
     }
   };
 
@@ -102,6 +134,158 @@ export default function PaymentStep({
 
   const handleCloseWidget = () => {
     setShowWompiWidget(false);
+  };
+
+  // Función para crear el Checkout Web de Wompi (ya no necesaria - se hace directamente en openWompiCheckout)
+
+  // Función para abrir el Widget de Wompi (configuración mínima que funciona)
+  const openWompiWidget = async () => {
+    try {
+      console.log("🎯 Opening Wompi Widget for order:", orderId);
+      console.log(
+        "🔍 WidgetCheckout type:",
+        typeof (window as any).WidgetCheckout
+      );
+      console.log(
+        "🔍 WidgetCheckout available:",
+        !!(window as any).WidgetCheckout
+      );
+
+      // Verificar que el script de Wompi esté cargado
+      if (typeof window === "undefined") {
+        console.error("❌ Window not available");
+        throw new Error("Window no está disponible");
+      }
+
+      if (!(window as any).WidgetCheckout) {
+        console.error("❌ WidgetCheckout not available");
+        console.log(
+          "🔍 Available window properties:",
+          Object.keys(window).filter(
+            (key) =>
+              key.toLowerCase().includes("widget") ||
+              key.toLowerCase().includes("wompi")
+          )
+        );
+        throw new Error("Widget de Wompi no está cargado");
+      }
+
+      console.log("✅ WidgetCheckout found, creating widget...");
+
+      // Debug: Verificar datos del cliente y monto antes de crear el widget
+      console.log("🔍 Customer data debug:");
+      console.log(
+        "  - customerName:",
+        customerName,
+        "Type:",
+        typeof customerName
+      );
+      console.log(
+        "  - customerEmail:",
+        customerEmail,
+        "Type:",
+        typeof customerEmail
+      );
+      console.log(
+        "  - customerMobile:",
+        customerMobile,
+        "Type:",
+        typeof customerMobile
+      );
+      console.log("💰 Payment amount debug:");
+      console.log("  - totalAmount:", totalAmount, "Type:", typeof totalAmount);
+      console.log("  - amountInCents:", totalAmount * 100);
+
+      // Intentar con datos reales del formulario
+      console.log("✅ Attempting with real customer data from form");
+
+      try {
+        const widgetConfigWithData = {
+          currency: "COP",
+          amountInCents: totalAmount * 100,
+          reference: `ORDER_${orderId}_${Date.now()}`,
+          publicKey: "pub_test_6j4AFOkyelP8Sb8HsS9u9l7aagAaRak4",
+          redirectUrl:
+            window.location.origin + "/checkout/success?order_id=" + orderId,
+          // Datos reales del formulario de dirección (formato correcto según docs.wompi.co)
+          customerData: {
+            email: customerEmail.trim(),
+            fullName: customerName.trim(), // ← fullName, NO name
+            phoneNumber: customerMobile.replace(/\D/g, ""), // Solo números
+            phoneNumberPrefix: "+57", // Colombia
+            legalId: "123456789", // ← Temporal - se puede mejorar después
+            legalIdType: "CC", // ← Temporal - se puede mejorar después
+          },
+        };
+
+        console.log(
+          "🎯 Widget config with real customer data:",
+          widgetConfigWithData
+        );
+
+        // Debug de los datos del cliente
+        console.log("🔍 Customer data:", widgetConfigWithData.customerData);
+        console.log("🔧 Creating WidgetCheckout instance (with data)...");
+        const checkout = new (window as any).WidgetCheckout(
+          widgetConfigWithData
+        );
+        console.log(
+          "✅ WidgetCheckout instance created (with data):",
+          checkout
+        );
+
+        console.log("🚀 Opening widget (with data)...");
+        checkout.open((result: any) => {
+          console.log("🎉 Transaction completed:", result);
+          if (result && result.transaction && result.transaction.id) {
+            handlePaymentSuccess(result.transaction);
+          } else {
+            console.error("❌ Invalid transaction result:", result);
+            showError("Error", "No se pudo procesar el pago");
+          }
+        });
+        console.log("✅ Widget.open() called successfully (with data)");
+      } catch (customerDataError) {
+        console.warn(
+          "⚠️ Customer data format issue, falling back to minimal config:",
+          customerDataError
+        );
+
+        // Fallback a configuración mínima (sin customerData)
+        const minimalConfig = {
+          currency: "COP",
+          amountInCents: totalAmount * 100,
+          reference: `ORDER_${orderId}_${Date.now()}`,
+          publicKey: "pub_test_6j4AFOkyelP8Sb8HsS9u9l7aagAaRak4",
+          redirectUrl:
+            window.location.origin + "/checkout/success?order_id=" + orderId,
+        };
+
+        console.log("🎯 Using minimal config as fallback:", minimalConfig);
+
+        console.log("🔧 Creating WidgetCheckout instance (minimal)...");
+        const checkout = new (window as any).WidgetCheckout(minimalConfig);
+        console.log("✅ WidgetCheckout instance created (minimal):", checkout);
+
+        console.log("🚀 Opening widget (minimal)...");
+        checkout.open((result: any) => {
+          console.log("🎉 Transaction completed:", result);
+          if (result && result.transaction && result.transaction.id) {
+            handlePaymentSuccess(result.transaction);
+          } else {
+            console.error("❌ Invalid transaction result:", result);
+            showError("Error", "No se pudo procesar el pago");
+          }
+        });
+        console.log("✅ Widget.open() called successfully (minimal)");
+      }
+    } catch (error) {
+      console.error("❌ Error opening Wompi widget:", error);
+      showError(
+        "Error",
+        "No se pudo abrir el widget de pago: " + error.message
+      );
+    }
   };
 
   return (
@@ -159,9 +343,21 @@ export default function PaymentStep({
                   Pago Seguro con Wompi
                 </h3>
                 <p className="text-sm text-blue-700 mt-1">
-                  Wompi es la plataforma de pagos más segura de Colombia. Acepta
-                  tarjetas de crédito, débito, PSE, Nequi y Daviplata.
+                  Wompi es la plataforma de pagos más segura de Colombia. Al
+                  hacer clic en "Pagar con Wompi" podrás elegir entre tarjetas
+                  de crédito/débito, PSE, Nequi, Daviplata y más métodos de
+                  pago.
                 </p>
+                <div className="mt-2 flex items-center">
+                  <div
+                    className={`w-2 h-2 rounded-full mr-2 ${
+                      wompiScriptLoaded ? "bg-green-500" : "bg-yellow-500"
+                    }`}
+                  ></div>
+                  <span className="text-xs text-blue-600">
+                    {wompiScriptLoaded ? "Wompi listo" : "Cargando Wompi..."}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -170,10 +366,17 @@ export default function PaymentStep({
           <div className="space-y-4">
             <button
               onClick={handleStartPayment}
-              disabled={checkoutState.loading || showWompiWidget}
+              disabled={
+                checkoutState.loading || showWompiWidget || !wompiScriptLoaded
+              }
               className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
-              {checkoutState.loading ? (
+              {!wompiScriptLoaded ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Cargando Wompi...
+                </>
+              ) : checkoutState.loading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                   Inicializando pago...

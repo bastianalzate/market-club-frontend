@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Wompi Widget - Simple</title>
+    <script src="https://checkout.wompi.co/widget.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .test-section {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+      }
+      button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      .log {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        font-family: monospace;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🧪 Test Wompi Widget - Simple</h1>
+
+    <div class="test-section">
+      <h2>Test 1: Configuración Mínima</h2>
+      <button onclick="testMinimal()">Test Widget Mínimo</button>
+      <div id="log1" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 2: Con Customer Data</h2>
+      <button onclick="testWithCustomer()">Test con Customer Data</button>
+      <div id="log2" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 3: Con Shipping Address</h2>
+      <button onclick="testWithShipping()">Test con Shipping Address</button>
+      <div id="log3" class="log"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 4: Configuración Completa</h2>
+      <button onclick="testComplete()">Test Configuración Completa</button>
+      <div id="log4" class="log"></div>
+    </div>
+
+    <script>
+      function log(message, logId) {
+        const logElement = document.getElementById(logId);
+        const timestamp = new Date().toLocaleTimeString();
+        logElement.textContent += `[${timestamp}] ${message}\n`;
+      }
+
+      function testMinimal() {
+        const logId = "log1";
+        log("🧪 Testing minimal configuration...", logId);
+
+        try {
+          const widget = new WidgetCheckout({
+            currency: "COP",
+            amountInCents: 100000,
+            reference: "TEST_MIN_" + Date.now(),
+            publicKey: "pub_test_6j4AFOkyelP8Sb8HsS9u9l7aagAaRak4",
+            redirectUrl:
+              "http://localhost:3000/checkout/success?order_id=test_min",
+          });
+
+          log("✅ Widget created successfully", logId);
+          log("🚀 Opening widget...", logId);
+
+          widget.open((result) => {
+            log("✅ Widget completed: " + JSON.stringify(result), logId);
+          });
+        } catch (error) {
+          log("❌ Error: " + error.message, logId);
+        }
+      }
+
+      function testWithCustomer() {
+        const logId = "log2";
+        log("🧪 Testing with customer data...", logId);
+
+        try {
+          const widget = new WidgetCheckout({
+            currency: "COP",
+            amountInCents: 100000,
+            reference: "TEST_CUST_" + Date.now(),
+            publicKey: "pub_test_6j4AFOkyelP8Sb8HsS9u9l7aagAaRak4",
+            redirectUrl:
+              "http://localhost:3000/checkout/success?order_id=test_cust",
+            customerData: {
+              name: "Test User",
+              email: "test@example.com",
+              phoneNumber: "3001234567",
+              phoneNumberPrefix: "+57",
+            },
+          });
+
+          log("✅ Widget with customer data created successfully", logId);
+          log("🚀 Opening widget...", logId);
+
+          widget.open((result) => {
+            log("✅ Widget completed: " + JSON.stringify(result), logId);
+          });
+        } catch (error) {
+          log("❌ Error: " + error.message, logId);
+        }
+      }
+
+      function testWithShipping() {
+        const logId = "log3";
+        log("🧪 Testing with shipping address...", logId);
+
+        try {
+          const widget = new WidgetCheckout({
+            currency: "COP",
+            amountInCents: 100000,
+            reference: "TEST_SHIP_" + Date.now(),
+            publicKey: "pub_test_6j4AFOkyelP8Sb8HsS9u9l7aagAaRak4",
+            redirectUrl:
+              "http://localhost:3000/checkout/success?order_id=test_ship",
+            customerData: {
+              name: "Test User",
+              email: "test@example.com",
+              phoneNumber: "3001234567",
+              phoneNumberPrefix: "+57",
+            },
+            shippingAddress: {
+              addressLine1: "Calle 123 #45-67",
+              city: "Bogotá",
+              region: "Cundinamarca",
+              country: "CO",
+              phoneNumber: "3001234567",
+            },
+          });
+
+          log("✅ Widget with shipping address created successfully", logId);
+          log("🚀 Opening widget...", logId);
+
+          widget.open((result) => {
+            log("✅ Widget completed: " + JSON.stringify(result), logId);
+          });
+        } catch (error) {
+          log("❌ Error: " + error.message, logId);
+        }
+      }
+
+      function testComplete() {
+        const logId = "log4";
+        log("🧪 Testing complete configuration...", logId);
+
+        try {
+          const widget = new WidgetCheckout({
+            currency: "COP",
+            amountInCents: 100000,
+            reference: "TEST_COMPLETE_" + Date.now(),
+            publicKey: "pub_test_6j4AFOkyelP8Sb8HsS9u9l7aagAaRak4",
+            redirectUrl:
+              "http://localhost:3000/checkout/success?order_id=test_complete",
+            customerData: {
+              name: "Bastian Alzate",
+              email: "bastian@example.com",
+              phoneNumber: "3043345434",
+              phoneNumberPrefix: "+57",
+            },
+            shippingAddress: {
+              addressLine1: "Carrera 57 #83b167",
+              city: "Medellín",
+              region: "Antioquia",
+              country: "CO",
+              phoneNumber: "3043345434",
+            },
+          });
+
+          log("✅ Complete widget created successfully", logId);
+          log("🚀 Opening widget...", logId);
+
+          widget.open((result) => {
+            log("✅ Widget completed: " + JSON.stringify(result), logId);
+          });
+        } catch (error) {
+          log("❌ Error: " + error.message, logId);
+        }
+      }
+
+      // Log when page loads
+      window.addEventListener("load", () => {
+        console.log("🧪 Wompi Test Page Loaded");
+        console.log(
+          "WidgetCheckout available:",
+          typeof WidgetCheckout !== "undefined"
+        );
+      });
+    </script>
+  </body>
+</html>

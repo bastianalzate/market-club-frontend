@@ -21,6 +21,7 @@ export default function ShippingAddressForm({
   const [formData, setFormData] = useState<ShippingAddress>({
     first_name: "",
     last_name: "",
+    email: "",
     address_line_1: "",
     address_line_2: "",
     city: "",
@@ -80,6 +81,7 @@ export default function ShippingAddressForm({
     if (
       !formData.first_name ||
       !formData.last_name ||
+      !formData.email ||
       !formData.address_line_1 ||
       !formData.city ||
       !formData.state ||
@@ -88,7 +90,7 @@ export default function ShippingAddressForm({
     ) {
       showError(
         "Campos requeridos",
-        "Por favor completa todos los campos obligatorios incluyendo el teléfono"
+        "Por favor completa todos los campos obligatorios incluyendo el email y teléfono"
       );
       return;
     }
@@ -148,6 +150,26 @@ export default function ShippingAddressForm({
               value={formData.last_name}
               onChange={handleInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+              required
+            />
+          </div>
+
+          {/* Email */}
+          <div className="md:col-span-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Email *
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+              placeholder="tu@email.com"
               required
             />
           </div>

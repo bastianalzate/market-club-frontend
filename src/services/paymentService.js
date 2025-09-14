@@ -46,6 +46,9 @@ export class PaymentService {
         if (customerData.phone) {
             requestBody.customer_phone = customerData.phone;
         }
+        if (customerData.payment_method) {
+            requestBody.payment_method = customerData.payment_method;
+        }
         
         console.log('💳 Payment session request body:', requestBody);
         
@@ -58,6 +61,46 @@ export class PaymentService {
         console.log('💳 Payment session response:', response.status);
         const data = await response.json();
         console.log('💳 Payment session data:', data);
+        
+        return data;
+    }
+
+    // Crear widget de Wompi
+    static async createWompiWidget(orderId, totalAmount, redirectUrl, customerData = {}) {
+        console.log('🎯 Creating Wompi widget for order:', orderId);
+        
+        const requestBody = {
+            order_id: orderId,
+            amount: totalAmount,
+            currency: 'COP',
+            redirect_url: redirectUrl
+        };
+        
+        // Solo agregar datos del cliente si están disponibles (opcional)
+        if (customerData.email) {
+            requestBody.customer_email = customerData.email;
+        }
+        if (customerData.name) {
+            requestBody.customer_name = customerData.name;
+        }
+        if (customerData.phone) {
+            requestBody.customer_phone = customerData.phone;
+        }
+        if (customerData.payment_method) {
+            requestBody.payment_method = customerData.payment_method;
+        }
+        
+        console.log('🎯 Widget request body:', requestBody);
+        
+        const response = await fetch(`${API_CONFIG.BASE_URL}/payments/wompi/create-widget`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(requestBody)
+        });
+        
+        console.log('🎯 Widget response:', response.status);
+        const data = await response.json();
+        console.log('🎯 Widget data:', data);
         
         return data;
     }

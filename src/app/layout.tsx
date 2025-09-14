@@ -72,6 +72,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+        {/* Script de Wompi */}
+        <script src="https://checkout.wompi.co/widget.js" async></script>
+      </head>
       <body className={FONT_CLASSES}>
         <SuppressHydrationWarning />
         <ReduxProvider>

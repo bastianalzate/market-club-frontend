@@ -3,6 +3,7 @@
 export interface ShippingAddress {
   first_name: string;
   last_name: string;
+  email: string;
   address_line_1: string;
   address_line_2?: string;
   city: string;
@@ -15,6 +16,7 @@ export interface ShippingAddress {
 export interface BillingAddress {
   first_name: string;
   last_name: string;
+  email: string;
   address_line_1: string;
   address_line_2?: string;
   city: string;
