@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { constants } from '@/config/constants';
 
 // Tipo para los productos que vienen de la API
@@ -72,6 +73,7 @@ export interface TransformedProduct extends Product {
 
 // Hook para manejar productos desde la API con paginación real
 export const useProducts = () => {
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<TransformedProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -249,10 +251,19 @@ export const useProducts = () => {
     }
   };
 
-  // Cargar productos al montar el componente
+  // Inicializar filtros desde URL al montar el componente
   useEffect(() => {
-    fetchProducts(1, selectedCountry, selectedCategory, selectedPriceRange);
-  }, []);
+    const countryFromUrl = searchParams.get('country') || '';
+    const categoryFromUrl = searchParams.get('beer_style') || '';
+    const priceFromUrl = searchParams.get('price_range') || '';
+    
+    setSelectedCountry(countryFromUrl);
+    setSelectedCategory(categoryFromUrl);
+    setSelectedPriceRange(priceFromUrl);
+    
+    // Cargar productos con filtros de URL
+    fetchProducts(1, countryFromUrl, categoryFromUrl, priceFromUrl);
+  }, [searchParams]);
 
   return {
     products,

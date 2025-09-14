@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, Suspense } from "react";
 import CategoryIcons from "./CategoryIcons";
 import ProductFilters from "./ProductFilters";
 import ProductGrid from "./ProductGrid";
@@ -9,7 +9,7 @@ import ServicesBanner from "@/components/home/ServicesBanner";
 import CountriesBanner from "./CountriesBanner";
 import { useProducts, TransformedProduct } from "@/hooks/useProducts";
 
-export default function TiendaContent() {
+function TiendaContentInner() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Hook para obtener productos desde la API
@@ -150,5 +150,22 @@ export default function TiendaContent() {
       {/* Sección con fondo gris después del MarketClubBanner */}
       <div className="bg-gray-50"></div>
     </div>
+  );
+}
+
+export default function TiendaContent() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Cargando tienda...</p>
+          </div>
+        </div>
+      }
+    >
+      <TiendaContentInner />
+    </Suspense>
   );
 }

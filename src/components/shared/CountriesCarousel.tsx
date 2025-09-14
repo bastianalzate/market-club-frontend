@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Country {
@@ -21,14 +22,9 @@ const countries: Country[] = [
     flag: "/images/countries/BELGICA.png",
   },
   {
-    id: "china",
-    name: "China",
-    flag: "/images/countries/CHINA.png",
-  },
-  {
-    id: "escocia",
-    name: "Escocia",
-    flag: "/images/countries/ESCOCIA.png",
+    id: "colombia",
+    name: "Colombia",
+    flag: "/images/countries/COLOMBIA.png",
   },
   {
     id: "espana",
@@ -36,9 +32,19 @@ const countries: Country[] = [
     flag: "/images/countries/ESPAÑA.png",
   },
   {
-    id: "holanda",
-    name: "Holanda",
-    flag: "/images/countries/HOLLANDA.png",
+    id: "escocia",
+    name: "Escocia",
+    flag: "/images/countries/ESCOCIA.png",
+  },
+  {
+    id: "inglaterra",
+    name: "Inglaterra",
+    flag: "/images/countries/INGLATERRA.png",
+  },
+  {
+    id: "italia",
+    name: "Italia",
+    flag: "/images/countries/ITALIA.png",
   },
   {
     id: "japon",
@@ -51,19 +57,29 @@ const countries: Country[] = [
     flag: "/images/countries/MEXICO.png",
   },
   {
+    id: "paises bajos",
+    name: "Países Bajos",
+    flag: "/images/countries/PAISES_BAJOS.png",
+  },
+  {
     id: "peru",
     name: "Perú",
     flag: "/images/countries/PERU.png",
   },
   {
-    id: "reino-unido",
-    name: "Reino Unido",
-    flag: "/images/countries/REINO UNIDO.png",
+    id: "republica checa",
+    name: "República Checa",
+    flag: "/images/countries/REPUBLICA_CHECA.png",
   },
   {
     id: "tailandia",
     name: "Tailandia",
     flag: "/images/countries/TAILANDIA.png",
+  },
+  {
+    id: "estados unidos",
+    name: "Estados Unidos",
+    flag: "/images/countries/ESTADOS_UNIDOS.png",
   },
 ];
 
@@ -72,14 +88,15 @@ export default function CountriesCarousel() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const router = useRouter();
 
   // Configuración del carrusel infinito
   const itemsPerView = 6; // Mostrar 6 banderas a la vez
   const totalItems = countries.length;
-  
+
   // Calcular el ancho de cada elemento (100% dividido entre 6 elementos)
   const itemWidth = 74 / itemsPerView;
-  
+
   // Calcular el índice máximo para que se vean todas las banderas
   // Con 11 países y 6 por vista: 0,1,2,3,4,5 (6 páginas total)
   const maxIndex = Math.max(0, totalItems - itemsPerView);
@@ -131,12 +148,17 @@ export default function CountriesCarousel() {
     });
   };
 
+  // Función para navegar a la tienda con filtro de país
+  const handleCountryClick = (countryId: string) => {
+    // Navegar a la tienda con el filtro de país aplicado
+    router.push(`/tienda?country=${encodeURIComponent(countryId)}`);
+  };
+
   return (
     <section className="py-8 bg-white border-t border-gray-200">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-
         {/* Carrusel */}
-        <div 
+        <div
           className="relative"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -163,27 +185,35 @@ export default function CountriesCarousel() {
           <div ref={sliderRef} className="overflow-hidden">
             <div
               className="flex transition-transform duration-500 ease-in-out"
-              style={{ 
+              style={{
                 transform: `translateX(-${currentIndex * itemWidth}%)`,
-                width: `${totalItems * itemWidth}%`
+                width: `${totalItems * itemWidth}%`,
               }}
             >
               {countries.map((country, index) => (
                 <div
                   key={country.id}
-                  className="flex-shrink-0 px-2"
+                  className="flex-shrink-0 px-2 py-2"
                   style={{ width: `${itemWidth}%` }}
                 >
-                  <div className="hover:scale-105 transition-transform duration-300">
+                  <button
+                    onClick={() => handleCountryClick(country.id)}
+                    className="hover:scale-110 transition-transform duration-300 focus:outline-none rounded-lg"
+                    aria-label={`Ver cervezas de ${country.name}`}
+                  >
                     {/* Solo la imagen de la bandera */}
-                    <div className="aspect-square w-40 h-40 mx-auto">
+                    <div className="aspect-square w-40 h-40 mx-auto p-2">
                       <img
                         src={country.flag}
                         alt={`Bandera de ${country.name}`}
                         className="w-full h-full object-cover rounded-lg"
                       />
                     </div>
-                  </div>
+                    {/* Nombre del país */}
+                    <p className="text-center mt-2 text-sm font-medium text-gray-700 hover:text-yellow-600 transition-colors duration-200">
+                      {country.name}
+                    </p>
+                  </button>
                 </div>
               ))}
             </div>
