@@ -130,6 +130,7 @@ export function useAuth() {
         email: result.user.email,
         phone: "+57 300 123 4567", // El backend no devuelve phone, usar valor por defecto
         isGuest: false,
+        is_wholesaler: result.user.is_wholesaler || false,
       };
 
       // Guardar el token en localStorage
@@ -198,6 +199,7 @@ export function useAuth() {
         email: result.user.email,
         phone: data.phone, // El backend no devuelve phone, lo mantenemos del formulario
         isGuest: false,
+        is_wholesaler: result.user.is_wholesaler || data.isWholesaler,
       };
 
       // Guardar el token en localStorage

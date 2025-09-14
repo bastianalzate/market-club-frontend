@@ -242,6 +242,18 @@ export const useProducts = () => {
       } else {
         throw new Error('No se encontraron productos en la búsqueda');
       }
+
+      // Transformar los productos para que coincidan con la interfaz esperada
+      const transformedProducts = data.data.map(transformProduct);
+      setProducts(transformedProducts);
+      
+      // Actualizar paginación para búsqueda
+      setPagination({
+        currentPage: data.current_page,
+        lastPage: data.last_page,
+        total: data.total,
+        perPage: data.per_page,
+      });
     } catch (err) {
       console.error('Error searching products:', err);
       setError(err instanceof Error ? err.message : 'Error en la búsqueda');
