@@ -10,30 +10,82 @@ interface CheckoutSummaryProps {
 export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
   const { cart, itemsCount } = useCartContext();
 
+  // Calcular subtotal manualmente para asegurar precisión
+  const manualSubtotal =
+    cart?.items?.reduce((sum, item) => {
+      return sum + parseFloat(String(item.unit_price)) * item.quantity;
+    }, 0) || 0;
+
+  // Calcular total manualmente
+  const manualTotal =
+    manualSubtotal +
+    parseFloat(String(cart?.shipping_amount || 0)) +
+    parseFloat(String(cart?.tax_amount || 0));
+
   if (itemsCount === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <p className="text-gray-500 text-center">
-          No hay productos en el carrito
-        </p>
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Tu carrito está vacío
+          </h3>
+          <p className="text-gray-500">
+            Agrega algunos productos para continuar con tu compra
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border">
+    <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900">
-          Resumen del Pedido
-        </h2>
+      <div className="px-6 py-5 bg-gradient-to-r from-amber-50 to-yellow-50 border-b border-gray-100">
+        <div className="flex items-center">
+          <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center mr-3">
+            <svg
+              className="w-5 h-5 text-amber-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-gray-900">
+            Resumen del Pedido
+          </h2>
+        </div>
       </div>
 
       {/* Items */}
-      <div className="px-6 py-4">
+      <div className="px-6 py-5">
         <div className="space-y-4">
           {cart?.items?.map((item) => (
-            <div key={item.id} className="flex items-center space-x-4">
+            <div
+              key={item.id}
+              className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg"
+            >
               <div className="flex-shrink-0">
                 <img
                   src={
@@ -42,20 +94,25 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
                     "/images/cervezas/bottella-01.png"
                   }
                   alt={item.product.name}
-                  className="w-12 h-12 rounded-lg object-cover"
+                  className="w-14 h-14 rounded-lg object-cover shadow-sm"
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-semibold text-gray-900 truncate">
                   {item.product.name}
                 </p>
                 <p className="text-sm text-gray-500">
                   Cantidad: {item.quantity}
                 </p>
+                <p className="text-xs text-gray-400">
+                  Precio unitario: {formatPrice(item.unit_price)}
+                </p>
               </div>
               <div className="flex-shrink-0 text-right">
-                <p className="text-sm font-medium text-gray-900">
-                  {formatPrice(item.total_price)}
+                <p className="text-sm font-bold text-gray-900">
+                  {formatPrice(
+                    parseFloat(String(item.unit_price)) * item.quantity
+                  )}
                 </p>
               </div>
             </div>
@@ -64,87 +121,74 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
       </div>
 
       {/* Totals */}
-      <div className="px-6 py-4 border-t border-gray-200 space-y-3">
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Subtotal:</span>
-          <span className="font-medium text-gray-900">
-            {formatPrice(cart?.subtotal || 0)}
-          </span>
-        </div>
+      <div className="px-6 py-5 bg-gray-50 border-t border-gray-100">
+        <div className="space-y-3">
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Subtotal:</span>
+            <span className="font-semibold text-gray-900">
+              {formatPrice(manualSubtotal)}
+            </span>
+          </div>
 
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Impuestos:</span>
-          <span className="font-medium text-gray-900">
-            {formatPrice(cart?.tax_amount || 0)}
-          </span>
-        </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Impuestos:</span>
+            <span className="font-semibold text-gray-900">
+              {formatPrice(cart?.tax_amount || 0)}
+            </span>
+          </div>
 
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Envío:</span>
-          <span className="font-medium text-gray-900">
-            {formatPrice(cart?.shipping_amount || 0)}
-          </span>
-        </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Envío:</span>
+            <span className="font-semibold text-gray-900">
+              {formatPrice(cart?.shipping_amount || 0)}
+            </span>
+          </div>
 
-        <div className="flex justify-between text-lg font-semibold border-t border-gray-200 pt-3">
-          <span className="text-gray-900">Total:</span>
-          <span className="text-gray-900">
-            {formatPrice(cart?.total_amount || 0)}
-          </span>
+          <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-3">
+            <span className="text-gray-900">Total:</span>
+            <span className="text-gray-900">{formatPrice(manualTotal)}</span>
+          </div>
         </div>
       </div>
 
       {/* Estimated Delivery */}
-      <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+      <div className="px-6 py-4 bg-blue-50 border-t border-blue-100">
         <div className="flex items-center">
-          <svg
-            className="w-5 h-5 text-gray-400 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-            />
-          </svg>
-          <p className="text-sm text-gray-600">
-            Entrega estimada: 3-5 días hábiles
-          </p>
+          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+            <svg
+              className="w-4 h-4 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+              />
+            </svg>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-blue-900">
+              Entrega estimada
+            </p>
+            <p className="text-xs text-blue-700">3-5 días hábiles</p>
+          </div>
         </div>
       </div>
 
       {/* Continue Button */}
-      <div className="px-6 py-4 border-t border-gray-200 space-y-3">
+      <div className="px-6 py-5 border-t border-gray-100">
         <button
           onClick={onContinue}
-          className="w-full bg-yellow-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-yellow-700 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+          className="w-full text-white py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+          style={{
+            backgroundColor: "rgb(180, 140, 43)",
+            focusRingColor: "rgba(180, 140, 43, 0.5)",
+          }}
         >
           Continuar al Checkout
-        </button>
-
-        {/* Botón de prueba para debug */}
-        <button
-          onClick={async () => {
-            try {
-              const { CheckoutService } = await import(
-                "@/services/checkoutService"
-              );
-              const result = await CheckoutService.calculateShipping(
-                "Bogotá",
-                "Cundinamarca",
-                "110111"
-              );
-              console.log("🧪 Test Result:", result);
-            } catch (error) {
-              console.error("🧪 Test Error:", error);
-            }
-          }}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
-        >
-          🧪 Probar Cálculo de Envío
         </button>
       </div>
     </div>

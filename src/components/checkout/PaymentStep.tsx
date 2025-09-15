@@ -138,18 +138,10 @@ export default function PaymentStep({
 
   // Función para crear el Checkout Web de Wompi (ya no necesaria - se hace directamente en openWompiCheckout)
 
-  // Función para abrir el Widget de Wompi (configuración mínima que funciona)
+  // Función para abrir el Widget de Wompi con firma de integridad
   const openWompiWidget = async () => {
     try {
       console.log("🎯 Opening Wompi Widget for order:", orderId);
-      console.log(
-        "🔍 WidgetCheckout type:",
-        typeof (window as any).WidgetCheckout
-      );
-      console.log(
-        "🔍 WidgetCheckout available:",
-        !!(window as any).WidgetCheckout
-      );
 
       // Verificar que el script de Wompi esté cargado
       if (typeof window === "undefined") {
@@ -159,126 +151,116 @@ export default function PaymentStep({
 
       if (!(window as any).WidgetCheckout) {
         console.error("❌ WidgetCheckout not available");
-        console.log(
-          "🔍 Available window properties:",
-          Object.keys(window).filter(
-            (key) =>
-              key.toLowerCase().includes("widget") ||
-              key.toLowerCase().includes("wompi")
-          )
-        );
         throw new Error("Widget de Wompi no está cargado");
       }
 
-      console.log("✅ WidgetCheckout found, creating widget...");
+      console.log("✅ WidgetCheckout found, generating signature...");
 
-      // Debug: Verificar datos del cliente y monto antes de crear el widget
-      console.log("🔍 Customer data debug:");
-      console.log(
-        "  - customerName:",
-        customerName,
-        "Type:",
-        typeof customerName
+      // PASO 1: Generar la firma de integridad desde el backend
+      // Solo enviar el order_id, el backend generará todo lo demás
+      const signatureData = {
+        order_id: orderId,
+      };
+
+      console.log("🔐 Requesting signature for order:", orderId);
+
+      const signatureResponse = await PaymentService.generateSignature(
+        signatureData
       );
-      console.log(
-        "  - customerEmail:",
-        customerEmail,
-        "Type:",
-        typeof customerEmail
-      );
-      console.log(
-        "  - customerMobile:",
-        customerMobile,
-        "Type:",
-        typeof customerMobile
-      );
-      console.log("💰 Payment amount debug:");
-      console.log("  - totalAmount:", totalAmount, "Type:", typeof totalAmount);
-      console.log("  - amountInCents:", totalAmount * 100);
 
-      // Intentar con datos reales del formulario
-      console.log("✅ Attempting with real customer data from form");
+      console.log("🔍 Full signature response:", signatureResponse);
 
-      try {
-        const widgetConfigWithData = {
-          currency: "COP",
-          amountInCents: totalAmount * 100,
-          reference: `ORDER_${orderId}_${Date.now()}`,
-          publicKey: "pub_test_6j4AFOkyelP8Sb8HsS9u9l7aagAaRak4",
-          redirectUrl:
-            window.location.origin + "/checkout/success?order_id=" + orderId,
-          // Datos reales del formulario de dirección (formato correcto según docs.wompi.co)
-          customerData: {
-            email: customerEmail.trim(),
-            fullName: customerName.trim(), // ← fullName, NO name
-            phoneNumber: customerMobile.replace(/\D/g, ""), // Solo números
-            phoneNumberPrefix: "+57", // Colombia
-            legalId: "123456789", // ← Temporal - se puede mejorar después
-            legalIdType: "CC", // ← Temporal - se puede mejorar después
-          },
-        };
-
-        console.log(
-          "🎯 Widget config with real customer data:",
-          widgetConfigWithData
-        );
-
-        // Debug de los datos del cliente
-        console.log("🔍 Customer data:", widgetConfigWithData.customerData);
-        console.log("🔧 Creating WidgetCheckout instance (with data)...");
-        const checkout = new (window as any).WidgetCheckout(
-          widgetConfigWithData
-        );
-        console.log(
-          "✅ WidgetCheckout instance created (with data):",
-          checkout
-        );
-
-        console.log("🚀 Opening widget (with data)...");
-        checkout.open((result: any) => {
-          console.log("🎉 Transaction completed:", result);
-          if (result && result.transaction && result.transaction.id) {
-            handlePaymentSuccess(result.transaction);
-          } else {
-            console.error("❌ Invalid transaction result:", result);
-            showError("Error", "No se pudo procesar el pago");
-          }
+      if (!signatureResponse.success || !signatureResponse.data?.signature) {
+        console.error("❌ Signature response validation failed:", {
+          success: signatureResponse.success,
+          hasData: !!signatureResponse.data,
+          hasSignature: !!signatureResponse.data?.signature,
+          fullResponse: signatureResponse,
         });
-        console.log("✅ Widget.open() called successfully (with data)");
-      } catch (customerDataError) {
-        console.warn(
-          "⚠️ Customer data format issue, falling back to minimal config:",
-          customerDataError
-        );
-
-        // Fallback a configuración mínima (sin customerData)
-        const minimalConfig = {
-          currency: "COP",
-          amountInCents: totalAmount * 100,
-          reference: `ORDER_${orderId}_${Date.now()}`,
-          publicKey: "pub_test_6j4AFOkyelP8Sb8HsS9u9l7aagAaRak4",
-          redirectUrl:
-            window.location.origin + "/checkout/success?order_id=" + orderId,
-        };
-
-        console.log("🎯 Using minimal config as fallback:", minimalConfig);
-
-        console.log("🔧 Creating WidgetCheckout instance (minimal)...");
-        const checkout = new (window as any).WidgetCheckout(minimalConfig);
-        console.log("✅ WidgetCheckout instance created (minimal):", checkout);
-
-        console.log("🚀 Opening widget (minimal)...");
-        checkout.open((result: any) => {
-          console.log("🎉 Transaction completed:", result);
-          if (result && result.transaction && result.transaction.id) {
-            handlePaymentSuccess(result.transaction);
-          } else {
-            console.error("❌ Invalid transaction result:", result);
-            showError("Error", "No se pudo procesar el pago");
-          }
-        });
-        console.log("✅ Widget.open() called successfully (minimal)");
+        throw new Error("No se pudo generar la firma de integridad");
       }
+
+      // PASO 2: Usar EXACTAMENTE los datos que devuelve el backend
+      const { reference, amount, currency, signature, public_key } =
+        signatureResponse.data;
+
+      console.log("✅ Using backend data:", {
+        reference,
+        amount,
+        currency,
+        signature,
+        public_key,
+      });
+
+      // PASO 3: Configurar el widget con los datos EXACTOS del backend
+      const widgetConfig = {
+        currency: currency, // ← Usar currency del backend
+        amountInCents: amount, // ← Usar amount del backend (ya en centavos)
+        reference: reference, // ← Usar reference del backend
+        publicKey: public_key, // ← Usar public_key del backend
+        redirectUrl:
+          window.location.origin + "/checkout/success?order_id=" + orderId,
+        signature: signature, // ← Usar signature del backend (formato {integrity: 'firma'})
+        customerData: {
+          email: customerEmail?.trim() || "usuario@ejemplo.com",
+          fullName: customerName?.trim() || "Usuario",
+          phoneNumber: customerMobile?.replace(/\D/g, "") || "3001234567",
+          phoneNumberPrefix: "+57",
+          legalId: "123456789", // Temporal
+          legalIdType: "CC", // Temporal
+        },
+      };
+
+      console.log("🎯 Widget config with signature:", widgetConfig);
+
+      // Validar que todos los campos requeridos estén presentes
+      const requiredFields = [
+        "currency",
+        "amountInCents",
+        "reference",
+        "publicKey",
+        "signature",
+      ];
+      const missingFields = requiredFields.filter(
+        (field) => !widgetConfig[field]
+      );
+
+      if (missingFields.length > 0) {
+        console.error("❌ Missing required widget fields:", missingFields);
+        throw new Error(
+          `Campos requeridos faltantes: ${missingFields.join(", ")}`
+        );
+      }
+
+      // PASO 3: Crear y abrir el widget
+      console.log("🔧 Creating WidgetCheckout instance...");
+      console.log(
+        "🔍 WidgetCheckout constructor available:",
+        typeof (window as any).WidgetCheckout
+      );
+
+      let checkout;
+      try {
+        checkout = new (window as any).WidgetCheckout(widgetConfig);
+        console.log("✅ WidgetCheckout instance created:", checkout);
+      } catch (widgetError) {
+        console.error("❌ Error creating WidgetCheckout:", widgetError);
+        throw new Error(`Error creando el widget: ${widgetError.message}`);
+      }
+
+      console.log("🚀 Opening widget...");
+      checkout.open((result: any) => {
+        console.log("🎉 Transaction completed:", result);
+        if (result && result.transaction && result.transaction.id) {
+          // El pago fue exitoso, redirigir a la página de éxito
+          console.log("✅ Payment successful, redirecting to success page...");
+          window.location.href = `/checkout/success?order_id=${orderId}&transaction_id=${result.transaction.id}&reference=${reference}`;
+        } else {
+          console.error("❌ Invalid transaction result:", result);
+          showError("Error", "No se pudo procesar el pago");
+        }
+      });
+      console.log("✅ Widget.open() called successfully");
     } catch (error) {
       console.error("❌ Error opening Wompi widget:", error);
       showError(

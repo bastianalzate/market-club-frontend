@@ -18,6 +18,16 @@ export default function CheckoutFlow() {
     useCheckout();
   const { toast, showSuccess, showError, hideToast } = useToast();
 
+  // Helper function para formatear precios
+  const formatPrice = (price: number | string) => {
+    const numPrice = typeof price === "string" ? parseFloat(price) : price;
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      minimumFractionDigits: 0,
+    }).format(numPrice);
+  };
+
   const [currentStep, setCurrentStepLocal] = useState(1);
   const [shippingAddress, setShippingAddress] =
     useState<ShippingAddress | null>(null);
@@ -191,73 +201,8 @@ export default function CheckoutFlow() {
 
             {currentStep === 3 && (
               <div>
-                {/* Debug info */}
-                <div className="mb-4 p-3 bg-gray-100 rounded-lg text-sm">
-                  <p>
-                    <strong>Debug Info:</strong>
-                  </p>
-                  <p>Current Step: {currentStep}</p>
-                  <p>
-                    Checkout State Order ID:{" "}
-                    {checkoutState.orderId || "No order ID"}
-                  </p>
-                  <p>Cart exists: {cart ? "Yes" : "No"}</p>
-                  <p>Cart items count: {cart?.items?.length || 0}</p>
-                </div>
-
                 {checkoutState.orderId && cart ? (
                   <>
-                    {/* Debug info para el carrito */}
-                    <div className="mb-4 p-3 bg-yellow-100 border border-yellow-300 rounded-lg text-sm">
-                      <div className="flex justify-between items-center mb-2">
-                        <p>
-                          <strong>🛒 Cart Debug Info:</strong>
-                        </p>
-                        <button
-                          onClick={() => {
-                            console.log("🔄 Reloading cart...");
-                            loadCart();
-                          }}
-                          className="bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600"
-                        >
-                          Reload Cart
-                        </button>
-                      </div>
-                      <p>
-                        Cart total_amount: {cart.total_amount} (Type:{" "}
-                        {typeof cart.total_amount})
-                      </p>
-                      <p>
-                        Parsed totalAmount:{" "}
-                        {parseFloat(String(cart.total_amount))}
-                      </p>
-                      <p>Cart items count: {cart.items?.length || 0}</p>
-                      <p>Cart ID: {cart.id}</p>
-                      <p>Cart Session ID: {cart.session_id}</p>
-                      <div className="mt-2">
-                        <p>
-                          <strong>Items breakdown:</strong>
-                        </p>
-                        {cart.items?.map((item, index) => (
-                          <div key={index} className="ml-2 text-xs">
-                            {index + 1}. {item.product.name} - $
-                            {item.product.price} x {item.quantity} = $
-                            {item.product.price * item.quantity}
-                          </div>
-                        ))}
-                      </div>
-                      <div className="mt-2">
-                        <p>
-                          <strong>Backend totals:</strong>
-                        </p>
-                        <p>Subtotal: ${cart.subtotal}</p>
-                        <p>Tax: ${cart.tax_amount}</p>
-                        <p>Shipping: ${cart.shipping_amount}</p>
-                        <p>
-                          <strong>Total: ${cart.total_amount}</strong>
-                        </p>
-                      </div>
-                    </div>
                     <PaymentStep
                       orderId={checkoutState.orderId}
                       totalAmount={parseFloat(String(cart.total_amount))}
@@ -361,18 +306,35 @@ export default function CheckoutFlow() {
           {/* Sidebar - Order Summary */}
           {currentStep < 4 && (
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg shadow-sm border p-6 sticky top-8">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Resumen del Pedido
-                </h3>
+              <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 sticky top-8">
+                <div className="flex items-center mb-6">
+                  <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center mr-3">
+                    <svg
+                      className="w-5 h-5 text-amber-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900">
+                    Resumen del Pedido
+                  </h3>
+                </div>
 
                 {cart && (
                   <>
-                    <div className="space-y-3 mb-4">
+                    <div className="space-y-3 mb-6">
                       {cart.items?.slice(0, 3).map((item) => (
                         <div
                           key={item.id}
-                          className="flex items-center space-x-3"
+                          className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
                         >
                           <img
                             src={
@@ -381,55 +343,67 @@ export default function CheckoutFlow() {
                               "/images/cervezas/bottella-01.png"
                             }
                             alt={item.product.name}
-                            className="w-12 h-12 rounded-lg object-cover"
+                            className="w-12 h-12 rounded-lg object-cover shadow-sm"
                           />
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">
+                            <p className="text-sm font-semibold text-gray-900 truncate">
                               {item.product.name}
                             </p>
                             <p className="text-sm text-gray-500">
                               Cantidad: {item.quantity}
                             </p>
                           </div>
-                          <p className="text-sm font-medium text-gray-900">
-                            $
-                            {parseFloat(
-                              String(item.total_price)
-                            ).toLocaleString()}
+                          <p className="text-sm font-bold text-gray-900">
+                            {formatPrice(
+                              parseFloat(String(item.unit_price)) *
+                                item.quantity
+                            )}
                           </p>
                         </div>
                       ))}
 
                       {cart.items && cart.items.length > 3 && (
-                        <p className="text-sm text-gray-500 text-center">
-                          +{cart.items.length - 3} productos más
-                        </p>
+                        <div className="text-center py-2">
+                          <p className="text-sm text-gray-500 bg-gray-100 rounded-lg py-2 px-3">
+                            +{cart.items.length - 3} productos más
+                          </p>
+                        </div>
                       )}
                     </div>
 
-                    <div className="border-t border-gray-200 pt-4 space-y-2">
+                    <div className="border-t border-gray-200 pt-4 space-y-3 bg-gray-50 rounded-lg p-4">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Subtotal:</span>
-                        <span className="font-medium">
-                          ${parseFloat(String(cart.subtotal)).toLocaleString()}
+                        <span className="font-semibold text-gray-900">
+                          {formatPrice(
+                            cart.items?.reduce(
+                              (sum, item) =>
+                                sum +
+                                parseFloat(String(item.unit_price)) *
+                                  item.quantity,
+                              0
+                            ) || 0
+                          )}
                         </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Envío:</span>
-                        <span className="font-medium">
-                          $
-                          {parseFloat(
-                            String(cart.shipping_amount)
-                          ).toLocaleString()}
+                        <span className="font-semibold text-gray-900">
+                          {formatPrice(cart.shipping_amount)}
                         </span>
                       </div>
-                      <div className="flex justify-between text-lg font-semibold border-t border-gray-200 pt-2">
-                        <span>Total:</span>
-                        <span>
-                          $
-                          {parseFloat(
-                            String(cart.total_amount)
-                          ).toLocaleString()}
+                      <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-3">
+                        <span className="text-gray-900">Total:</span>
+                        <span className="text-gray-900">
+                          {formatPrice(
+                            (cart.items?.reduce(
+                              (sum, item) =>
+                                sum +
+                                parseFloat(String(item.unit_price)) *
+                                  item.quantity,
+                              0
+                            ) || 0) + parseFloat(String(cart.shipping_amount))
+                          )}
                         </span>
                       </div>
                     </div>

@@ -139,4 +139,33 @@ export class PaymentService {
         });
         return response.json();
     }
+
+    // Generar firma de integridad para Wompi
+    static async generateSignature(data) {
+        try {
+            console.log('🔐 Generating Wompi signature with data:', data);
+            
+            const response = await fetch(`${API_CONFIG.BASE_URL}/payments/wompi/generate-signature`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('❌ Wompi signature generation failed:', errorData);
+                throw new Error(errorData.message || 'Error generating Wompi signature');
+            }
+
+            const result = await response.json();
+            console.log('✅ Wompi signature generated successfully:', result);
+            return result;
+        } catch (error) {
+            console.error('❌ Error generating Wompi signature:', error);
+            throw error;
+        }
+    }
 }

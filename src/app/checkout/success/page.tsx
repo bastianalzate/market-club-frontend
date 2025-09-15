@@ -31,6 +31,10 @@ export default function CheckoutSuccessPage() {
 
         // Si tenemos transaction_id, verificar directamente
         if (transactionId) {
+          console.log(
+            "🔍 Verifying payment with transaction_id:",
+            transactionId
+          );
           const verificationResponse = await verifyPayment(transactionId);
 
           if (
@@ -38,6 +42,7 @@ export default function CheckoutSuccessPage() {
             verificationResponse.status === "approved"
           ) {
             // Confirmar la orden
+            console.log("✅ Payment verified, confirming order:", orderId);
             await confirmOrder(orderId, transactionId);
             setTransactionStatus("success");
             showSuccess(
@@ -45,6 +50,10 @@ export default function CheckoutSuccessPage() {
               "Tu pago ha sido procesado correctamente"
             );
           } else {
+            console.log(
+              "❌ Payment verification failed:",
+              verificationResponse
+            );
             setTransactionStatus("failed");
             showError(
               "Pago fallido",
@@ -52,10 +61,10 @@ export default function CheckoutSuccessPage() {
             );
           }
         }
-        // Si solo tenemos reference, obtener la transacción
+        // Si solo tenemos reference, asumir que el pago fue exitoso
+        // (Wompi redirige solo en caso de éxito)
         else if (reference) {
-          // Aquí podrías llamar a getTransactionByReference si está disponible
-          // Por ahora, asumimos que el pago fue exitoso si llegamos aquí
+          console.log("✅ Payment successful (reference only):", reference);
           setTransactionStatus("success");
           showSuccess(
             "Pago exitoso",
