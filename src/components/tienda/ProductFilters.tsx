@@ -51,7 +51,7 @@ export default function ProductFilters({
 
   const countries = [
     { value: "", label: "Todos" },
-    { value: "inglaterra", label: "Inglaterra" },
+    { value: "reino unido", label: "Reino Unido" },
     { value: "colombia", label: "Colombia" },
     { value: "alemania", label: "Alemania" },
     { value: "italia", label: "Italia" },

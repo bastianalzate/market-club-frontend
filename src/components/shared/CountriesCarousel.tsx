@@ -37,9 +37,9 @@ const countries: Country[] = [
     flag: "/images/countries/ESCOCIA.png",
   },
   {
-    id: "inglaterra",
-    name: "Inglaterra",
-    flag: "/images/countries/INGLATERRA.png",
+    id: "reino unido",
+    name: "Reino Unido",
+    flag: "/images/countries/REINO_UNIDO.png",
   },
   {
     id: "italia",
