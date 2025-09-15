@@ -10,6 +10,7 @@ export interface LatestBeer {
   sale_price: number | null;
   current_price: number;
   image_url: string;
+  stock_quantity: number;
   created_at: string;
 }
 

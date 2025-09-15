@@ -49,8 +49,8 @@ export default function ProductSlider() {
       volume: 500,
       style: "Reciente",
       origin: "Importada",
-      inStock: true,
-      stockQuantity: 100,
+      inStock: latestBeer.stock_quantity > 0,
+      stockQuantity: latestBeer.stock_quantity,
       rating: 4.5,
       reviewCount: 128,
       tags: ["reciente", "cerveza"],
@@ -70,6 +70,15 @@ export default function ProductSlider() {
   };
 
   const handleAddToCart = async (latestBeer: LatestBeer) => {
+    // Verificar que el producto tenga stock antes de intentar agregarlo
+    if (latestBeer.stock_quantity === 0) {
+      showError(
+        "Producto agotado",
+        `"${latestBeer.name}" no está disponible en este momento.`
+      );
+      return;
+    }
+
     setAddingToCart(latestBeer.id);
 
     try {
@@ -107,9 +116,19 @@ export default function ProductSlider() {
           <LazyImage
             src={beer.image_url}
             alt={beer.name}
-            className="w-full h-full"
+            className={`w-full h-full ${
+              beer.stock_quantity === 0 ? "grayscale opacity-60" : ""
+            }`}
           />
         </div>
+        
+        {/* Etiqueta de Agotado */}
+        {beer.stock_quantity === 0 && (
+          <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+            AGOTADO
+          </div>
+        )}
+        
         {/* Botón de corazón (favorito) */}
         <button
           onClick={() => toggleFavorite(beer.id)}
@@ -177,9 +196,11 @@ export default function ProductSlider() {
           {/* Botón principal "Añadir al carrito" */}
           <button
             onClick={() => handleAddToCart(beer)}
-            disabled={addingToCart === beer.id}
+            disabled={addingToCart === beer.id || beer.stock_quantity === 0}
             className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            style={{ backgroundColor: "#B58E31" }}
+            style={{ 
+              backgroundColor: beer.stock_quantity === 0 ? "#6B7280" : "#B58E31" 
+            }}
             onMouseEnter={(e) =>
               !e.currentTarget.disabled &&
               (e.currentTarget.style.backgroundColor = "#A07D2A")
@@ -192,11 +213,15 @@ export default function ProductSlider() {
             <span>
               {addingToCart === beer.id
                 ? "Agregando..."
+                : beer.stock_quantity === 0
+                ? "Agotado"
                 : isInCart(beer.id)
                 ? "Agregar más"
                 : "Añadir al carrito"}
             </span>
-            {addingToCart !== beer.id && <ArrowRight className="w-4 h-4" />}
+            {addingToCart !== beer.id && beer.stock_quantity > 0 && (
+              <ArrowRight className="w-4 h-4" />
+            )}
           </button>
         </div>
       </div>
