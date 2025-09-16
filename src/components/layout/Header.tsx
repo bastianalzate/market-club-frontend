@@ -221,355 +221,367 @@ export default function Header() {
     <>
       <header className="py-3 bg-white shadow-sm border-b sm:py-4 md:py-6">
         <div className="px-3 mx-auto max-w-7xl sm:px-4 md:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="shrink-0">
-            <Link href="/" title="Market Club" className="flex items-center">
-              <Image
-                src="/images/logo/logo.png"
-                alt="Market Club Logo"
-                width={120}
-                height={0}
-                className="h-auto w-[100px] xs:w-[120px] sm:w-[140px] md:w-[160px] lg:w-[180px] xl:w-[200px]"
-                priority
-              />
-            </Link>
-          </div>
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <div className="shrink-0">
+              <Link href="/" title="Market Club" className="flex items-center">
+                <Image
+                  src="/images/logo/logo.png"
+                  alt="Market Club Logo"
+                  width={120}
+                  height={0}
+                  className="h-auto w-[100px] xs:w-[120px] sm:w-[140px] md:w-[160px] lg:w-[180px] xl:w-[200px]"
+                  priority
+                />
+              </Link>
+            </div>
 
-          {/* Mobile Actions */}
-          <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 lg:hidden">
-            {/* Search */}
-            <button
-              className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
-              aria-label="Buscar"
-            >
-              <Search className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
+            {/* Mobile Actions */}
+            <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 lg:hidden">
+              {/* Search */}
+              <button
+                className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+                aria-label="Buscar"
+              >
+                <Search className="w-4 h-4 sm:w-5 sm:h-5" />
+              </button>
 
-            {/* Cart */}
-            <button
-              onClick={handleOpenCart}
-              className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative"
-            >
-              <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-              {itemsCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center text-[10px] sm:text-xs">
-                  {itemsCount}
-                </span>
-              )}
-            </button>
+              {/* Cart */}
+              <button
+                onClick={handleOpenCart}
+                className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative"
+              >
+                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+                {itemsCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center text-[10px] sm:text-xs">
+                    {itemsCount}
+                  </span>
+                )}
+              </button>
 
-            {/* User Profile */}
-            <div className="hidden sm:block">
+              {/* User Profile */}
+              <div className="hidden sm:block">
+                <UserProfile />
+              </div>
+
+              {/* Mobile Menu Button */}
+              <button
+                type="button"
+                className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+                onClick={toggleMenu}
+                aria-controls="mobile-menu"
+                aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+              >
+                {!isMenuOpen ? (
+                  <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+                ) : (
+                  <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                )}
+              </button>
+            </div>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex lg:items-center lg:justify-center lg:ml-8 xl:ml-12 2xl:ml-20">
+              <div className="flex items-center space-x-4 xl:space-x-6 2xl:space-x-8">
+                <NavLink
+                  href="/"
+                  title="Inicio"
+                  isActive={isActive("/")}
+                  baseStyle={baseLinkStyle}
+                  activeStyle={activeLinkStyle}
+                >
+                  Inicio
+                </NavLink>
+
+                <NavLink
+                  href="/tienda"
+                  title="Tienda"
+                  isActive={isActive("/tienda")}
+                  baseStyle={baseLinkStyle}
+                  activeStyle={activeLinkStyle}
+                >
+                  Tienda
+                </NavLink>
+
+                <NavLink
+                  href="/gifts"
+                  title="Armá tu regalo"
+                  isActive={isActive("/gifts")}
+                  baseStyle={baseLinkStyle}
+                  activeStyle={activeLinkStyle}
+                >
+                  Armá tu regalo
+                </NavLink>
+
+                {isAuthenticated && user?.is_wholesaler && (
+                  <NavLink
+                    href="/mayorista"
+                    title="Mayorista"
+                    isActive={isActive("/mayorista")}
+                    baseStyle={baseLinkStyle}
+                    activeStyle={activeLinkStyle}
+                  >
+                    Mayorista
+                  </NavLink>
+                )}
+
+                <NavLink
+                  href="/about"
+                  title="Market Club"
+                  isActive={isActive("/about")}
+                  baseStyle={baseLinkStyle}
+                  activeStyle={activeLinkStyle}
+                >
+                  Market Club
+                </NavLink>
+
+                <NavLink
+                  href="/contacto"
+                  title="Contacto"
+                  isActive={isActive("/contacto")}
+                  baseStyle={baseLinkStyle}
+                  activeStyle={activeLinkStyle}
+                >
+                  Contacto
+                </NavLink>
+              </div>
+            </nav>
+
+            {/* Desktop Actions */}
+            <div className="hidden lg:flex lg:items-center lg:space-x-3 xl:space-x-4">
+              {/* Search */}
+              <button
+                className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+                aria-label="Buscar"
+              >
+                <Search className="w-5 h-5" />
+              </button>
+
+              {/* Cart */}
+              <button
+                onClick={handleOpenCart}
+                className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                {itemsCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {itemsCount}
+                  </span>
+                )}
+              </button>
+
+              {/* User Profile */}
               <UserProfile />
             </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              type="button"
-              className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
-              onClick={toggleMenu}
-              aria-controls="mobile-menu"
-              aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
-            >
-              {!isMenuOpen ? (
-                <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
-              ) : (
-                <X className="w-5 h-5 sm:w-6 sm:h-6" />
-              )}
-            </button>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex lg:items-center lg:justify-center lg:ml-8 xl:ml-12 2xl:ml-20">
-            <div className="flex items-center space-x-4 xl:space-x-6 2xl:space-x-8">
-            <NavLink
-              href="/"
-              title="Inicio"
-              isActive={isActive("/")}
-              baseStyle={baseLinkStyle}
-              activeStyle={activeLinkStyle}
-            >
-              Inicio
-            </NavLink>
+          {/* Mobile Navigation */}
+          {isMenuOpen && (
+            <>
+              {/* Overlay de fondo */}
+              <div
+                className={`fixed inset-0 bg-black z-40 transition-opacity duration-300 ${
+                  isClosing ? "opacity-0" : "opacity-50"
+                }`}
+                onClick={closeMenu}
+              />
 
-            <NavLink
-              href="/tienda"
-              title="Tienda"
-              isActive={isActive("/tienda")}
-              baseStyle={baseLinkStyle}
-              activeStyle={activeLinkStyle}
-            >
-              Tienda
-            </NavLink>
-
-            <NavLink
-              href="/gifts"
-              title="Armá tu regalo"
-              isActive={isActive("/gifts")}
-              baseStyle={baseLinkStyle}
-              activeStyle={activeLinkStyle}
-            >
-              Armá tu regalo
-            </NavLink>
-
-            {isAuthenticated && user?.is_wholesaler && (
-              <NavLink
-                href="/mayorista"
-                title="Mayorista"
-                isActive={isActive("/mayorista")}
-                baseStyle={baseLinkStyle}
-                activeStyle={activeLinkStyle}
+              {/* Menú móvil */}
+              <div
+                id="mobile-menu"
+                className={`fixed inset-0 z-50 bg-white transform transition-all duration-300 ease-out ${
+                  isClosing
+                    ? "animate-[slideOutToRight_0.3s_ease-in_forwards]"
+                    : "animate-[slideInFromRight_0.3s_ease-out_forwards]"
+                }`}
               >
-                Mayorista
-              </NavLink>
-            )}
+                {/* Header del menú móvil */}
+                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                  <div className="flex items-center">
+                    <Image
+                      src="/images/logo/logo.png"
+                      alt="Market Club Logo"
+                      width={120}
+                      height={0}
+                      className="h-auto w-[120px]"
+                    />
+                  </div>
 
-            <NavLink
-              href="/about"
-              title="Market Club"
-              isActive={isActive("/about")}
-              baseStyle={baseLinkStyle}
-              activeStyle={activeLinkStyle}
-            >
-              Market Club
-            </NavLink>
-
-            <NavLink
-              href="/contacto"
-              title="Contacto"
-              isActive={isActive("/contacto")}
-              baseStyle={baseLinkStyle}
-              activeStyle={activeLinkStyle}
-            >
-              Contacto
-            </NavLink>
-            </div>
-          </nav>
-
-          {/* Desktop Actions */}
-          <div className="hidden lg:flex lg:items-center lg:space-x-3 xl:space-x-4">
-            {/* Search */}
-            <button
-              className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
-              aria-label="Buscar"
-            >
-              <Search className="w-5 h-5" />
-            </button>
-
-            {/* Cart */}
-            <button
-              onClick={handleOpenCart}
-              className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              {itemsCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {itemsCount}
-                </span>
-              )}
-            </button>
-
-            {/* User Profile */}
-            <UserProfile />
-          </div>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <>
-            {/* Overlay de fondo */}
-            <div 
-              className={`fixed inset-0 bg-black z-40 transition-opacity duration-300 ${
-                isClosing ? 'opacity-0' : 'opacity-50'
-              }`}
-              onClick={closeMenu}
-            />
-            
-            {/* Menú móvil */}
-            <div 
-              id="mobile-menu" 
-              className={`fixed inset-0 z-50 bg-white transform transition-all duration-300 ease-out ${
-                isClosing 
-                  ? 'animate-[slideOutToRight_0.3s_ease-in_forwards]' 
-                  : 'animate-[slideInFromRight_0.3s_ease-out_forwards]'
-              }`}
-            >
-              {/* Header del menú móvil */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-                <div className="flex items-center">
-                  <Image
-                    src="/images/logo/logo.png"
-                    alt="Market Club Logo"
-                    width={120}
-                    height={0}
-                    className="h-auto w-[120px]"
-                  />
-                </div>
-                
-                {/* Sección de usuario en el header */}
-                <div className="flex items-center space-x-2">
-                  {isAuthenticated && user ? (
-                    <>
-                      <div className="flex items-center space-x-2 px-2 py-1.5 bg-gray-50 rounded-full max-w-[120px]">
-                        <User className="w-4 h-4 text-gray-600 flex-shrink-0" />
-                        <span className="text-xs font-medium text-gray-900 truncate">
-                          {user.name.split(' ')[0]}
-                        </span>
-                      </div>
+                  {/* Sección de usuario en el header */}
+                  <div className="flex items-center space-x-2">
+                    {isAuthenticated && user ? (
+                      <>
+                        <div className="flex items-center space-x-2 px-2 py-1.5 bg-gray-50 rounded-full max-w-[120px]">
+                          <User className="w-4 h-4 text-gray-600 flex-shrink-0" />
+                          <span className="text-xs font-medium text-gray-900 truncate">
+                            {user.name.split(" ")[0]}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => {
+                            logout();
+                            closeMenu();
+                          }}
+                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
+                          title="Cerrar sesión"
+                        >
+                          <LogOut className="w-4 h-4" />
+                        </button>
+                      </>
+                    ) : (
                       <button
                         onClick={() => {
-                          logout();
+                          openLoginModal();
                           closeMenu();
                         }}
-                        className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
-                        title="Cerrar sesión"
+                        className="flex items-center space-x-1 px-3 py-1.5 bg-[#B58E31] text-white rounded-full hover:bg-[#A67D2A] transition-colors"
                       >
-                        <LogOut className="w-4 h-4" />
+                        <User className="w-4 h-4" />
+                        <span className="text-xs font-medium">Login</span>
                       </button>
-                    </>
-                  ) : (
+                    )}
+
                     <button
-                      onClick={() => {
-                        openLoginModal();
-                        closeMenu();
-                      }}
-                      className="flex items-center space-x-1 px-3 py-1.5 bg-[#B58E31] text-white rounded-full hover:bg-[#A67D2A] transition-colors"
+                      type="button"
+                      className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+                      onClick={closeMenu}
+                      aria-label="Cerrar menú"
                     >
-                      <User className="w-4 h-4" />
-                      <span className="text-xs font-medium">Login</span>
+                      <X className="w-5 h-5" />
                     </button>
-                  )}
-                  
-                  <button
-                    type="button"
-                    className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
-                    onClick={closeMenu}
-                    aria-label="Cerrar menú"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
+                  </div>
                 </div>
-              </div>
-              
-              {/* Contenido del menú */}
-              <div className="px-4 py-6 h-full overflow-y-auto">
-                <nav className="flex flex-col space-y-1">
-                  <div className={`opacity-0 ${
-                    isClosing 
-                      ? 'animate-[slideOutLeft_0.2s_ease-in_0s_forwards]' 
-                      : 'animate-[slideInLeft_0.3s_ease-out_0.1s_forwards]'
-                  }`}>
-                    <MobileNavLink
-                      href="/"
-                      title="Inicio"
-                      isActive={isActive("/")}
-                      baseStyle={mobileLinkStyle}
-                      activeStyle={mobileActiveLinkStyle}
-                      onClick={closeMenu}
-                    >
-                      Inicio
-                    </MobileNavLink>
-                  </div>
 
-                  <div className={`opacity-0 ${
-                    isClosing 
-                      ? 'animate-[slideOutLeft_0.2s_ease-in_0.05s_forwards]' 
-                      : 'animate-[slideInLeft_0.3s_ease-out_0.15s_forwards]'
-                  }`}>
-                    <MobileNavLink
-                      href="/tienda"
-                      title="Tienda"
-                      isActive={isActive("/tienda")}
-                      baseStyle={mobileLinkStyle}
-                      activeStyle={mobileActiveLinkStyle}
-                      onClick={closeMenu}
+                {/* Contenido del menú */}
+                <div className="px-4 py-6 h-full overflow-y-auto">
+                  <nav className="flex flex-col space-y-1">
+                    <div
+                      className={`opacity-0 ${
+                        isClosing
+                          ? "animate-[slideOutLeft_0.2s_ease-in_0s_forwards]"
+                          : "animate-[slideInLeft_0.3s_ease-out_0.1s_forwards]"
+                      }`}
                     >
-                      Tienda
-                    </MobileNavLink>
-                  </div>
-
-                  <div className={`opacity-0 ${
-                    isClosing 
-                      ? 'animate-[slideOutLeft_0.2s_ease-in_0.1s_forwards]' 
-                      : 'animate-[slideInLeft_0.3s_ease-out_0.2s_forwards]'
-                  }`}>
-                    <MobileNavLink
-                      href="/gifts"
-                      title="Armá tu regalo"
-                      isActive={isActive("/gifts")}
-                      baseStyle={mobileLinkStyle}
-                      activeStyle={mobileActiveLinkStyle}
-                      onClick={closeMenu}
-                    >
-                      Armá tu regalo
-                    </MobileNavLink>
-                  </div>
-
-                  {isAuthenticated && user?.is_wholesaler && (
-                    <div className={`opacity-0 ${
-                      isClosing 
-                        ? 'animate-[slideOutLeft_0.2s_ease-in_0.15s_forwards]' 
-                        : 'animate-[slideInLeft_0.3s_ease-out_0.25s_forwards]'
-                    }`}>
                       <MobileNavLink
-                        href="/mayorista"
-                        title="Mayorista"
-                        isActive={isActive("/mayorista")}
+                        href="/"
+                        title="Inicio"
+                        isActive={isActive("/")}
                         baseStyle={mobileLinkStyle}
                         activeStyle={mobileActiveLinkStyle}
                         onClick={closeMenu}
                       >
-                        Mayorista
+                        Inicio
                       </MobileNavLink>
                     </div>
-                  )}
 
-                  <div className={`opacity-0 ${
-                    isClosing 
-                      ? 'animate-[slideOutLeft_0.2s_ease-in_0.2s_forwards]' 
-                      : 'animate-[slideInLeft_0.3s_ease-out_0.3s_forwards]'
-                  }`}>
-                    <MobileNavLink
-                      href="/about"
-                      title="Market Club"
-                      isActive={isActive("/about")}
-                      baseStyle={mobileLinkStyle}
-                      activeStyle={mobileActiveLinkStyle}
-                      onClick={closeMenu}
+                    <div
+                      className={`opacity-0 ${
+                        isClosing
+                          ? "animate-[slideOutLeft_0.2s_ease-in_0.05s_forwards]"
+                          : "animate-[slideInLeft_0.3s_ease-out_0.15s_forwards]"
+                      }`}
                     >
-                      Market Club
-                    </MobileNavLink>
-                  </div>
+                      <MobileNavLink
+                        href="/tienda"
+                        title="Tienda"
+                        isActive={isActive("/tienda")}
+                        baseStyle={mobileLinkStyle}
+                        activeStyle={mobileActiveLinkStyle}
+                        onClick={closeMenu}
+                      >
+                        Tienda
+                      </MobileNavLink>
+                    </div>
 
-                  <div className={`opacity-0 ${
-                    isClosing 
-                      ? 'animate-[slideOutLeft_0.2s_ease-in_0.25s_forwards]' 
-                      : 'animate-[slideInLeft_0.3s_ease-out_0.35s_forwards]'
-                  }`}>
-                    <MobileNavLink
-                      href="/contacto"
-                      title="Contacto"
-                      isActive={isActive("/contacto")}
-                      baseStyle={mobileLinkStyle}
-                      activeStyle={mobileActiveLinkStyle}
-                      onClick={closeMenu}
+                    <div
+                      className={`opacity-0 ${
+                        isClosing
+                          ? "animate-[slideOutLeft_0.2s_ease-in_0.1s_forwards]"
+                          : "animate-[slideInLeft_0.3s_ease-out_0.2s_forwards]"
+                      }`}
                     >
-                      Contacto
-                    </MobileNavLink>
-                  </div>
-                </nav>
+                      <MobileNavLink
+                        href="/gifts"
+                        title="Armá tu regalo"
+                        isActive={isActive("/gifts")}
+                        baseStyle={mobileLinkStyle}
+                        activeStyle={mobileActiveLinkStyle}
+                        onClick={closeMenu}
+                      >
+                        Armá tu regalo
+                      </MobileNavLink>
+                    </div>
+
+                    {isAuthenticated && user?.is_wholesaler && (
+                      <div
+                        className={`opacity-0 ${
+                          isClosing
+                            ? "animate-[slideOutLeft_0.2s_ease-in_0.15s_forwards]"
+                            : "animate-[slideInLeft_0.3s_ease-out_0.25s_forwards]"
+                        }`}
+                      >
+                        <MobileNavLink
+                          href="/mayorista"
+                          title="Mayorista"
+                          isActive={isActive("/mayorista")}
+                          baseStyle={mobileLinkStyle}
+                          activeStyle={mobileActiveLinkStyle}
+                          onClick={closeMenu}
+                        >
+                          Mayorista
+                        </MobileNavLink>
+                      </div>
+                    )}
+
+                    <div
+                      className={`opacity-0 ${
+                        isClosing
+                          ? "animate-[slideOutLeft_0.2s_ease-in_0.2s_forwards]"
+                          : "animate-[slideInLeft_0.3s_ease-out_0.3s_forwards]"
+                      }`}
+                    >
+                      <MobileNavLink
+                        href="/about"
+                        title="Market Club"
+                        isActive={isActive("/about")}
+                        baseStyle={mobileLinkStyle}
+                        activeStyle={mobileActiveLinkStyle}
+                        onClick={closeMenu}
+                      >
+                        Market Club
+                      </MobileNavLink>
+                    </div>
+
+                    <div
+                      className={`opacity-0 ${
+                        isClosing
+                          ? "animate-[slideOutLeft_0.2s_ease-in_0.25s_forwards]"
+                          : "animate-[slideInLeft_0.3s_ease-out_0.35s_forwards]"
+                      }`}
+                    >
+                      <MobileNavLink
+                        href="/contacto"
+                        title="Contacto"
+                        isActive={isActive("/contacto")}
+                        baseStyle={mobileLinkStyle}
+                        activeStyle={mobileActiveLinkStyle}
+                        onClick={closeMenu}
+                      >
+                        Contacto
+                      </MobileNavLink>
+                    </div>
+                  </nav>
+                </div>
               </div>
-            </div>
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </div>
 
-      {/* Cart Drawer */}
-      <CartDrawer isOpen={isCartOpen} onClose={handleCloseCart} />
+        {/* Cart Drawer */}
+        <CartDrawer isOpen={isCartOpen} onClose={handleCloseCart} />
 
-      {/* Login Modal */}
-      <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
+        {/* Login Modal */}
+        <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
       </header>
     </>
   );

@@ -10,7 +10,10 @@ import {
   CreditCard,
   Mail,
   Phone,
+  Loader2,
 } from "lucide-react";
+import { useUserProfile, useUserOrders } from "@/hooks/useUserProfile";
+import { useEffect } from "react";
 
 interface User {
   id: string;
@@ -25,37 +28,18 @@ interface PerfilOverviewProps {
 }
 
 export default function PerfilOverview({ user }: PerfilOverviewProps) {
-  // Datos mock para demostración
-  const stats = {
-    totalOrders: 12,
-    totalSpent: 450000,
-    favoriteProducts: 8,
-    memberSince: "2024-01-15",
-  };
+  const {
+    profile,
+    stats,
+    loading: profileLoading,
+    error: profileError,
+  } = useUserProfile();
+  const { orders, loading: ordersLoading, loadOrders } = useUserOrders();
 
-  const recentOrders = [
-    {
-      id: "ORD-001",
-      date: "2024-01-20",
-      status: "Entregado",
-      total: 85000,
-      items: 3,
-    },
-    {
-      id: "ORD-002",
-      date: "2024-01-18",
-      status: "En camino",
-      total: 120000,
-      items: 5,
-    },
-    {
-      id: "ORD-003",
-      date: "2024-01-15",
-      status: "Entregado",
-      total: 65000,
-      items: 2,
-    },
-  ];
+  // Cargar datos al montar el componente
+  useEffect(() => {
+    loadOrders({ per_page: 3 }); // Solo las 3 órdenes más recientes
+  }, [loadOrders]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("es-CO", {
@@ -73,6 +57,68 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
     });
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Entregado":
+        return "bg-green-100 text-green-800";
+      case "En camino":
+        return "bg-yellow-100 text-yellow-800";
+      case "Procesando":
+        return "bg-blue-100 text-blue-800";
+      case "Pendiente":
+        return "bg-gray-100 text-gray-800";
+      case "Cancelado":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  // Mostrar loading si están cargando los datos
+  if (profileLoading || ordersLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <Loader2 className="w-8 h-8 animate-spin text-yellow-600 mx-auto mb-4" />
+            <p className="text-gray-600">Cargando información del perfil...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Mostrar error si hay algún problema
+  if (profileError) {
+    return (
+      <div className="space-y-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <svg
+                className="h-5 w-5 text-red-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">
+                Error al cargar el perfil
+              </h3>
+              <p className="mt-1 text-sm text-red-700">{profileError}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Estadísticas principales */}
@@ -82,7 +128,7 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
             <div>
               <p className="text-sm font-medium text-gray-600">Total Pedidos</p>
               <p className="text-2xl font-bold text-gray-900">
-                {stats.totalOrders}
+                {stats?.total_orders || 0}
               </p>
             </div>
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -96,7 +142,7 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
             <div>
               <p className="text-sm font-medium text-gray-600">Total Gastado</p>
               <p className="text-2xl font-bold text-gray-900">
-                {formatPrice(stats.totalSpent)}
+                {formatPrice(stats?.total_spent || 0)}
               </p>
             </div>
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -110,7 +156,7 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
             <div>
               <p className="text-sm font-medium text-gray-600">Favoritos</p>
               <p className="text-2xl font-bold text-gray-900">
-                {stats.favoriteProducts}
+                {stats?.favorite_products_count || 0}
               </p>
             </div>
             <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
@@ -124,10 +170,12 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
             <div>
               <p className="text-sm font-medium text-gray-600">Miembro desde</p>
               <p className="text-lg font-bold text-gray-900">
-                {new Date(stats.memberSince).toLocaleDateString("es-CO", {
-                  month: "short",
-                  year: "numeric",
-                })}
+                {stats?.member_since
+                  ? new Date(stats.member_since).toLocaleDateString("es-CO", {
+                      month: "short",
+                      year: "numeric",
+                    })
+                  : "N/A"}
               </p>
             </div>
             <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
@@ -137,117 +185,131 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
         </div>
       </div>
 
-      {/* Pedidos recientes */}
+      {/* Pedidos Recientes */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
+        <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-gray-900">
               Pedidos Recientes
-            </h3>
-            <button className="text-sm font-medium text-yellow-600 hover:text-yellow-700">
+            </h2>
+            <button className="text-sm text-yellow-600 hover:text-yellow-700 font-medium">
               Ver todos
             </button>
           </div>
         </div>
 
-        <div className="divide-y divide-gray-200">
-          {recentOrders.map((order) => (
-            <div
-              key={order.id}
-              className="p-6 hover:bg-gray-50 transition-colors"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <Package className="w-5 h-5 text-gray-600" />
+        <div className="p-6">
+          {orders.length > 0 ? (
+            <div className="space-y-4">
+              {orders.map((order) => (
+                <div
+                  key={order.id}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                >
+                  <div className="flex items-center space-x-4">
+                    <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+                      <Package className="w-5 h-5 text-gray-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        Pedido #{order.order_number}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {formatDate(order.created_at)} • {order.items.length}{" "}
+                        productos
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-900">
-                      Pedido #{order.id}
+                  <div className="text-right">
+                    <p className="font-semibold text-gray-900">
+                      {formatPrice(order.total_amount)}
                     </p>
-                    <p className="text-sm text-gray-600">
-                      {formatDate(order.date)} • {order.items} productos
-                    </p>
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                        order.status
+                      )}`}
+                    >
+                      {order.status}
+                    </span>
                   </div>
                 </div>
-
-                <div className="text-right">
-                  <p className="font-semibold text-gray-900">
-                    {formatPrice(order.total)}
-                  </p>
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      order.status === "Entregado"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-yellow-100 text-yellow-800"
-                    }`}
-                  >
-                    {order.status}
-                  </span>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            <div className="text-center py-8">
+              <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No tienes pedidos recientes</p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Información de la cuenta */}
+      {/* Información de Contacto y Beneficios */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Información de Contacto */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Información de Contacto
           </h3>
           <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                <Mail className="w-4 h-4 text-gray-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Email</p>
-                <p className="font-medium text-gray-900">{user.email}</p>
-              </div>
+            <div className="flex items-center space-x-3">
+              <Mail className="w-5 h-5 text-gray-400" />
+              <span className="text-gray-700">
+                {profile?.email || user.email}
+              </span>
             </div>
-
-            {user.phone && (
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <Phone className="w-4 h-4 text-gray-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Teléfono</p>
-                  <p className="font-medium text-gray-900">{user.phone}</p>
-                </div>
+            {profile?.phone && (
+              <div className="flex items-center space-x-3">
+                <Phone className="w-5 h-5 text-gray-400" />
+                <span className="text-gray-700">{profile.phone}</span>
+              </div>
+            )}
+            {profile?.address && (
+              <div className="flex items-center space-x-3">
+                <MapPin className="w-5 h-5 text-gray-400" />
+                <span className="text-gray-700">
+                  {profile.address.city}, {profile.address.state}
+                </span>
               </div>
             )}
           </div>
         </div>
 
+        {/* Beneficios de Miembro */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Beneficios de Miembro
           </h3>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
                 <Package className="w-4 h-4 text-green-600" />
               </div>
               <div>
                 <p className="font-medium text-gray-900">Envío Gratis</p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-500">
                   En pedidos desde $200.000
                 </p>
               </div>
             </div>
-
-            <div className="flex items-center gap-3">
+            <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                 <CreditCard className="w-4 h-4 text-blue-600" />
               </div>
               <div>
                 <p className="font-medium text-gray-900">Pagos Seguros</p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-500">
                   Protegido con encriptación
                 </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <MapPin className="w-4 h-4 text-yellow-600" />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">Entrega a Domicilio</p>
+                <p className="text-sm text-gray-500">En toda Colombia</p>
               </div>
             </div>
           </div>

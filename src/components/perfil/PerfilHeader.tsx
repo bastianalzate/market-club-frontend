@@ -1,6 +1,7 @@
 "use client";
 
 import { User, MapPin, Phone, Mail, Crown } from "lucide-react";
+import { useProfileContext } from "@/contexts/ProfileContext";
 
 interface User {
   id: string;
@@ -15,6 +16,13 @@ interface PerfilHeaderProps {
 }
 
 export default function PerfilHeader({ user }: PerfilHeaderProps) {
+  const { profile } = useProfileContext();
+
+  // Usar los datos actualizados del perfil si están disponibles, sino usar los datos del user prop
+  const displayName = profile?.name || user.name;
+  const displayEmail = profile?.email || user.email;
+  const displayPhone = profile?.phone || user.phone;
+
   return (
     <div className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -36,17 +44,17 @@ export default function PerfilHeader({ user }: PerfilHeaderProps) {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  {user.name}
+                  {displayName}
                 </h1>
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4" />
-                    <span>{user.email}</span>
+                    <span>{displayEmail}</span>
                   </div>
-                  {user.phone && (
+                  {displayPhone && (
                     <div className="flex items-center gap-2">
                       <Phone className="w-4 h-4" />
-                      <span>{user.phone}</span>
+                      <span>{displayPhone}</span>
                     </div>
                   )}
                 </div>
