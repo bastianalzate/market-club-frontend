@@ -10,6 +10,7 @@ export interface FeaturedProduct {
   sale_price: number | null;
   current_price: number;
   image_url: string;
+  stock_quantity: number;
 }
 
 export const useFeaturedProducts = () => {

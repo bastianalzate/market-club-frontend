@@ -158,7 +158,7 @@ export default function ProductGrid({
       volume: 500,
       style: tiendaProduct.category.name,
       origin: "Importada",
-      inStock: tiendaProduct.inStock,
+      inStock: tiendaProduct.stock_quantity > 0,
       stockQuantity: tiendaProduct.stock_quantity,
       rating: tiendaProduct.rating,
       reviewCount: tiendaProduct.reviewCount,
@@ -170,6 +170,15 @@ export default function ProductGrid({
   };
 
   const handleAddToCart = async (tiendaProduct: TransformedProduct) => {
+    // Verificar que el producto tenga stock antes de intentar agregarlo
+    if (tiendaProduct.stock_quantity === 0) {
+      showError(
+        "Producto agotado",
+        `"${tiendaProduct.name}" no está disponible en este momento.`
+      );
+      return;
+    }
+
     setAddingToCart(tiendaProduct.id);
 
     try {
@@ -351,9 +360,19 @@ export default function ProductGrid({
                   <LazyImage
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-full"
+                    className={`w-full h-full ${
+                      product.stock_quantity === 0 ? "grayscale opacity-60" : ""
+                    }`}
                   />
                 </div>
+                
+                {/* Etiqueta de Agotado */}
+                {product.stock_quantity === 0 && (
+                  <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+                    AGOTADO
+                  </div>
+                )}
+                
                 {/* Botón de corazón (favorito) */}
                 <button
                   onClick={() => toggleFavorite(product.id)}
@@ -421,9 +440,11 @@ export default function ProductGrid({
                   {/* Botón principal "Añadir al carrito" */}
                   <button
                     onClick={() => handleAddToCart(product)}
-                    disabled={addingToCart === product.id || !product.inStock}
+                    disabled={addingToCart === product.id || product.stock_quantity === 0}
                     className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    style={{ backgroundColor: "#B58E31" }}
+                    style={{ 
+                      backgroundColor: product.stock_quantity === 0 ? "#6B7280" : "#B58E31" 
+                    }}
                     onMouseEnter={(e) =>
                       !e.currentTarget.disabled &&
                       (e.currentTarget.style.backgroundColor = "#A07D2A")
@@ -436,13 +457,13 @@ export default function ProductGrid({
                     <span>
                       {addingToCart === product.id
                         ? "Agregando..."
-                        : !product.inStock
-                        ? "Sin Stock"
+                        : product.stock_quantity === 0
+                        ? "Agotado"
                         : isInCart(product.id)
                         ? "Agregar más"
                         : "Añadir al carrito"}
                     </span>
-                    {addingToCart !== product.id && product.inStock && (
+                    {addingToCart !== product.id && product.stock_quantity > 0 && (
                       <ArrowRight className="w-4 h-4" />
                     )}
                   </button>
