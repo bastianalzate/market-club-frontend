@@ -106,7 +106,7 @@ export default function ProductSlider() {
 
   // Función para renderizar cada producto del carrusel
   const renderProduct = (beer: LatestBeer) => (
-    <div className="bg-white rounded-lg overflow-hidden shadow-lg h-full">
+    <div className="bg-white rounded-lg overflow-hidden shadow-lg h-full flex flex-col">
       {/* Imagen del producto con botón de favorito */}
       <div className="relative">
         <div
@@ -116,7 +116,7 @@ export default function ProductSlider() {
           <LazyImage
             src={beer.image_url}
             alt={beer.name}
-            className={`w-full h-full ${
+            className={`w-full h-full object-contain ${
               beer.stock_quantity === 0 ? "grayscale opacity-60" : ""
             }`}
           />
@@ -124,7 +124,7 @@ export default function ProductSlider() {
         
         {/* Etiqueta de Agotado */}
         {beer.stock_quantity === 0 && (
-          <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+          <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg sm:top-4 sm:left-4 sm:px-3 sm:text-sm">
             AGOTADO
           </div>
         )}
@@ -132,11 +132,11 @@ export default function ProductSlider() {
         {/* Botón de corazón (favorito) */}
         <button
           onClick={() => toggleFavorite(beer.id)}
-          className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors"
+          className="absolute top-2 right-2 p-1.5 bg-white/90 hover:bg-white rounded-full transition-colors sm:top-3 sm:right-3 sm:p-2"
           aria-label="Agregar a favoritos"
         >
           <Heart
-            className={`w-5 h-5 ${
+            className={`w-4 h-4 sm:w-5 sm:h-5 ${
               favorites.includes(beer.id)
                 ? "fill-red-500 text-red-500"
                 : "text-gray-600"
@@ -146,36 +146,36 @@ export default function ProductSlider() {
       </div>
 
       {/* Información del producto */}
-      <div className="p-6">
+      <div className="p-4 flex-1 flex flex-col sm:p-6">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm text-gray-600 font-medium">
+          <span className="text-xs text-gray-600 font-medium sm:text-sm">
             BOTELLA 500ML
           </span>
           <div className="text-right">
             {beer.sale_price && beer.sale_price < beer.price ? (
               <div>
-                <span className="text-sm text-gray-500 line-through">
+                <span className="text-xs text-gray-500 line-through sm:text-sm">
                   {formatPrice(beer.price)}
                 </span>
-                <span className="text-lg font-bold text-gray-900 ml-2">
+                <span className="text-base font-bold text-gray-900 ml-1 sm:text-lg sm:ml-2">
                   {formatPrice(beer.sale_price)}
                 </span>
               </div>
             ) : (
-              <span className="text-lg font-bold text-gray-900">
+              <span className="text-base font-bold text-gray-900 sm:text-lg">
                 {formatPrice(beer.current_price)}
               </span>
             )}
           </div>
         </div>
 
-        <h3 className="text-lg font-bold text-gray-900 mb-4">{beer.name}</h3>
+        <h3 className="text-base font-bold text-gray-900 mb-4 line-clamp-2 sm:text-lg">{beer.name}</h3>
 
         {/* Botones de acción */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 mt-auto sm:space-x-3">
           {/* Ícono de carrito cuadrado con contador - Solo visual */}
           <div
-            className="relative p-3 rounded-lg"
+            className="relative p-2 rounded-lg sm:p-3"
             style={{
               backgroundColor: "transparent",
               borderColor: "#D0D5DD",
@@ -184,10 +184,10 @@ export default function ProductSlider() {
             }}
             aria-label="Contador del carrito"
           >
-            <ShoppingCart className="w-5 h-5" style={{ color: "#B58E31" }} />
+            <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#B58E31" }} />
             {/* Contador en el ícono del carrito */}
             {isInCart(beer.id) && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold sm:h-5 sm:w-5">
                 {getProductQuantity(beer.id)}
               </span>
             )}
@@ -197,7 +197,7 @@ export default function ProductSlider() {
           <button
             onClick={() => handleAddToCart(beer)}
             disabled={addingToCart === beer.id || beer.stock_quantity === 0}
-            className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="flex-1 flex items-center justify-center space-x-1 text-white py-2 px-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm sm:py-3 sm:px-4 sm:space-x-2"
             style={{ 
               backgroundColor: beer.stock_quantity === 0 ? "#6B7280" : "#B58E31" 
             }}
@@ -210,7 +210,7 @@ export default function ProductSlider() {
               (e.currentTarget.style.backgroundColor = "#B58E31")
             }
           >
-            <span>
+            <span className="truncate">
               {addingToCart === beer.id
                 ? "Agregando..."
                 : beer.stock_quantity === 0
@@ -220,7 +220,7 @@ export default function ProductSlider() {
                 : "Añadir al carrito"}
             </span>
             {addingToCart !== beer.id && beer.stock_quantity > 0 && (
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3 h-3 flex-shrink-0 sm:w-4 sm:h-4" />
             )}
           </button>
         </div>
@@ -232,20 +232,20 @@ export default function ProductSlider() {
     <section className="py-12 bg-black sm:py-16 lg:py-20">
       <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
         {/* Header con título y botón */}
-        <div className="flex items-center justify-center lg:justify-between mb-8">
-          <h2 className="text-2xl font-bold text-white sm:text-3xl">
+        <div className="flex flex-col items-center text-center mb-6 sm:mb-8 lg:flex-row lg:justify-between lg:text-left">
+          <h2 className="text-xl font-bold text-white mb-4 sm:text-2xl lg:text-3xl lg:mb-0">
             Últimas Cervezas
           </h2>
 
-          <div className="hidden lg:flex">
+          <div className="hidden sm:flex lg:flex">
             <a
               href="/tienda"
               title=""
-              className="inline-flex items-center justify-center p-1 -m-1 text-sm font-bold text-gray-300 transition-all duration-200 rounded-md focus:text-white focus:ring-white focus:ring-2 focus:ring-offset-2 focus:outline-none hover:text-white"
+              className="inline-flex items-center justify-center p-2 text-sm font-bold text-gray-300 transition-all duration-200 rounded-md focus:text-white focus:ring-white focus:ring-2 focus:ring-offset-2 focus:outline-none hover:text-white"
             >
               Ver todas las cervezas
               <svg
-                className="w-5 h-5 ml-2 text-gray-400"
+                className="w-4 h-4 ml-2 text-gray-400 sm:w-5 sm:h-5"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -283,7 +283,14 @@ export default function ProductSlider() {
             </div>
           </div>
         ) : (
-          <ProductCarousel itemsPerView={3} className="px-8">
+          <ProductCarousel 
+            itemsPerView={{
+              mobile: 1,
+              tablet: 2,
+              desktop: 3
+            }} 
+            className="px-2 sm:px-4 lg:px-8"
+          >
             {latestBeers.map((beer) => renderProduct(beer))}
           </ProductCarousel>
         )}
