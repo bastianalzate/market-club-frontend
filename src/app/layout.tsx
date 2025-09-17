@@ -11,6 +11,7 @@ import MainLayout from "@/components/layout/MainLayout";
 import ReduxProvider from "@/providers/ReduxProvider";
 import SuppressHydrationWarning from "@/components/shared/SuppressHydrationWarning";
 import { CartProvider } from "@/contexts/CartContext";
+import { ProfileProvider } from "@/contexts/ProfileContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -79,9 +80,11 @@ export default function RootLayout({
       <body className={FONT_CLASSES}>
         <SuppressHydrationWarning />
         <ReduxProvider>
-          <CartProvider>
-            <MainLayout>{children}</MainLayout>
-          </CartProvider>
+          <ProfileProvider>
+            <CartProvider>
+              <MainLayout>{children}</MainLayout>
+            </CartProvider>
+          </ProfileProvider>
         </ReduxProvider>
       </body>
     </html>

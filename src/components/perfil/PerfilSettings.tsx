@@ -12,9 +12,12 @@ import {
   Save,
   Eye,
   EyeOff,
+  Loader2,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserProfile, useUserSettings } from "@/hooks/useUserProfile";
+import { useNotification } from "@/hooks/useNotification";
 
 interface User {
   id: string;
@@ -30,485 +33,770 @@ interface PerfilSettingsProps {
 
 export default function PerfilSettings({ user }: PerfilSettingsProps) {
   const { logout } = useAuth();
-  const [activeSection, setActiveSection] = useState<
-    "profile" | "security" | "notifications" | "billing"
-  >("profile");
+  const { showSuccess, showError } = useNotification();
+  const {
+    profile,
+    updateProfile,
+    changePassword,
+    loading: profileLoading,
+    error: profileError,
+  } = useUserProfile();
+  const { settings, updateSettings } = useUserSettings();
+
+  const [activeSection, setActiveSection] = useState<"profile" | "security">(
+    "profile"
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Estados del formulario
+  // Estados del formulario de perfil
   const [profileData, setProfileData] = useState({
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
-    address: "",
-    city: "",
-    country: "Colombia",
+    name: "",
+    email: "",
+    phone: "",
+    address: {
+      street: "",
+      city: "",
+      state: "",
+      postal_code: "",
+      country: "Colombia",
+    },
   });
 
+  // Estados del formulario de contraseña
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
 
+  // Estados de notificaciones
   const [notificationSettings, setNotificationSettings] = useState({
-    emailNotifications: true,
-    smsNotifications: false,
-    orderUpdates: true,
+    email_notifications: true,
+    sms_notifications: false,
+    order_updates: true,
     promotions: true,
     newsletter: false,
   });
 
+  // Estados de facturación
   const [billingData, setBillingData] = useState({
     cardNumber: "**** **** **** 1234",
     expiryDate: "12/25",
-    cardholderName: user.name,
+    cardholderName: "",
     billingAddress: "",
   });
 
-  const handleSaveProfile = () => {
-    // Aquí se enviaría la información al backend
-    console.log("Guardando perfil:", profileData);
+  // Cargar datos del perfil cuando se monta el componente
+  useEffect(() => {
+    if (profile) {
+      setProfileData({
+        name: profile.name || "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        address: {
+          street: profile.address?.street || "",
+          city: profile.address?.city || "",
+          state: profile.address?.state || "",
+          postal_code: profile.address?.postal_code || "",
+          country: profile.address?.country || "Colombia",
+        },
+      });
+      setBillingData((prev) => ({
+        ...prev,
+        cardholderName: profile.name || "",
+      }));
+    } else if (user) {
+      // Fallback: usar datos del usuario prop si el perfil del hook está vacío
+      setProfileData({
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        address: {
+          street: "",
+          city: "",
+          state: "",
+          postal_code: "",
+          country: "Colombia",
+        },
+      });
+    }
+  }, [profile, user]);
+
+  // Cargar configuraciones de notificaciones
+  useEffect(() => {
+    if (settings) {
+      setNotificationSettings(settings.notification_settings);
+    }
+  }, [settings]);
+
+  const handleSaveProfile = async () => {
+    try {
+      setLoading(true);
+
+      // Solo enviar los campos que acepta el backend
+      const dataToSend = {
+        name: profileData.name,
+        phone: profileData.phone,
+      };
+
+      const result = await updateProfile(dataToSend);
+
+      if (result.success) {
+        showSuccess(
+          "Perfil actualizado",
+          "Tu información se ha actualizado correctamente"
+        );
+      } else {
+        showError("Error", result.message || "Error al actualizar el perfil");
+      }
+    } catch (error) {
+      showError("Error", "Error al actualizar el perfil");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleChangePassword = () => {
-    // Aquí se enviaría la nueva contraseña al backend
-    console.log("Cambiando contraseña");
+  const handleChangePassword = async () => {
+    // Validaciones del frontend
+    if (!passwordData.currentPassword) {
+      showError("Error", "Debes ingresar tu contraseña actual");
+      return;
+    }
+
+    if (!passwordData.newPassword) {
+      showError("Error", "Debes ingresar una nueva contraseña");
+      return;
+    }
+
+    if (passwordData.newPassword.length < 8) {
+      showError(
+        "Error",
+        "La nueva contraseña debe tener al menos 8 caracteres"
+      );
+      return;
+    }
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      showError("Error", "Las contraseñas no coinciden");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const result = await changePassword({
+        current_password: passwordData.currentPassword,
+        new_password: passwordData.newPassword,
+        new_password_confirmation: passwordData.confirmPassword,
+      });
+
+      if (result.success) {
+        showSuccess(
+          "Contraseña cambiada",
+          "Tu contraseña se ha actualizado correctamente"
+        );
+        setPasswordData({
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+      } else {
+        // Manejar errores específicos del backend
+        let errorMessage = "Error al cambiar la contraseña";
+
+        if (result.errors) {
+          const errors = result.errors;
+
+          if (
+            errors.new_password &&
+            errors.new_password.includes(
+              "The new password field must be at least 8 characters."
+            )
+          ) {
+            errorMessage =
+              "La nueva contraseña debe tener al menos 8 caracteres";
+          } else if (
+            errors.new_password_confirmation &&
+            errors.new_password_confirmation.includes(
+              "The new password confirmation field must be at least 8 characters."
+            )
+          ) {
+            errorMessage =
+              "La confirmación de contraseña debe tener al menos 8 caracteres";
+          } else if (errors.current_password) {
+            errorMessage = "La contraseña actual es incorrecta";
+          } else if (
+            errors.new_password_confirmation &&
+            errors.new_password_confirmation.includes(
+              "The new password confirmation does not match."
+            )
+          ) {
+            errorMessage = "Las contraseñas no coinciden";
+          } else {
+            // Mostrar el primer error disponible
+            const firstError = Object.values(errors)[0];
+            if (Array.isArray(firstError) && firstError.length > 0) {
+              errorMessage = firstError[0];
+            }
+          }
+        } else if (result.message) {
+          errorMessage = result.message;
+        }
+
+        showError("Error", errorMessage);
+      }
+    } catch (error) {
+      showError("Error", "Error de conexión. Intenta nuevamente");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSaveNotifications = () => {
-    // Aquí se guardarían las preferencias de notificación
-    console.log("Guardando notificaciones:", notificationSettings);
+  const handleSaveNotifications = async () => {
+    try {
+      setLoading(true);
+      const result = await updateSettings({
+        notification_settings: notificationSettings,
+      });
+
+      if (result.success) {
+        showSuccess(
+          "Configuraciones guardadas",
+          "Tus preferencias se han guardado correctamente"
+        );
+      } else {
+        showError(
+          "Error",
+          result.message || "Error al guardar las configuraciones"
+        );
+      }
+    } catch (error) {
+      showError("Error", "Error al guardar las configuraciones");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSaveBilling = () => {
     // Aquí se guardarían los datos de facturación
     console.log("Guardando facturación:", billingData);
+    showSuccess(
+      "Información guardada",
+      "Los datos de facturación se han guardado"
+    );
   };
 
   const sections = [
     { id: "profile" as const, label: "Perfil", icon: User },
     { id: "security" as const, label: "Seguridad", icon: Lock },
-    { id: "notifications" as const, label: "Notificaciones", icon: Bell },
-    { id: "billing" as const, label: "Facturación", icon: CreditCard },
+    // { id: "notifications" as const, label: "Notificaciones", icon: Bell },
+    // { id: "billing" as const, label: "Facturación", icon: CreditCard },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Navegación de secciones */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex flex-wrap gap-2">
-          {sections.map((section) => {
-            const Icon = section.icon;
-            return (
-              <button
-                key={section.id}
-                onClick={() => setActiveSection(section.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                  activeSection === section.id
-                    ? "bg-yellow-100 text-yellow-900 border border-yellow-200"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {section.label}
-              </button>
-            );
-          })}
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Configuración</h1>
+          <p className="text-gray-600">
+            Gestiona tu información personal y preferencias
+          </p>
         </div>
       </div>
 
-      {/* Contenido de la sección activa */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        {activeSection === "profile" && (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Información Personal
-            </h3>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Navegación lateral */}
+        <div className="lg:col-span-1">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <nav className="space-y-2">
+              {sections.map((section) => {
+                const Icon = section.icon;
+                const isActive = activeSection === section.id;
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nombre completo
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    value={profileData.name}
-                    onChange={(e) =>
-                      setProfileData({ ...profileData, name: e.target.value })
-                    }
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent text-gray-900 placeholder-gray-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="email"
-                    value={profileData.email}
-                    onChange={(e) =>
-                      setProfileData({ ...profileData, email: e.target.value })
-                    }
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent text-gray-900 placeholder-gray-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Teléfono
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="tel"
-                    value={profileData.phone}
-                    onChange={(e) =>
-                      setProfileData({ ...profileData, phone: e.target.value })
-                    }
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent text-gray-900 placeholder-gray-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  País
-                </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <select
-                    value={profileData.country}
-                    onChange={(e) =>
-                      setProfileData({
-                        ...profileData,
-                        country: e.target.value,
-                      })
-                    }
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent text-gray-900 placeholder-gray-500"
-                  >
-                    <option value="Colombia">Colombia</option>
-                    <option value="México">México</option>
-                    <option value="Argentina">Argentina</option>
-                    <option value="Chile">Chile</option>
-                    <option value="Perú">Perú</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Dirección
-                </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                  <textarea
-                    value={profileData.address}
-                    onChange={(e) =>
-                      setProfileData({
-                        ...profileData,
-                        address: e.target.value,
-                      })
-                    }
-                    rows={3}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent resize-none text-gray-900 placeholder-gray-500"
-                    placeholder="Calle 123 #45-67, Medellín"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end">
-              <button
-                onClick={handleSaveProfile}
-                className="flex items-center gap-2 px-6 py-3 text-white rounded-lg font-medium hover:opacity-90 transition-colors"
-                style={{ backgroundColor: "rgb(180, 140, 43)" }}
-              >
-                <Save className="w-4 h-4" />
-                Guardar cambios
-              </button>
-            </div>
-          </div>
-        )}
-
-        {activeSection === "security" && (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900">Seguridad</h3>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Contraseña actual
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type={showCurrentPassword ? "text" : "password"}
-                    value={passwordData.currentPassword}
-                    onChange={(e) =>
-                      setPasswordData({
-                        ...passwordData,
-                        currentPassword: e.target.value,
-                      })
-                    }
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent text-gray-900 placeholder-gray-500"
-                  />
+                return (
                   <button
-                    type="button"
-                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    key={section.id}
+                    onClick={() => setActiveSection(section.id)}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-all duration-200 ${
+                      isActive
+                        ? "bg-yellow-50 border border-yellow-200 text-yellow-900"
+                        : "hover:bg-gray-50 text-gray-700 hover:text-gray-900"
+                    }`}
                   >
-                    {showCurrentPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nueva contraseña
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type={showNewPassword ? "text" : "password"}
-                    value={passwordData.newPassword}
-                    onChange={(e) =>
-                      setPasswordData({
-                        ...passwordData,
-                        newPassword: e.target.value,
-                      })
-                    }
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent text-gray-900 placeholder-gray-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showNewPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirmar nueva contraseña
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={passwordData.confirmPassword}
-                    onChange={(e) =>
-                      setPasswordData({
-                        ...passwordData,
-                        confirmPassword: e.target.value,
-                      })
-                    }
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent text-gray-900 placeholder-gray-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end">
-              <button
-                onClick={handleChangePassword}
-                className="flex items-center gap-2 px-6 py-3 text-white rounded-lg font-medium hover:opacity-90 transition-colors"
-                style={{ backgroundColor: "rgb(180, 140, 43)" }}
-              >
-                <Shield className="w-4 h-4" />
-                Cambiar contraseña
-              </button>
-            </div>
-          </div>
-        )}
-
-        {activeSection === "notifications" && (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Preferencias de Notificación
-            </h3>
-
-            <div className="space-y-4">
-              {Object.entries(notificationSettings).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0"
-                >
-                  <div>
-                    <h4 className="font-medium text-gray-900">
-                      {key === "emailNotifications" &&
-                        "Notificaciones por email"}
-                      {key === "smsNotifications" && "Notificaciones por SMS"}
-                      {key === "orderUpdates" && "Actualizaciones de pedidos"}
-                      {key === "promotions" && "Promociones y ofertas"}
-                      {key === "newsletter" && "Boletín informativo"}
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      {key === "emailNotifications" &&
-                        "Recibe notificaciones importantes por correo electrónico"}
-                      {key === "smsNotifications" &&
-                        "Recibe alertas por mensaje de texto"}
-                      {key === "orderUpdates" &&
-                        "Notificaciones sobre el estado de tus pedidos"}
-                      {key === "promotions" &&
-                        "Ofertas especiales y descuentos"}
-                      {key === "newsletter" &&
-                        "Novedades y contenido exclusivo"}
-                    </p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={value}
-                      onChange={(e) =>
-                        setNotificationSettings({
-                          ...notificationSettings,
-                          [key]: e.target.checked,
-                        })
-                      }
-                      className="sr-only peer"
+                    <Icon
+                      className={`w-5 h-5 ${
+                        isActive ? "text-yellow-600" : "text-gray-400"
+                      }`}
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
-                  </label>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex justify-end">
-              <button
-                onClick={handleSaveNotifications}
-                className="flex items-center gap-2 px-6 py-3 text-white rounded-lg font-medium hover:opacity-90 transition-colors"
-                style={{ backgroundColor: "rgb(180, 140, 43)" }}
-              >
-                <Bell className="w-4 h-4" />
-                Guardar preferencias
-              </button>
-            </div>
+                    <span className="font-medium">{section.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
           </div>
-        )}
+        </div>
 
-        {activeSection === "billing" && (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Información de Facturación
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Número de tarjeta
-                </label>
-                <div className="relative">
-                  <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    value={billingData.cardNumber}
-                    readOnly
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
-                  />
+        {/* Contenido principal */}
+        <div className="lg:col-span-3">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            {/* Sección de Perfil */}
+            {activeSection === "profile" && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                    Información Personal
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Nombre completo
+                      </label>
+                      <input
+                        type="text"
+                        value={profileData.name}
+                        onChange={(e) =>
+                          setProfileData({
+                            ...profileData,
+                            name: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        value={profileData.email}
+                        readOnly
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        El email no se puede modificar
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Teléfono
+                      </label>
+                      <input
+                        type="tel"
+                        value={profileData.phone}
+                        onChange={(e) =>
+                          setProfileData({
+                            ...profileData,
+                            phone: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleSaveProfile}
+                    disabled={loading}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50"
+                  >
+                    {loading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Save className="w-4 h-4" />
+                    )}
+                    Guardar cambios
+                  </button>
                 </div>
               </div>
+            )}
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Fecha de vencimiento
-                </label>
-                <div className="relative">
-                  <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    value={billingData.expiryDate}
-                    readOnly
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-gray-50"
-                  />
+            {/* Sección de Seguridad */}
+            {activeSection === "security" && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                    Cambiar Contraseña
+                  </h2>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Contraseña actual
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showCurrentPassword ? "text" : "password"}
+                          value={passwordData.currentPassword}
+                          onChange={(e) =>
+                            setPasswordData({
+                              ...passwordData,
+                              currentPassword: e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowCurrentPassword(!showCurrentPassword)
+                          }
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                          {showCurrentPassword ? (
+                            <EyeOff className="w-4 h-4" />
+                          ) : (
+                            <Eye className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Nueva contraseña
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showNewPassword ? "text" : "password"}
+                          value={passwordData.newPassword}
+                          onChange={(e) =>
+                            setPasswordData({
+                              ...passwordData,
+                              newPassword: e.target.value,
+                            })
+                          }
+                          className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 ${
+                            passwordData.newPassword.length > 0 &&
+                            passwordData.newPassword.length < 8
+                              ? "border-red-300 bg-red-50"
+                              : passwordData.newPassword.length >= 8
+                              ? "border-green-300 bg-green-50"
+                              : "border-gray-300"
+                          }`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowNewPassword(!showNewPassword)}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                          {showNewPassword ? (
+                            <EyeOff className="w-4 h-4" />
+                          ) : (
+                            <Eye className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
+                      <div className="mt-1">
+                        <p
+                          className={`text-xs ${
+                            passwordData.newPassword.length > 0 &&
+                            passwordData.newPassword.length < 8
+                              ? "text-red-600"
+                              : passwordData.newPassword.length >= 8
+                              ? "text-green-600"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          Mínimo 8 caracteres
+                          {passwordData.newPassword.length > 0 && (
+                            <span className="ml-2">
+                              ({passwordData.newPassword.length}/8)
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Confirmar nueva contraseña
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showConfirmPassword ? "text" : "password"}
+                          value={passwordData.confirmPassword}
+                          onChange={(e) =>
+                            setPasswordData({
+                              ...passwordData,
+                              confirmPassword: e.target.value,
+                            })
+                          }
+                          className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 ${
+                            passwordData.confirmPassword.length > 0 &&
+                            passwordData.newPassword !==
+                              passwordData.confirmPassword
+                              ? "border-red-300 bg-red-50"
+                              : passwordData.confirmPassword.length > 0 &&
+                                passwordData.newPassword ===
+                                  passwordData.confirmPassword
+                              ? "border-green-300 bg-green-50"
+                              : "border-gray-300"
+                          }`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="w-4 h-4" />
+                          ) : (
+                            <Eye className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
+                      {passwordData.confirmPassword.length > 0 && (
+                        <div className="mt-1">
+                          <p
+                            className={`text-xs ${
+                              passwordData.newPassword !==
+                              passwordData.confirmPassword
+                                ? "text-red-600"
+                                : "text-green-600"
+                            }`}
+                          >
+                            {passwordData.newPassword !==
+                            passwordData.confirmPassword
+                              ? "Las contraseñas no coinciden"
+                              : "Las contraseñas coinciden"}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleChangePassword}
+                    disabled={loading}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50"
+                  >
+                    {loading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Lock className="w-4 h-4" />
+                    )}
+                    Cambiar contraseña
+                  </button>
                 </div>
               </div>
+            )}
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nombre del titular
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    value={billingData.cardholderName}
-                    onChange={(e) =>
-                      setBillingData({
-                        ...billingData,
-                        cardholderName: e.target.value,
-                      })
-                    }
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent text-gray-900 placeholder-gray-500"
-                  />
+            {/* Sección de Notificaciones - OCULTA */}
+            {false && activeSection === "notifications" && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                    Preferencias de Notificación
+                  </h2>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-900">
+                          Notificaciones por email
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          Recibe actualizaciones importantes por correo
+                        </p>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={notificationSettings.email_notifications}
+                          onChange={(e) =>
+                            setNotificationSettings({
+                              ...notificationSettings,
+                              email_notifications: e.target.checked,
+                            })
+                          }
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
+                      </label>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-900">
+                          Actualizaciones de pedidos
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          Notificaciones sobre el estado de tus pedidos
+                        </p>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={notificationSettings.order_updates}
+                          onChange={(e) =>
+                            setNotificationSettings({
+                              ...notificationSettings,
+                              order_updates: e.target.checked,
+                            })
+                          }
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
+                      </label>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-900">
+                          Promociones y ofertas
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          Recibe ofertas especiales y descuentos
+                        </p>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={notificationSettings.promotions}
+                          onChange={(e) =>
+                            setNotificationSettings({
+                              ...notificationSettings,
+                              promotions: e.target.checked,
+                            })
+                          }
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
+                      </label>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-900">
+                          Newsletter
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          Recibe nuestro boletín con novedades
+                        </p>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={notificationSettings.newsletter}
+                          onChange={(e) =>
+                            setNotificationSettings({
+                              ...notificationSettings,
+                              newsletter: e.target.checked,
+                            })
+                          }
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleSaveNotifications}
+                    disabled={loading}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50"
+                  >
+                    {loading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Bell className="w-4 h-4" />
+                    )}
+                    Guardar preferencias
+                  </button>
                 </div>
               </div>
+            )}
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Dirección de facturación
-                </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                  <textarea
-                    value={billingData.billingAddress}
-                    onChange={(e) =>
-                      setBillingData({
-                        ...billingData,
-                        billingAddress: e.target.value,
-                      })
-                    }
-                    rows={3}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent resize-none text-gray-900 placeholder-gray-500"
-                    placeholder="Dirección para facturación"
-                  />
+            {/* Sección de Facturación - OCULTA */}
+            {false && activeSection === "billing" && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                    Información de Facturación
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Número de tarjeta
+                      </label>
+                      <input
+                        type="text"
+                        value={billingData.cardNumber}
+                        onChange={(e) =>
+                          setBillingData({
+                            ...billingData,
+                            cardNumber: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Fecha de vencimiento
+                      </label>
+                      <input
+                        type="text"
+                        value={billingData.expiryDate}
+                        onChange={(e) =>
+                          setBillingData({
+                            ...billingData,
+                            expiryDate: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Nombre del titular
+                      </label>
+                      <input
+                        type="text"
+                        value={billingData.cardholderName}
+                        onChange={(e) =>
+                          setBillingData({
+                            ...billingData,
+                            cardholderName: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Dirección de facturación
+                      </label>
+                      <input
+                        type="text"
+                        value={billingData.billingAddress}
+                        onChange={(e) =>
+                          setBillingData({
+                            ...billingData,
+                            billingAddress: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleSaveBilling}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                  >
+                    <CreditCard className="w-4 h-4" />
+                    Guardar información
+                  </button>
                 </div>
               </div>
-            </div>
-
-            <div className="flex justify-end">
-              <button
-                onClick={handleSaveBilling}
-                className="flex items-center gap-2 px-6 py-3 text-white rounded-lg font-medium hover:opacity-90 transition-colors"
-                style={{ backgroundColor: "rgb(180, 140, 43)" }}
-              >
-                <CreditCard className="w-4 h-4" />
-                Guardar información
-              </button>
-            </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
