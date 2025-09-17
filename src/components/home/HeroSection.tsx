@@ -13,7 +13,7 @@ export default function HeroSection() {
         <div className="absolute inset-0 z-0 bg-black"></div>
         <div className="px-4 mx-auto relative z-10 sm:px-6 lg:px-8 max-w-7xl">
           <div className="grid items-start grid-cols-1 gap-y-12 lg:grid-cols-2 gap-x-16 pt-16">
-            <div>
+            <div className="text-center lg:text-left">
               <h1
                 className="font-bold text-white"
                 style={{ fontFamily: "var(--font-oswald)", fontSize: "80px" }}
@@ -61,13 +61,13 @@ export default function HeroSection() {
 
               <div className="mt-8 sm:mt-12">
                 <p
-                  className="text-lg font-normal text-white"
+                  className="text-lg font-normal text-white text-center lg:text-left"
                   style={{ fontFamily: "var(--font-inter)" }}
                 >
                   Calidad Premium
                 </p>
 
-                <div className="flex items-center mt-3">
+                <div className="flex items-center mt-3 justify-center lg:justify-start">
                   <div className="flex">
                     {/* Star Rating */}
                     {[...Array(5)].map((_, i) => (
@@ -114,7 +114,7 @@ export default function HeroSection() {
               </div>
             </div>
 
-            <div className="relative min-h-[600px]">
+            <div className="relative min-h-[600px] hidden lg:block">
               {/* Fondo con texto PAULANER repetido en toda la sección derecha */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <Image
