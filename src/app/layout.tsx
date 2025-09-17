@@ -10,6 +10,7 @@ import "./globals.css";
 import MainLayout from "@/components/layout/MainLayout";
 import ReduxProvider from "@/providers/ReduxProvider";
 import SuppressHydrationWarning from "@/components/shared/SuppressHydrationWarning";
+import WompiScript from "@/components/shared/WompiScript";
 import { CartProvider } from "@/contexts/CartContext";
 import { ProfileProvider } from "@/contexts/ProfileContext";
 
@@ -73,12 +74,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <head>
-        {/* Script de Wompi */}
-        <script src="https://checkout.wompi.co/widget.js" async></script>
-      </head>
       <body className={FONT_CLASSES}>
         <SuppressHydrationWarning />
+        <WompiScript />
         <ReduxProvider>
           <ProfileProvider>
             <CartProvider>

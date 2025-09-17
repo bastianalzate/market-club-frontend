@@ -240,7 +240,7 @@ export default function Header() {
             <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 lg:hidden">
               {/* Search */}
               <button
-                className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+                className="hidden p-2 text-gray-700 hover:text-gray-900 transition-colors"
                 aria-label="Buscar"
               >
                 <Search className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -351,7 +351,7 @@ export default function Header() {
             <div className="hidden lg:flex lg:items-center lg:space-x-3 xl:space-x-4">
               {/* Search */}
               <button
-                className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+                className="hidden p-2 text-gray-700 hover:text-gray-900 transition-colors"
                 aria-label="Buscar"
               >
                 <Search className="w-5 h-5" />
