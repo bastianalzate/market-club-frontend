@@ -78,22 +78,7 @@ export default function BeerClubSection() {
         {/* Overlay con contenido superpuesto - Layout horizontal para 1024px */}
         <div className="absolute inset-0 flex">
           {/* Sección izquierda - Imagen con texto */}
-          <div className="w-3/5 relative flex items-start justify-start">
-            {/* Texto "TÚ CLUB" superpuesto en la imagen */}
-            <div className="absolute top-8 left-4 z-10">
-              <h2
-                className="text-white text-4xl font-bold"
-                style={{
-                  fontFamily: "var(--font-oswald)",
-                  fontWeight: 700,
-                  lineHeight: "100%",
-                  letterSpacing: "0px",
-                  textTransform: "uppercase",
-                  textShadow: "2px 2px 4px rgba(0,0,0,0.7)",
-                }}
-              >
-                TÚ CLUB
-              </h2>
+          <div className="w-3/5 relative flex items-start justify-start">            <div className="absolute top-8 left-4 z-10">
             </div>
           </div>
 
@@ -176,23 +161,6 @@ export default function BeerClubSection() {
             alt="Beer Club - Jóvenes disfrutando cerveza en un bar"
             className="w-full h-full object-cover min-h-[300px] sm:min-h-[400px]"
           />
-
-          {/* Texto "TÚ CLUB" superpuesto en la imagen */}
-          <div className="absolute top-8 left-4 z-10">
-            <h2
-              className="text-white text-3xl sm:text-4xl font-bold"
-              style={{
-                fontFamily: "var(--font-oswald)",
-                fontWeight: 700,
-                lineHeight: "100%",
-                letterSpacing: "0px",
-                textTransform: "uppercase",
-                textShadow: "2px 2px 4px rgba(0,0,0,0.7)",
-              }}
-            >
-              TÚ CLUB
-            </h2>
-          </div>
         </div>
 
         {/* Tarjeta independiente con fondo dorado */}

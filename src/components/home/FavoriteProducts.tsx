@@ -112,7 +112,7 @@ export default function FavoriteProducts() {
 
   // Función para renderizar cada producto del carrusel
   const renderProduct = (product: FeaturedProduct) => (
-    <div className="bg-white rounded-lg overflow-hidden shadow-lg h-full">
+    <div className="bg-white rounded-lg overflow-hidden shadow-lg h-full flex flex-col">
       {/* Imagen del producto con botón de favorito */}
       <div className="relative">
         <div
@@ -122,7 +122,7 @@ export default function FavoriteProducts() {
           <LazyImage
             src={product.image_url}
             alt={product.name}
-            className={`w-full h-full ${
+            className={`w-full h-full object-contain ${
               product.stock_quantity === 0 ? "grayscale opacity-60" : ""
             }`}
           />
@@ -130,7 +130,7 @@ export default function FavoriteProducts() {
         
         {/* Etiqueta de Agotado */}
         {product.stock_quantity === 0 && (
-          <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+          <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg sm:top-4 sm:left-4 sm:px-3 sm:text-sm">
             AGOTADO
           </div>
         )}
@@ -138,11 +138,11 @@ export default function FavoriteProducts() {
         {/* Botón de corazón (favorito) */}
         <button
           onClick={() => toggleFavorite(product.id)}
-          className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors"
+          className="absolute top-2 right-2 p-1.5 bg-white/90 hover:bg-white rounded-full transition-colors sm:top-3 sm:right-3 sm:p-2"
           aria-label="Agregar a favoritos"
         >
           <Heart
-            className={`w-5 h-5 ${
+            className={`w-4 h-4 sm:w-5 sm:h-5 ${
               favorites.includes(product.id)
                 ? "fill-red-500 text-red-500"
                 : "text-gray-600"
@@ -152,36 +152,36 @@ export default function FavoriteProducts() {
       </div>
 
       {/* Información del producto */}
-      <div className="p-6">
+      <div className="p-4 flex-1 flex flex-col sm:p-6">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm text-gray-600 font-medium">
+          <span className="text-xs text-gray-600 font-medium sm:text-sm">
             BOTELLA 500ML
           </span>
           <div className="text-right">
             {product.sale_price && product.sale_price < product.price ? (
               <div>
-                <span className="text-sm text-gray-500 line-through">
+                <span className="text-xs text-gray-500 line-through sm:text-sm">
                   {formatPrice(product.price)}
                 </span>
-                <span className="text-lg font-bold text-gray-900 ml-2">
+                <span className="text-base font-bold text-gray-900 ml-1 sm:text-lg sm:ml-2">
                   {formatPrice(product.sale_price)}
                 </span>
               </div>
             ) : (
-              <span className="text-lg font-bold text-gray-900">
+              <span className="text-base font-bold text-gray-900 sm:text-lg">
                 {formatPrice(product.current_price)}
               </span>
             )}
           </div>
         </div>
 
-        <h3 className="text-lg font-bold text-gray-900 mb-4">{product.name}</h3>
+        <h3 className="text-base font-bold text-gray-900 mb-4 line-clamp-2 sm:text-lg">{product.name}</h3>
 
         {/* Botones de acción */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 mt-auto sm:space-x-3">
           {/* Ícono de carrito cuadrado con contador - Solo visual */}
           <div
-            className="relative p-3 rounded-lg"
+            className="relative p-2 rounded-lg sm:p-3"
             style={{
               backgroundColor: "transparent",
               borderColor: "#D0D5DD",
@@ -190,10 +190,10 @@ export default function FavoriteProducts() {
             }}
             aria-label="Contador del carrito"
           >
-            <ShoppingCart className="w-5 h-5" style={{ color: "#B58E31" }} />
+            <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#B58E31" }} />
             {/* Contador en el ícono del carrito */}
             {isInCart(product.id) && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold sm:h-5 sm:w-5">
                 {getProductQuantity(product.id)}
               </span>
             )}
@@ -203,7 +203,7 @@ export default function FavoriteProducts() {
           <button
             onClick={() => handleAddToCart(product)}
             disabled={addingToCart === product.id || product.stock_quantity === 0}
-            className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="flex-1 flex items-center justify-center space-x-1 text-white py-2 px-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm sm:py-3 sm:px-4 sm:space-x-2"
             style={{ 
               backgroundColor: product.stock_quantity === 0 ? "#6B7280" : "#B58E31" 
             }}
@@ -216,7 +216,7 @@ export default function FavoriteProducts() {
               (e.currentTarget.style.backgroundColor = "#B58E31")
             }
           >
-            <span>
+            <span className="truncate">
               {addingToCart === product.id
                 ? "Agregando..."
                 : product.stock_quantity === 0
@@ -226,7 +226,7 @@ export default function FavoriteProducts() {
                 : "Añadir al carrito"}
             </span>
             {addingToCart !== product.id && product.stock_quantity > 0 && (
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3 h-3 flex-shrink-0 sm:w-4 sm:h-4" />
             )}
           </button>
         </div>
@@ -311,7 +311,14 @@ export default function FavoriteProducts() {
             </div>
           </div>
         ) : (
-          <ProductCarousel itemsPerView={3} className="px-8">
+          <ProductCarousel 
+            itemsPerView={{
+              mobile: 1,
+              tablet: 2,
+              desktop: 3
+            }} 
+            className="px-2 sm:px-4 lg:px-8"
+          >
             {featuredProducts.map((product) => renderProduct(product))}
           </ProductCarousel>
         )}

@@ -86,19 +86,35 @@ const countries: Country[] = [
 export default function CountriesCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [itemsPerView, setItemsPerView] = useState(6);
   const sliderRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
 
-  // Configuración del carrusel infinito
-  const itemsPerView = 6; // Mostrar 6 banderas a la vez
   const totalItems = countries.length;
 
-  // Calcular el ancho de cada elemento (100% dividido entre 6 elementos)
-  const itemWidth = 74 / itemsPerView;
+  // Función para calcular items por vista según el tamaño de pantalla
+  const updateItemsPerView = () => {
+    const width = window.innerWidth;
+    if (width < 640) { // sm - móviles
+      setItemsPerView(1);
+    } else { // sm+ - tablets y desktop
+      setItemsPerView(6);
+    }
+  };
 
-  // Calcular el índice máximo para que se vean todas las banderas
-  // Con 11 países y 6 por vista: 0,1,2,3,4,5 (6 páginas total)
+  // Configurar responsive al montar y en resize
+  useEffect(() => {
+    updateItemsPerView();
+    const handleResize = () => updateItemsPerView();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Calcular el ancho de cada elemento dinámicamente
+  const itemWidth = itemsPerView === 1 ? 100 : 74 / itemsPerView;
+
+  // Calcular el índice máximo dinámicamente
   const maxIndex = Math.max(0, totalItems - itemsPerView);
 
   // Auto-play del carrusel

@@ -31,7 +31,7 @@ export default function ProductCarousel({
   useEffect(() => {
     const updateItemsPerView = () => {
       const width = window.innerWidth;
-      if (width < 768) {
+      if (width < 640) { // Cambio a 640px para coincidir con CountriesCarousel
         setCurrentItemsPerView(itemsPerView.mobile || 1);
       } else if (width < 1024) {
         setCurrentItemsPerView(itemsPerView.tablet || 2);
