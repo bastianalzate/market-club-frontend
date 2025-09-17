@@ -18,6 +18,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserProfile, useUserSettings } from "@/hooks/useUserProfile";
 import { useNotification } from "@/hooks/useNotification";
+import { useToast } from "@/hooks/useToast";
+import Toast from "@/components/shared/Toast";
 
 interface User {
   id: string;
@@ -34,6 +36,12 @@ interface PerfilSettingsProps {
 export default function PerfilSettings({ user }: PerfilSettingsProps) {
   const { logout } = useAuth();
   const { showSuccess, showError } = useNotification();
+  const {
+    toast,
+    showSuccess: showToastSuccess,
+    showError: showToastError,
+    hideToast,
+  } = useToast();
   const {
     profile,
     updateProfile,
@@ -133,6 +141,17 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
     }
   }, [settings]);
 
+  // Función para detectar si hay cambios en el perfil
+  const hasProfileChanges = () => {
+    if (!profile && !user) return false;
+
+    const originalData = profile || user;
+    return (
+      profileData.name !== (originalData.name || "") ||
+      profileData.phone !== (originalData.phone || "")
+    );
+  };
+
   const handleSaveProfile = async () => {
     try {
       setLoading(true);
@@ -146,14 +165,33 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
       const result = await updateProfile(dataToSend);
 
       if (result.success) {
+        // Mostrar toast de éxito
+        showToastSuccess(
+          "¡Perfil actualizado! 👤",
+          "Tu información personal se ha guardado exitosamente"
+        );
+
+        // También mostrar notificación
         showSuccess(
           "Perfil actualizado",
           "Tu información se ha actualizado correctamente"
         );
       } else {
+        // Mostrar toast de error
+        showToastError(
+          "Error al actualizar",
+          result.message || "No se pudo actualizar tu perfil"
+        );
+
         showError("Error", result.message || "Error al actualizar el perfil");
       }
     } catch (error) {
+      // Mostrar toast de error
+      showToastError(
+        "Error de conexión",
+        "Verifica tu conexión e intenta nuevamente"
+      );
+
       showError("Error", "Error al actualizar el perfil");
     } finally {
       setLoading(false);
@@ -194,10 +232,19 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
       });
 
       if (result.success) {
+        // Mostrar toast de éxito
+        showToastSuccess(
+          "¡Contraseña actualizada! 🔐",
+          "Tu contraseña se ha cambiado exitosamente"
+        );
+
+        // También mostrar notificación
         showSuccess(
           "Contraseña cambiada",
           "Tu contraseña se ha actualizado correctamente"
         );
+
+        // Limpiar formulario
         setPasswordData({
           currentPassword: "",
           newPassword: "",
@@ -399,11 +446,22 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                     </div>
                   </div>
                 </div>
+
+                {/* Indicador de cambios pendientes */}
+                {hasProfileChanges() && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p className="text-sm text-blue-700 flex items-center gap-2">
+                      <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                      Tienes cambios sin guardar
+                    </p>
+                  </div>
+                )}
+
                 <div className="flex justify-end">
                   <button
                     onClick={handleSaveProfile}
-                    disabled={loading}
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50"
+                    disabled={loading || !hasProfileChanges()}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -570,11 +628,90 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                     </div>
                   </div>
                 </div>
+
+                {/* Indicador de validación */}
+                {(!passwordData.currentPassword ||
+                  !passwordData.newPassword ||
+                  !passwordData.confirmPassword ||
+                  passwordData.newPassword.length < 8 ||
+                  passwordData.newPassword !==
+                    passwordData.confirmPassword) && (
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                    <p className="text-sm text-gray-600 mb-2 font-medium">
+                      Para cambiar tu contraseña, completa los siguientes
+                      requisitos:
+                    </p>
+                    <ul className="space-y-1 text-xs">
+                      <li
+                        className={`flex items-center gap-2 ${
+                          passwordData.currentPassword
+                            ? "text-green-600"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        <span
+                          className={`w-2 h-2 rounded-full ${
+                            passwordData.currentPassword
+                              ? "bg-green-500"
+                              : "bg-gray-300"
+                          }`}
+                        ></span>
+                        Ingresa tu contraseña actual
+                      </li>
+                      <li
+                        className={`flex items-center gap-2 ${
+                          passwordData.newPassword &&
+                          passwordData.newPassword.length >= 8
+                            ? "text-green-600"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        <span
+                          className={`w-2 h-2 rounded-full ${
+                            passwordData.newPassword &&
+                            passwordData.newPassword.length >= 8
+                              ? "bg-green-500"
+                              : "bg-gray-300"
+                          }`}
+                        ></span>
+                        Nueva contraseña de al menos 8 caracteres
+                      </li>
+                      <li
+                        className={`flex items-center gap-2 ${
+                          passwordData.confirmPassword &&
+                          passwordData.newPassword ===
+                            passwordData.confirmPassword
+                            ? "text-green-600"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        <span
+                          className={`w-2 h-2 rounded-full ${
+                            passwordData.confirmPassword &&
+                            passwordData.newPassword ===
+                              passwordData.confirmPassword
+                              ? "bg-green-500"
+                              : "bg-gray-300"
+                          }`}
+                        ></span>
+                        Confirma que las contraseñas coincidan
+                      </li>
+                    </ul>
+                  </div>
+                )}
+
                 <div className="flex justify-end">
                   <button
                     onClick={handleChangePassword}
-                    disabled={loading}
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50"
+                    disabled={
+                      loading ||
+                      !passwordData.currentPassword ||
+                      !passwordData.newPassword ||
+                      !passwordData.confirmPassword ||
+                      passwordData.newPassword.length < 8 ||
+                      passwordData.newPassword !== passwordData.confirmPassword
+                    }
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -798,6 +935,15 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
           </div>
         </div>
       </div>
+
+      {/* Toast para notificaciones */}
+      <Toast
+        isVisible={toast.isVisible}
+        type={toast.type}
+        title={toast.title}
+        message={toast.message}
+        onClose={hideToast}
+      />
     </div>
   );
 }
