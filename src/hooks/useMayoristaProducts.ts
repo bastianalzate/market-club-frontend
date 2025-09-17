@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { constants } from '@/config/constants';
+import { getAuthHeaders } from '@/utils/authHeaders';
 
 // Tipo para los productos que vienen de la API
 export interface Product {
@@ -116,12 +117,11 @@ export const useMayoristaProducts = () => {
         url += `&price_range=${encodeURIComponent(priceRange)}`;
       }
 
+      console.log('🔍 Fetching mayorista products with auth headers from:', url);
+      
       const response = await fetch(url, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers: getAuthHeaders(),
       });
 
       if (!response.ok) {

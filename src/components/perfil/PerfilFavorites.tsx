@@ -14,7 +14,9 @@ import {
 import { useState, useEffect } from "react";
 import { useCart } from "@/hooks/useCart";
 import { useNotification } from "@/hooks/useNotification";
+import { useToast } from "@/hooks/useToast";
 import { useUserFavorites } from "@/hooks/useUserProfile";
+import Toast from "@/components/shared/Toast";
 
 interface User {
   id: string;
@@ -35,6 +37,12 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
 
   const { addToCart, updateQuantity, removeFromCart } = useCart();
   const { showSuccess, showError } = useNotification();
+  const {
+    toast,
+    showSuccess: showToastSuccess,
+    showError: showToastError,
+    hideToast,
+  } = useToast();
   const {
     favorites,
     pagination,
@@ -108,14 +116,33 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
       const result = await removeFromFavorites(productId);
 
       if (result.success) {
+        // Mostrar toast de éxito
+        showToastSuccess(
+          "🗑️ ¡Eliminado de favoritos!",
+          "El producto se eliminó de tus favoritos"
+        );
+
+        // También mostrar notificación
         showSuccess(
           "Producto removido",
           "El producto se removió de tus favoritos"
         );
       } else {
+        // Mostrar toast de error
+        showToastError(
+          "Error al eliminar",
+          result.message || "No se pudo eliminar de favoritos"
+        );
+
         showError("Error", result.message || "Error al remover de favoritos");
       }
     } catch (error) {
+      // Mostrar toast de error
+      showToastError(
+        "Error de conexión",
+        "Verifica tu conexión e intenta nuevamente"
+      );
+
       showError("Error", "Error al remover de favoritos");
     }
   };
@@ -380,6 +407,15 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
           </div>
         </div>
       )}
+
+      {/* Toast para notificaciones */}
+      <Toast
+        isVisible={toast.isVisible}
+        type={toast.type}
+        title={toast.title}
+        message={toast.message}
+        onClose={hideToast}
+      />
     </div>
   );
 }

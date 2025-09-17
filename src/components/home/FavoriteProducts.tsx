@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Heart, ShoppingCart, ArrowRight, Plus, Minus } from "lucide-react";
 import { useCartContext } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/useToast";
+import { useWishlist } from "@/hooks/useWishlist";
 import {
   useFeaturedProducts,
   FeaturedProduct,
@@ -15,8 +16,9 @@ import LazyImage from "@/components/shared/LazyImage";
 import ProductCarousel from "@/components/shared/ProductCarousel";
 
 export default function FavoriteProducts() {
-  const [favorites, setFavorites] = useState<number[]>([]);
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
+  const [localProducts, setLocalProducts] = useState<FeaturedProduct[]>([]);
+
   const {
     addToCart,
     updateQuantity,
@@ -25,14 +27,42 @@ export default function FavoriteProducts() {
     isInCart,
   } = useCartContext();
   const { toast, showSuccess, showError, hideToast } = useToast();
+
+  // Función para actualizar el estado is_favorite de un producto en la lista
+  const updateProductFavoriteInList = useCallback(
+    (productId: number, isFavorite: boolean) => {
+      console.log(
+        `🔄 FavoriteProducts: Actualizando producto ${productId} a is_favorite: ${isFavorite}`
+      );
+      setLocalProducts((prev) =>
+        prev.map((product) =>
+          product.id === productId
+            ? { ...product, is_favorite: isFavorite }
+            : product
+        )
+      );
+    },
+    []
+  );
+
+  const {
+    toggleWishlist,
+    isInWishlist,
+    loading: wishlistLoading,
+  } = useWishlist({
+    showSuccess,
+    showError,
+    onProductFavoriteUpdate: updateProductFavoriteInList,
+  });
   const { products: featuredProducts, loading, error } = useFeaturedProducts();
 
-  const toggleFavorite = (productId: number) => {
-    setFavorites((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
-    );
+  // Sincronizar productos locales con props cuando cambien
+  useEffect(() => {
+    setLocalProducts(featuredProducts);
+  }, [featuredProducts]);
+
+  const handleToggleFavorite = async (productId: number) => {
+    await toggleWishlist(productId);
   };
 
   // Las funciones getProductQuantity e isInCart ahora vienen del hook useCart
@@ -127,26 +157,31 @@ export default function FavoriteProducts() {
             }`}
           />
         </div>
-        
+
         {/* Etiqueta de Agotado */}
         {product.stock_quantity === 0 && (
           <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
             AGOTADO
           </div>
         )}
-        
+
         {/* Botón de corazón (favorito) */}
         <button
-          onClick={() => toggleFavorite(product.id)}
-          className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors"
-          aria-label="Agregar a favoritos"
+          onClick={() => handleToggleFavorite(product.id)}
+          disabled={wishlistLoading}
+          className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors disabled:opacity-50"
+          aria-label={
+            isInWishlist(product.id, product)
+              ? "Quitar de favoritos"
+              : "Agregar a favoritos"
+          }
         >
           <Heart
-            className={`w-5 h-5 ${
-              favorites.includes(product.id)
+            className={`w-5 h-5 transition-colors ${
+              isInWishlist(product.id, product)
                 ? "fill-red-500 text-red-500"
-                : "text-gray-600"
-            }`}
+                : "text-gray-600 hover:text-red-500"
+            } ${wishlistLoading ? "animate-pulse" : ""}`}
           />
         </button>
       </div>
@@ -202,10 +237,13 @@ export default function FavoriteProducts() {
           {/* Botón principal "Añadir al carrito" */}
           <button
             onClick={() => handleAddToCart(product)}
-            disabled={addingToCart === product.id || product.stock_quantity === 0}
+            disabled={
+              addingToCart === product.id || product.stock_quantity === 0
+            }
             className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            style={{ 
-              backgroundColor: product.stock_quantity === 0 ? "#6B7280" : "#B58E31" 
+            style={{
+              backgroundColor:
+                product.stock_quantity === 0 ? "#6B7280" : "#B58E31",
             }}
             onMouseEnter={(e) =>
               !e.currentTarget.disabled &&
@@ -304,7 +342,7 @@ export default function FavoriteProducts() {
             </div>
             <div className="text-gray-400 text-sm">{error}</div>
           </div>
-        ) : featuredProducts.length === 0 ? (
+        ) : localProducts.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-400 text-lg mb-2">
               No hay productos destacados disponibles
@@ -312,7 +350,7 @@ export default function FavoriteProducts() {
           </div>
         ) : (
           <ProductCarousel itemsPerView={3} className="px-8">
-            {featuredProducts.map((product) => renderProduct(product))}
+            {localProducts.map((product) => renderProduct(product))}
           </ProductCarousel>
         )}
       </div>

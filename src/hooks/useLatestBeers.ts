@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { constants } from "@/config/constants";
+import { getAuthHeaders } from "@/utils/authHeaders";
 
 export interface LatestBeer {
   id: number;
@@ -24,12 +25,11 @@ export const useLatestBeers = () => {
       setLoading(true);
       setError(null);
 
+      console.log('🔍 Fetching latest beers with auth headers');
+      
       const response = await fetch(`${constants.api_url}/products/latest-beers`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers: getAuthHeaders(),
       });
 
       if (!response.ok) {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { constants } from '@/config/constants';
+import { getAuthHeaders } from '@/utils/authHeaders';
 
 // Tipo para los productos que vienen de la API
 export interface Product {
@@ -116,12 +117,11 @@ export const useProducts = () => {
         url += `&price_range=${encodeURIComponent(priceRange)}`;
       }
 
+      console.log('🔍 Fetching products with auth headers from:', url);
+      
       const response = await fetch(url, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers: getAuthHeaders(),
       });
 
       if (!response.ok) {
@@ -213,12 +213,11 @@ export const useProducts = () => {
       setLoading(true);
       setError(null);
 
+      console.log('🔍 Searching products with auth headers:', searchTerm);
+      
       const response = await fetch(`${constants.api_url}/products/search?q=${encodeURIComponent(searchTerm)}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers: getAuthHeaders(),
       });
 
       if (!response.ok) {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { constants } from "@/config/constants";
+import { getAuthHeaders } from "@/utils/authHeaders";
 
 export interface FeaturedProduct {
   id: number;
@@ -23,12 +24,11 @@ export const useFeaturedProducts = () => {
       setLoading(true);
       setError(null);
 
+      console.log('🔍 Fetching featured products with auth headers');
+      
       const response = await fetch(`${constants.api_url}/products/featured`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers: getAuthHeaders(),
       });
 
       if (!response.ok) {
