@@ -1,10 +1,27 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Search } from "lucide-react";
 
 export default function HeroSection() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Si hay término de búsqueda, navegar a tienda con el filtro
+    if (searchTerm.trim()) {
+      router.push(`/tienda?search=${encodeURIComponent(searchTerm.trim())}`);
+    } else {
+      // Si no hay término, ir a tienda sin filtro
+      router.push("/tienda");
+    }
+  };
+
   return (
     <div className="">
       {/* Hero Section */}
@@ -30,8 +47,7 @@ export default function HeroSection() {
               </p>
 
               <form
-                action="#"
-                method="POST"
+                onSubmit={handleSearch}
                 className="relative mt-8 rounded-full sm:mt-12"
               >
                 <div className="relative">
@@ -42,17 +58,17 @@ export default function HeroSection() {
                     </div>
                     <input
                       type="text"
-                      name=""
-                      id=""
-                      placeholder="Cerveza Alemana, Paulaner"
-                      className="block w-full py-4 pr-6 text-white placeholder-gray-500 bg-black border border-transparent rounded-full pl-14 sm:py-5 focus:border-transparent focus:ring-0"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Busca tu cerveza favorita (ej: Corona, Erdinger, Paulaner)"
+                      className="block w-full py-4 pr-6 text-white placeholder-gray-500 bg-black border border-transparent rounded-full pl-14 sm:py-5 focus:border-transparent focus:ring-0 focus:outline-none"
                     />
                   </div>
                 </div>
                 <div className="sm:absolute flex sm:right-1.5 sm:inset-y-1.5 mt-4 sm:mt-0">
                   <button
                     type="submit"
-                    className="inline-flex items-center justify-center w-full px-5 py-5 text-sm font-bold tracking-widest text-black uppercase transition-all duration-200 bg-white rounded-full sm:w-auto sm:py-3 hover:opacity-90"
+                    className="inline-flex items-center justify-center w-full px-5 py-5 text-sm font-bold tracking-widest text-black uppercase transition-all duration-200 bg-white rounded-full sm:w-auto sm:py-3 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
                   >
                     ¡DESCÚBRELA AHORA!
                   </button>

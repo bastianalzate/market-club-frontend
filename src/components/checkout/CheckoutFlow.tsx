@@ -254,7 +254,7 @@ export default function CheckoutFlow() {
             ].map(({ step, title, icon }) => (
               <div key={step} className="flex items-center">
                 <div
-                  className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-200 ${
+                  className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-200 focus:outline-none focus:ring-0 ${
                     currentStep >= step
                       ? "bg-yellow-600 border-yellow-600 text-white shadow-lg"
                       : "bg-white border-gray-300 text-gray-400"
@@ -336,7 +336,7 @@ export default function CheckoutFlow() {
                         <div className="mt-3">
                           <button
                             onClick={() => setServerError(null)}
-                            className="bg-red-100 text-red-800 px-3 py-1 rounded-md text-sm font-medium hover:bg-red-200 transition-colors"
+                            className="bg-red-100 text-red-800 px-3 py-1 rounded-md text-sm font-medium hover:bg-red-200 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                           >
                             Reintentar
                           </button>
@@ -399,7 +399,7 @@ export default function CheckoutFlow() {
                       </p>
                       <button
                         onClick={() => handleStepChange(2)}
-                        className="bg-yellow-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-yellow-700 transition-colors"
+                        className="bg-yellow-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-yellow-700 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
                       >
                         Volver a Dirección
                       </button>

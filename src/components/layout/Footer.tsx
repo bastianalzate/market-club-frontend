@@ -1,10 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import {
-  Mail,
-  Phone,
-  MapPin,
-} from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -25,28 +21,19 @@ export default function Footer() {
         </div>
 
         <div className="grid grid-cols-2 mt-16 sm:grid-cols-3 gap-y-16 lg:grid-cols-6 gap-x-16">
-          {/* Company */}
+          {/* Menu */}
           <div>
             <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
-              Empresa
+              Menu
             </h6>
 
             <ul className="mt-8 space-y-5">
               <li>
                 <Link
-                  href="/about"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
-                >
-                  Sobre Nosotros
-                </Link>
-              </li>
-
-              <li>
-                <Link
                   href="/tienda"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
                 >
-                  Productos
+                  Tienda
                 </Link>
               </li>
 
@@ -55,49 +42,58 @@ export default function Footer() {
                   href="/gifts"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
                 >
-                  Regalos
+                  Arma tu regalo
                 </Link>
               </li>
 
               <li>
                 <Link
-                  href="/kits"
+                  href="/about"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
                 >
-                  Kits
+                  Market Club
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/contacto"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                >
+                  Contacto
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Help */}
+          {/* Enlaces Directos */}
           <div>
             <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
-              Ayuda
+              Enlaces Directos
             </h6>
 
             <ul className="mt-8 space-y-5">
               <li>
                 <Link
-                  href="/support"
+                  href="/privacy-policy"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
                 >
-                  Soporte al Cliente
+                  Políticas de Privacidad
                 </Link>
               </li>
 
               <li>
                 <Link
-                  href="/shipping"
+                  href="/shipping-policy"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
                 >
-                  Detalles de Envío
+                  Políticas de Envío
                 </Link>
               </li>
 
               <li>
                 <Link
-                  href="/terms"
+                  href="/terms-and-conditions"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
                 >
                   Términos y Condiciones
@@ -106,56 +102,31 @@ export default function Footer() {
 
               <li>
                 <Link
-                  href="/privacy"
+                  href="/faq"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
                 >
-                  Política de Privacidad
+                  FAQ
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Resources */}
+          {/* Medios de Pago */}
           <div className="col-span-2 sm:col-span-1">
             <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
-              Recursos
+              Medios de Pago
             </h6>
 
             <ul className="mt-8 space-y-5">
               <li>
-                <Link
-                  href="/blog"
+                <a
+                  href="https://wompi.co"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
                 >
-                  Blog de Cervezas
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/guides"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
-                >
-                  Guías de Cata
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/recipes"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
-                >
-                  Recetas
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/events"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
-                >
-                  Eventos
-                </Link>
+                  Wompi
+                </a>
               </li>
             </ul>
           </div>
@@ -206,8 +177,8 @@ export default function Footer() {
                   Llámanos
                 </h6>
                 <p className="mt-2.5 text-xl font-pj text-gray-900 font-bold">
-                  <a href="tel:+573001234567" title="">
-                    (300) 123-4567
+                  <a href="tel:+573168751700" title="">
+                    (+57) 316 8751700
                   </a>
                 </p>
               </div>
@@ -217,8 +188,8 @@ export default function Footer() {
                   Escríbenos
                 </h6>
                 <p className="mt-2.5 text-xl font-pj text-gray-900 font-bold">
-                  <a href="mailto:info@marketclub.com" title="">
-                    info@marketclub.com
+                  <a href="mailto:info@marketclub.com.co" title="">
+                    info@marketclub.com.co
                   </a>
                 </p>
               </div>

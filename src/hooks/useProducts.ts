@@ -215,7 +215,7 @@ export const useProducts = () => {
 
       console.log('🔍 Searching products with auth headers:', searchTerm);
       
-      const response = await fetch(`${constants.api_url}/products/search?q=${encodeURIComponent(searchTerm)}`, {
+      const response = await fetch(`${constants.api_url}/products?search=${encodeURIComponent(searchTerm)}`, {
         method: 'GET',
         headers: getAuthHeaders(),
       });
@@ -267,13 +267,20 @@ export const useProducts = () => {
     const countryFromUrl = searchParams.get('country') || '';
     const categoryFromUrl = searchParams.get('beer_style') || '';
     const priceFromUrl = searchParams.get('price_range') || '';
+    const searchFromUrl = searchParams.get('search') || '';
     
     setSelectedCountry(countryFromUrl);
     setSelectedCategory(categoryFromUrl);
     setSelectedPriceRange(priceFromUrl);
     
-    // Cargar productos con filtros de URL
-    fetchProducts(1, countryFromUrl, categoryFromUrl, priceFromUrl);
+    // Si hay término de búsqueda en la URL, usarlo
+    if (searchFromUrl.trim()) {
+      console.log('🔍 Search term from URL:', searchFromUrl);
+      searchProducts(searchFromUrl);
+    } else {
+      // Cargar productos con filtros de URL
+      fetchProducts(1, countryFromUrl, categoryFromUrl, priceFromUrl);
+    }
   }, [searchParams]);
 
   return {

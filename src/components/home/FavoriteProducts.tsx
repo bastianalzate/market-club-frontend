@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { Heart, ShoppingCart, ArrowRight, Plus, Minus } from "lucide-react";
 import { useCartContext } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/useToast";
@@ -304,10 +305,9 @@ export default function FavoriteProducts() {
           </h2>
 
           <div className="hidden lg:flex">
-            <a
+            <Link
               href="/tienda"
-              title=""
-              className="inline-flex items-center justify-center p-1 -m-1 text-sm font-bold text-gray-300 transition-all duration-200 rounded-md focus:text-white focus:ring-white focus:ring-2 focus:ring-offset-2 focus:outline-none hover:text-white"
+              className="inline-flex items-center justify-center p-1 -m-1 text-sm font-bold text-gray-300 transition-all duration-200 rounded-md focus:outline-none hover:text-white"
             >
               Ver todas las cervezas
               <svg
@@ -324,7 +324,7 @@ export default function FavoriteProducts() {
                   d="M17 8l4 4m0 0l-4 4m4-4H3"
                 />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
 
