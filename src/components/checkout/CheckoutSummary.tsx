@@ -81,7 +81,7 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-5 bg-gradient-to-r from-amber-50 to-yellow-50 border-b border-gray-100">
+      <div className="px-4 sm:px-6 py-4 sm:py-5 bg-gradient-to-r from-amber-50 to-yellow-50 border-b border-gray-100">
         <div className="flex items-center">
           <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center mr-3">
             <svg
@@ -98,25 +98,25 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
               />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900">
             Resumen del Pedido
           </h2>
         </div>
       </div>
 
       {/* Items */}
-      <div className="px-6 py-5">
-        <div className="space-y-4">
+      <div className="px-4 sm:px-6 py-4 sm:py-5">
+        <div className="space-y-3 sm:space-y-4">
           {cart?.items?.map((item) => (
             <div
               key={item.id}
-              className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg"
+              className="flex items-center space-x-3 sm:space-x-4 p-3 bg-gray-50 rounded-lg"
             >
               <div className="flex-shrink-0">
                 <img
                   src={getProductImageUrl(item.product)}
                   alt={item.product.name}
-                  className="w-14 h-14 rounded-lg object-cover shadow-sm"
+                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg object-cover shadow-sm"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = "/images/cervezas/bottella-01.png";
@@ -124,10 +124,10 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">
+                <p className="text-xs sm:text-sm font-semibold text-gray-900 truncate">
                   {item.product.name}
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-500">
                   Cantidad: {item.quantity}
                 </p>
                 <p className="text-xs text-gray-400">
@@ -135,7 +135,7 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
                 </p>
               </div>
               <div className="flex-shrink-0 text-right">
-                <p className="text-sm font-bold text-gray-900">
+                <p className="text-xs sm:text-sm font-bold text-gray-900">
                   {formatPrice(
                     parseFloat(String(item.unit_price)) * item.quantity
                   )}
@@ -147,30 +147,30 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
       </div>
 
       {/* Totals */}
-      <div className="px-6 py-5 bg-gray-50 border-t border-gray-100">
-        <div className="space-y-3">
-          <div className="flex justify-between text-sm">
+      <div className="px-4 sm:px-6 py-4 sm:py-5 bg-gray-50 border-t border-gray-100">
+        <div className="space-y-2 sm:space-y-3">
+          <div className="flex justify-between text-xs sm:text-sm">
             <span className="text-gray-600">Subtotal:</span>
             <span className="font-semibold text-gray-900">
               {formatPrice(manualSubtotal)}
             </span>
           </div>
 
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-xs sm:text-sm">
             <span className="text-gray-600">Impuestos (IVA 19%):</span>
             <span className="font-semibold text-gray-900">
               {formatPrice(finalTaxAmount)}
             </span>
           </div>
 
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-xs sm:text-sm">
             <span className="text-gray-600">Envío:</span>
             <span className="font-semibold text-gray-900">
               {formatPrice(cart?.shipping_amount || 0)}
             </span>
           </div>
 
-          <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-3">
+          <div className="flex justify-between text-base sm:text-lg font-bold border-t border-gray-200 pt-2 sm:pt-3">
             <span className="text-gray-900">Total:</span>
             <span className="text-gray-900">{formatPrice(manualTotal)}</span>
           </div>
@@ -178,11 +178,11 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
       </div>
 
       {/* Estimated Delivery */}
-      <div className="px-6 py-4 bg-blue-50 border-t border-blue-100">
+      <div className="px-4 sm:px-6 py-3 sm:py-4 bg-blue-50 border-t border-blue-100">
         <div className="flex items-center">
-          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-full flex items-center justify-center mr-2 sm:mr-3">
             <svg
-              className="w-4 h-4 text-blue-600"
+              className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -196,7 +196,7 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
             </svg>
           </div>
           <div>
-            <p className="text-sm font-semibold text-blue-900">
+            <p className="text-xs sm:text-sm font-semibold text-blue-900">
               Entrega estimada
             </p>
             <p className="text-xs text-blue-700">3-5 días hábiles</p>
@@ -205,14 +205,10 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
       </div>
 
       {/* Continue Button */}
-      <div className="px-6 py-5 border-t border-gray-100">
+      <div className="px-4 sm:px-6 py-4 sm:py-5 border-t border-gray-100">
         <button
           onClick={onContinue}
-          className="w-full text-white py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
-          style={{
-            backgroundColor: "rgb(180, 140, 43)",
-            focusRingColor: "rgba(180, 140, 43, 0.5)",
-          }}
+          className="w-full text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold text-sm sm:text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-yellow-600 focus:ring-opacity-50 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl bg-yellow-600 hover:bg-yellow-700"
         >
           Continuar al Checkout
         </button>

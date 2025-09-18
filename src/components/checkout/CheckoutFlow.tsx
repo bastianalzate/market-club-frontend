@@ -155,26 +155,26 @@ export default function CheckoutFlow() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-6 lg:py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
-          <p className="text-gray-600 mt-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Checkout</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2 px-4">
             Completa tu pedido de forma segura
           </p>
         </div>
 
         {/* Progress Steps */}
-        <div className="mb-8">
-          <div className="flex items-center justify-center space-x-8">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center justify-center space-x-2 sm:space-x-4 lg:space-x-8 overflow-x-auto pb-2">
             {[
               {
                 step: 1,
                 title: "Resumen",
                 icon: (
                   <svg
-                    className="w-5 h-5"
+                    className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -193,7 +193,7 @@ export default function CheckoutFlow() {
                 title: "Dirección",
                 icon: (
                   <svg
-                    className="w-5 h-5"
+                    className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -218,7 +218,7 @@ export default function CheckoutFlow() {
                 title: "Pago",
                 icon: (
                   <svg
-                    className="w-5 h-5"
+                    className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -237,7 +237,7 @@ export default function CheckoutFlow() {
                 title: "Confirmación",
                 icon: (
                   <svg
-                    className="w-5 h-5"
+                    className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -252,9 +252,9 @@ export default function CheckoutFlow() {
                 ),
               },
             ].map(({ step, title, icon }) => (
-              <div key={step} className="flex items-center">
+              <div key={step} className="flex items-center flex-shrink-0">
                 <div
-                  className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-200 ${
+                  className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full border-2 transition-all duration-200 ${
                     currentStep >= step
                       ? "bg-yellow-600 border-yellow-600 text-white shadow-lg"
                       : "bg-white border-gray-300 text-gray-400"
@@ -266,7 +266,7 @@ export default function CheckoutFlow() {
                 >
                   {currentStep > step ? (
                     <svg
-                      className="w-6 h-6"
+                      className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -283,7 +283,7 @@ export default function CheckoutFlow() {
                   )}
                 </div>
                 <span
-                  className={`ml-3 text-sm font-medium transition-colors duration-200 ${
+                  className={`ml-2 sm:ml-3 text-xs sm:text-sm font-medium transition-colors duration-200 hidden sm:block ${
                     currentStep >= step ? "text-gray-900" : "text-gray-400"
                   }`}
                 >
@@ -291,7 +291,7 @@ export default function CheckoutFlow() {
                 </span>
                 {step < 4 && (
                   <div
-                    className={`w-8 h-0.5 ml-4 transition-colors duration-200 ${
+                    className={`w-4 sm:w-6 lg:w-8 h-0.5 ml-2 sm:ml-4 transition-colors duration-200 ${
                       currentStep > step ? "bg-yellow-600" : "bg-gray-300"
                     }`}
                   />
@@ -301,9 +301,9 @@ export default function CheckoutFlow() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 order-2 lg:order-1">
             {currentStep === 1 && (
               <CheckoutSummary onContinue={() => handleStepChange(2)} />
             )}
@@ -459,12 +459,12 @@ export default function CheckoutFlow() {
 
           {/* Sidebar - Order Summary */}
           {currentStep < 4 && (
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 sticky top-8">
-                <div className="flex items-center mb-6">
-                  <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center mr-3">
+            <div className="lg:col-span-1 order-1 lg:order-2">
+              <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-4 sm:p-6 sticky top-4 sm:top-8 max-h-[80vh] overflow-y-auto">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-amber-100 rounded-full flex items-center justify-center mr-2 sm:mr-3">
                     <svg
-                      className="w-5 h-5 text-amber-600"
+                      className="w-3 h-3 sm:w-5 sm:h-5 text-amber-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -477,39 +477,39 @@ export default function CheckoutFlow() {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900">
+                  <h3 className="text-sm sm:text-lg font-bold text-gray-900">
                     Resumen del Pedido
                   </h3>
                 </div>
 
                 {(cart || orderData) && (
                   <>
-                    <div className="space-y-3 mb-6">
+                    <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
                       {(currentStep < 3 ? cart?.items : orderData?.items)
                         ?.slice(0, 3)
                         .map((item) => (
                           <div
                             key={item.id}
-                            className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
+                            className="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 bg-gray-50 rounded-lg"
                           >
                             <img
                               src={getProductImageUrl(item.product)}
                               alt={item.product.name}
-                              className="w-12 h-12 rounded-lg object-cover shadow-sm"
+                              className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
                                 target.src = "/images/cervezas/bottella-01.png";
                               }}
                             />
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold text-gray-900 truncate">
+                              <p className="text-xs sm:text-sm font-semibold text-gray-900 truncate">
                                 {item.product.name}
                               </p>
-                              <p className="text-sm text-gray-500">
+                              <p className="text-xs sm:text-sm text-gray-500">
                                 Cantidad: {item.quantity}
                               </p>
                             </div>
-                            <p className="text-sm font-bold text-gray-900">
+                            <p className="text-xs sm:text-sm font-bold text-gray-900">
                               {formatPrice(
                                 parseFloat(String(item.unit_price)) *
                                   item.quantity
@@ -534,8 +534,8 @@ export default function CheckoutFlow() {
                         )}
                     </div>
 
-                    <div className="border-t border-gray-200 pt-4 space-y-3 bg-gray-50 rounded-lg p-4">
-                      <div className="flex justify-between text-sm">
+                    <div className="border-t border-gray-200 pt-3 sm:pt-4 space-y-2 sm:space-y-3 bg-gray-50 rounded-lg p-3 sm:p-4">
+                      <div className="flex justify-between text-xs sm:text-sm">
                         <span className="text-gray-600">Subtotal:</span>
                         <span className="font-semibold text-gray-900">
                           {formatPrice(
@@ -551,7 +551,7 @@ export default function CheckoutFlow() {
                           )}
                         </span>
                       </div>
-                      <div className="flex justify-between text-sm">
+                      <div className="flex justify-between text-xs sm:text-sm">
                         <span className="text-gray-600">Envío:</span>
                         <span className="font-semibold text-gray-900">
                           {formatPrice(
@@ -561,7 +561,7 @@ export default function CheckoutFlow() {
                           )}
                         </span>
                       </div>
-                      <div className="flex justify-between text-sm">
+                      <div className="flex justify-between text-xs sm:text-sm">
                         <span className="text-gray-600">
                           Impuestos (IVA 19%):
                         </span>
@@ -590,7 +590,7 @@ export default function CheckoutFlow() {
                           )}
                         </span>
                       </div>
-                      <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-3">
+                      <div className="flex justify-between text-base sm:text-lg font-bold border-t border-gray-200 pt-2 sm:pt-3">
                         <span className="text-gray-900">Total:</span>
                         <span className="text-gray-900">
                           {formatPrice(

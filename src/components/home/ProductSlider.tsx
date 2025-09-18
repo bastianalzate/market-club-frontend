@@ -317,7 +317,14 @@ export default function ProductSlider() {
             </div>
           </div>
         ) : (
-          <ProductCarousel itemsPerView={3} className="px-8">
+          <ProductCarousel 
+            itemsPerView={{
+              mobile: 1,
+              tablet: 2,
+              desktop: 3
+            }} 
+            className="px-2 sm:px-8"
+          >
             {localBeers.map((beer) => renderProduct(beer))}
           </ProductCarousel>
         )}

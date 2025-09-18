@@ -109,7 +109,7 @@ export default function ProductCarousel({
           {children.map((child, index) => (
             <div
               key={index}
-              className="flex-shrink-0 px-2"
+              className="flex-shrink-0 px-1 sm:px-2"
               style={{ width: `${100 / currentItemsPerView}%` }}
             >
               {child}
