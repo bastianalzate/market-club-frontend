@@ -3,8 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Search, Menu, X, ShoppingCart, User, LogOut } from "lucide-react";
-import { useState, useMemo, useCallback, memo } from "react";
-import { usePathname } from "next/navigation";
+import { useState, useMemo, useCallback, memo, useRef, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import CartDrawer from "../../features/cart/components/CartDrawer";
 import { useCartContext } from "@/contexts/CartContext";
 import LoginModal from "../auth/LoginModal";
@@ -85,7 +85,12 @@ MobileNavLink.displayName = "MobileNavLink";
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const pathname = usePathname();
+  const router = useRouter();
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
   // Solo obtener lo que necesitamos del carrito para evitar re-renders innecesarios
   const { itemsCount } = useCartContext();
 
@@ -104,6 +109,48 @@ export default function Header() {
   const handleCloseCart = useCallback(() => {
     setIsCartOpen(false);
   }, []);
+
+  // Funciones para manejar el buscador
+  const handleOpenSearch = useCallback(() => {
+    setIsSearchOpen(true);
+    // Focus en el input después de que se abra
+    setTimeout(() => {
+      searchInputRef.current?.focus();
+    }, 100);
+  }, []);
+
+  const handleCloseSearch = useCallback(() => {
+    setIsSearchOpen(false);
+    setSearchTerm("");
+  }, []);
+
+  const handleSearchSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (searchTerm.trim()) {
+        router.push(`/tienda?search=${encodeURIComponent(searchTerm.trim())}`);
+        handleCloseSearch();
+      }
+    },
+    [searchTerm, router, handleCloseSearch]
+  );
+
+  // Cerrar buscador con ESC
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isSearchOpen) {
+        handleCloseSearch();
+      }
+    };
+
+    if (isSearchOpen) {
+      document.addEventListener("keydown", handleEsc);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEsc);
+    };
+  }, [isSearchOpen, handleCloseSearch]);
   const {
     isLoginModalOpen,
     openLoginModal,
@@ -186,7 +233,7 @@ export default function Header() {
       return (
         <button
           onClick={openLoginModal}
-          className="p-2 bg-gray-100 text-gray-700 hover:text-gray-900 hover:bg-gray-200 rounded-full transition-colors border border-gray-300"
+          className="p-2 bg-gray-100 text-gray-700 hover:text-gray-900 hover:bg-gray-200 rounded-full transition-colors border border-gray-300 cursor-pointer"
           aria-label="Iniciar sesión"
         >
           <User className="w-5 h-5" />
@@ -198,7 +245,7 @@ export default function Header() {
       <div className="flex items-center space-x-2">
         <Link
           href="/perfil"
-          className="flex items-center space-x-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+          className="flex items-center space-x-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors cursor-pointer"
           aria-label="Ver perfil"
         >
           <User className="w-4 h-4 text-gray-600" />
@@ -206,7 +253,7 @@ export default function Header() {
         </Link>
         <button
           onClick={logout}
-          className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+          className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
           title="Cerrar sesión"
         >
           <LogOut className="w-4 h-4" />
@@ -240,7 +287,8 @@ export default function Header() {
             <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 lg:hidden">
               {/* Search */}
               <button
-                className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+                onClick={handleOpenSearch}
+                className="p-2 text-gray-700 hover:text-gray-900 transition-colors cursor-pointer"
                 aria-label="Buscar"
               >
                 <Search className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -249,7 +297,7 @@ export default function Header() {
               {/* Cart */}
               <button
                 onClick={handleOpenCart}
-                className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative"
+                className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative cursor-pointer"
               >
                 <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                 {itemsCount > 0 && (
@@ -351,7 +399,8 @@ export default function Header() {
             <div className="hidden lg:flex lg:items-center lg:space-x-3 xl:space-x-4">
               {/* Search */}
               <button
-                className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+                onClick={handleOpenSearch}
+                className="p-2 text-gray-700 hover:text-gray-900 transition-colors cursor-pointer"
                 aria-label="Buscar"
               >
                 <Search className="w-5 h-5" />
@@ -360,7 +409,7 @@ export default function Header() {
               {/* Cart */}
               <button
                 onClick={handleOpenCart}
-                className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative"
+                className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative cursor-pointer"
               >
                 <ShoppingCart className="w-5 h-5" />
                 {itemsCount > 0 && (
@@ -422,7 +471,7 @@ export default function Header() {
                             logout();
                             closeMenu();
                           }}
-                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
+                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
                           title="Cerrar sesión"
                         >
                           <LogOut className="w-4 h-4" />
@@ -434,7 +483,7 @@ export default function Header() {
                           openLoginModal();
                           closeMenu();
                         }}
-                        className="flex items-center space-x-1 px-3 py-1.5 bg-[#B58E31] text-white rounded-full hover:bg-[#A67D2A] transition-colors"
+                        className="flex items-center space-x-1 px-3 py-1.5 bg-[#B58E31] text-white rounded-full hover:bg-[#A67D2A] transition-colors cursor-pointer"
                       >
                         <User className="w-4 h-4" />
                         <span className="text-xs font-medium">Login</span>
@@ -582,6 +631,81 @@ export default function Header() {
 
         {/* Login Modal */}
         <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
+
+        {/* Search Modal */}
+        {isSearchOpen && (
+          <div className="fixed inset-0 z-50 overflow-y-auto">
+            {/* Overlay */}
+            <div
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-all duration-300"
+              onClick={handleCloseSearch}
+            ></div>
+
+            {/* Modal */}
+            <div className="flex min-h-full items-start justify-center p-4 pt-16">
+              <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full transform transition-all duration-300 scale-100">
+                {/* Header */}
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <div className="flex items-center space-x-3">
+                    <Search className="w-6 h-6 text-gray-600" />
+                    <h2 className="text-xl font-bold text-gray-900">
+                      Buscar Productos
+                    </h2>
+                  </div>
+                  <button
+                    onClick={handleCloseSearch}
+                    className="p-2 hover:bg-gray-100 rounded-xl transition-all duration-200"
+                  >
+                    <X className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                  </button>
+                </div>
+
+                {/* Search Form */}
+                <div className="p-6">
+                  <form onSubmit={handleSearchSubmit}>
+                    <div className="relative">
+                      <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <input
+                        ref={searchInputRef}
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Busca tu cerveza favorita (ej: Corona, Erdinger, Paulaner)"
+                        className="w-full pl-12 pr-4 py-4 text-gray-900 placeholder-gray-500 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 focus:outline-none transition-colors"
+                      />
+                    </div>
+                    <div className="flex justify-end mt-6 space-x-3">
+                      <button
+                        type="button"
+                        onClick={handleCloseSearch}
+                        className="px-6 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={!searchTerm.trim()}
+                        className="px-6 py-3 text-white bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                      >
+                        Buscar
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                {/* Tips */}
+                <div className="px-6 pb-6">
+                  <div className="bg-yellow-50 rounded-xl p-4">
+                    <p className="text-sm text-gray-600">
+                      <span className="font-medium">💡 Tip:</span> Puedes buscar
+                      por nombre de cerveza, marca o país de origen.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
     </>
   );

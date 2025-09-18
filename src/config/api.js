@@ -5,6 +5,7 @@ const API_BASE_URL = 'http://localhost:8000/api';
 const CART_ENDPOINTS = {
     GET: '/cart',                    // Ver carrito
     ADD: '/cart/add',               // Agregar producto
+    ADD_GIFT: '/cart/add-gift',     // Agregar regalo personalizado
     UPDATE: '/cart/update',         // Actualizar cantidad
     REMOVE: '/cart/remove',         // Remover producto
     CLEAR: '/cart/clear',           // Limpiar carrito

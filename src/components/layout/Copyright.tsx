@@ -15,54 +15,14 @@ export default function Copyright() {
 
           {/* Redes sociales */}
           <ul className="flex items-center justify-center space-x-1 mt-4 sm:order-2 sm:mt-0 sm:justify-end">
-            {/* X (Twitter) */}
-            <li>
-              <a
-                href="#"
-                target="_blank"
-                title="X (Twitter)"
-                className="inline-flex items-center justify-center w-10 h-10 text-gray-900 transition-all duration-200 rounded-full hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
-                rel="noopener"
-              >
-                <svg
-                  className="w-6 h-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                </svg>
-              </a>
-            </li>
-
-            {/* Facebook */}
-            <li>
-              <a
-                href="#"
-                target="_blank"
-                title="Facebook"
-                className="inline-flex items-center justify-center w-10 h-10 text-gray-900 transition-all duration-200 rounded-full hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
-                rel="noopener"
-              >
-                <svg
-                  className="w-6 h-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                </svg>
-              </a>
-            </li>
-
             {/* Instagram */}
             <li>
               <a
-                href="#"
+                href="https://www.instagram.com/somos_marketclub/"
                 target="_blank"
                 title="Instagram"
-                className="inline-flex items-center justify-center w-10 h-10 text-gray-900 transition-all duration-200 rounded-full hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
-                rel="noopener"
+                className="inline-flex items-center justify-center w-10 h-10 text-gray-900 transition-all duration-200 rounded-full hover:bg-pink-100 hover:text-pink-600 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
+                rel="noopener noreferrer"
               >
                 <svg
                   className="w-6 h-6"
@@ -81,14 +41,34 @@ export default function Copyright() {
               </a>
             </li>
 
+            {/* Facebook */}
+            <li>
+              <a
+                href="https://www.facebook.com/profile.php?id=100092608152292&locale=es_LA"
+                target="_blank"
+                title="Facebook"
+                className="inline-flex items-center justify-center w-10 h-10 text-gray-900 transition-all duration-200 rounded-full hover:bg-blue-100 hover:text-blue-600 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
+                rel="noopener noreferrer"
+              >
+                <svg
+                  className="w-6 h-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                </svg>
+              </a>
+            </li>
+
             {/* TikTok */}
             <li>
               <a
-                href="#"
+                href="https://www.tiktok.com/@market_club_"
                 target="_blank"
                 title="TikTok"
-                className="inline-flex items-center justify-center w-10 h-10 text-gray-900 transition-all duration-200 rounded-full hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
-                rel="noopener"
+                className="inline-flex items-center justify-center w-10 h-10 text-gray-900 transition-all duration-200 rounded-full hover:bg-gray-100 hover:text-black focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
+                rel="noopener noreferrer"
               >
                 <svg
                   className="w-6 h-6"

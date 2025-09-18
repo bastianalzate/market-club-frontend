@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { constants } from "@/config/constants";
+import { getAuthHeaders } from "@/utils/authHeaders";
 
 interface OrderItem {
   id: number;
@@ -24,6 +25,30 @@ interface OrderItem {
   quantity: number;
   unit_price: number;
   total_price: number;
+  gift_data?: {
+    name: string;
+    description: string;
+    box: {
+      id: string;
+      name: string;
+      price: number;
+      description: string;
+      maxBeers: number;
+      dimensions: string;
+      deliveryTime: string;
+    };
+    beers: {
+      id: number;
+      name: string;
+      brand: string;
+      price: number;
+      volume: string;
+      category: string;
+      nationality: string;
+      image?: string;
+    }[];
+    totalPrice: number;
+  };
 }
 
 interface OrderDetails {
@@ -65,8 +90,17 @@ export default function OrderDetailsModal({
   orderDetails,
   loading,
 }: OrderDetailsModalProps) {
+  const [beerImages, setBeerImages] = useState<Record<number, string>>({});
   // Helper function para obtener la URL de imagen del producto
-  const getProductImageUrl = (imageUrl?: string) => {
+  const getProductImageUrl = (imageUrl?: string, productName?: string) => {
+    // Si es un regalo personalizado, usar imagen de regalo
+    if (
+      productName &&
+      productName.toLowerCase().includes("regalo personaliz")
+    ) {
+      return "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSI4IiBmaWxsPSIjQjU4RTMxIi8+PHJlY3QgeD0iMyIgeT0iOCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMiA4djEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxMnY3YTIgMiAwIDAgMS0yIDJIN2EyIDIgMCAwIDEtMi0ydi03IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik03LjUgOGEyLjUgMi41IDAgMCAxIDAtNUE0LjggOCAwIDAgMSAxMiA4YTQuOCA4IDAgMCAxIDQuNS01IDIuNSAyLjUgMCAwIDEgMCA1IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=";
+    }
+
     if (!imageUrl) {
       return "/images/cervezas/bottella-01.png"; // Imagen por defecto
     }
@@ -139,6 +173,112 @@ export default function OrderDetailsModal({
         return <Clock className="w-4 h-4" />;
     }
   };
+
+  // Helper function para verificar si un item es un regalo
+  const isGiftItem = (item: OrderItem) => {
+    return (
+      item.gift_data ||
+      item.product_name.toLowerCase().includes("regalo personaliz")
+    );
+  };
+
+  // Función para cargar información real de las cervezas
+  const loadBeerImages = async (beerIds: number[]) => {
+    console.log(`🍺 Loading images for beer IDs:`, beerIds);
+    try {
+      const promises = beerIds.map(async (beerId) => {
+        const response = await fetch(
+          `${constants.api_url}/products/${beerId}`,
+          {
+            method: "GET",
+            headers: getAuthHeaders(),
+          }
+        );
+        if (response.ok) {
+          const product = await response.json();
+          console.log(`🍺 API response for beer ${beerId}:`, product);
+
+          if (product && (product.image_url || product.image)) {
+            // Priorizar image_url si existe (ya viene completa), sino usar image
+            const imageUrl =
+              product.image_url ||
+              (() => {
+                const baseUrl = constants.api_url.replace("/api", "");
+                return product.image.startsWith("http")
+                  ? product.image
+                  : `${baseUrl}/storage/${product.image}`;
+              })();
+
+            console.log(`🍺 Using image URL for beer ${beerId}:`, imageUrl);
+            return { id: beerId, imageUrl };
+          } else {
+            console.log(
+              `🍺 No image found for beer ${beerId}, product:`,
+              product
+            );
+          }
+        } else {
+          console.error(
+            `🍺 API error for beer ${beerId}:`,
+            response.status,
+            response.statusText
+          );
+        }
+        return { id: beerId, imageUrl: "/images/cervezas/bottella-01.png" };
+      });
+
+      const results = await Promise.all(promises);
+      const imageMap: Record<number, string> = {};
+      results.forEach(({ id, imageUrl }) => {
+        imageMap[id] = imageUrl;
+      });
+      setBeerImages(imageMap);
+    } catch (error) {
+      console.error("Error loading beer images:", error);
+    }
+  };
+
+  // Helper function para obtener imagen de cerveza individual
+  const getBeerImageUrl = (beer: any) => {
+    // Primero intentar usar la imagen cargada dinámicamente
+    if (beerImages[beer.id]) {
+      return beerImages[beer.id];
+    }
+
+    // Fallback a la imagen del beer si existe
+    if (beer.image) {
+      // Si la imagen ya incluye la URL completa, usarla tal como está
+      if (beer.image.startsWith("http")) {
+        return beer.image;
+      }
+      // Si es una ruta relativa, construir la URL completa
+      const baseUrl = constants.api_url.replace("/api", "");
+      return `${baseUrl}/storage/${beer.image}`;
+    }
+    return "/images/cervezas/bottella-01.png";
+  };
+
+  // Cargar imágenes de cervezas cuando se abra el modal con un regalo
+  useEffect(() => {
+    if (isOpen && orderDetails) {
+      const giftItems = orderDetails.items.filter(isGiftItem);
+      const beerIds: number[] = [];
+
+      giftItems.forEach((item) => {
+        if (item.gift_data?.beers) {
+          item.gift_data.beers.forEach((beer) => {
+            if (!beerImages[beer.id]) {
+              beerIds.push(beer.id);
+            }
+          });
+        }
+      });
+
+      if (beerIds.length > 0) {
+        loadBeerImages(beerIds);
+      }
+    }
+  }, [isOpen, orderDetails]);
 
   // Cerrar modal con ESC
   useEffect(() => {
@@ -349,35 +489,103 @@ export default function OrderDetailsModal({
                   </h3>
                   <div className="space-y-4">
                     {orderDetails.items.map((item) => (
-                      <div
-                        key={item.id}
-                        className="bg-white/80 backdrop-blur-sm border border-orange-100 rounded-xl p-5 flex items-center space-x-4 hover:shadow-md transition-all duration-200"
-                      >
-                        <img
-                          src={getProductImageUrl(item.product_image)}
-                          alt={item.product_name}
-                          className="w-16 h-16 rounded-lg object-cover shadow-sm flex-shrink-0"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = "/images/cervezas/bottella-01.png";
-                          }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-lg font-semibold text-gray-900 truncate">
-                            {item.product_name}
-                          </h4>
-                          <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                            <span>Cantidad: {item.quantity}</span>
-                            <span>
-                              Precio unitario: {formatPrice(item.unit_price)}
-                            </span>
+                      <div key={item.id}>
+                        {/* Producto principal (regalo o producto normal) */}
+                        <div className="bg-white/80 backdrop-blur-sm border border-orange-100 rounded-xl p-5 flex items-center space-x-4 hover:shadow-md transition-all duration-200">
+                          <img
+                            src={getProductImageUrl(
+                              item.product_image,
+                              item.product_name
+                            )}
+                            alt={item.product_name}
+                            className="w-16 h-16 rounded-lg object-cover shadow-sm flex-shrink-0"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = "/images/cervezas/bottella-01.png";
+                            }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-lg font-semibold text-gray-900 truncate">
+                              {item.product_name}
+                            </h4>
+                            <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                              <span>Cantidad: {item.quantity}</span>
+                              <span>
+                                Precio unitario: {formatPrice(item.unit_price)}
+                              </span>
+                            </div>
+                            {/* Información adicional para regalos */}
+                            {isGiftItem(item) && item.gift_data && (
+                              <div className="mt-2 text-sm text-gray-600">
+                                <span className="font-medium">
+                                  {item.gift_data.box.name}
+                                </span>
+                                {" • "}
+                                <span>{item.gift_data.box.dimensions}</span>
+                                {" • "}
+                                <span>
+                                  {item.gift_data.beers.length} cervezas
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            <p className="text-lg font-bold text-gray-900">
+                              {formatPrice(item.total_price)}
+                            </p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-lg font-bold text-gray-900">
-                            {formatPrice(item.total_price)}
-                          </p>
-                        </div>
+
+                        {/* Mostrar cervezas individuales si es un regalo */}
+                        {isGiftItem(item) &&
+                          item.gift_data &&
+                          item.gift_data.beers && (
+                            <div className="mt-3 ml-6 space-y-2">
+                              <h5 className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                                <Package className="w-4 h-4 text-orange-500" />
+                                Cervezas incluidas:
+                              </h5>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                {item.gift_data.beers.map((beer, index) => (
+                                  <div
+                                    key={`${item.id}-beer-${index}`}
+                                    className="flex items-center space-x-3 p-3 bg-orange-50/50 rounded-lg border border-orange-100/50"
+                                  >
+                                    <img
+                                      src={getBeerImageUrl(beer)}
+                                      alt={beer.name}
+                                      className="w-8 h-8 rounded-lg object-cover shadow-sm flex-shrink-0"
+                                      onError={(e) => {
+                                        const target =
+                                          e.target as HTMLImageElement;
+                                        target.src =
+                                          "/images/cervezas/bottella-01.png";
+                                      }}
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-medium text-gray-900 truncate">
+                                        {beer.name}
+                                      </p>
+                                      <div className="flex items-center gap-2 text-xs text-gray-600">
+                                        <span>{beer.brand}</span>
+                                        {beer.volume && (
+                                          <>
+                                            <span>•</span>
+                                            <span>{beer.volume}</span>
+                                          </>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <div className="text-right">
+                                      <p className="text-sm font-semibold text-gray-700">
+                                        {formatPrice(beer.price)}
+                                      </p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                       </div>
                     ))}
                   </div>

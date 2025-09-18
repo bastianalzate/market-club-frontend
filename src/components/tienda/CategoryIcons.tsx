@@ -1,15 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Package,
-  ShoppingBag,
-  Store,
-  Plane,
-  Barrel,
-  Box,
-  Tag,
-} from "lucide-react";
+import Image from "next/image";
+import { ShoppingBag, Store, Plane, Barrel, Box, Tag } from "lucide-react";
+import beerIcon from "@/assets/images/icons/beer.svg";
 
 export default function CategoryIcons() {
   const [activeCategory, setActiveCategory] = useState(0);
@@ -18,7 +12,7 @@ export default function CategoryIcons() {
     {
       id: 0,
       name: "Cervezas",
-      icon: Package,
+      icon: "beer", // Usar icono personalizado
       description: "Variedad de cervezas",
     },
     {
@@ -76,7 +70,6 @@ export default function CategoryIcons() {
         <div className="flex justify-center">
           <div className="flex space-x-3 bg-white rounded-xl p-3 shadow-sm">
             {categories.map((category) => {
-              const IconComponent = category.icon;
               const isActive = activeCategory === category.id;
 
               return (
@@ -94,7 +87,26 @@ export default function CategoryIcons() {
                   style={isActive ? { backgroundColor: "#B58E31" } : {}}
                   title={category.description}
                 >
-                  <IconComponent className="w-8 h-8" />
+                  {/* Renderizar icono personalizado o de Lucide */}
+                  {category.icon === "beer" ? (
+                    <Image
+                      src={beerIcon}
+                      alt="Cerveza"
+                      width={32}
+                      height={32}
+                      className={`w-8 h-8 ${
+                        isActive ? "brightness-0 invert" : ""
+                      }`}
+                    />
+                  ) : (
+                    (() => {
+                      const IconComponent =
+                        category.icon as React.ComponentType<{
+                          className: string;
+                        }>;
+                      return <IconComponent className="w-8 h-8" />;
+                    })()
+                  )}
 
                   {/* Tooltip */}
                   <div

@@ -12,11 +12,14 @@ export interface CartProduct {
 
 export interface CartItem {
   id: number;
-  product_id: number;
+  product_id: number | null;
+  gift_id?: string;
   quantity: number;
   unit_price: string | number;
   total_price: string | number;
-  product: CartProduct;
+  product: CartProduct | null;
+  is_gift?: boolean;
+  gift_data?: any;
 }
 
 export interface Cart {
@@ -73,5 +76,6 @@ export interface UpdateQuantityPayload {
 }
 
 export interface RemoveFromCartPayload {
-  productId: number;
+  productId?: number;
+  giftId?: string;
 }

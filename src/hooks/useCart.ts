@@ -139,6 +139,39 @@ export const useCart = () => {
     }
   }, [updateCartState]);
 
+  // Agregar regalo personalizado al carrito
+  const addGift = useCallback(async (giftData: any) => {
+    try {
+      console.log('🎁 Adding gift to cart:', giftData);
+      setState(prev => ({ ...prev, loading: true, error: null }));
+      
+      const response = await CartService.addGift(giftData);
+      
+      console.log('🎁 Add gift response:', response);
+      
+      if (response.success) {
+        console.log('🎁 Gift added successfully, updating state...');
+        // Actualizar el estado directamente con la respuesta
+        if (response.data) {
+          updateCartState(response.data);
+        } else {
+          // Si no hay data en la respuesta, recargar el carrito
+          console.log('🎁 No data in response, reloading cart...');
+          await loadCart();
+        }
+        console.log('🎁 Gift state updated');
+        return { success: true, message: response.message };
+      } else {
+        throw new Error(response.message || 'Error al agregar regalo');
+      }
+    } catch (error) {
+      // Manejar errores de manera más amigable
+      console.error('🎁 Error adding gift to cart:', error);
+      setState(prev => ({ ...prev, loading: false, error: null }));
+      return { success: false, message: 'No se pudo agregar el regalo al carrito. Intenta nuevamente.' };
+    }
+  }, [updateCartState, loadCart]);
+
   // Actualizar cantidad de un producto
   const updateQuantity = useCallback(async (payload: UpdateQuantityPayload) => {
     try {
@@ -167,7 +200,7 @@ export const useCart = () => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
       
-      const response = await CartService.removeProduct(payload.productId);
+      const response = await CartService.removeProduct(payload.productId, payload.giftId);
       
       if (response.success) {
         // Recargar el carrito después de remover
@@ -277,6 +310,7 @@ export const useCart = () => {
     // Funciones
     loadCart,
     addToCart,
+    addGift,
     updateQuantity,
     removeFromCart,
     clearCart,

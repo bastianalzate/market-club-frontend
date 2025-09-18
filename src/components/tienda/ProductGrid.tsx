@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   Grid,
-  List,
   ChevronLeft,
   ChevronRight,
   Heart,
@@ -319,6 +318,8 @@ export default function ProductGrid({
           >
             <Grid className="w-5 h-5" />
           </button>
+          {/* Botón de vista de lista oculto */}
+          {/* 
           <button
             onClick={() => setViewMode("list")}
             className={`p-2 rounded-lg ${
@@ -332,6 +333,7 @@ export default function ProductGrid({
           >
             <List className="w-5 h-5" />
           </button>
+          */}
         </div>
 
         <div className="text-sm text-gray-500">

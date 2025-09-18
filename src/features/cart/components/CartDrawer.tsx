@@ -25,7 +25,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   } = useCartContext();
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
-  const [deletingItems, setDeletingItems] = useState<Set<number>>(new Set());
+  const [deletingItems, setDeletingItems] = useState<Set<number | string>>(
+    new Set()
+  );
   const router = useRouter();
 
   const formatPrice = (price: number | string) => {
@@ -38,7 +40,17 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   };
 
   // Función para construir la URL completa de la imagen
-  const getImageUrl = (product: { image?: string; image_url?: string }) => {
+  const getImageUrl = (
+    product: { image?: string; image_url?: string } | null,
+    isGift: boolean = false
+  ) => {
+    // Si es un regalo, usar icono de regalo
+    if (isGift) {
+      return "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSI4IiBmaWxsPSIjQjU4RTMxIi8+PHJlY3QgeD0iMyIgeT0iOCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMiA4djEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxMnY3YTIgMiAwIDAgMS0yIDJIN2EyIDIgMCAwIDEtMi0ydi03IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik03LjUgOGEyLjUgMi41IDAgMCAxIDAtNUE0LjggOCAwIDAgMSAxMiA4YTQuOCA4IDAgMCAxIDQuNS01IDIuNSAyLjUgMCAwIDEgMCA1IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=";
+    }
+
+    if (!product) return "/images/cervezas/bottella-01.png";
+
     // Priorizar image_url si existe, sino usar image
     const imagePath = product.image_url || product.image;
     if (!imagePath) return "/images/cervezas/bottella-01.png";
@@ -52,21 +64,49 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     return `http://localhost:8000/storage/${imagePath}`;
   };
 
+  // Función para obtener el nombre del item (producto o regalo)
+  const getItemName = (item: any) => {
+    if (item.is_gift && item.gift_data) {
+      return item.gift_data.name;
+    }
+    return item.product?.name || "Producto";
+  };
+
+  // Función para verificar si es un regalo
+  const isGiftItem = (item: any) => {
+    return item.is_gift === true || (item.product_id === null && item.gift_id);
+  };
+
+  // Función para obtener el ID del item (para operaciones de carrito)
+  const getItemId = (item: any) => {
+    if (isGiftItem(item)) {
+      return item.gift_id || item.id;
+    }
+    return item.product_id;
+  };
+
   // Función para manejar la eliminación con loading
-  const handleRemoveFromCart = async (productId: number) => {
+  const handleRemoveFromCart = async (itemId: number | string) => {
     try {
       // Agregar el item a la lista de items siendo eliminados
-      setDeletingItems((prev) => new Set(prev).add(productId));
+      setDeletingItems((prev) => new Set(prev).add(itemId));
 
       // Llamar a la función de eliminación del contexto
-      await removeFromCart({ productId });
+      // Para regalos, usamos gift_id; para productos, usamos product_id
+      if (typeof itemId === "string") {
+        // Es un regalo
+        await removeFromCart({ giftId: itemId });
+      } else {
+        // Es un producto normal
+        await removeFromCart({ productId: itemId });
+      }
     } catch (error) {
       console.error("Error removing item from cart:", error);
     } finally {
       // Remover el item de la lista de items siendo eliminados
       setDeletingItems((prev) => {
         const newSet = new Set(prev);
-        newSet.delete(productId);
+        newSet.delete(itemId);
         return newSet;
       });
     }
@@ -193,118 +233,127 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     </div>
                   ) : (
                     <ul className="-my-5 divide-y divide-gray-200 divide-dotted">
-                      {cart.items.map((item) => (
-                        <li key={item.id} className="flex py-5">
-                          <div
-                            className="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center bg-gray-100"
-                            style={{
-                              backgroundColor: item.product.name.includes(
-                                "Regalo"
-                              )
-                                ? "#B58E31"
-                                : undefined,
-                            }}
-                          >
-                            <img
-                              className={`object-cover ${
-                                item.product.name.includes("Regalo")
-                                  ? "w-8 h-8"
-                                  : "w-16 h-16 rounded-lg"
-                              }`}
-                              src={getImageUrl(item.product)}
-                              alt={item.product.name}
-                              onError={(e) => {
-                                console.log(
-                                  "🛒 Image failed to load:",
-                                  getImageUrl(item.product)
-                                );
-                                const target = e.target as HTMLImageElement;
-                                target.src = "/images/cervezas/bottella-01.png";
-                              }}
-                              onLoad={() => {
-                                console.log(
-                                  "🛒 Image loaded successfully:",
-                                  getImageUrl(item.product)
-                                );
-                              }}
-                            />
-                          </div>
+                      {cart.items.map((item) => {
+                        const isGift = isGiftItem(item);
+                        const itemName = getItemName(item);
+                        const itemId = getItemId(item);
 
-                          <div className="flex items-stretch justify-between flex-1 ml-5 space-x-5">
-                            <div className="flex flex-col justify-between flex-1">
-                              <p className="text-sm font-bold text-gray-900">
-                                {item.product.name}
-                              </p>
+                        return (
+                          <li key={item.id} className="flex py-5">
+                            <div
+                              className="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center bg-gray-100"
+                              style={{
+                                backgroundColor: isGift ? "#B58E31" : undefined,
+                              }}
+                            >
+                              <img
+                                className={`object-cover ${
+                                  isGift ? "w-8 h-8" : "w-16 h-16 rounded-lg"
+                                }`}
+                                src={getImageUrl(item.product, isGift)}
+                                alt={itemName}
+                                onError={(e) => {
+                                  console.log(
+                                    "🛒 Image failed to load:",
+                                    getImageUrl(item.product, isGift)
+                                  );
+                                  const target = e.target as HTMLImageElement;
+                                  target.src =
+                                    "/images/cervezas/bottella-01.png";
+                                }}
+                                onLoad={() => {
+                                  console.log(
+                                    "🛒 Image loaded successfully:",
+                                    getImageUrl(item.product, isGift)
+                                  );
+                                }}
+                              />
+                            </div>
 
-                              {/* Controles de cantidad */}
-                              <div className="mt-2 flex items-center space-x-2">
+                            <div className="flex items-stretch justify-between flex-1 ml-5 space-x-5">
+                              <div className="flex flex-col justify-between flex-1">
+                                <p className="text-sm font-bold text-gray-900">
+                                  {itemName}
+                                </p>
+
+                                {/* Mostrar detalles del regalo si es un regalo */}
+                                {isGift && item.gift_data && (
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    {item.gift_data.description ||
+                                      `${item.gift_data.box?.name} con ${
+                                        item.gift_data.beers?.length || 0
+                                      } cervezas`}
+                                  </p>
+                                )}
+
+                                {/* Controles de cantidad - Solo para productos, no para regalos */}
+                                {!isGift && (
+                                  <div className="mt-2 flex items-center space-x-2">
+                                    <button
+                                      type="button"
+                                      onClick={async () => {
+                                        if (item.quantity > 1) {
+                                          await updateQuantity({
+                                            productId: itemId,
+                                            quantity: item.quantity - 1,
+                                          });
+                                        } else {
+                                          await handleRemoveFromCart(itemId);
+                                        }
+                                      }}
+                                      className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                                      aria-label="Disminuir cantidad"
+                                    >
+                                      <Minus className="w-4 h-4 text-gray-600" />
+                                    </button>
+
+                                    <span className="text-sm font-bold text-gray-800 min-w-[20px] text-center">
+                                      {item.quantity}
+                                    </span>
+
+                                    <button
+                                      type="button"
+                                      onClick={async () =>
+                                        await updateQuantity({
+                                          productId: itemId,
+                                          quantity: item.quantity + 1,
+                                        })
+                                      }
+                                      className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                                      aria-label="Aumentar cantidad"
+                                    >
+                                      <Plus className="w-4 h-4 text-gray-600" />
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="flex flex-col items-end justify-between">
+                                <p className="flex-shrink-0 w-20 text-sm font-bold text-right text-gray-600">
+                                  {formatPrice(item.total_price)}
+                                </p>
+
                                 <button
                                   type="button"
-                                  onClick={async () => {
-                                    if (item.quantity > 1) {
-                                      await updateQuantity({
-                                        productId: item.product_id,
-                                        quantity: item.quantity - 1,
-                                      });
-                                    } else {
-                                      await handleRemoveFromCart(
-                                        item.product_id
-                                      );
-                                    }
-                                  }}
-                                  className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-                                  aria-label="Disminuir cantidad"
+                                  onClick={() => handleRemoveFromCart(itemId)}
+                                  disabled={deletingItems.has(itemId)}
+                                  className={`inline-flex p-2 -m-2 transition-all duration-200 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 ${
+                                    deletingItems.has(itemId)
+                                      ? "text-gray-300 cursor-not-allowed"
+                                      : "text-gray-400 hover:text-gray-900"
+                                  }`}
                                 >
-                                  <Minus className="w-4 h-4 text-gray-600" />
-                                </button>
-
-                                <span className="text-sm font-bold text-gray-800 min-w-[20px] text-center">
-                                  {item.quantity}
-                                </span>
-
-                                <button
-                                  type="button"
-                                  onClick={async () =>
-                                    await updateQuantity({
-                                      productId: item.product_id,
-                                      quantity: item.quantity + 1,
-                                    })
-                                  }
-                                  className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-                                  aria-label="Aumentar cantidad"
-                                >
-                                  <Plus className="w-4 h-4 text-gray-600" />
+                                  {deletingItems.has(itemId) ? (
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                  ) : (
+                                    <Trash2 className="w-5 h-5" />
+                                  )}
                                 </button>
                               </div>
                             </div>
-
-                            <div className="flex flex-col items-end justify-between">
-                              <p className="flex-shrink-0 w-20 text-sm font-bold text-right text-gray-600">
-                                {formatPrice(item.total_price)}
-                              </p>
-
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleRemoveFromCart(item.product_id)
-                                }
-                                disabled={deletingItems.has(item.product_id)}
-                                className={`inline-flex p-2 -m-2 transition-all duration-200 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 ${
-                                  deletingItems.has(item.product_id)
-                                    ? "text-gray-300 cursor-not-allowed"
-                                    : "text-gray-400 hover:text-gray-900"
-                                }`}
-                              >
-                                {deletingItems.has(item.product_id) ? (
-                                  <Loader2 className="w-5 h-5 animate-spin" />
-                                ) : (
-                                  <Trash2 className="w-5 h-5" />
-                                )}
-                              </button>
-                            </div>
-                          </div>
-                        </li>
-                      ))}
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </div>

@@ -190,14 +190,9 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
       {/* Pedidos Recientes */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Pedidos Recientes
-            </h2>
-            <button className="text-sm text-yellow-600 hover:text-yellow-700 font-medium">
-              Ver todos
-            </button>
-          </div>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Pedidos Recientes
+          </h2>
         </div>
 
         <div className="p-6">
