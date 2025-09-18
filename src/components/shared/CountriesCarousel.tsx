@@ -27,6 +27,11 @@ const countries: Country[] = [
     flag: "/images/countries/COLOMBIA.png",
   },
   {
+    id: "estados unidos",
+    name: "Estados Unidos",
+    flag: "/images/countries/EEUU.png",
+  },
+  {
     id: "espana",
     name: "España",
     flag: "/images/countries/ESPAÑA.png",
@@ -75,11 +80,6 @@ const countries: Country[] = [
     id: "tailandia",
     name: "Tailandia",
     flag: "/images/countries/TAILANDIA.png",
-  },
-  {
-    id: "estados unidos",
-    name: "Estados Unidos",
-    flag: "/images/countries/ESTADOS_UNIDOS.png",
   },
 ];
 
@@ -226,7 +226,7 @@ export default function CountriesCarousel() {
                 >
                   <button
                     onClick={() => handleCountryClick(country.id)}
-                    className="hover:scale-110 transition-transform duration-300 focus:outline-none rounded-lg"
+                    className="hover:scale-110 transition-transform duration-300 focus:outline-none rounded-lg cursor-pointer"
                     aria-label={`Ver cervezas de ${country.name}`}
                   >
                     {/* Solo la imagen de la bandera */}

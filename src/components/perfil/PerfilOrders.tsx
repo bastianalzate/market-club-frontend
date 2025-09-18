@@ -40,7 +40,15 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
     useUserOrders();
 
   // Helper function para obtener la URL de imagen del producto
-  const getProductImageUrl = (imageUrl?: string) => {
+  const getProductImageUrl = (imageUrl?: string, productName?: string) => {
+    // Si es un regalo personalizado, usar imagen de regalo
+    if (
+      productName &&
+      productName.toLowerCase().includes("regalo personaliz")
+    ) {
+      return "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSI4IiBmaWxsPSIjQjU4RTMxIi8+PHJlY3QgeD0iMyIgeT0iOCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMiA4djEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxMnY3YTIgMiAwIDAgMS0yIDJIN2EyIDIgMCAwIDEtMi0ydi03IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik03LjUgOGEyLjUgMi41IDAgMCAxIDAtNUE0LjggOCAwIDAgMSAxMiA4YTQuOCA4IDAgMCAxIDQuNS01IDIuNSAyLjUgMCAwIDEgMCA1IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=";
+    }
+
     if (!imageUrl) {
       return "/images/cervezas/bottella-01.png"; // Imagen por defecto
     }
@@ -395,7 +403,10 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
                         className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
                       >
                         <img
-                          src={getProductImageUrl(item.product_image)}
+                          src={getProductImageUrl(
+                            item.product_image,
+                            item.product_name
+                          )}
                           alt={item.product_name}
                           className="w-12 h-12 rounded-lg object-cover shadow-sm flex-shrink-0"
                           onError={(e) => {

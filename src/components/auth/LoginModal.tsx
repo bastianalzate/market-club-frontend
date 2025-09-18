@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { X, Mail, Lock, User, Phone, MapPin, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import SuccessModal from "@/components/shared/SuccessModal";
@@ -30,6 +31,7 @@ interface GuestData {
 type ModalMode = "options" | "login" | "register" | "guest";
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
+  const router = useRouter();
   const { login, register, guestCheckout, isLoading, error, clearError } =
     useAuth();
   const [isAnimating, setIsAnimating] = useState(false);
@@ -61,14 +63,40 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     address: "",
   });
 
+  // Función para limpiar todos los formularios
+  const clearAllForms = useCallback(() => {
+    setLoginData({ email: "", password: "" });
+    setRegisterData({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      phone: "",
+      country: "Colombia",
+      isWholesaler: false,
+    });
+    setGuestData({
+      name: "",
+      email: "",
+      phone: "",
+      address: "",
+    });
+    setValidationErrors({});
+    setSuccessMessage("");
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+    clearError();
+  }, [clearError]);
+
   // Manejar la animación de salida
   const handleClose = useCallback(() => {
     setIsAnimating(false);
+    clearAllForms(); // Limpiar todos los formularios al cerrar
     setTimeout(() => {
       setShouldRender(false);
       onClose();
     }, 300);
-  }, [onClose]);
+  }, [onClose, clearAllForms]);
 
   // Función para limpiar el formulario de registro
   const clearRegisterForm = () => {
@@ -183,8 +211,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         case "login":
           await login(loginData.email, loginData.password);
           // Si llegamos aquí, el login fue exitoso
-          console.log("Login exitoso, cerrando modal...");
+          console.log("Login exitoso, redirigiendo a perfil...");
           handleClose();
+          router.push("/perfil");
           break;
         case "register":
           // Validar formulario antes de enviar
@@ -317,7 +346,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             </div>
             <button
               onClick={handleClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
               aria-label="Cerrar modal"
             >
               <X className="w-5 h-5 text-gray-500" />
@@ -330,7 +359,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               <div className="space-y-4">
                 <button
                   onClick={() => setMode("login")}
-                  className="w-full flex items-center justify-center px-6 py-4 text-white rounded-xl font-semibold transition-colors"
+                  className="w-full flex items-center justify-center px-6 py-4 text-white rounded-xl font-semibold transition-colors cursor-pointer"
                   style={{ backgroundColor: "rgb(181, 142, 49)" }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = "rgb(160, 120, 23)";
@@ -345,7 +374,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                 <button
                   onClick={() => setMode("register")}
-                  className="w-full flex items-center justify-center px-6 py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-colors"
+                  className="w-full flex items-center justify-center px-6 py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-colors cursor-pointer"
                 >
                   <User className="w-5 h-5 mr-2" />
                   Crear cuenta nueva
@@ -362,7 +391,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                 <button
                   onClick={() => setMode("guest")}
-                  className="w-full flex items-center justify-center px-6 py-4 border-2 border-gray-300 text-gray-900 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center justify-center px-6 py-4 border-2 border-gray-300 text-gray-900 rounded-xl font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   <MapPin className="w-5 h-5 mr-2" />
                   Continuar como invitado
@@ -376,7 +405,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 <button
                   type="button"
                   onClick={() => setMode("options")}
-                  className="font-medium text-sm transition-colors"
+                  className="font-medium text-sm transition-colors cursor-pointer"
                   style={{ color: "rgb(181, 142, 49)" }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = "rgb(160, 120, 23)";
@@ -815,7 +844,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full text-white py-3 px-6 rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full text-white py-3 px-6 rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   style={{ backgroundColor: "rgb(181, 142, 49)" }}
                   onMouseEnter={(e) => {
                     if (!isLoading) {
@@ -855,6 +884,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         onClose={() => {
           setShowSuccessModal(false);
           handleClose(); // Cerrar el modal principal también
+          router.push("/perfil"); // Redirigir al perfil después del registro
         }}
         title="¡Cuenta Creada Exitosamente!"
         message="Bienvenido a Market Club. Tu cuenta ha sido creada correctamente y ya puedes disfrutar de todos nuestros productos y servicios."

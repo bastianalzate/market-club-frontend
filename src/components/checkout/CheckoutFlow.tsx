@@ -30,7 +30,17 @@ export default function CheckoutFlow() {
   };
 
   // Helper function para obtener la URL de imagen del producto
-  const getProductImageUrl = (product: any) => {
+  const getProductImageUrl = (product: any, item?: any): string => {
+    // Si es un regalo, usar imagen de regalo
+    if (item?.is_gift || item?.gift_data) {
+      return "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSI4IiBmaWxsPSIjQjU4RTMxIi8+PHJlY3QgeD0iMyIgeT0iOCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMiA4djEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxMnY3YTIgMiAwIDAgMS0yIDJIN2EyIDIgMCAwIDEtMi0ydi03IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik03LjUgOGEyLjUgMi41IDAgMCAxIDAtNUE0LjggOCAwIDAgMSAxMiA4YTQuOCA4IDAgMCAxIDQuNS01IDIuNSAyLjUgMCAwIDEgMCA1IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=";
+    }
+
+    // Verificar que el producto no sea null o undefined
+    if (!product) {
+      return "/images/cervezas/bottella-01.png";
+    }
+
     if (product.image_url) {
       return product.image_url;
     }
@@ -99,7 +109,7 @@ export default function CheckoutFlow() {
         setOrderData(savedData);
       }
 
-      const orderResponse = await createOrder(address, null, "");
+      const orderResponse = await createOrder(address, undefined, "");
 
       if (orderResponse.success) {
         showSuccess("Orden creada", "Tu orden ha sido creada exitosamente");
@@ -254,7 +264,7 @@ export default function CheckoutFlow() {
             ].map(({ step, title, icon }) => (
               <div key={step} className="flex items-center flex-shrink-0">
                 <div
-                  className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full border-2 transition-all duration-200 ${
+                  className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-200 focus:outline-none focus:ring-0 ${
                     currentStep >= step
                       ? "bg-yellow-600 border-yellow-600 text-white shadow-lg"
                       : "bg-white border-gray-300 text-gray-400"
@@ -336,7 +346,7 @@ export default function CheckoutFlow() {
                         <div className="mt-3">
                           <button
                             onClick={() => setServerError(null)}
-                            className="bg-red-100 text-red-800 px-3 py-1 rounded-md text-sm font-medium hover:bg-red-200 transition-colors"
+                            className="bg-red-100 text-red-800 px-3 py-1 rounded-md text-sm font-medium hover:bg-red-200 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                           >
                             Reintentar
                           </button>
@@ -399,7 +409,7 @@ export default function CheckoutFlow() {
                       </p>
                       <button
                         onClick={() => handleStepChange(2)}
-                        className="bg-yellow-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-yellow-700 transition-colors"
+                        className="bg-yellow-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-yellow-700 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
                       >
                         Volver a Dirección
                       </button>
@@ -487,23 +497,29 @@ export default function CheckoutFlow() {
                     <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
                       {(currentStep < 3 ? cart?.items : orderData?.items)
                         ?.slice(0, 3)
-                        .map((item) => (
+                        .map((item: any) => (
                           <div
                             key={item.id}
                             className="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 bg-gray-50 rounded-lg"
                           >
                             <img
-                              src={getProductImageUrl(item.product)}
-                              alt={item.product.name}
-                              className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm"
+                              src={getProductImageUrl(item.product, item)}
+                              alt={
+                                item.product?.name ||
+                                item.gift_data?.name ||
+                                "Producto"
+                              }
+                              className="w-12 h-12 rounded-lg object-cover shadow-sm"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
                                 target.src = "/images/cervezas/bottella-01.png";
                               }}
                             />
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs sm:text-sm font-semibold text-gray-900 truncate">
-                                {item.product.name}
+                              <p className="text-sm font-semibold text-gray-900 truncate">
+                                {item.product?.name ||
+                                  item.gift_data?.name ||
+                                  "Producto personalizado"}
                               </p>
                               <p className="text-xs sm:text-sm text-gray-500">
                                 Cantidad: {item.quantity}

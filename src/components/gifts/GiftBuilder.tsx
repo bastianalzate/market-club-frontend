@@ -13,8 +13,7 @@ import {
   Gift,
   ShoppingCart,
 } from "lucide-react";
-import { useCart } from "@/hooks/useCart";
-import { Product } from "@/features/products/types/product";
+import { useCartContext } from "@/contexts/CartContext";
 import { useNotification } from "@/hooks/useNotification";
 import { useProducts, TransformedProduct } from "@/hooks/useProducts";
 import NotificationToast from "@/components/shared/NotificationToast";
@@ -115,17 +114,25 @@ export default function GiftBuilder() {
   const defaultBox = giftBoxes.find((box) => box.recommended) || giftBoxes[0];
 
   // Hook del carrito
-  const { addToCart } = useCart();
+  const { addGift, loadCart } = useCartContext();
 
   // Hook de notificaciones
   const { notification, showSuccess, showError, hideNotification } =
     useNotification();
 
-  // Hook de productos del backend con paginación
+  // Hook de productos del backend con paginación y filtros
   const {
     products: backendProducts,
     loading: productsLoading,
     pagination,
+    selectedCountry,
+    selectedCategory,
+    selectedPriceRange,
+    searchProducts,
+    filterByCountry,
+    filterByCategory,
+    filterByPriceRange,
+    clearAllFilters,
     goToPage,
     nextPage,
     prevPage,
@@ -139,9 +146,6 @@ export default function GiftBuilder() {
   });
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedNationality, setSelectedNationality] = useState("all");
-  const [priceRange, setPriceRange] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
 
   // Referencia para el scroll al título de cervezas
@@ -150,51 +154,81 @@ export default function GiftBuilder() {
   // Convertir productos del backend a formato Beer
   const availableBeers = backendProducts.map(transformToBeer);
 
-  // Obtener categorías únicas de los productos
+  // Categorías exactas como en la tienda
   const categories = [
-    "all",
-    ...Array.from(new Set(availableBeers.map((beer) => beer.category))).filter(
-      Boolean
-    ),
+    { value: "", label: "Todas" },
+    { value: "ale", label: "Cervezas Ale" },
+    { value: "blonde", label: "Cervezas Rubias" },
+    { value: "dark", label: "Cervezas Oscuras" },
+    { value: "ipa", label: "India Pale Ale" },
+    { value: "lager", label: "Cervezas Lager" },
+    { value: "pale_ale", label: "Pale Ale" },
+    { value: "pilsner", label: "Cervezas Pilsner" },
+    { value: "porter", label: "Cervezas Porter" },
+    { value: "wheat", label: "Cervezas de Trigo" },
   ];
 
-  // Obtener nacionalidades únicas de los productos
-  const nationalities = [
-    "all",
-    ...Array.from(
-      new Set(availableBeers.map((beer) => beer.nationality))
-    ).filter(Boolean),
+  // Países exactos como en la tienda
+  const countries = [
+    { value: "", label: "Todos" },
+    { value: "reino unido", label: "Reino Unido" },
+    { value: "colombia", label: "Colombia" },
+    { value: "alemania", label: "Alemania" },
+    { value: "italia", label: "Italia" },
+    { value: "escocia", label: "Escocia" },
+    { value: "belgica", label: "Bélgica" },
+    { value: "espana", label: "España" },
+    { value: "paises bajos", label: "Países Bajos" },
+    { value: "japon", label: "Japón" },
+    { value: "mexico", label: "México" },
+    { value: "peru", label: "Perú" },
+    { value: "republica checa", label: "República Checa" },
+    { value: "estados unidos", label: "Estados Unidos" },
+    { value: "tailandia", label: "Tailandia" },
   ];
 
+  // Rangos de precio exactos como en la tienda
   const priceRanges = [
-    { value: "all", label: "Todos los precios" },
-    { value: "low", label: "Menos de $15.000" },
-    { value: "medium", label: "$15.000 - $20.000" },
-    { value: "high", label: "Más de $20.000" },
+    { value: "", label: "Todos los precios" },
+    { value: "less_than_15000", label: "Menos de $15.000" },
+    { value: "15000_25000", label: "$15.000 - $25.000" },
+    { value: "25000_35000", label: "$25.000 - $35.000" },
+    { value: "35000_50000", label: "$35.000 - $50.000" },
+    { value: "50000_75000", label: "$50.000 - $75.000" },
+    { value: "75000_100000", label: "$75.000 - $100.000" },
+    { value: "more_than_100000", label: "Más de $100.000" },
   ];
 
+  // Los productos ya vienen filtrados del hook useProducts
   const filteredBeers = availableBeers.filter((beer) => {
     const matchesSearch =
       beer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       beer.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "all" || beer.category === selectedCategory;
-    const matchesNationality =
-      selectedNationality === "all" || beer.nationality === selectedNationality;
-    const matchesPrice =
-      priceRange === "all" ||
-      (priceRange === "low" && beer.price < 15000) ||
-      (priceRange === "medium" && beer.price >= 15000 && beer.price <= 20000) ||
-      (priceRange === "high" && beer.price > 20000);
-
-    return (
-      matchesSearch &&
-      matchesCategory &&
-      matchesNationality &&
-      matchesPrice &&
-      beer.inStock
-    );
+    return matchesSearch && beer.inStock;
   });
+
+  // Funciones para manejar cambios en los filtros
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+    searchProducts(term);
+  };
+
+  const handleCountryChange = (country: string) => {
+    filterByCountry(country);
+  };
+
+  const handleCategoryChange = (category: string) => {
+    filterByCategory(category);
+  };
+
+  const handlePriceRangeChange = (priceRange: string) => {
+    filterByPriceRange(priceRange);
+  };
+
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    clearAllFilters();
+  };
 
   const selectBox = (box: GiftBox) => {
     setGiftBuilder((prev) => ({
@@ -281,67 +315,109 @@ export default function GiftBuilder() {
     }, 100);
   };
 
-  // Función para crear un producto de regalo personalizado
-  const createGiftProduct = (): Product => {
+  // Función para agregar el regalo al carrito
+  const handleAddGiftToCart = async () => {
     if (!giftBuilder.selectedBox || giftBuilder.selectedBeers.length === 0) {
-      throw new Error("Regalo incompleto");
+      showError(
+        "Regalo incompleto",
+        "Por favor, selecciona una caja y al menos una cerveza para crear tu regalo."
+      );
+      return;
     }
 
-    const beerNames = giftBuilder.selectedBeers
-      .map((beer) => beer.name)
-      .join(", ");
-    const giftName = `Regalo Personalizado - ${giftBuilder.selectedBox.name}`;
-    const giftDescription = `Caja ${giftBuilder.selectedBox.name} con ${giftBuilder.selectedBeers.length} cervezas: ${beerNames}`;
-
-    return {
-      id: Date.now(), // ID único para cada regalo
-      name: giftName,
-      description: giftDescription,
-      price: giftBuilder.totalPrice,
-      image:
-        "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSI4IiBmaWxsPSIjQjU4RTMxIi8+PHJlY3QgeD0iMyIgeT0iOCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMiA4djEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxMnY3YTIgMiAwIDAgMS0yIDJIN2EyIDIgMCAwIDEtMi0ydi03IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik03LjUgOGEyLjUgMi41IDAgMCAxIDAtNUE0LjggOCAwIDAgMSAxMiA4YTQuOCA4IDAgMCAxIDQuNS01IDIuNSAyLjUgMCAwIDEgMCA1IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=",
-      images: ["/images/logo/logo.png"],
-      category: "Regalo Personalizado",
-      brand: "Market Club",
-      alcoholContent: 0, // No aplica para el paquete completo
-      volume: 0, // No aplica para el paquete completo
-      style: "Gift Box",
-      origin: "Colombia",
-      inStock: true,
-      stockQuantity: 1,
-      rating: 5.0,
-      reviewCount: 0,
-      tags: ["regalo", "personalizado", "cerveza", "gift-box"],
-      featured: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-  };
-
-  // Función para agregar el regalo al carrito
-  const handleAddGiftToCart = () => {
     try {
-      const giftProduct = createGiftProduct();
-      addToCart(giftProduct, 1);
+      console.log("🎁 Creando regalo personalizado...");
+      console.log("🎁 Caja seleccionada:", giftBuilder.selectedBox);
+      console.log("🎁 Cervezas seleccionadas:", giftBuilder.selectedBeers);
 
-      // Mostrar notificación de éxito
-      showSuccess(
-        "¡Regalo agregado! 🎉",
-        `Tu regalo personalizado "${giftBuilder.selectedBox?.name}" se agregó al carrito exitosamente.`
-      );
+      // Crear los datos del regalo para enviar al backend
+      const beerNames = giftBuilder.selectedBeers
+        .map((beer) => beer.name)
+        .join(", ");
+      const giftName = `Regalo Personalizado - ${giftBuilder.selectedBox.name}`;
+      const giftDescription = `Caja ${giftBuilder.selectedBox.name} con ${giftBuilder.selectedBeers.length} cervezas: ${beerNames}`;
 
-      // Resetear el builder después de agregar para crear otro regalo
-      setGiftBuilder({
-        selectedBox: defaultBox,
-        selectedBeers: [],
-        totalPrice: defaultBox.price,
-        isComplete: false,
-      });
+      const giftData = {
+        name: giftName,
+        description: giftDescription,
+        box: {
+          id: giftBuilder.selectedBox.id,
+          name: giftBuilder.selectedBox.name,
+          price: giftBuilder.selectedBox.price,
+          description: giftBuilder.selectedBox.description,
+          maxBeers: giftBuilder.selectedBox.maxBeers,
+          dimensions: giftBuilder.selectedBox.dimensions,
+          deliveryTime: giftBuilder.selectedBox.deliveryTime,
+        },
+        beers: giftBuilder.selectedBeers.map((beer) => ({
+          id: beer.id,
+          name: beer.name,
+          brand: beer.brand,
+          price: beer.price,
+          volume: beer.volume,
+          category: beer.category,
+          nationality: beer.nationality,
+        })),
+        totalPrice: giftBuilder.totalPrice,
+        quantity: 1,
+      };
+
+      // Crear un ID especial para el regalo usando timestamp
+      const giftId = Date.now().toString();
+
+      console.log("🎁 ID del regalo generado:", giftId);
+      console.log("🎁 Datos del regalo:", giftData);
+
+      // Preparar datos en el formato que espera el backend
+      const giftPayload = {
+        product_id: giftId,
+        quantity: 1,
+        gift_data: giftData,
+        is_gift: true,
+      };
+
+      console.log("🎁 Payload a enviar:", giftPayload);
+
+      // Usar el endpoint específico para regalos
+      const result = await addGift(giftPayload);
+
+      if (result.success) {
+        // Forzar recarga del carrito para asegurar sincronización
+        console.log("🎁 Forzando recarga del carrito...");
+        await loadCart();
+
+        // Mostrar notificación de éxito
+        showSuccess(
+          "¡Regalo agregado! 🎉",
+          `Tu regalo personalizado "${giftBuilder.selectedBox.name}" con ${
+            giftBuilder.selectedBeers.length
+          } cerveza${
+            giftBuilder.selectedBeers.length > 1 ? "s" : ""
+          } se agregó al carrito exitosamente.`
+        );
+
+        // Resetear el builder después de agregar para crear otro regalo
+        setGiftBuilder({
+          selectedBox: defaultBox,
+          selectedBeers: [],
+          totalPrice: defaultBox.price,
+          isComplete: false,
+        });
+
+        console.log("🎁 Regalo agregado exitosamente y builder reseteado");
+      } else {
+        showError(
+          "Error al agregar regalo",
+          result.message || "No se pudo agregar el regalo al carrito."
+        );
+      }
     } catch (error) {
-      console.error("Error al agregar regalo al carrito:", error);
+      console.error("🎁 Error al agregar regalo al carrito:", error);
       showError(
         "Error al agregar regalo",
-        "Por favor, completa tu selección antes de agregar al carrito."
+        error instanceof Error
+          ? error.message
+          : "No se pudo agregar el regalo al carrito. Intenta nuevamente."
       );
     }
   };
@@ -474,7 +550,7 @@ export default function GiftBuilder() {
                         type="text"
                         placeholder="Buscar cervezas por nombre o marca..."
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => handleSearchChange(e.target.value)}
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-gray-900 placeholder-gray-500"
                       />
                     </div>
@@ -490,43 +566,42 @@ export default function GiftBuilder() {
                   {/* Panel de Filtros */}
                   {showFilters && (
                     <div className="bg-gray-50 rounded-lg p-4 space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Categoría
+                            País de Origen
                           </label>
                           <select
-                            value={selectedCategory}
+                            value={selectedCountry}
                             onChange={(e) =>
-                              setSelectedCategory(e.target.value)
+                              handleCountryChange(e.target.value)
                             }
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900"
                           >
-                            {categories.map((category) => (
-                              <option key={category} value={category}>
-                                {category === "all"
-                                  ? "Todas las categorías"
-                                  : category}
+                            {countries.map((country) => (
+                              <option key={country.value} value={country.value}>
+                                {country.label}
                               </option>
                             ))}
                           </select>
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Nacionalidad
+                            Estilo de Cerveza
                           </label>
                           <select
-                            value={selectedNationality}
+                            value={selectedCategory}
                             onChange={(e) =>
-                              setSelectedNationality(e.target.value)
+                              handleCategoryChange(e.target.value)
                             }
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900"
                           >
-                            {nationalities.map((nationality) => (
-                              <option key={nationality} value={nationality}>
-                                {nationality === "all"
-                                  ? "Todas las nacionalidades"
-                                  : nationality}
+                            {categories.map((category) => (
+                              <option
+                                key={category.value}
+                                value={category.value}
+                              >
+                                {category.label}
                               </option>
                             ))}
                           </select>
@@ -536,8 +611,10 @@ export default function GiftBuilder() {
                             Rango de Precio
                           </label>
                           <select
-                            value={priceRange}
-                            onChange={(e) => setPriceRange(e.target.value)}
+                            value={selectedPriceRange}
+                            onChange={(e) =>
+                              handlePriceRangeChange(e.target.value)
+                            }
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900"
                           >
                             {priceRanges.map((range) => (
@@ -546,6 +623,14 @@ export default function GiftBuilder() {
                               </option>
                             ))}
                           </select>
+                        </div>
+                        <div className="flex items-end">
+                          <button
+                            onClick={handleClearFilters}
+                            className="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors font-medium"
+                          >
+                            Limpiar Filtros
+                          </button>
                         </div>
                       </div>
                     </div>

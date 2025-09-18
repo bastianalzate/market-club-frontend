@@ -1,6 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import {
+  CreditCard,
+  Building2,
+  Smartphone,
+  Banknote,
+  ArrowLeft,
+  Shield,
+} from "lucide-react";
 import { useCheckout } from "@/hooks/useCheckout";
 import { useToast } from "@/hooks/useToast";
 import WompiWidget from "@/components/payment/WompiWidget";
@@ -406,17 +414,21 @@ export default function PaymentStep({
                 Métodos de pago aceptados:
               </p>
               <div className="flex justify-center space-x-2 flex-wrap gap-2">
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200">
-                  💳 Tarjetas
+                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5">
+                  <CreditCard className="w-3 h-3" />
+                  Tarjetas
                 </span>
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200">
-                  🏦 PSE
+                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5">
+                  <Building2 className="w-3 h-3" />
+                  PSE
                 </span>
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200">
-                  📱 Nequi
+                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5">
+                  <Smartphone className="w-3 h-3" />
+                  Nequi
                 </span>
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200">
-                  💸 Daviplata
+                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5">
+                  <Banknote className="w-3 h-3" />
+                  Daviplata
                 </span>
               </div>
             </div>
@@ -426,19 +438,7 @@ export default function PaymentStep({
           <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <div className="flex items-start">
               <div className="flex-shrink-0">
-                <svg
-                  className="w-5 h-5 text-yellow-600 mt-0.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z"
-                  />
-                </svg>
+                <Shield className="w-5 h-5 text-yellow-600 mt-0.5" />
               </div>
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-yellow-800">

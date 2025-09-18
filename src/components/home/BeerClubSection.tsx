@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Gift } from "lucide-react";
 import clubCerveceroImage from "@/assets/images/home/club-cervecero.png";
 
@@ -54,13 +55,14 @@ export default function BeerClubSection() {
                 </p>
 
                 {/* Botón de llamada a la acción */}
-                <button
-                  className="bg-black text-white px-8 py-4 rounded-lg font-bold uppercase tracking-wide flex items-center gap-3 hover:bg-gray-800 transition-colors duration-200"
+                <Link
+                  href="/about"
+                  className="inline-flex bg-black text-white px-8 py-4 rounded-lg font-bold uppercase tracking-wide items-center gap-3 hover:bg-gray-800 transition-colors duration-200 focus:outline-none"
                   style={{ fontFamily: "var(--font-oswald)" }}
                 >
                   <Gift className="w-5 h-5" />
                   QUIERO UNIRME
-                </button>
+                </Link>
               </div>
             </div>
           </div>

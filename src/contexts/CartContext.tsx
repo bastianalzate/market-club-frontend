@@ -26,6 +26,7 @@ interface CartContextType {
   addToCart: (
     payload: AddToCartPayload
   ) => Promise<{ success: boolean; message: string }>;
+  addGift: (giftData: any) => Promise<{ success: boolean; message: string }>;
   updateQuantity: (
     payload: UpdateQuantityPayload
   ) => Promise<{ success: boolean; message: string }>;

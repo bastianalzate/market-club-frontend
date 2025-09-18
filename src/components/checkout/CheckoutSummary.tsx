@@ -12,7 +12,17 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
   const { cart, itemsCount } = useCartContext();
 
   // Helper function para obtener la URL de imagen del producto
-  const getProductImageUrl = (product: any) => {
+  const getProductImageUrl = (product: any, item?: any): string => {
+    // Si es un regalo, usar imagen de regalo
+    if (item?.is_gift || item?.gift_data) {
+      return "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSI4IiBmaWxsPSIjQjU4RTMxIi8+PHJlY3QgeD0iMyIgeT0iOCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMiA4djEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxMnY3YTIgMiAwIDAgMS0yIDJIN2EyIDIgMCAwIDEtMi0ydi03IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik03LjUgOGEyLjUgMi41IDAgMCAxIDAtNUE0LjggOCAwIDAgMSAxMiA4YTQuOCA4IDAgMCAxIDQuNS01IDIuNSAyLjUgMCAwIDEgMCA1IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=";
+    }
+
+    // Verificar que el producto no sea null o undefined
+    if (!product) {
+      return "/images/cervezas/bottella-01.png";
+    }
+
     if (product.image_url) {
       return product.image_url;
     }
@@ -105,18 +115,18 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
       </div>
 
       {/* Items */}
-      <div className="px-4 sm:px-6 py-4 sm:py-5">
-        <div className="space-y-3 sm:space-y-4">
-          {cart?.items?.map((item) => (
+      <div className="px-6 py-5">
+        <div className="space-y-4">
+          {cart?.items?.map((item: any) => (
             <div
               key={item.id}
               className="flex items-center space-x-3 sm:space-x-4 p-3 bg-gray-50 rounded-lg"
             >
               <div className="flex-shrink-0">
                 <img
-                  src={getProductImageUrl(item.product)}
-                  alt={item.product.name}
-                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg object-cover shadow-sm"
+                  src={getProductImageUrl(item.product, item)}
+                  alt={item.product?.name || item.gift_data?.name || "Producto"}
+                  className="w-14 h-14 rounded-lg object-cover shadow-sm"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = "/images/cervezas/bottella-01.png";
@@ -124,8 +134,10 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs sm:text-sm font-semibold text-gray-900 truncate">
-                  {item.product.name}
+                <p className="text-sm font-semibold text-gray-900 truncate">
+                  {item.product?.name ||
+                    item.gift_data?.name ||
+                    "Producto personalizado"}
                 </p>
                 <p className="text-xs sm:text-sm text-gray-500">
                   Cantidad: {item.quantity}
@@ -208,7 +220,10 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
       <div className="px-4 sm:px-6 py-4 sm:py-5 border-t border-gray-100">
         <button
           onClick={onContinue}
-          className="w-full text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-bold text-sm sm:text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-yellow-600 focus:ring-opacity-50 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl bg-yellow-600 hover:bg-yellow-700"
+          className="w-full text-white py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+          style={{
+            backgroundColor: "rgb(180, 140, 43)",
+          }}
         >
           Continuar al Checkout
         </button>

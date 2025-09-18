@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback, Suspense } from "react";
+import { useState, useCallback, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import CategoryIcons from "./CategoryIcons";
 import ProductFilters from "./ProductFilters";
 import ProductGrid from "./ProductGrid";
@@ -11,6 +12,7 @@ import { useProducts, TransformedProduct } from "@/hooks/useProducts";
 
 function TiendaContentInner() {
   const [searchTerm, setSearchTerm] = useState("");
+  const searchParams = useSearchParams();
 
   // Hook para obtener productos desde la API
   const {
@@ -30,6 +32,12 @@ function TiendaContentInner() {
     nextPage,
     prevPage,
   } = useProducts();
+
+  // Inicializar el término de búsqueda desde la URL
+  useEffect(() => {
+    const searchFromUrl = searchParams.get("search") || "";
+    setSearchTerm(searchFromUrl);
+  }, [searchParams]);
 
   // Función para manejar cambios en la búsqueda
   const handleSearchChange = useCallback(

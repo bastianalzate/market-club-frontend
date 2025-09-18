@@ -62,6 +62,33 @@ export class CartService {
         }
     }
 
+    static async addGift(giftData) {
+        try {
+            console.log('🎁 Adding gift to cart:', giftData);
+            
+            const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CART.ADD_GIFT}`, {
+                method: 'POST',
+                headers: getSessionHeaders(),
+                body: JSON.stringify(giftData)
+            });
+            
+            console.log('🎁 Add gift response status:', response.status);
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'Error desconocido' }));
+                console.error('🎁 Add gift error:', errorData);
+                throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
+            }
+            
+            const result = await response.json();
+            console.log('🎁 Add gift result:', result);
+            return result;
+        } catch (error) {
+            console.error('🎁 Error adding gift to cart:', error);
+            throw error;
+        }
+    }
+
     static async updateQuantity(productId, quantity) {
         try {
             const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CART.UPDATE}`, {
@@ -84,14 +111,22 @@ export class CartService {
         }
     }
 
-    static async removeProduct(productId) {
+    static async removeProduct(productId, giftId) {
         try {
+            const requestBody = {};
+            
+            if (giftId !== undefined && giftId !== null) {
+                requestBody.gift_id = giftId;
+            } else if (productId !== undefined && productId !== null) {
+                requestBody.product_id = productId;
+            } else {
+                throw new Error('Se debe proporcionar productId o giftId');
+            }
+
             const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CART.REMOVE}`, {
                 method: 'DELETE',
                 headers: getSessionHeaders(),
-                body: JSON.stringify({
-                    product_id: productId
-                })
+                body: JSON.stringify(requestBody)
             });
             
             if (!response.ok) {
