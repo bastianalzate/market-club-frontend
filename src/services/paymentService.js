@@ -147,10 +147,7 @@ export class PaymentService {
             
             const response = await fetch(`${API_CONFIG.BASE_URL}/payments/wompi/generate-signature`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(data),
             });
 

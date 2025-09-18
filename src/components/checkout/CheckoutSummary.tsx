@@ -2,6 +2,7 @@
 
 import { useCartContext } from "@/contexts/CartContext";
 import { formatPrice } from "@/utils/formatters";
+import { constants } from "@/config/constants";
 
 interface CheckoutSummaryProps {
   onContinue: () => void;
@@ -10,17 +11,42 @@ interface CheckoutSummaryProps {
 export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
   const { cart, itemsCount } = useCartContext();
 
+  // Helper function para obtener la URL de imagen del producto
+  const getProductImageUrl = (product: any) => {
+    if (product.image_url) {
+      return product.image_url;
+    }
+    if (product.image) {
+      // Si la imagen ya incluye la URL completa, usarla tal como está
+      if (product.image.startsWith("http")) {
+        return product.image;
+      }
+      // Si es una ruta relativa, construir la URL completa
+      const baseUrl = constants.api_url.replace("/api", "");
+      return `${baseUrl}/storage/${product.image}`;
+    }
+    return "/images/cervezas/bottella-01.png";
+  };
+
   // Calcular subtotal manualmente para asegurar precisión
   const manualSubtotal =
     cart?.items?.reduce((sum, item) => {
       return sum + parseFloat(String(item.unit_price)) * item.quantity;
     }, 0) || 0;
 
+  // Calcular impuestos (IVA 19% en Colombia)
+  const TAX_RATE = 0.19; // 19%
+  const calculatedTaxAmount = Math.round(manualSubtotal * TAX_RATE);
+
+  // Usar impuestos calculados si el backend no los proporciona
+  const finalTaxAmount =
+    parseFloat(String(cart?.tax_amount || 0)) || calculatedTaxAmount;
+
   // Calcular total manualmente
   const manualTotal =
     manualSubtotal +
     parseFloat(String(cart?.shipping_amount || 0)) +
-    parseFloat(String(cart?.tax_amount || 0));
+    finalTaxAmount;
 
   if (itemsCount === 0) {
     return (
@@ -88,13 +114,13 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
             >
               <div className="flex-shrink-0">
                 <img
-                  src={
-                    item.product.image_url ||
-                    item.product.image ||
-                    "/images/cervezas/bottella-01.png"
-                  }
+                  src={getProductImageUrl(item.product)}
                   alt={item.product.name}
                   className="w-14 h-14 rounded-lg object-cover shadow-sm"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/images/cervezas/bottella-01.png";
+                  }}
                 />
               </div>
               <div className="flex-1 min-w-0">
@@ -131,9 +157,9 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
           </div>
 
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Impuestos:</span>
+            <span className="text-gray-600">Impuestos (IVA 19%):</span>
             <span className="font-semibold text-gray-900">
-              {formatPrice(cart?.tax_amount || 0)}
+              {formatPrice(finalTaxAmount)}
             </span>
           </div>
 

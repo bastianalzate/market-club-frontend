@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useCheckout } from "@/hooks/useCheckout";
 import { ShippingAddress } from "@/types/checkout";
 import { useToast } from "@/hooks/useToast";
 import Toast from "@/components/shared/Toast";
@@ -15,7 +14,6 @@ export default function ShippingAddressForm({
   onNext,
   onBack,
 }: ShippingAddressFormProps) {
-  const { calculateShipping } = useCheckout();
   const { toast, showSuccess, showError, hideToast } = useToast();
 
   const [formData, setFormData] = useState<ShippingAddress>({
@@ -31,48 +29,11 @@ export default function ShippingAddressForm({
     phone: "",
   });
 
-  const [shippingCost, setShippingCost] = useState<number | null>(null);
-  const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
-
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleCalculateShipping = async () => {
-    if (!formData.city || !formData.state || !formData.postal_code) {
-      showError(
-        "Campos requeridos",
-        "Por favor completa ciudad, departamento y código postal"
-      );
-      return;
-    }
-
-    try {
-      setIsCalculatingShipping(true);
-      const response = await calculateShipping(
-        formData.city,
-        formData.state,
-        formData.postal_code
-      );
-
-      if (response.success) {
-        setShippingCost(response.shipping_amount);
-        showSuccess(
-          "Envío calculado",
-          `Costo de envío: $${response.shipping_amount.toLocaleString()} - ${
-            response.estimated_days
-          } días hábiles`
-        );
-      }
-    } catch (error) {
-      console.error("Error calculating shipping:", error);
-      showError("Error", "No se pudo calcular el costo de envío");
-    } finally {
-      setIsCalculatingShipping(false);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -328,34 +289,6 @@ export default function ShippingAddressForm({
               required
             />
           </div>
-        </div>
-
-        {/* Calculate Shipping Button */}
-        <div className="mt-6">
-          <button
-            type="button"
-            onClick={handleCalculateShipping}
-            disabled={
-              isCalculatingShipping ||
-              !formData.city ||
-              !formData.state ||
-              !formData.postal_code
-            }
-            className="w-full md:w-auto bg-gray-100 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isCalculatingShipping
-              ? "Calculando..."
-              : "Calcular Costo de Envío"}
-          </button>
-
-          {shippingCost && (
-            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-sm text-green-800">
-                <strong>Costo de envío:</strong> $
-                {shippingCost.toLocaleString()} COP
-              </p>
-            </div>
-          )}
         </div>
 
         {/* Navigation Buttons */}

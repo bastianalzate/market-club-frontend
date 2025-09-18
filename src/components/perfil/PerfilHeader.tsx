@@ -22,6 +22,7 @@ export default function PerfilHeader({ user }: PerfilHeaderProps) {
   const displayName = profile?.name || user.name;
   const displayEmail = profile?.email || user.email;
   const displayPhone = profile?.phone || user.phone;
+  const isWholesaler = profile?.is_wholesaler || false;
 
   return (
     <div className="bg-white shadow-sm border-b border-gray-200">
@@ -66,6 +67,11 @@ export default function PerfilHeader({ user }: PerfilHeaderProps) {
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                     <Crown className="w-3 h-3 mr-1" />
                     Usuario Invitado
+                  </span>
+                ) : isWholesaler ? (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <Crown className="w-3 h-3 mr-1" />
+                    Mayorista
                   </span>
                 ) : (
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">

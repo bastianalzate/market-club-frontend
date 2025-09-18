@@ -10,10 +10,11 @@ import ShippingAddressForm from "./ShippingAddressForm";
 import PaymentStep from "./PaymentStep";
 import { useToast } from "@/hooks/useToast";
 import Toast from "@/components/shared/Toast";
+import { constants } from "@/config/constants";
 
 export default function CheckoutFlow() {
   const router = useRouter();
-  const { cart, itemsCount } = useCartContext();
+  const { cart, itemsCount, loadCart } = useCartContext();
   const { checkoutState, createOrder, setCurrentStep, resetCheckout } =
     useCheckout();
   const { toast, showSuccess, showError, hideToast } = useToast();
@@ -28,17 +29,35 @@ export default function CheckoutFlow() {
     }).format(numPrice);
   };
 
+  // Helper function para obtener la URL de imagen del producto
+  const getProductImageUrl = (product: any) => {
+    if (product.image_url) {
+      return product.image_url;
+    }
+    if (product.image) {
+      // Si la imagen ya incluye la URL completa, usarla tal como está
+      if (product.image.startsWith("http")) {
+        return product.image;
+      }
+      // Si es una ruta relativa, construir la URL completa
+      const baseUrl = constants.api_url.replace("/api", "");
+      return `${baseUrl}/storage/${product.image}`;
+    }
+    return "/images/cervezas/bottella-01.png";
+  };
+
   const [currentStep, setCurrentStepLocal] = useState(1);
   const [shippingAddress, setShippingAddress] =
     useState<ShippingAddress | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [orderData, setOrderData] = useState<any>(null);
 
-  // Redirect if cart is empty
+  // Redirect if cart is empty, but only if no order has been created
   useEffect(() => {
-    if (itemsCount === 0) {
+    if (itemsCount === 0 && !checkoutState.orderId) {
       router.push("/tienda");
     }
-  }, [itemsCount, router]);
+  }, [itemsCount, router, checkoutState.orderId]);
 
   const handleStepChange = (step: number) => {
     setCurrentStepLocal(step);
@@ -49,10 +68,43 @@ export default function CheckoutFlow() {
   const handleShippingNext = async (address: ShippingAddress) => {
     try {
       setShippingAddress(address);
+
+      // Guardar los datos del carrito antes de crear la orden
+      if (cart) {
+        console.log("🔍 Cart data before saving:", cart);
+
+        // Calcular subtotal manualmente para asegurar precisión
+        const manualSubtotal =
+          cart.items?.reduce((sum, item) => {
+            return sum + parseFloat(String(item.unit_price)) * item.quantity;
+          }, 0) || 0;
+
+        // Calcular impuestos (IVA 19% en Colombia)
+        const TAX_RATE = 0.19; // 19%
+        const calculatedTaxAmount = Math.round(manualSubtotal * TAX_RATE);
+
+        // Usar impuestos calculados si el backend no los proporciona
+        const finalTaxAmount =
+          parseFloat(String(cart.tax_amount || 0)) || calculatedTaxAmount;
+        const shippingAmount = parseFloat(String(cart.shipping_amount || 0));
+
+        const savedData = {
+          items: cart.items,
+          subtotal: manualSubtotal,
+          shipping_amount: shippingAmount,
+          tax_amount: finalTaxAmount,
+          total_amount: manualSubtotal + shippingAmount + finalTaxAmount,
+        };
+        console.log("💾 Saving order data:", savedData);
+        setOrderData(savedData);
+      }
+
       const orderResponse = await createOrder(address, null, "");
 
       if (orderResponse.success) {
         showSuccess("Orden creada", "Tu orden ha sido creada exitosamente");
+        // Sincronizar el carrito después de crear la orden exitosamente
+        await loadCart();
         handleStepChange(3); // Move to payment step
       }
     } catch (error) {
@@ -84,17 +136,21 @@ export default function CheckoutFlow() {
     }
   };
 
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = async () => {
     showSuccess("Pago exitoso", "Tu pago ha sido procesado exitosamente");
+    // Sincronizar el carrito después del pago exitoso
+    await loadCart();
     handleStepChange(4); // Move to success step
   };
 
-  const handleCompleteOrder = () => {
+  const handleCompleteOrder = async () => {
     resetCheckout();
+    // Asegurar sincronización final del carrito antes de redirigir
+    await loadCart();
     router.push("/");
   };
 
-  if (itemsCount === 0) {
+  if (itemsCount === 0 && !checkoutState.orderId) {
     return null; // Will redirect
   }
 
@@ -113,23 +169,121 @@ export default function CheckoutFlow() {
         <div className="mb-8">
           <div className="flex items-center justify-center space-x-8">
             {[
-              { step: 1, title: "Resumen", icon: "📋" },
-              { step: 2, title: "Dirección", icon: "📍" },
-              { step: 3, title: "Pago", icon: "💳" },
-              { step: 4, title: "Confirmación", icon: "✅" },
+              {
+                step: 1,
+                title: "Resumen",
+                icon: (
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                    />
+                  </svg>
+                ),
+              },
+              {
+                step: 2,
+                title: "Dirección",
+                icon: (
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                ),
+              },
+              {
+                step: 3,
+                title: "Pago",
+                icon: (
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                    />
+                  </svg>
+                ),
+              },
+              {
+                step: 4,
+                title: "Confirmación",
+                icon: (
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                ),
+              },
             ].map(({ step, title, icon }) => (
               <div key={step} className="flex items-center">
                 <div
-                  className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                  className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-200 ${
                     currentStep >= step
-                      ? "bg-yellow-600 border-yellow-600 text-white"
+                      ? "bg-yellow-600 border-yellow-600 text-white shadow-lg"
                       : "bg-white border-gray-300 text-gray-400"
+                  } ${
+                    checkoutState.orderId && step < 3
+                      ? "cursor-not-allowed opacity-50"
+                      : ""
                   }`}
                 >
-                  {currentStep > step ? "✓" : icon}
+                  {currentStep > step ? (
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  ) : (
+                    icon
+                  )}
                 </div>
                 <span
-                  className={`ml-2 text-sm font-medium ${
+                  className={`ml-3 text-sm font-medium transition-colors duration-200 ${
                     currentStep >= step ? "text-gray-900" : "text-gray-400"
                   }`}
                 >
@@ -137,7 +291,7 @@ export default function CheckoutFlow() {
                 </span>
                 {step < 4 && (
                   <div
-                    className={`w-8 h-0.5 ml-4 ${
+                    className={`w-8 h-0.5 ml-4 transition-colors duration-200 ${
                       currentStep > step ? "bg-yellow-600" : "bg-gray-300"
                     }`}
                   />
@@ -201,11 +355,11 @@ export default function CheckoutFlow() {
 
             {currentStep === 3 && (
               <div>
-                {checkoutState.orderId && cart ? (
+                {checkoutState.orderId && orderData ? (
                   <>
                     <PaymentStep
                       orderId={checkoutState.orderId}
-                      totalAmount={parseFloat(String(cart.total_amount))}
+                      totalAmount={parseFloat(String(orderData.total_amount))}
                       customerEmail={
                         shippingAddress?.email || "usuario@ejemplo.com"
                       } // Email requerido por Wompi
@@ -328,47 +482,56 @@ export default function CheckoutFlow() {
                   </h3>
                 </div>
 
-                {cart && (
+                {(cart || orderData) && (
                   <>
                     <div className="space-y-3 mb-6">
-                      {cart.items?.slice(0, 3).map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
-                        >
-                          <img
-                            src={
-                              item.product.image_url ||
-                              item.product.image ||
-                              "/images/cervezas/bottella-01.png"
-                            }
-                            alt={item.product.name}
-                            className="w-12 h-12 rounded-lg object-cover shadow-sm"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-gray-900 truncate">
-                              {item.product.name}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              Cantidad: {item.quantity}
+                      {(currentStep < 3 ? cart?.items : orderData?.items)
+                        ?.slice(0, 3)
+                        .map((item) => (
+                          <div
+                            key={item.id}
+                            className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
+                          >
+                            <img
+                              src={getProductImageUrl(item.product)}
+                              alt={item.product.name}
+                              className="w-12 h-12 rounded-lg object-cover shadow-sm"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = "/images/cervezas/bottella-01.png";
+                              }}
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-gray-900 truncate">
+                                {item.product.name}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                Cantidad: {item.quantity}
+                              </p>
+                            </div>
+                            <p className="text-sm font-bold text-gray-900">
+                              {formatPrice(
+                                parseFloat(String(item.unit_price)) *
+                                  item.quantity
+                              )}
                             </p>
                           </div>
-                          <p className="text-sm font-bold text-gray-900">
-                            {formatPrice(
-                              parseFloat(String(item.unit_price)) *
-                                item.quantity
-                            )}
-                          </p>
-                        </div>
-                      ))}
+                        ))}
 
-                      {cart.items && cart.items.length > 3 && (
-                        <div className="text-center py-2">
-                          <p className="text-sm text-gray-500 bg-gray-100 rounded-lg py-2 px-3">
-                            +{cart.items.length - 3} productos más
-                          </p>
-                        </div>
-                      )}
+                      {(currentStep < 3 ? cart?.items : orderData?.items) &&
+                        (currentStep < 3 ? cart?.items : orderData?.items)
+                          .length > 3 && (
+                          <div className="text-center py-2">
+                            <p className="text-sm text-gray-500 bg-gray-100 rounded-lg py-2 px-3">
+                              +
+                              {(currentStep < 3
+                                ? cart?.items
+                                : orderData?.items
+                              ).length - 3}{" "}
+                              productos más
+                            </p>
+                          </div>
+                        )}
                     </div>
 
                     <div className="border-t border-gray-200 pt-4 space-y-3 bg-gray-50 rounded-lg p-4">
@@ -376,33 +539,84 @@ export default function CheckoutFlow() {
                         <span className="text-gray-600">Subtotal:</span>
                         <span className="font-semibold text-gray-900">
                           {formatPrice(
-                            cart.items?.reduce(
-                              (sum, item) =>
-                                sum +
-                                parseFloat(String(item.unit_price)) *
-                                  item.quantity,
-                              0
-                            ) || 0
+                            currentStep < 3
+                              ? cart?.items?.reduce(
+                                  (sum, item) =>
+                                    sum +
+                                    parseFloat(String(item.unit_price)) *
+                                      item.quantity,
+                                  0
+                                ) || 0
+                              : orderData?.subtotal || 0
                           )}
                         </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Envío:</span>
                         <span className="font-semibold text-gray-900">
-                          {formatPrice(cart.shipping_amount)}
+                          {formatPrice(
+                            currentStep < 3
+                              ? parseFloat(String(cart?.shipping_amount || 0))
+                              : orderData?.shipping_amount || 0
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">
+                          Impuestos (IVA 19%):
+                        </span>
+                        <span className="font-semibold text-gray-900">
+                          {formatPrice(
+                            currentStep < 3
+                              ? (() => {
+                                  const subtotal =
+                                    cart?.items?.reduce(
+                                      (sum, item) =>
+                                        sum +
+                                        parseFloat(String(item.unit_price)) *
+                                          item.quantity,
+                                      0
+                                    ) || 0;
+                                  const TAX_RATE = 0.19;
+                                  const calculatedTax = Math.round(
+                                    subtotal * TAX_RATE
+                                  );
+                                  return (
+                                    parseFloat(String(cart?.tax_amount || 0)) ||
+                                    calculatedTax
+                                  );
+                                })()
+                              : orderData?.tax_amount || 0
+                          )}
                         </span>
                       </div>
                       <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-3">
                         <span className="text-gray-900">Total:</span>
                         <span className="text-gray-900">
                           {formatPrice(
-                            (cart.items?.reduce(
-                              (sum, item) =>
-                                sum +
-                                parseFloat(String(item.unit_price)) *
-                                  item.quantity,
-                              0
-                            ) || 0) + parseFloat(String(cart.shipping_amount))
+                            currentStep < 3
+                              ? (() => {
+                                  const subtotal =
+                                    cart?.items?.reduce(
+                                      (sum, item) =>
+                                        sum +
+                                        parseFloat(String(item.unit_price)) *
+                                          item.quantity,
+                                      0
+                                    ) || 0;
+                                  const shipping = parseFloat(
+                                    String(cart?.shipping_amount || 0)
+                                  );
+                                  const TAX_RATE = 0.19;
+                                  const calculatedTax = Math.round(
+                                    subtotal * TAX_RATE
+                                  );
+                                  const finalTax =
+                                    parseFloat(String(cart?.tax_amount || 0)) ||
+                                    calculatedTax;
+                                  return subtotal + shipping + finalTax;
+                                })()
+                              : orderData?.total_amount || 0
                           )}
                         </span>
                       </div>
