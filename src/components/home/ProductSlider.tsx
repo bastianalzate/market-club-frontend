@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useLatestBeers, LatestBeer } from "@/hooks/useLatestBeers";
 import { useCartContext } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/useToast";
+import { useWishlist } from "@/hooks/useWishlist";
 import { Product } from "@/features/products/types/product";
 import Toast from "@/components/shared/Toast";
 import ProductCarousel from "@/components/shared/ProductCarousel";
@@ -12,8 +13,9 @@ import LazyImage from "@/components/shared/LazyImage";
 import { Heart, ShoppingCart, ArrowRight } from "lucide-react";
 
 export default function ProductSlider() {
-  const [favorites, setFavorites] = useState<number[]>([]);
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
+  const [localBeers, setLocalBeers] = useState<LatestBeer[]>([]);
+
   const {
     addToCart,
     updateQuantity,
@@ -22,14 +24,40 @@ export default function ProductSlider() {
     isInCart,
   } = useCartContext();
   const { toast, showSuccess, showError, hideToast } = useToast();
+
+  // Función para actualizar el estado is_favorite de un producto en la lista
+  const updateBeerFavoriteInList = useCallback(
+    (productId: number, isFavorite: boolean) => {
+      console.log(
+        `🔄 ProductSlider: Actualizando beer ${productId} a is_favorite: ${isFavorite}`
+      );
+      setLocalBeers((prev) =>
+        prev.map((beer) =>
+          beer.id === productId ? { ...beer, is_favorite: isFavorite } : beer
+        )
+      );
+    },
+    []
+  );
+
+  const {
+    toggleWishlist,
+    isInWishlist,
+    loading: wishlistLoading,
+  } = useWishlist({
+    showSuccess,
+    showError,
+    onProductFavoriteUpdate: updateBeerFavoriteInList,
+  });
   const { beers: latestBeers, loading, error } = useLatestBeers();
 
-  const toggleFavorite = (productId: number) => {
-    setFavorites((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
-    );
+  // Sincronizar beers locales con props cuando cambien
+  useEffect(() => {
+    setLocalBeers(latestBeers);
+  }, [latestBeers]);
+
+  const handleToggleFavorite = async (productId: number) => {
+    await toggleWishlist(productId);
   };
 
   // Las funciones getProductQuantity e isInCart ahora vienen del hook useCart
@@ -121,26 +149,31 @@ export default function ProductSlider() {
             }`}
           />
         </div>
-        
+
         {/* Etiqueta de Agotado */}
         {beer.stock_quantity === 0 && (
           <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg sm:top-4 sm:left-4 sm:px-3 sm:text-sm">
             AGOTADO
           </div>
         )}
-        
+
         {/* Botón de corazón (favorito) */}
         <button
-          onClick={() => toggleFavorite(beer.id)}
-          className="absolute top-2 right-2 p-1.5 bg-white/90 hover:bg-white rounded-full transition-colors sm:top-3 sm:right-3 sm:p-2"
-          aria-label="Agregar a favoritos"
+          onClick={() => handleToggleFavorite(beer.id)}
+          disabled={wishlistLoading}
+          className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors disabled:opacity-50"
+          aria-label={
+            isInWishlist(beer.id, beer)
+              ? "Quitar de favoritos"
+              : "Agregar a favoritos"
+          }
         >
           <Heart
-            className={`w-4 h-4 sm:w-5 sm:h-5 ${
-              favorites.includes(beer.id)
+            className={`w-5 h-5 transition-colors ${
+              isInWishlist(beer.id, beer)
                 ? "fill-red-500 text-red-500"
-                : "text-gray-600"
-            }`}
+                : "text-gray-600 hover:text-red-500"
+            } ${wishlistLoading ? "animate-pulse" : ""}`}
           />
         </button>
       </div>
@@ -197,9 +230,10 @@ export default function ProductSlider() {
           <button
             onClick={() => handleAddToCart(beer)}
             disabled={addingToCart === beer.id || beer.stock_quantity === 0}
-            className="flex-1 flex items-center justify-center space-x-1 text-white py-2 px-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm sm:py-3 sm:px-4 sm:space-x-2"
-            style={{ 
-              backgroundColor: beer.stock_quantity === 0 ? "#6B7280" : "#B58E31" 
+            className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            style={{
+              backgroundColor:
+                beer.stock_quantity === 0 ? "#6B7280" : "#B58E31",
             }}
             onMouseEnter={(e) =>
               !e.currentTarget.disabled &&
@@ -276,22 +310,15 @@ export default function ProductSlider() {
             </div>
             <div className="text-gray-400 text-sm">{error}</div>
           </div>
-        ) : latestBeers.length === 0 ? (
+        ) : localBeers.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-400 text-lg mb-2">
               No hay cervezas recientes disponibles
             </div>
           </div>
         ) : (
-          <ProductCarousel 
-            itemsPerView={{
-              mobile: 1,
-              tablet: 2,
-              desktop: 3
-            }} 
-            className="px-2 sm:px-4 lg:px-8"
-          >
-            {latestBeers.map((beer) => renderProduct(beer))}
+          <ProductCarousel itemsPerView={3} className="px-8">
+            {localBeers.map((beer) => renderProduct(beer))}
           </ProductCarousel>
         )}
       </div>

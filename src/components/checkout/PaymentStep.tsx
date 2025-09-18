@@ -27,6 +27,11 @@ export default function PaymentStep({
   onBack,
   onSuccess,
 }: PaymentStepProps) {
+  console.log("💰 PaymentStep received totalAmount:", totalAmount);
+  console.log(
+    "💰 PaymentStep amountInCents will be:",
+    Math.round(totalAmount * 100)
+  );
   const { createPaymentSession, confirmOrder, checkoutState } = useCheckout();
   const { toast, showSuccess, showError, hideToast } = useToast();
 
@@ -157,10 +162,13 @@ export default function PaymentStep({
       console.log("✅ WidgetCheckout found, generating signature...");
 
       // PASO 1: Generar la firma de integridad desde el backend
-      // Solo enviar el order_id, el backend generará todo lo demás
+      // Enviar el order_id y el totalAmount para asegurar consistencia
       const signatureData = {
         order_id: orderId,
+        amount: totalAmount, // Asegurar que el backend use el mismo total que mostramos
       };
+
+      console.log("🔐 Signature data with totalAmount:", signatureData);
 
       console.log("🔐 Requesting signature for order:", orderId);
 
@@ -169,6 +177,15 @@ export default function PaymentStep({
       );
 
       console.log("🔍 Full signature response:", signatureResponse);
+      console.log(
+        "🔍 Backend returned amount:",
+        signatureResponse.data?.amount
+      );
+      console.log("🔍 Frontend totalAmount:", totalAmount);
+      console.log(
+        "🔍 Amount match:",
+        signatureResponse.data?.amount === totalAmount
+      );
 
       if (!signatureResponse.success || !signatureResponse.data?.signature) {
         console.error("❌ Signature response validation failed:", {
@@ -252,9 +269,9 @@ export default function PaymentStep({
       checkout.open((result: any) => {
         console.log("🎉 Transaction completed:", result);
         if (result && result.transaction && result.transaction.id) {
-          // El pago fue exitoso, redirigir a la página de éxito
-          console.log("✅ Payment successful, redirecting to success page...");
-          window.location.href = `/checkout/success?order_id=${orderId}&transaction_id=${result.transaction.id}&reference=${reference}`;
+          // El pago fue exitoso, llamar al callback de éxito
+          console.log("✅ Payment successful, calling success callback...");
+          handlePaymentSuccess(result);
         } else {
           console.error("❌ Invalid transaction result:", result);
           showError("Error", "No se pudo procesar el pago");
@@ -273,11 +290,9 @@ export default function PaymentStep({
   return (
     <>
       <div className="bg-white rounded-lg shadow-sm border">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Método de Pago
-          </h2>
-          <p className="text-sm text-gray-600 mt-1">
+        <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+          <h2 className="text-xl font-bold text-gray-900">Método de Pago</h2>
+          <p className="text-sm font-medium text-gray-700 mt-1">
             Pagar de forma segura con Wompi
           </p>
         </div>
@@ -290,12 +305,12 @@ export default function PaymentStep({
             </h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Número de orden:</span>
-                <span className="font-medium">{orderId}</span>
+                <span className="text-gray-700">Número de orden:</span>
+                <span className="font-medium text-gray-900">{orderId}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Total a pagar:</span>
-                <span className="font-medium text-lg">
+                <span className="text-gray-700">Total a pagar:</span>
+                <span className="font-bold text-lg text-gray-900">
                   ${totalAmount.toLocaleString()} COP
                 </span>
               </div>
@@ -321,10 +336,10 @@ export default function PaymentStep({
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-blue-800">
+                <h3 className="text-sm font-bold text-blue-900">
                   Pago Seguro con Wompi
                 </h3>
-                <p className="text-sm text-blue-700 mt-1">
+                <p className="text-sm text-blue-800 mt-1">
                   Wompi es la plataforma de pagos más segura de Colombia. Al
                   hacer clic en "Pagar con Wompi" podrás elegir entre tarjetas
                   de crédito/débito, PSE, Nequi, Daviplata y más métodos de
@@ -336,7 +351,7 @@ export default function PaymentStep({
                       wompiScriptLoaded ? "bg-green-500" : "bg-yellow-500"
                     }`}
                   ></div>
-                  <span className="text-xs text-blue-600">
+                  <span className="text-xs font-medium text-blue-700">
                     {wompiScriptLoaded ? "Wompi listo" : "Cargando Wompi..."}
                   </span>
                 </div>
@@ -387,36 +402,54 @@ export default function PaymentStep({
 
             {/* Métodos de pago aceptados */}
             <div className="text-center">
-              <p className="text-xs text-gray-500 mb-2">
+              <p className="text-xs font-medium text-gray-700 mb-2">
                 Métodos de pago aceptados:
               </p>
-              <div className="flex justify-center space-x-2">
-                <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+              <div className="flex justify-center space-x-2 flex-wrap gap-2">
+                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200">
                   💳 Tarjetas
                 </span>
-                <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200">
                   🏦 PSE
                 </span>
-                <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200">
                   📱 Nequi
                 </span>
-                <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200">
                   💸 Daviplata
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Botón de volver */}
-          <div className="mt-6">
-            <button
-              type="button"
-              onClick={onBack}
-              disabled={showWompiWidget}
-              className="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-medium hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Volver a Dirección
-            </button>
+          {/* Información de seguridad */}
+          <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <svg
+                  className="w-5 h-5 text-yellow-600 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-yellow-800">
+                  Orden en Proceso
+                </h3>
+                <p className="text-sm text-yellow-700 mt-1">
+                  Tu orden ya fue creada exitosamente. Complete el pago para
+                  finalizar tu compra.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

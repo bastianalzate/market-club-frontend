@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useUserOrders } from "@/hooks/useUserProfile";
+import { constants } from "@/config/constants";
+import OrderDetailsModal from "./OrderDetailsModal";
 
 interface User {
   id: string;
@@ -30,9 +32,35 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [orderDetails, setOrderDetails] = useState<any>(null);
+  const [modalLoading, setModalLoading] = useState(false);
 
   const { orders, pagination, loading, error, loadOrders, getOrderDetails } =
     useUserOrders();
+
+  // Helper function para obtener la URL de imagen del producto
+  const getProductImageUrl = (imageUrl?: string) => {
+    if (!imageUrl) {
+      return "/images/cervezas/bottella-01.png"; // Imagen por defecto
+    }
+
+    // Si la imagen ya incluye la URL completa, usarla tal como está
+    if (imageUrl.startsWith("http")) {
+      return imageUrl;
+    }
+
+    // Si es una ruta relativa, construir la URL completa
+    const baseUrl = constants.api_url.replace("/api", "");
+
+    if (imageUrl.startsWith("/storage/") || imageUrl.startsWith("storage/")) {
+      const cleanPath = imageUrl.startsWith("/") ? imageUrl.slice(1) : imageUrl;
+      return `${baseUrl}/${cleanPath}`;
+    }
+
+    // Para rutas que no empiezan con storage/, asumir que van en storage/
+    return `${baseUrl}/storage/${imageUrl}`;
+  };
 
   // Cargar órdenes al montar el componente
   useEffect(() => {
@@ -116,12 +144,29 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
 
   const handleViewOrder = async (orderId: string) => {
     try {
-      const orderDetails = await getOrderDetails(orderId);
-      console.log("Order details:", orderDetails);
-      // Aquí podrías abrir un modal o navegar a una página de detalles
+      setSelectedOrderId(orderId);
+      setModalLoading(true);
+
+      const orderData = await getOrderDetails(orderId);
+
+      if (orderData && orderData.id) {
+        setOrderDetails(orderData);
+      } else {
+        console.error("❌ No valid order data received");
+        setOrderDetails(null);
+      }
     } catch (error) {
-      console.error("Error getting order details:", error);
+      console.error("❌ Error getting order details:", error);
+      setOrderDetails(null);
+    } finally {
+      setModalLoading(false);
     }
+  };
+
+  const handleCloseModal = () => {
+    setSelectedOrderId(null);
+    setOrderDetails(null);
+    setModalLoading(false);
   };
 
   if (loading && orders.length === 0) {
@@ -181,36 +226,87 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
 
       {/* Filtros y Búsqueda */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex flex-col lg:flex-row gap-4">
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Filtrar Pedidos
+          </h3>
+          <p className="text-sm text-gray-600">
+            Busca y filtra tus pedidos por número o estado
+          </p>
+        </div>
+        <div className="flex flex-col lg:flex-row gap-6">
           {/* Búsqueda */}
-          <form onSubmit={handleSearch} className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Buscar por número de orden..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-              />
-            </div>
-          </form>
+          <div className="flex-1">
+            <label
+              htmlFor="search-orders"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Buscar pedido
+            </label>
+            <form onSubmit={handleSearch}>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  id="search-orders"
+                  type="text"
+                  placeholder="Ingresa el número de orden (ej: ORD-68CB3EA79B116)"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 text-gray-900 placeholder-gray-500 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 focus:outline-none transition-colors"
+                />
+              </div>
+            </form>
+          </div>
 
           {/* Filtro de Estado */}
-          <div className="flex items-center gap-2">
-            <Filter className="w-5 h-5 text-gray-400" />
-            <select
-              value={statusFilter}
-              onChange={(e) => handleStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+          <div className="lg:w-64">
+            <label
+              htmlFor="status-filter"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
-              <option value="all">Todos los estados</option>
-              <option value="Pendiente">Pendiente</option>
-              <option value="Procesando">Procesando</option>
-              <option value="En camino">En camino</option>
-              <option value="Entregado">Entregado</option>
-              <option value="Cancelado">Cancelado</option>
-            </select>
+              Filtrar por estado
+            </label>
+            <div className="relative">
+              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <select
+                id="status-filter"
+                value={statusFilter}
+                onChange={(e) => handleStatusFilter(e.target.value)}
+                className="w-full pl-10 pr-8 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 focus:outline-none transition-colors appearance-none"
+              >
+                <option value="all" className="text-gray-900">
+                  Todos los estados
+                </option>
+                <option value="Pendiente" className="text-gray-900">
+                  ⏳ Pendiente
+                </option>
+                <option value="Procesando" className="text-gray-900">
+                  📦 Procesando
+                </option>
+                <option value="En camino" className="text-gray-900">
+                  🚚 En camino
+                </option>
+                <option value="Entregado" className="text-gray-900">
+                  ✅ Entregado
+                </option>
+                <option value="Cancelado" className="text-gray-900">
+                  ❌ Cancelado
+                </option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                <svg
+                  className="h-5 w-5 text-gray-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -298,13 +394,15 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
                         key={item.id}
                         className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
                       >
-                        {item.product_image && (
-                          <img
-                            src={item.product_image}
-                            alt={item.product_name}
-                            className="w-10 h-10 rounded-lg object-cover"
-                          />
-                        )}
+                        <img
+                          src={getProductImageUrl(item.product_image)}
+                          alt={item.product_name}
+                          className="w-12 h-12 rounded-lg object-cover shadow-sm flex-shrink-0"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = "/images/cervezas/bottella-01.png";
+                          }}
+                        />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">
                             {item.product_name}
@@ -374,6 +472,14 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
           </div>
         )}
       </div>
+
+      {/* Modal de Detalles del Pedido */}
+      <OrderDetailsModal
+        isOpen={selectedOrderId !== null}
+        onClose={handleCloseModal}
+        orderDetails={orderDetails}
+        loading={modalLoading}
+      />
     </div>
   );
 }

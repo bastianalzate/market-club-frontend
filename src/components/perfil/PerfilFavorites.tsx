@@ -14,7 +14,9 @@ import {
 import { useState, useEffect } from "react";
 import { useCart } from "@/hooks/useCart";
 import { useNotification } from "@/hooks/useNotification";
+import { useToast } from "@/hooks/useToast";
 import { useUserFavorites } from "@/hooks/useUserProfile";
+import Toast from "@/components/shared/Toast";
 
 interface User {
   id: string;
@@ -35,6 +37,12 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
 
   const { addToCart, updateQuantity, removeFromCart } = useCart();
   const { showSuccess, showError } = useNotification();
+  const {
+    toast,
+    showSuccess: showToastSuccess,
+    showError: showToastError,
+    hideToast,
+  } = useToast();
   const {
     favorites,
     pagination,
@@ -108,14 +116,33 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
       const result = await removeFromFavorites(productId);
 
       if (result.success) {
+        // Mostrar toast de éxito
+        showToastSuccess(
+          "🗑️ ¡Eliminado de favoritos!",
+          "El producto se eliminó de tus favoritos"
+        );
+
+        // También mostrar notificación
         showSuccess(
           "Producto removido",
           "El producto se removió de tus favoritos"
         );
       } else {
+        // Mostrar toast de error
+        showToastError(
+          "Error al eliminar",
+          result.message || "No se pudo eliminar de favoritos"
+        );
+
         showError("Error", result.message || "Error al remover de favoritos");
       }
     } catch (error) {
+      // Mostrar toast de error
+      showToastError(
+        "Error de conexión",
+        "Verifica tu conexión e intenta nuevamente"
+      );
+
       showError("Error", "Error al remover de favoritos");
     }
   };
@@ -183,43 +210,60 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
 
       {/* Filtros y Búsqueda */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex flex-col lg:flex-row gap-4">
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Buscar Favoritos</h3>
+          <p className="text-sm text-gray-600">Encuentra rápidamente tus productos favoritos</p>
+        </div>
+        <div className="flex flex-col lg:flex-row gap-6">
           {/* Búsqueda */}
-          <form onSubmit={handleSearch} className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Buscar en favoritos..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-              />
-            </div>
-          </form>
+          <div className="flex-1">
+            <label htmlFor="search-favorites" className="block text-sm font-medium text-gray-700 mb-2">
+              Buscar producto
+            </label>
+            <form onSubmit={handleSearch}>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  id="search-favorites"
+                  type="text"
+                  placeholder="Busca por nombre del producto (ej: Cerveza Estrella Galicia)"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 text-gray-900 placeholder-gray-500 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 focus:outline-none transition-colors"
+                />
+              </div>
+            </form>
+          </div>
 
           {/* Vista */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setViewMode("grid")}
-              className={`p-2 rounded-lg ${
-                viewMode === "grid"
-                  ? "bg-yellow-100 text-yellow-600"
-                  : "text-gray-400 hover:text-gray-600"
-              }`}
-            >
-              <Grid className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setViewMode("list")}
-              className={`p-2 rounded-lg ${
-                viewMode === "list"
-                  ? "bg-yellow-100 text-yellow-600"
-                  : "text-gray-400 hover:text-gray-600"
-              }`}
-            >
-              <List className="w-5 h-5" />
-            </button>
+          <div className="lg:w-48">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Vista de productos
+            </label>
+            <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                  viewMode === "grid"
+                    ? "bg-white text-yellow-600 shadow-sm"
+                    : "text-gray-600 hover:text-gray-800"
+                }`}
+              >
+                <Grid className="w-4 h-4" />
+                Cuadrícula
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                  viewMode === "list"
+                    ? "bg-white text-yellow-600 shadow-sm"
+                    : "text-gray-600 hover:text-gray-800"
+                }`}
+              >
+                <List className="w-4 h-4" />
+                Lista
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -380,6 +424,15 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
           </div>
         </div>
       )}
+
+      {/* Toast para notificaciones */}
+      <Toast
+        isVisible={toast.isVisible}
+        type={toast.type}
+        title={toast.title}
+        message={toast.message}
+        onClose={hideToast}
+      />
     </div>
   );
 }

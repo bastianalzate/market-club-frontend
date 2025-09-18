@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Grid,
   List,
@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useCartContext } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/useToast";
+import { useWishlist } from "@/hooks/useWishlist";
 import { Product } from "@/features/products/types/product";
 import { TransformedProduct } from "@/hooks/useProducts";
 import ProductSkeleton from "@/components/shared/ProductSkeleton";
@@ -90,6 +91,13 @@ export default function ProductGrid({
 }: ProductGridProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(pagination?.currentPage || 1);
+  const [localProducts, setLocalProducts] =
+    useState<TransformedProduct[]>(products);
+
+  // Sincronizar productos locales con props cuando cambien
+  useEffect(() => {
+    setLocalProducts(products);
+  }, [products]);
 
   // Sincronizar currentPage con la paginación del servidor
   useEffect(() => {
@@ -97,7 +105,6 @@ export default function ProductGrid({
       setCurrentPage(pagination.currentPage);
     }
   }, [pagination?.currentPage]);
-  const [favorites, setFavorites] = useState<number[]>([]);
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
   const [justAdded, setJustAdded] = useState<number | null>(null);
   const {
@@ -110,12 +117,35 @@ export default function ProductGrid({
   } = useCartContext();
   const { toast, showSuccess, showError, hideToast } = useToast();
 
-  const toggleFavorite = (productId: number) => {
-    setFavorites((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
-    );
+  // Función para actualizar el estado is_favorite de un producto en la lista
+  const updateProductFavoriteInList = useCallback(
+    (productId: number, isFavorite: boolean) => {
+      console.log(
+        `🔄 ProductGrid: Actualizando producto ${productId} a is_favorite: ${isFavorite}`
+      );
+      setLocalProducts((prev) =>
+        prev.map((product) =>
+          product.id === productId
+            ? { ...product, is_favorite: isFavorite }
+            : product
+        )
+      );
+    },
+    []
+  );
+
+  const {
+    toggleWishlist,
+    isInWishlist,
+    loading: wishlistLoading,
+  } = useWishlist({
+    showSuccess,
+    showError,
+    onProductFavoriteUpdate: updateProductFavoriteInList,
+  });
+
+  const handleToggleFavorite = async (productId: number) => {
+    await toggleWishlist(productId);
   };
 
   // Las funciones getProductQuantity e isInCart ahora vienen del hook useCart
@@ -215,10 +245,11 @@ export default function ProductGrid({
   };
 
   // Configuración de paginación - usar la paginación del servidor si está disponible
-  const totalPages = pagination?.lastPage || Math.ceil(products.length / 9);
+  const totalPages =
+    pagination?.lastPage || Math.ceil(localProducts.length / 9);
   const currentProducts = pagination
-    ? products
-    : products.slice((currentPage - 1) * 9, currentPage * 9);
+    ? localProducts
+    : localProducts.slice((currentPage - 1) * 9, currentPage * 9);
 
   // Para mostrar información de paginación
   const startIndex = pagination
@@ -305,7 +336,7 @@ export default function ProductGrid({
 
         <div className="text-sm text-gray-500">
           Mostrando {startIndex}-{endIndex} de{" "}
-          {pagination?.total || totalProducts || products.length} productos
+          {pagination?.total || totalProducts || localProducts.length} productos
         </div>
       </div>
 
@@ -365,26 +396,31 @@ export default function ProductGrid({
                     }`}
                   />
                 </div>
-                
+
                 {/* Etiqueta de Agotado */}
                 {product.stock_quantity === 0 && (
                   <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
                     AGOTADO
                   </div>
                 )}
-                
+
                 {/* Botón de corazón (favorito) */}
                 <button
-                  onClick={() => toggleFavorite(product.id)}
-                  className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors"
-                  aria-label="Agregar a favoritos"
+                  onClick={() => handleToggleFavorite(product.id)}
+                  disabled={wishlistLoading}
+                  className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors disabled:opacity-50"
+                  aria-label={
+                    isInWishlist(product.id, product)
+                      ? "Quitar de favoritos"
+                      : "Agregar a favoritos"
+                  }
                 >
                   <Heart
-                    className={`w-5 h-5 ${
-                      favorites.includes(product.id)
+                    className={`w-5 h-5 transition-colors ${
+                      isInWishlist(product.id, product)
                         ? "fill-red-500 text-red-500"
-                        : "text-gray-600"
-                    }`}
+                        : "text-gray-600 hover:text-red-500"
+                    } ${wishlistLoading ? "animate-pulse" : ""}`}
                   />
                 </button>
               </div>
@@ -440,10 +476,14 @@ export default function ProductGrid({
                   {/* Botón principal "Añadir al carrito" */}
                   <button
                     onClick={() => handleAddToCart(product)}
-                    disabled={addingToCart === product.id || product.stock_quantity === 0}
-                    className="flex-1 flex items-center justify-center gap-1 sm:gap-2 text-white py-2 sm:py-3 px-2 sm:px-4 rounded-lg text-sm sm:text-base font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    style={{ 
-                      backgroundColor: product.stock_quantity === 0 ? "#6B7280" : "#B58E31" 
+                    disabled={
+                      addingToCart === product.id ||
+                      product.stock_quantity === 0
+                    }
+                    className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    style={{
+                      backgroundColor:
+                        product.stock_quantity === 0 ? "#6B7280" : "#B58E31",
                     }}
                     onMouseEnter={(e) =>
                       !e.currentTarget.disabled &&
@@ -463,9 +503,10 @@ export default function ProductGrid({
                         ? "Agregar más"
                         : "Añadir al carrito"}
                     </span>
-                    {addingToCart !== product.id && product.stock_quantity > 0 && (
-                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                    )}
+                    {addingToCart !== product.id &&
+                      product.stock_quantity > 0 && (
+                        <ArrowRight className="w-4 h-4" />
+                      )}
                   </button>
                 </div>
               </div>

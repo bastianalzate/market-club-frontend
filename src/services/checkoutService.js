@@ -26,10 +26,8 @@ export class CheckoutService {
     static async createOrder(shippingAddress, billingAddress = null, notes = '') {
         const headers = getSessionHeaders();
         console.log('📦 Create Order Headers:', headers);
-        
-        // Obtener información del usuario si está logueado
-        const token = localStorage.getItem('token');
-        const userId = localStorage.getItem('user_id');
+        console.log('📦 Token exists:', !!localStorage.getItem('token'));
+        console.log('📦 Authorization header:', headers['Authorization']);
         
         // Transformar datos al formato que espera el backend
         const backendShippingAddress = {
@@ -50,13 +48,8 @@ export class CheckoutService {
             notes: notes
         };
         
-        // Si el usuario está logueado, incluir el user_id
-        if (token && userId) {
-            requestBody.user_id = parseInt(userId);
-            console.log('📦 User authenticated, including user_id:', userId);
-        } else {
-            console.log('📦 User not authenticated, using session_id');
-        }
+        // El backend ahora maneja automáticamente la autenticación opcional
+        console.log('📦 Backend will handle user authentication automatically via Authorization header');
         
         console.log('📦 Transformed Shipping Address:', backendShippingAddress);
         console.log('📦 Request Body:', requestBody);

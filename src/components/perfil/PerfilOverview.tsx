@@ -168,7 +168,9 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Miembro desde</p>
+              <p className="text-sm font-medium text-gray-600">
+                {profile?.is_wholesaler ? "Mayorista desde" : "Miembro desde"}
+              </p>
               <p className="text-lg font-bold text-gray-900">
                 {stats?.member_since
                   ? new Date(stats.member_since).toLocaleDateString("es-CO", {
@@ -275,10 +277,12 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
           </div>
         </div>
 
-        {/* Beneficios de Miembro */}
+        {/* Beneficios de Miembro/Mayorista */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Beneficios de Miembro
+            {profile?.is_wholesaler
+              ? "Beneficios de Mayorista"
+              : "Beneficios de Miembro"}
           </h3>
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
