@@ -28,8 +28,26 @@ export interface SubscriptionSectionConfig {
   plans: SubscriptionPlan[];
 }
 
+export interface PricingPlan {
+  id: string;
+  name: string;
+  price: string;
+  period: string;
+  description: string;
+  features: string[];
+  buttonText: string;
+  buttonColor?: string;
+  isHighlighted?: boolean;
+}
+
+export interface PricingSectionConfig {
+  plans: PricingPlan[];
+  backgroundColor?: string;
+}
+
 export interface MarketClubPageConfig {
   banner: BannerConfig;
   heroSection: HeroSectionConfig;
   subscriptionSection: SubscriptionSectionConfig;
+  pricingSection: PricingSectionConfig;
 }

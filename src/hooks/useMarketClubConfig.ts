@@ -64,6 +64,64 @@ export const useMarketClubConfig = (): MarketClubPageConfig => {
           imagePosition: 'left'
         }
       ]
+    },
+    pricingSection: {
+      backgroundColor: "#B58E31",
+      plans: [
+        {
+          id: "descuentos-envios",
+          name: "Descuentos y envíos",
+          price: "$0",
+          period: "/ Month",
+          description: "Ideal for individuals who need quick access to basic features.",
+          features: [
+            "20,000+ of PNG & SVG graphics",
+            "Access to 100 million stock images",
+            "Upload custom icons and fonts",
+            "Unlimited Sharing",
+            "Upload graphics & video in up to 4k",
+            "Unlimited Projects",
+            "Instant Access to our design system",
+            "Create teams to collaborate on designs"
+          ],
+          buttonText: "Empieza ahora",
+          buttonColor: "#B58E31",
+          isHighlighted: false
+        },
+        {
+          id: "vip",
+          name: "VIP",
+          price: "$25",
+          period: "/ Month",
+          description: "Ideal for individuals who need advanced features and tools for client work.",
+          features: [
+            "Invitaciones a catas privadas, degustaciones y eventos exclusivos",
+            "Acceso anticipado con precios preferenciales a nuevas colecciones y lanzamientos",
+            "Prioridad en reservas para cenas, experiencias gastronómicas y eventos especiales",
+            "Eventos exclusivos para regular experiencias gastronómicas por temporadas",
+            "Cupones descuentos para regular experiencia en fechas especiales (cumpleaños, aniversarios)"
+          ],
+          buttonText: "Empieza ahora",
+          buttonColor: "#FFFFFF",
+          isHighlighted: true
+        },
+        {
+          id: "personalizacion",
+          name: "Personalización",
+          price: "$100",
+          period: "/ Month",
+          description: "Ideal for businesses who need personalized services and security for large teams.",
+          features: [
+            "Atención personalizada por WhatsApp para recibir recomendaciones y ofertas",
+            "Personaliza tu caja mensual siguiendo tus gustos y preferencias",
+            "Armar un catálogo personal con precio preferencial",
+            "Recomendaciones inmediatas y alertas sobre lanzamientos y novedades"
+          ],
+          buttonText: "Empieza ahora",
+          buttonColor: "#B58E31",
+          isHighlighted: false
+        }
+      ]
     }
   };
 };
