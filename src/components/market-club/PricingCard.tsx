@@ -1,7 +1,10 @@
+import { useMemo, useState } from "react";
 import { PricingPlan } from "@/types/market-club";
 
 interface PricingCardProps extends PricingPlan {
   className?: string;
+  onActionClick?: () => void;
+  isBusy?: boolean;
 }
 
 export default function PricingCard({
@@ -13,14 +16,27 @@ export default function PricingCard({
   buttonText,
   buttonColor = "#B58E31",
   isHighlighted = false,
-  className = ""
+  className = "",
+  onActionClick,
+  isBusy = false
 }: PricingCardProps) {
+  const [expanded, setExpanded] = useState(false);
+  const MAX_CHARS = 220;
+  const truncated = useMemo(() => {
+    if (!description) return "";
+    if (expanded) return description;
+    if (description.length <= MAX_CHARS) return description;
+    return description.slice(0, MAX_CHARS).trimEnd() + "…";
+  }, [description, expanded]);
   return (
     <div className={`${
       isHighlighted ? 'bg-black text-white' : 'bg-white'
     } rounded-lg p-8 flex flex-col h-full ${className}`}>
-      {/* Header */}
-      <div className="mb-6">
+      {/* Header alineado */}
+      <div 
+        className="mb-6 grid"
+        style={{ gridTemplateRows: 'auto 1fr auto', minHeight: 240 }}
+      >
         <h3 
           className={`mb-4 ${isHighlighted ? 'text-white' : 'text-black'}`}
           style={{
@@ -33,7 +49,7 @@ export default function PricingCard({
         </h3>
         
         <p 
-          className={`mb-6 text-sm ${isHighlighted ? 'text-gray-300' : 'text-gray-600'}`}
+          className={`text-sm ${isHighlighted ? 'text-gray-300' : 'text-gray-600'}`}
           style={{
             fontFamily: "var(--font-inter)",
             fontSize: "14px",
@@ -41,10 +57,19 @@ export default function PricingCard({
             lineHeight: "1.4"
           }}
         >
-          {description}
+          {truncated}
+          {description && description.length > MAX_CHARS && (
+            <button
+              type="button"
+              className={`ml-1 text-xs underline align-baseline ${isHighlighted ? 'text-gray-300' : 'text-gray-700'}`}
+              onClick={() => setExpanded((v) => !v)}
+            >
+              {expanded ? 'Ver menos' : 'Ver más'}
+            </button>
+          )}
         </p>
 
-        <div className="mb-6">
+        <div className="mt-6">
           <span 
             className={`${isHighlighted ? 'text-white' : 'text-black'}`}
             style={{
@@ -68,7 +93,7 @@ export default function PricingCard({
         </div>
       </div>
 
-      {/* Button */}
+      {/* Botón en posición consistente */}
       <div className="mb-6">
         <button
           className={`w-full py-3 px-4 rounded-md font-medium transition-opacity hover:opacity-90 ${
@@ -80,8 +105,10 @@ export default function PricingCard({
             fontSize: "14px",
             fontWeight: 600
           }}
+          onClick={onActionClick}
+          disabled={isBusy}
         >
-          {buttonText}
+          {isBusy ? 'Procesando…' : buttonText}
         </button>
       </div>
 
