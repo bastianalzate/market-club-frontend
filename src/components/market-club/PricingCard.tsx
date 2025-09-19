@@ -4,6 +4,7 @@ import { PricingPlan } from "@/types/market-club";
 interface PricingCardProps extends PricingPlan {
   className?: string;
   onActionClick?: () => void;
+  isBusy?: boolean;
 }
 
 export default function PricingCard({
@@ -16,7 +17,8 @@ export default function PricingCard({
   buttonColor = "#B58E31",
   isHighlighted = false,
   className = "",
-  onActionClick
+  onActionClick,
+  isBusy = false
 }: PricingCardProps) {
   const [expanded, setExpanded] = useState(false);
   const MAX_CHARS = 220;
@@ -104,8 +106,9 @@ export default function PricingCard({
             fontWeight: 600
           }}
           onClick={onActionClick}
+          disabled={isBusy}
         >
-          {buttonText}
+          {isBusy ? 'Procesando…' : buttonText}
         </button>
       </div>
 

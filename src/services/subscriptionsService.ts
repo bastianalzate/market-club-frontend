@@ -51,3 +51,29 @@ export async function subscribeToPlan(planId: string, durationMonths = 1) {
   return res.json();
 }
 
+export interface CurrentSubscriptionResponse {
+  success: boolean;
+  data: null | {
+    id: number;
+    status: string;
+    plan: {
+      id: string;
+      name: string;
+    };
+  };
+}
+
+export async function getCurrentSubscription(): Promise<CurrentSubscriptionResponse | null> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+  if (!token) return null;
+  const res = await fetch(`${constants.api_url}/subscriptions/current`, {
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
+

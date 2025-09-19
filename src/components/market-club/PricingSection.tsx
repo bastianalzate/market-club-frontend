@@ -3,8 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import PricingCard from "./PricingCard";
 import { PricingSectionConfig, PricingPlan } from "@/types/market-club";
-import { fetchSubscriptionPlans } from "@/services/subscriptionsService";
+import { fetchSubscriptionPlans, subscribeToPlan, getCurrentSubscription } from "@/services/subscriptionsService";
 import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 interface PricingSectionProps extends PricingSectionConfig {
   containerClassName?: string;
@@ -22,6 +23,8 @@ export default function PricingSection({
   const [error, setError] = useState<string | null>(null);
   const [backendPlans, setBackendPlans] = useState<any[]>([]);
   const { isAuthenticated, openLoginModal } = useAuth();
+  const [subscribingPlanId, setSubscribingPlanId] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     let mounted = true;
@@ -41,6 +44,8 @@ export default function PricingSection({
       mounted = false;
     };
   }, []);
+
+  // Nota: No redirigimos automáticamente si el usuario ya tiene una suscripción.
 
   const mappedPlans = useMemo(() => {
     if (backendPlans.length === 0) return plans; // fallback a los quemados si falla
@@ -92,8 +97,27 @@ export default function PricingSection({
                   openLoginModal();
                   return;
                 }
-                // Aquí luego podremos iniciar el flujo de suscripción
+                // Si ya tiene suscripción activa, no cambiarla y redirigir al perfil inmediatamente
+                (async () => {
+                  try {
+                    setSubscribingPlanId(plan.id);
+                    const current = await getCurrentSubscription();
+                    if (current && current.success && current.data) {
+                      router.push('/perfil');
+                      return;
+                    }
+                    // Si no tiene suscripción, crearla y luego redirigir
+                    await subscribeToPlan(plan.id, 1);
+                    router.push('/perfil');
+                  } catch (e) {
+                    // Ante cualquier error, no intentar cambiar el plan actual
+                    router.push('/perfil');
+                  } finally {
+                    setSubscribingPlanId(null);
+                  }
+                })();
               }}
+              isBusy={subscribingPlanId === plan.id}
             />
           ))}
         </div>
