@@ -220,7 +220,7 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
       <div className="px-4 sm:px-6 py-4 sm:py-5 border-t border-gray-100">
         <button
           onClick={onContinue}
-          className="w-full text-white py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+          className="w-full text-white py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl cursor-pointer"
           style={{
             backgroundColor: "rgb(180, 140, 43)",
           }}

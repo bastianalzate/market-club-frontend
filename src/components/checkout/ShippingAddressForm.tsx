@@ -29,6 +29,8 @@ export default function ShippingAddressForm({
     phone: "",
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -56,10 +58,21 @@ export default function ShippingAddressForm({
       return;
     }
 
-    // Continuar directamente sin validar la dirección
-    console.log("📍 Dirección ingresada:", formData);
-    showSuccess("Dirección guardada", "Continuando con el proceso de pago");
-    onNext(formData);
+    setIsLoading(true);
+
+    try {
+      // Simular un pequeño delay para mostrar el loading
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Continuar directamente sin validar la dirección
+      console.log("📍 Dirección ingresada:", formData);
+      showSuccess("Dirección guardada", "Continuando con el proceso de pago");
+      onNext(formData);
+    } catch (error) {
+      showError("Error", "Hubo un problema al procesar la dirección");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -303,9 +316,21 @@ export default function ShippingAddressForm({
 
           <button
             type="submit"
-            className="w-full md:w-auto bg-yellow-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-yellow-700 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+            disabled={isLoading}
+            className={`w-full md:w-auto py-3 px-6 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 cursor-pointer ${
+              isLoading
+                ? "bg-gray-400 cursor-not-allowed text-white"
+                : "bg-yellow-600 hover:bg-yellow-700 text-white"
+            }`}
           >
-            Continuar al Pago
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                Procesando...
+              </div>
+            ) : (
+              "Continuar al Pago"
+            )}
           </button>
         </div>
       </form>

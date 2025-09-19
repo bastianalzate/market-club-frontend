@@ -95,7 +95,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     setTimeout(() => {
       setShouldRender(false);
       onClose();
-    }, 300);
+    }, 250);
   }, [onClose, clearAllForms]);
 
   // Función para limpiar el formulario de registro
@@ -303,8 +303,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         style={{
           backgroundColor: "#00000091",
           animation: isAnimating
-            ? "fadeIn 0.3s ease-in-out"
-            : "fadeOut 0.3s ease-in-out",
+            ? "fadeIn 0.25s ease-in-out"
+            : "fadeOut 0.25s ease-in-out",
         }}
         onClick={handleClose}
       />
@@ -314,16 +314,16 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         className="fixed inset-0 z-50 flex items-center justify-center p-4"
         style={{
           animation: isAnimating
-            ? "fadeIn 0.3s ease-in-out"
-            : "fadeOut 0.3s ease-in-out",
+            ? "fadeIn 0.25s ease-in-out"
+            : "fadeOut 0.25s ease-in-out",
         }}
       >
         <div
           className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden"
           style={{
             animation: isAnimating
-              ? "slideInFromBottom 0.3s ease-in-out"
-              : "slideOutToBottom 0.3s ease-in-out",
+              ? "slideInFromBottom 0.25s ease-in-out"
+              : "slideOutToBottom 0.25s ease-in-out",
           }}
           onClick={(e) => e.stopPropagation()}
         >

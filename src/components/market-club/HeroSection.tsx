@@ -14,10 +14,10 @@ export default function HeroSection({
   titleStyle = {
     fontFamily: "var(--font-oswald)",
     fontSize: "64px",
-    fontWeight: 700
+    fontWeight: 700,
   },
-  descriptionClassName = "text-[#F5F5F5] font-inter text-[32px] leading-[34px] text-justify",
-  containerClassName = "bg-black text-white py-16 px-4"
+  descriptionClassName = "text-[#F5F5F5] font-inter text-[32px] leading-[34px] text-left",
+  containerClassName = "bg-black text-white py-16 px-4",
 }: HeroSectionProps) {
   return (
     <div className={containerClassName}>
@@ -25,20 +25,15 @@ export default function HeroSection({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Título */}
           <div>
-            <h2 
-              className="text-white mb-8 leading-tight"
-              style={titleStyle}
-            >
+            <h2 className="text-white mb-8 leading-tight" style={titleStyle}>
               {title}
               {subtitle && <span className="block">{subtitle}</span>}
             </h2>
           </div>
-          
+
           {/* Texto descriptivo */}
           <div>
-            <p className={descriptionClassName}>
-              {description}
-            </p>
+            <p className={descriptionClassName}>{description}</p>
           </div>
         </div>
       </div>

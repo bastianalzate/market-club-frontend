@@ -547,8 +547,23 @@ export default function ContactoPage() {
                 className={`w-full font-semibold py-4 px-6 rounded-lg transition-colors duration-200 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 outline-none ${
                   isSubmitting
                     ? "bg-gray-400 cursor-not-allowed text-white"
-                    : "bg-yellow-600 hover:bg-yellow-700 text-white cursor-pointer"
+                    : "text-white cursor-pointer"
                 }`}
+                style={{
+                  backgroundColor: isSubmitting
+                    ? undefined
+                    : "rgb(180, 140, 43)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSubmitting) {
+                    e.currentTarget.style.backgroundColor = "rgb(160, 120, 23)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSubmitting) {
+                    e.currentTarget.style.backgroundColor = "rgb(180, 140, 43)";
+                  }
+                }}
               >
                 {isSubmitting ? "Enviando..." : "Enviar mensaje"}
               </button>
@@ -571,7 +586,7 @@ export default function ContactoPage() {
 
       {/* Sección de Horarios y Ubicación - Fondo completo */}
       <div className="mt-16 bg-black w-full">
-        <div className="max-w-7xl mx-auto">
+        <div className="w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
             {/* Mapa de Google Maps */}
             <div className="bg-black overflow-hidden h-full">
@@ -591,7 +606,7 @@ export default function ContactoPage() {
             </div>
 
             {/* Horarios de Atención */}
-            <div className="text-white flex items-center pl-16 py-12">
+            <div className="text-white flex items-center px-16 py-12">
               <div>
                 <h2
                   className="text-white mb-10"
