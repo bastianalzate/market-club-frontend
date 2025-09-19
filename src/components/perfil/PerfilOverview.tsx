@@ -147,46 +147,50 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
     }
   };
 
-  // Helper para obtener información del plan
+  // Helper para obtener información del plan usando datos reales del backend
   const getPlanInfo = (planSlug: string) => {
+    // Buscar el plan real en los datos del backend
+    const realPlan = plans.find((plan) => plan.id === planSlug);
+
+    if (realPlan) {
+      return {
+        name: realPlan.name,
+        price: `${formatPrice(parseFloat(realPlan.price))} / ${
+          realPlan.period
+        }`,
+        description: realPlan.description,
+        features: realPlan.features,
+        beers: realPlan.features[0] || "Información no disponible", // Primera característica
+        extras: realPlan.features[1] || "Información no disponible", // Segunda característica
+        color: getPlanColor(planSlug),
+        maxBeers: 0, // Los planes no tienen límite específico
+      };
+    }
+
+    // Fallback para cuando no se encuentre el plan
+    return {
+      name: "Plan Desconocido",
+      price: "$0 / mes",
+      description: "Información no disponible",
+      features: [],
+      beers: "Información no disponible",
+      extras: "Información no disponible",
+      color: "gray",
+      maxBeers: 0,
+    };
+  };
+
+  // Helper para obtener colores por plan
+  const getPlanColor = (planSlug: string) => {
     switch (planSlug) {
       case "curious_brewer":
-        return {
-          name: "Curioso Cervecero",
-          price: "$150.000 / mes",
-          beers: "Descuentos del 10% en todas las cervezas",
-          extras: "Envío gratis en compras superiores a $100.000",
-          color: "amber",
-          maxBeers: 0, // No hay límite específico de cervezas
-        };
+        return "amber";
       case "collector_brewer":
-        return {
-          name: "Coleccionista Cervecero",
-          price: "$200.000 / mes",
-          beers: "Invitaciones a catas privadas y degustaciones exclusivas",
-          extras:
-            "Acceso anticipado con precios preferenciales a nuevas colecciones",
-          color: "blue",
-          maxBeers: 0, // No hay límite específico de cervezas
-        };
+        return "blue";
       case "master_brewer":
-        return {
-          name: "Maestro Cervecero",
-          price: "$200.000 / mes",
-          beers: "Atención personalizada por WhatsApp",
-          extras: "Personaliza tu caja mensual según gustos",
-          color: "purple",
-          maxBeers: 0, // No hay límite específico de cervezas
-        };
+        return "purple";
       default:
-        return {
-          name: "Plan Desconocido",
-          price: "$0 / mes",
-          beers: "Información no disponible",
-          extras: "Información no disponible",
-          color: "gray",
-          maxBeers: 0,
-        };
+        return "gray";
     }
   };
 
@@ -397,47 +401,40 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                   </div>
 
                   {/* Beneficios dinámicos según el plan */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 border border-amber-100">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                          <Package className="w-4 h-4 text-green-600" />
-                        </div>
-                        <h3 className="font-semibold text-gray-900">
-                          Cervezas Mensuales
-                        </h3>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        {getPlanInfo(currentSubscription.plan.id).beers}
-                      </p>
-                    </div>
-
-                    <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 border border-amber-100">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                          <Gift className="w-4 h-4 text-purple-600" />
-                        </div>
-                        <h3 className="font-semibold text-gray-900">
-                          Extras Especiales
-                        </h3>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        {getPlanInfo(currentSubscription.plan.id).extras}
-                      </p>
-                    </div>
-
-                    <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 border border-amber-100">
-                      <div className="flex items-center gap-3 mb-2">
+                      <div className="flex items-center gap-3 mb-3">
                         <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <Zap className="w-4 h-4 text-blue-600" />
+                          <Package className="w-4 h-4 text-blue-600" />
                         </div>
                         <h3 className="font-semibold text-gray-900">
-                          Flexibilidad
+                          Descripción del Plan
                         </h3>
                       </div>
                       <p className="text-sm text-gray-600">
-                        Suscripción mensual por un año • Cancela cuando quieras
+                        {getPlanInfo(currentSubscription.plan.id).description}
                       </p>
+                    </div>
+
+                    <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 border border-amber-100">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                        </div>
+                        <h3 className="font-semibold text-gray-900">
+                          Beneficios Incluidos
+                        </h3>
+                      </div>
+                      <div className="space-y-2">
+                        {getPlanInfo(currentSubscription.plan.id).features.map(
+                          (feature, index) => (
+                            <div key={index} className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                              <p className="text-sm text-gray-600">{feature}</p>
+                            </div>
+                          )
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -590,6 +587,25 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                           <p className="text-sm text-gray-600 mb-3">
                             {plan.description}
                           </p>
+
+                          {/* Mostrar algunas características principales */}
+                          <div className="mb-3">
+                            <div className="space-y-1">
+                              {plan.features
+                                .slice(0, 2)
+                                .map((feature, index) => (
+                                  <div
+                                    key={index}
+                                    className="flex items-start gap-2"
+                                  >
+                                    <div className="w-1 h-1 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                    <p className="text-xs text-gray-500">
+                                      {feature}
+                                    </p>
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
                           <button
                             onClick={() => handleSubscribe(plan.id)}
                             disabled={subscriptionLoading}
