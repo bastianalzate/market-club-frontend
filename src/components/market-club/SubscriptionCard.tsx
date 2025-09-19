@@ -3,6 +3,7 @@ import { SubscriptionPlan } from "@/types/market-club";
 
 interface SubscriptionCardProps extends SubscriptionPlan {
   className?: string;
+  onSubscribeClick?: (planId: string) => void;
 }
 
 export default function SubscriptionCard({
@@ -13,6 +14,8 @@ export default function SubscriptionCard({
   image,
   buttonText,
   buttonColor = "#B58E31",
+  id,
+  onSubscribeClick,
   imagePosition = 'left',
   className = ""
 }: SubscriptionCardProps) {
@@ -112,6 +115,7 @@ export default function SubscriptionCard({
               fontSize: "16px",
               fontWeight: 600
             }}
+            onClick={() => onSubscribeClick?.(id as unknown as string)}
           >
             {buttonText}
           </button>
