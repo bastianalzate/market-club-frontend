@@ -516,7 +516,7 @@ export default function ContactoPage() {
           </div>
 
           {/* Imagen */}
-          <div className="relative">
+          <div className="relative hidden lg:block">
             <Image
               src="/images/contact/contacto-banner.png"
               alt="Personas brindando con cervezas"

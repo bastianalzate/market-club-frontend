@@ -86,19 +86,38 @@ const countries: Country[] = [
 export default function CountriesCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [itemsPerView, setItemsPerView] = useState(6);
+  const [isVerySmallScreen, setIsVerySmallScreen] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
 
-  // Configuración del carrusel infinito
-  const itemsPerView = 6; // Mostrar 6 banderas a la vez
   const totalItems = countries.length;
 
-  // Calcular el ancho de cada elemento (100% dividido entre 6 elementos)
-  const itemWidth = 74 / itemsPerView;
+  // Función para calcular items por vista según el tamaño de pantalla
+  const updateItemsPerView = () => {
+    const width = window.innerWidth;
+    if (width < 640) { // sm - móviles
+      setItemsPerView(1);
+      setIsVerySmallScreen(width <= 375); // Pantallas muy pequeñas
+    } else { // sm+ - tablets y desktop
+      setItemsPerView(6);
+      setIsVerySmallScreen(false);
+    }
+  };
 
-  // Calcular el índice máximo para que se vean todas las banderas
-  // Con 11 países y 6 por vista: 0,1,2,3,4,5 (6 páginas total)
+  // Configurar responsive al montar y en resize
+  useEffect(() => {
+    updateItemsPerView();
+    const handleResize = () => updateItemsPerView();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Calcular el ancho de cada elemento dinámicamente
+  const itemWidth = itemsPerView === 1 ? 100 : 74 / itemsPerView;
+
+  // Calcular el índice máximo dinámicamente
   const maxIndex = Math.max(0, totalItems - itemsPerView);
 
   // Auto-play del carrusel
@@ -162,7 +181,7 @@ export default function CountriesCarousel() {
 
   return (
     <section className="py-8 bg-white border-t border-gray-200">
-      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div className="px-6 mx-auto max-w-7xl sm:px-8 lg:px-12">
         {/* Carrusel */}
         <div
           className="relative"
@@ -172,23 +191,23 @@ export default function CountriesCarousel() {
           {/* Botón anterior */}
           <button
             onClick={goToPrevious}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-full transition-all duration-200 shadow-sm"
+            className="absolute left-0 sm:left-0 top-1/2 -translate-y-1/2 z-20 bg-gray-100 hover:bg-gray-200 text-gray-600 p-1.5 sm:p-2 rounded-full transition-all duration-200 shadow-sm"
             aria-label="Anterior"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           {/* Botón siguiente */}
           <button
             onClick={goToNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-full transition-all duration-200 shadow-sm"
+            className="absolute right-0 sm:right-0 top-1/2 -translate-y-1/2 z-20 bg-gray-100 hover:bg-gray-200 text-gray-600 p-1.5 sm:p-2 rounded-full transition-all duration-200 shadow-sm"
             aria-label="Siguiente"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           {/* Contenedor del carrusel */}
-          <div ref={sliderRef} className="overflow-hidden">
+          <div ref={sliderRef} className="overflow-hidden mx-4 sm:mx-0">
             <div
               className="flex transition-transform duration-500 ease-in-out"
               style={{
@@ -199,8 +218,11 @@ export default function CountriesCarousel() {
               {countries.map((country, index) => (
                 <div
                   key={country.id}
-                  className="flex-shrink-0 px-2 py-2"
-                  style={{ width: `${itemWidth}%` }}
+                  className="flex-shrink-0 py-2 sm:px-2"
+                  style={{ 
+                    width: `${itemWidth}%`,
+                    paddingLeft: itemsPerView === 1 ? (isVerySmallScreen ? '1.8%' : '2.3%') : undefined
+                  }}
                 >
                   <button
                     onClick={() => handleCountryClick(country.id)}
@@ -208,7 +230,7 @@ export default function CountriesCarousel() {
                     aria-label={`Ver cervezas de ${country.name}`}
                   >
                     {/* Solo la imagen de la bandera */}
-                    <div className="aspect-square w-40 h-40 mx-auto p-2">
+                    <div className="aspect-square w-32 h-32 sm:w-40 sm:h-40 mx-auto p-1 sm:p-2">
                       <img
                         src={country.flag}
                         alt={`Bandera de ${country.name}`}

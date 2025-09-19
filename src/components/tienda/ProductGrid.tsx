@@ -367,9 +367,9 @@ export default function ProductGrid({
         </div>
       ) : (
         <div
-          className={`grid gap-6 ${
+          className={`grid gap-4 sm:gap-6 ${
             viewMode === "grid"
-              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+              ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
               : "grid-cols-1"
           }`}
         >
@@ -388,7 +388,7 @@ export default function ProductGrid({
               >
                 <div
                   className="overflow-hidden pt-4"
-                  style={{ height: "354px" }}
+                  style={{ height: "400px" }}
                 >
                   <LazyImage
                     src={product.image}
@@ -429,7 +429,7 @@ export default function ProductGrid({
 
               {/* Información del producto */}
               <div
-                className={`p-6 ${
+                className={`p-4 sm:p-6 ${
                   viewMode === "list"
                     ? "flex-1 flex flex-col justify-between"
                     : ""
@@ -451,10 +451,10 @@ export default function ProductGrid({
                 </div>
 
                 {/* Botones de acción */}
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   {/* Botón de carrito cuadrado con contador - Solo visual */}
                   <div
-                    className="relative p-3 rounded-lg"
+                    className="relative p-2 sm:p-3 rounded-lg flex-shrink-0"
                     style={{
                       backgroundColor: "transparent",
                       borderColor: "#D0D5DD",
@@ -464,12 +464,12 @@ export default function ProductGrid({
                     aria-label="Contador del carrito"
                   >
                     <ShoppingCart
-                      className="w-5 h-5"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       style={{ color: "#B58E31" }}
                     />
                     {/* Contador en el ícono del carrito */}
                     {isInCart(product.id) && (
-                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center font-bold text-[10px] sm:text-xs">
                         {getProductQuantity(product.id)}
                       </span>
                     )}

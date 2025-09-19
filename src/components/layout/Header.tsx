@@ -374,9 +374,9 @@ export default function Header() {
                 )}
 
                 <NavLink
-                  href="/about"
+                  href="/market-club"
                   title="Market Club"
-                  isActive={isActive("/about")}
+                  isActive={isActive("/market-club")}
                   baseStyle={baseLinkStyle}
                   activeStyle={activeLinkStyle}
                 >
@@ -590,9 +590,9 @@ export default function Header() {
                       }`}
                     >
                       <MobileNavLink
-                        href="/about"
+                        href="/market-club"
                         title="Market Club"
-                        isActive={isActive("/about")}
+                        isActive={isActive("/market-club")}
                         baseStyle={mobileLinkStyle}
                         activeStyle={mobileActiveLinkStyle}
                         onClick={closeMenu}
