@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
+import MarketClubBanner from "@/components/home/MarketClubBanner";
 
 export default function ContactoPage() {
   const [formData, setFormData] = useState({
@@ -377,6 +378,7 @@ export default function ContactoPage() {
                     <select
                       value={countryCode}
                       onChange={(e) => setCountryCode(e.target.value)}
+                      aria-label="Código de país"
                       className="px-4 py-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none appearance-none bg-white pr-8"
                       style={{
                         fontFamily: "var(--font-text)",
@@ -527,6 +529,79 @@ export default function ContactoPage() {
             />
           </div>
         </div>
+
+      </div>
+
+      {/* Sección de Horarios y Ubicación - Fondo completo */}
+      <div className="mt-16 bg-black w-full">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+            {/* Mapa de Google Maps */}
+            <div className="bg-black overflow-hidden h-full">
+              <div className="h-full min-h-[600px]">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.2847937728846!2d-75.56068562503114!3d6.249850342859314!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e4428dfb80fad05%3A0x42137cfcc7b53b56!2sMedell%C3%ADn%2C+Antioquia%2C+Colombia!5e0!3m2!1ses!2sco!4v1700000000000"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Ubicación Market Club - Medellín"
+                  className="w-full h-full"
+                ></iframe>
+              </div>
+            </div>
+
+            {/* Horarios de Atención */}
+            <div className="text-white flex items-center pl-16 py-12">
+              <div>
+                <h2
+                  className="text-white mb-10"
+                  style={{
+                    fontFamily: "var(--font-oswald)",
+                    fontWeight: "bold",
+                    fontSize: "64px",
+                  }}
+                >
+                  Nuestros horarios
+                </h2>
+                <div>
+                  <p
+                    className="text-white"
+                    style={{
+                      fontFamily: "Inter, sans-serif",
+                      fontWeight: 400,
+                      fontSize: "24px",
+                      lineHeight: "1.2",
+                      margin: 0,
+                    }}
+                  >
+                    Lunes a Sábado de 9:00 a.m. a 10:00 p.m.
+                  </p>
+                  <p
+                    className="text-white"
+                    style={{
+                      fontFamily: "Inter, sans-serif",
+                      fontWeight: 400,
+                      fontSize: "24px",
+                      lineHeight: "1.2",
+                      margin: 0,
+                    }}
+                  >
+                    Domingos y Festivos de 11:00 a.m. a 9:00 p.m.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Banner de Market Club */}
+      <MarketClubBanner backgroundColor="#B58E31" textColor="#FFFFFF" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       </div>
     </div>
   );
