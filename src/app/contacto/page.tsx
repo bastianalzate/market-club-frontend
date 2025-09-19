@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
+import { constants } from "@/config/constants";
 
 export default function ContactoPage() {
   const [formData, setFormData] = useState({
@@ -19,6 +20,7 @@ export default function ContactoPage() {
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [countryCode, setCountryCode] = useState("COP");
 
@@ -187,25 +189,57 @@ export default function ContactoPage() {
     setSubmitStatus("idle");
 
     try {
-      // Simular envío del formulario (aquí conectarías con tu API)
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      console.log("Formulario enviado:", formData);
-      setSubmitStatus("success");
-
-      // Limpiar formulario después del envío exitoso
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        message: "",
-        acceptPrivacy: false,
+      // Enviar formulario al endpoint real
+      const response = await fetch(`${constants.api_url}/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          first_name: formData.firstName.trim(),
+          last_name: formData.lastName.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          message: formData.message.trim(),
+        }),
       });
-      setErrors({});
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Error al enviar el mensaje");
+      }
+
+      if (data.success) {
+        console.log("Formulario enviado exitosamente:", data);
+        setSubmitStatus("success");
+        setSuccessMessage(
+          data.message ||
+            "¡Mensaje enviado correctamente! Te contactaremos pronto."
+        );
+
+        // Limpiar formulario después del envío exitoso
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          message: "",
+          acceptPrivacy: false,
+        });
+        setErrors({});
+      } else {
+        throw new Error(data.message || "Error al procesar el mensaje");
+      }
     } catch (error) {
       console.error("Error al enviar formulario:", error);
       setSubmitStatus("error");
+      setErrors({
+        submit:
+          error instanceof Error
+            ? error.message
+            : "Error al enviar el mensaje. Intenta nuevamente.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -485,18 +519,22 @@ export default function ContactoPage() {
               {/* Mensajes de estado */}
               {submitStatus === "success" && (
                 <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-green-800 text-center">
-                    ¡Mensaje enviado correctamente! Te contactaremos pronto.
-                  </p>
+                  <p className="text-green-800 text-center">{successMessage}</p>
                 </div>
               )}
 
               {submitStatus === "error" && (
                 <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-red-800 text-center">
-                    Hubo un error al enviar el mensaje. Por favor intenta
-                    nuevamente.
+                    {errors.submit ||
+                      "Hubo un error al enviar el mensaje. Por favor intenta nuevamente."}
                   </p>
+                </div>
+              )}
+
+              {errors.submit && submitStatus !== "error" && (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-red-800 text-center">{errors.submit}</p>
                 </div>
               )}
 

@@ -21,8 +21,9 @@ import {
 import { useUserProfile, useUserOrders } from "@/hooks/useUserProfile";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useToast } from "@/hooks/useToast";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Toast from "@/components/shared/Toast";
+import CancelSubscriptionModal from "@/components/shared/CancelSubscriptionModal";
 
 interface User {
   id: string;
@@ -58,6 +59,7 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
     renewSubscription,
   } = useSubscription();
   const { toast, showSuccess, showError, hideToast } = useToast();
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   // Cargar datos al montar el componente
   useEffect(() => {
@@ -101,22 +103,23 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
   };
 
   // Funciones para manejar acciones de suscripción
-  const handleCancelSubscription = async () => {
-    if (
-      window.confirm("¿Estás seguro de que quieres cancelar tu suscripción?")
-    ) {
-      const result = await cancelSubscription();
-      if (result.success) {
-        showSuccess(
-          "Suscripción cancelada",
-          "Tu suscripción ha sido cancelada exitosamente."
-        );
-        // Recargar historial después de cancelar
-        loadHistory();
-      } else {
-        showError("Error", result.message);
-      }
+  const handleCancelSubscription = () => {
+    setShowCancelModal(true);
+  };
+
+  const handleConfirmCancel = async () => {
+    const result = await cancelSubscription();
+    if (result.success) {
+      showSuccess(
+        "Suscripción cancelada",
+        "Tu suscripción ha sido cancelada exitosamente."
+      );
+      // Recargar historial después de cancelar
+      loadHistory();
+    } else {
+      showError("Error", result.message);
     }
+    setShowCancelModal(false);
   };
 
   const handleRenewSubscription = async () => {
@@ -899,6 +902,17 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
           </div>
         </div>
       </div>
+
+      {/* Modal de cancelación de suscripción */}
+      <CancelSubscriptionModal
+        isOpen={showCancelModal}
+        onClose={() => setShowCancelModal(false)}
+        onConfirm={handleConfirmCancel}
+        subscriptionName={getCurrentPlan()?.name}
+        subscriptionPrice={currentSubscription?.price_paid}
+        daysRemaining={currentSubscription?.days_remaining}
+        loading={subscriptionLoading}
+      />
 
       {/* Toast notifications */}
       <Toast
