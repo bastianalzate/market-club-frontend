@@ -2,8 +2,9 @@
 import { useEffect, useMemo, useState } from "react";
 import SubscriptionCard from "./SubscriptionCard";
 import { SubscriptionSectionConfig } from "@/types/market-club";
-import { fetchSubscriptionPlans } from "@/services/subscriptionsService";
+import { fetchSubscriptionPlans, getCurrentSubscription, subscribeToPlan } from "@/services/subscriptionsService";
 import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 interface SubscriptionSectionProps extends SubscriptionSectionConfig {
   containerClassName?: string;
@@ -17,6 +18,8 @@ export default function SubscriptionSection({
   const [error, setError] = useState<string | null>(null);
   const [backendPlans, setBackendPlans] = useState<any[]>([]);
   const { isAuthenticated, openLoginModal } = useAuth();
+  const [subscribingPlanId, setSubscribingPlanId] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     let mounted = true;
@@ -52,6 +55,24 @@ export default function SubscriptionSection({
     }));
   }, [backendPlans, plans]);
 
+  if (loading) {
+    return (
+      <div className={containerClassName}>
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center py-16">
+            <div className="flex items-center gap-3 text-gray-700">
+              <svg className="animate-spin h-5 w-5 text-yellow-600" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+              <span>Cargando…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={containerClassName}>
       <div className="max-w-7xl mx-auto">
@@ -68,8 +89,24 @@ export default function SubscriptionSection({
                   openLoginModal();
                   return;
                 }
-                // Aquí luego llamamos subscribeToPlan(planId)
+                (async () => {
+                  try {
+                    setSubscribingPlanId(plan.id as string);
+                    const current = await getCurrentSubscription();
+                    if (current && current.success && current.data) {
+                      router.push('/perfil');
+                      return;
+                    }
+                    await subscribeToPlan(plan.id as string, 1);
+                    router.push('/perfil');
+                  } catch (e) {
+                    router.push('/perfil');
+                  } finally {
+                    setSubscribingPlanId(null);
+                  }
+                })();
               }}
+              isBusy={subscribingPlanId === plan.id}
             />
           ))}
         </div>

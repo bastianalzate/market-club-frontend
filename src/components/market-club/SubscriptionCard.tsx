@@ -4,6 +4,7 @@ import { SubscriptionPlan } from "@/types/market-club";
 interface SubscriptionCardProps extends SubscriptionPlan {
   className?: string;
   onSubscribeClick?: (planId: string) => void;
+  isBusy?: boolean;
 }
 
 export default function SubscriptionCard({
@@ -17,7 +18,8 @@ export default function SubscriptionCard({
   id,
   onSubscribeClick,
   imagePosition = 'left',
-  className = ""
+  className = "",
+  isBusy = false
 }: SubscriptionCardProps) {
   const isImageLeft = imagePosition === 'left';
   
@@ -116,8 +118,9 @@ export default function SubscriptionCard({
               fontWeight: 600
             }}
             onClick={() => onSubscribeClick?.(id as unknown as string)}
+            disabled={isBusy}
           >
-            {buttonText}
+            {isBusy ? 'Procesando…' : buttonText}
           </button>
         </div>
       </div>
