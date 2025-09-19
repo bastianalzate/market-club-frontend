@@ -147,37 +147,14 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
     }
   };
 
-  // Helper para obtener información del plan usando datos reales del backend
-  const getPlanInfo = (planSlug: string) => {
-    // Buscar el plan real en los datos del backend
-    const realPlan = plans.find((plan) => plan.id === planSlug);
-
-    if (realPlan) {
-      return {
-        name: realPlan.name,
-        price: `${formatPrice(parseFloat(realPlan.price))} / ${
-          realPlan.period
-        }`,
-        description: realPlan.description,
-        features: realPlan.features,
-        beers: realPlan.features[0] || "Información no disponible", // Primera característica
-        extras: realPlan.features[1] || "Información no disponible", // Segunda característica
-        color: getPlanColor(planSlug),
-        maxBeers: 0, // Los planes no tienen límite específico
-      };
+  // Helper para obtener el plan actual desde los datos del backend
+  const getCurrentPlan = () => {
+    if (!currentSubscription?.plan?.id || plans.length === 0) {
+      return null;
     }
-
-    // Fallback para cuando no se encuentre el plan
-    return {
-      name: "Plan Desconocido",
-      price: "$0 / mes",
-      description: "Información no disponible",
-      features: [],
-      beers: "Información no disponible",
-      extras: "Información no disponible",
-      color: "gray",
-      maxBeers: 0,
-    };
+    return (
+      plans.find((plan) => plan.id === currentSubscription.plan.id) || null
+    );
   };
 
   // Helper para obtener colores por plan
@@ -193,6 +170,45 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
         return "gray";
     }
   };
+
+  // Skeleton para la sección de suscripciones
+  const SubscriptionSkeleton = () => (
+    <div className="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-pulse">
+      <div className="px-6 py-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gray-300 rounded-xl"></div>
+            <div>
+              <div className="h-6 bg-gray-300 rounded w-48 mb-2"></div>
+              <div className="h-4 bg-gray-300 rounded w-32"></div>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="h-4 bg-gray-300 rounded w-20 mb-1"></div>
+            <div className="h-3 bg-gray-300 rounded w-24"></div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="bg-white/70 rounded-lg p-4">
+            <div className="h-4 bg-gray-300 rounded w-32 mb-3"></div>
+            <div className="h-3 bg-gray-300 rounded w-full mb-2"></div>
+            <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+          </div>
+          <div className="bg-white/70 rounded-lg p-4">
+            <div className="h-4 bg-gray-300 rounded w-32 mb-3"></div>
+            <div className="space-y-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <div className="w-1.5 h-1.5 bg-gray-300 rounded-full mt-2"></div>
+                  <div className="h-3 bg-gray-300 rounded flex-1"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   // Mostrar loading si están cargando los datos
   if (profileLoading || ordersLoading) {
@@ -314,8 +330,12 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
 
         {/* Sección Market Club Premium */}
         <div className="space-y-6">
-          {/* Suscripción Activa */}
-          {currentSubscription && currentSubscription.is_active ? (
+          {/* Mostrar skeleton mientras cargan las suscripciones */}
+          {subscriptionLoading ? (
+            <SubscriptionSkeleton />
+          ) : currentSubscription &&
+            currentSubscription.is_active &&
+            getCurrentPlan() ? (
             <div className="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 rounded-xl shadow-sm border border-amber-200 overflow-hidden">
               <div className="relative">
                 {/* Patrón de fondo decorativo */}
@@ -340,10 +360,9 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                     <div className="flex items-center gap-3">
                       <div
                         className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lg ${
-                          getPlanInfo(currentSubscription.plan.id).color ===
-                          "purple"
+                          getPlanColor(currentSubscription.plan.id) === "purple"
                             ? "bg-gradient-to-br from-purple-500 to-indigo-600"
-                            : getPlanInfo(currentSubscription.plan.id).color ===
+                            : getPlanColor(currentSubscription.plan.id) ===
                               "blue"
                             ? "bg-gradient-to-br from-blue-500 to-cyan-600"
                             : "bg-gradient-to-br from-amber-400 to-orange-500"
@@ -353,11 +372,12 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                       </div>
                       <div>
                         <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                          {getPlanInfo(currentSubscription.plan.id).name}
+                          {getCurrentPlan()?.name}
                           <Star className="w-5 h-5 text-amber-500 fill-current" />
                         </h2>
                         <p className="text-sm text-gray-600">
-                          {formatPrice(currentSubscription.price_paid)} / mes
+                          {formatPrice(currentSubscription.price_paid)} /{" "}
+                          {getCurrentPlan()?.period}
                         </p>
                       </div>
                     </div>
@@ -412,7 +432,7 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                         </h3>
                       </div>
                       <p className="text-sm text-gray-600">
-                        {getPlanInfo(currentSubscription.plan.id).description}
+                        {getCurrentPlan()?.description}
                       </p>
                     </div>
 
@@ -426,14 +446,12 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                         </h3>
                       </div>
                       <div className="space-y-2">
-                        {getPlanInfo(currentSubscription.plan.id).features.map(
-                          (feature, index) => (
-                            <div key={index} className="flex items-start gap-2">
-                              <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                              <p className="text-sm text-gray-600">{feature}</p>
-                            </div>
-                          )
-                        )}
+                        {getCurrentPlan()?.features.map((feature, index) => (
+                          <div key={index} className="flex items-start gap-2">
+                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <p className="text-sm text-gray-600">{feature}</p>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -454,10 +472,9 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                     <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
                       <div
                         className={`h-2 rounded-full transition-all duration-500 ${
-                          getPlanInfo(currentSubscription.plan.id).color ===
-                          "purple"
+                          getPlanColor(currentSubscription.plan.id) === "purple"
                             ? "bg-gradient-to-r from-purple-400 to-indigo-500"
-                            : getPlanInfo(currentSubscription.plan.id).color ===
+                            : getPlanColor(currentSubscription.plan.id) ===
                               "blue"
                             ? "bg-gradient-to-r from-blue-400 to-cyan-500"
                             : "bg-gradient-to-r from-amber-400 to-orange-500"
@@ -502,11 +519,9 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                       onClick={handleRenewSubscription}
                       disabled={profileLoading || subscriptionLoading}
                       className={`flex-1 text-white px-4 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
-                        getPlanInfo(currentSubscription.plan.id).color ===
-                        "purple"
+                        getPlanColor(currentSubscription.plan.id) === "purple"
                           ? "bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 focus:ring-purple-500"
-                          : getPlanInfo(currentSubscription.plan.id).color ===
-                            "blue"
+                          : getPlanColor(currentSubscription.plan.id) === "blue"
                           ? "bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 focus:ring-blue-500"
                           : "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 focus:ring-amber-500"
                       }`}
@@ -560,8 +575,24 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                     nuestra suscripción premium
                   </p>
 
-                  {/* Planes disponibles */}
-                  {plans.length > 0 && (
+                  {/* Planes disponibles - Solo mostrar si hay datos reales */}
+                  {subscriptionLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                      {[1, 2, 3].map((i) => (
+                        <div
+                          key={i}
+                          className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border animate-pulse"
+                        >
+                          <div className="h-4 bg-gray-300 rounded w-20 mb-2"></div>
+                          <div className="h-6 bg-gray-300 rounded w-32 mb-2"></div>
+                          <div className="h-8 bg-gray-300 rounded w-24 mb-3"></div>
+                          <div className="h-3 bg-gray-300 rounded w-full mb-2"></div>
+                          <div className="h-3 bg-gray-300 rounded w-3/4 mb-3"></div>
+                          <div className="h-8 bg-gray-300 rounded w-full"></div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : plans.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                       {plans.map((plan) => (
                         <div
@@ -618,22 +649,24 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                         </div>
                       ))}
                     </div>
-                  )}
+                  ) : null}
 
-                  <div className="flex items-center justify-center space-x-6 text-sm text-gray-500">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                      <span>Cancela cuando quieras</span>
+                  {!subscriptionLoading && (
+                    <div className="flex items-center justify-center space-x-6 text-sm text-gray-500">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        <span>Cancela cuando quieras</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Package className="w-4 h-4 text-blue-500" />
+                        <span>Envío incluido</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Star className="w-4 h-4 text-amber-500" />
+                        <span>Cervezas premium</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Package className="w-4 h-4 text-blue-500" />
-                      <span>Envío incluido</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Star className="w-4 h-4 text-amber-500" />
-                      <span>Cervezas premium</span>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
