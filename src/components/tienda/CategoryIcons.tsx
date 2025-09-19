@@ -65,7 +65,7 @@ export default function CategoryIcons() {
                   key={category.id}
                   onClick={() => setActiveCategory(category.id)}
                   className={`
-                    relative p-3 sm:p-4 rounded-xl transition-all duration-200 group flex-shrink-0
+                    relative p-3 sm:p-4 rounded-xl transition-all duration-200 group flex-shrink-0 cursor-pointer
                     ${
                       isActive
                         ? "text-white shadow-lg scale-105"

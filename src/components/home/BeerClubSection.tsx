@@ -55,7 +55,8 @@ export default function BeerClubSection() {
 
                 {/* Botón de llamada a la acción */}
                 <button
-                  className="bg-black text-white px-8 py-4 rounded-lg font-bold uppercase tracking-wide flex items-center gap-3 hover:bg-gray-800 transition-colors duration-200"
+                  onClick={() => window.open("/market-club", "_blank")}
+                  className="bg-black text-white px-8 py-4 rounded-lg font-bold uppercase tracking-wide flex items-center gap-3 hover:bg-gray-800 transition-colors duration-200 cursor-pointer"
                   style={{ fontFamily: "var(--font-oswald)" }}
                 >
                   <Gift className="w-5 h-5" />

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { TransformedProduct } from "@/hooks/useMayoristaProducts";
 import LazyImage from "@/components/shared/LazyImage";
 import { ProductCardSkeleton } from "@/components/shared/ProductCardSkeleton";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Pagination {
   currentPage: number;
@@ -142,7 +142,7 @@ export default function MayoristaProductGrid({
                 {/* Botón de cotizar */}
                 <button
                   onClick={() => handleWhatsAppContact(product)}
-                  className="w-full flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200"
+                  className="w-full flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 cursor-pointer"
                 >
                   <MessageCircle className="w-4 h-4" />
                   <span>Cotizar WhatsApp</span>
@@ -155,53 +155,73 @@ export default function MayoristaProductGrid({
 
       {/* Paginación */}
       {!loading && products.length > 0 && pagination.lastPage > 1 && (
-        <div className="flex items-center justify-between bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleGoToPrevPage}
-              disabled={currentPage === 1}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                currentPage === 1
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-gray-100 hover:bg-gray-200 text-white"
-              }`}
-            >
-              Anterior
-            </button>
+        <div className="mt-12 flex items-center justify-center">
+          <div className="flex items-center space-x-2">
+            {/* Botón anterior - solo mostrar si no estamos en la página inicial */}
+            {currentPage > 1 && (
+              <button
+                onClick={handleGoToPrevPage}
+                className="p-2 rounded-lg transition-colors text-white hover:text-gray-300 hover:bg-gray-800"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+            )}
 
-            <div className="flex items-center gap-2">
+            {/* Números de página */}
+            <div className="flex items-center space-x-1">
               {Array.from({ length: pagination.lastPage }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => handleGoToPage(page)}
-                    className={`w-10 h-10 rounded-lg font-medium transition-colors ${
-                      page === currentPage
-                        ? "bg-yellow-600 text-white"
-                        : "bg-gray-100 hover:bg-gray-200 text-white"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                )
+                (page) => {
+                  // Mostrar solo algunas páginas para evitar demasiados botones
+                  if (
+                    page === 1 ||
+                    page === pagination.lastPage ||
+                    (page >= currentPage - 1 && page <= currentPage + 1)
+                  ) {
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => handleGoToPage(page)}
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          page === currentPage
+                            ? "text-white"
+                            : "text-white hover:text-gray-300 hover:bg-gray-800"
+                        }`}
+                        style={
+                          page === currentPage
+                            ? { backgroundColor: "#B58E31" }
+                            : {}
+                        }
+                      >
+                        {page}
+                      </button>
+                    );
+                  } else if (
+                    page === currentPage - 2 ||
+                    page === currentPage + 2
+                  ) {
+                    return (
+                      <span key={page} className="px-2 text-white">
+                        ...
+                      </span>
+                    );
+                  }
+                  return null;
+                }
               )}
             </div>
 
+            {/* Botón siguiente */}
             <button
               onClick={handleGoToNextPage}
               disabled={currentPage === pagination.lastPage}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`p-2 rounded-lg transition-colors ${
                 currentPage === pagination.lastPage
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-gray-100 hover:bg-gray-200 text-white"
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-white hover:text-gray-300 hover:bg-gray-800"
               }`}
             >
-              Siguiente
+              <ChevronRight className="w-5 h-5" />
             </button>
-          </div>
-
-          <div className="text-sm text-gray-600">
-            Página {currentPage} de {pagination.lastPage}
           </div>
         </div>
       )}

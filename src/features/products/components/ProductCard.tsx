@@ -54,7 +54,7 @@ export default function ProductCard({
         )}
         <button
           onClick={handleWishlistToggle}
-          className={`absolute top-2 right-2 p-2 rounded-full transition-colors ${
+          className={`absolute top-2 right-2 p-2 rounded-full transition-colors cursor-pointer ${
             isWishlisted
               ? "bg-red-500 text-white"
               : "bg-white/80 text-gray-600 hover:bg-red-500 hover:text-white"
@@ -124,12 +124,20 @@ export default function ProductCard({
             disabled={!product.inStock}
             className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-lg font-medium transition-colors ${
               product.inStock
-                ? "text-white"
+                ? "text-white cursor-pointer"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
-            style={product.inStock ? { backgroundColor: '#B58E31' } : {}}
-            onMouseEnter={product.inStock ? (e) => e.currentTarget.style.backgroundColor = '#A07D2A' : undefined}
-            onMouseLeave={product.inStock ? (e) => e.currentTarget.style.backgroundColor = '#B58E31' : undefined}
+            style={product.inStock ? { backgroundColor: "#B58E31" } : {}}
+            onMouseEnter={
+              product.inStock
+                ? (e) => (e.currentTarget.style.backgroundColor = "#A07D2A")
+                : undefined
+            }
+            onMouseLeave={
+              product.inStock
+                ? (e) => (e.currentTarget.style.backgroundColor = "#B58E31")
+                : undefined
+            }
           >
             <ShoppingCart className="w-4 h-4" />
             <span>{product.inStock ? "Agregar" : "Agotado"}</span>
@@ -139,4 +147,3 @@ export default function ProductCard({
     </div>
   );
 }
-

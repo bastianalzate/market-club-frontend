@@ -18,6 +18,7 @@ import { useNotification } from "@/hooks/useNotification";
 import { useProducts, TransformedProduct } from "@/hooks/useProducts";
 import NotificationToast from "@/components/shared/NotificationToast";
 import LazyImage from "@/components/shared/LazyImage";
+import { formatPrice } from "@/utils/formatters";
 
 interface GiftBox {
   id: string;
@@ -516,7 +517,7 @@ export default function GiftBuilder() {
                         {box.deliveryTime}
                       </div>
                       <p className="text-2xl font-bold text-[#B58E31]">
-                        ${box.price.toLocaleString()}
+                        {formatPrice(box.price)}
                       </p>
                     </div>
                   </div>
@@ -764,7 +765,7 @@ export default function GiftBuilder() {
                           </div>
 
                           <p className="text-sm font-bold text-[#B58E31]">
-                            ${beer.price.toLocaleString()}
+                            {formatPrice(beer.price)}
                           </p>
 
                           {!canSelect && !isSelected && (
@@ -893,7 +894,7 @@ export default function GiftBuilder() {
                         {giftBuilder.selectedBox.name}
                       </span>
                       <span className="font-bold text-[#B58E31]">
-                        ${giftBuilder.selectedBox.price.toLocaleString()}
+                        {formatPrice(giftBuilder.selectedBox.price)}
                       </span>
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
@@ -942,7 +943,7 @@ export default function GiftBuilder() {
                         </div>
                         <div className="flex items-center">
                           <span className="text-xs font-bold text-[#B58E31] mr-2">
-                            ${beer.price.toLocaleString()}
+                            {formatPrice(beer.price)}
                           </span>
                           <button
                             onClick={() => removeBeer(beer.id)}
@@ -966,7 +967,7 @@ export default function GiftBuilder() {
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-bold text-gray-900">Total</span>
                   <span className="text-2xl font-bold text-[#B58E31]">
-                    ${giftBuilder.totalPrice.toLocaleString()}
+                    {formatPrice(giftBuilder.totalPrice)}
                   </span>
                 </div>
               </div>
@@ -976,7 +977,7 @@ export default function GiftBuilder() {
                 onClick={handleAddGiftToCart}
                 className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 flex items-center justify-center space-x-2 ${
                   giftBuilder.isComplete
-                    ? "bg-gradient-to-r from-[#B58E31] to-[#D4A853] text-white hover:shadow-lg transform hover:-translate-y-0.5"
+                    ? "bg-gradient-to-r from-[#B58E31] to-[#D4A853] text-white hover:shadow-lg transform hover:-translate-y-0.5 cursor-pointer"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
                 disabled={!giftBuilder.isComplete}

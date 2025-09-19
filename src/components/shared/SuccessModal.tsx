@@ -156,7 +156,7 @@ export default function SuccessModal({
             <div className="flex-1" />
             <button
               onClick={handleClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
               aria-label="Cerrar modal"
             >
               <X className="w-5 h-5 text-gray-500" />
@@ -193,7 +193,7 @@ export default function SuccessModal({
             {/* Botón de acción */}
             <button
               onClick={handleClose}
-              className="w-full text-white py-3 px-6 rounded-xl font-semibold transition-colors"
+              className="w-full text-white py-3 px-6 rounded-xl font-semibold transition-colors cursor-pointer"
               style={{ backgroundColor: "rgb(181, 142, 49)" }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = "rgb(160, 120, 23)";

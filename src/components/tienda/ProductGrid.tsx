@@ -410,7 +410,7 @@ export default function ProductGrid({
                 <button
                   onClick={() => handleToggleFavorite(product.id)}
                   disabled={wishlistLoading}
-                  className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors disabled:opacity-50"
+                  className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors disabled:opacity-50 cursor-pointer"
                   aria-label={
                     isInWishlist(product.id, product)
                       ? "Quitar de favoritos"

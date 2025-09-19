@@ -315,7 +315,7 @@ export default function Header() {
               {/* Mobile Menu Button */}
               <button
                 type="button"
-                className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+                className="p-2 text-gray-700 hover:text-gray-900 transition-colors cursor-pointer"
                 onClick={toggleMenu}
                 aria-controls="mobile-menu"
                 aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
@@ -492,7 +492,7 @@ export default function Header() {
 
                     <button
                       type="button"
-                      className="p-2 text-gray-700 hover:text-gray-900 transition-colors"
+                      className="p-2 text-gray-700 hover:text-gray-900 transition-colors cursor-pointer"
                       onClick={closeMenu}
                       aria-label="Cerrar menú"
                     >
@@ -654,7 +654,7 @@ export default function Header() {
                   </div>
                   <button
                     onClick={handleCloseSearch}
-                    className="p-2 hover:bg-gray-100 rounded-xl transition-all duration-200"
+                    className="p-2 hover:bg-gray-100 rounded-xl transition-all duration-200 cursor-pointer"
                   >
                     <X className="w-5 h-5 text-gray-400 hover:text-gray-600" />
                   </button>
@@ -678,14 +678,14 @@ export default function Header() {
                       <button
                         type="button"
                         onClick={handleCloseSearch}
-                        className="px-6 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                        className="px-6 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 cursor-pointer"
                       >
                         Cancelar
                       </button>
                       <button
                         type="submit"
                         disabled={!searchTerm.trim()}
-                        className="px-6 py-3 text-white bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                        className="px-6 py-3 text-white bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-xl font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 cursor-pointer"
                       >
                         Buscar
                       </button>

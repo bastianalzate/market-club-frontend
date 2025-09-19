@@ -644,7 +644,7 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                           >
                             {subscriptionLoading
                               ? "Procesando..."
-                              : "Suscribirse"}
+                              : "Suscribirme"}
                           </button>
                         </div>
                       ))}

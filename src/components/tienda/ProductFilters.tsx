@@ -12,6 +12,7 @@ interface ProductFiltersProps {
   selectedPriceRange: string;
   onPriceRangeChange: (priceRange: string) => void;
   onClearFilters: () => void;
+  hidePriceFilter?: boolean; // Nueva prop opcional para ocultar el filtro de precios
 }
 
 export default function ProductFilters({
@@ -161,7 +162,7 @@ export default function ProductFilters({
         <div className="mt-6 pt-4 border-t border-gray-200">
           <button
             onClick={onClearFilters}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 hover:text-gray-900 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 hover:text-gray-900 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
             Limpiar filtros

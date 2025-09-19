@@ -213,7 +213,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="p-2 -m-2 text-gray-500 transition-all duration-200 bg-transparent rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                  className="p-2 -m-2 text-gray-500 transition-all duration-200 bg-transparent rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -301,7 +301,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                           await handleRemoveFromCart(itemId);
                                         }
                                       }}
-                                      className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                                      className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer"
                                       aria-label="Disminuir cantidad"
                                     >
                                       <Minus className="w-4 h-4 text-gray-600" />
@@ -319,7 +319,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                           quantity: item.quantity + 1,
                                         })
                                       }
-                                      className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                                      className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer"
                                       aria-label="Aumentar cantidad"
                                     >
                                       <Plus className="w-4 h-4 text-gray-600" />
@@ -340,7 +340,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                   className={`inline-flex p-2 -m-2 transition-all duration-200 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 ${
                                     deletingItems.has(itemId)
                                       ? "text-gray-300 cursor-not-allowed"
-                                      : "text-gray-400 hover:text-gray-900"
+                                      : "text-gray-400 hover:text-gray-900 cursor-pointer"
                                   }`}
                                 >
                                   {deletingItems.has(itemId) ? (
@@ -383,7 +383,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   <button
                     type="button"
                     onClick={handleCheckout}
-                    className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white transition-all duration-200 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 hover:opacity-90"
+                    className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white transition-all duration-200 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 hover:opacity-90 cursor-pointer"
                     style={{ backgroundColor: "#B58E31" }}
                   >
                     Ir a Pagar
@@ -392,7 +392,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   <button
                     type="button"
                     onClick={handleClose}
-                    className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-gray-900 transition-all duration-200 bg-transparent border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 hover:bg-gray-200 focus:bg-gray-200"
+                    className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-gray-900 transition-all duration-200 bg-transparent border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 hover:bg-gray-200 focus:bg-gray-200 cursor-pointer"
                   >
                     Continuar Comprando
                   </button>

@@ -507,7 +507,7 @@ export default function ContactoPage() {
                 className={`w-full font-semibold py-4 px-6 rounded-lg transition-colors duration-200 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 outline-none ${
                   isSubmitting
                     ? "bg-gray-400 cursor-not-allowed text-white"
-                    : "bg-yellow-600 hover:bg-yellow-700 text-white"
+                    : "bg-yellow-600 hover:bg-yellow-700 text-white cursor-pointer"
                 }`}
               >
                 {isSubmitting ? "Enviando..." : "Enviar mensaje"}

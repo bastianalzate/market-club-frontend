@@ -162,7 +162,7 @@ export default function ProductSlider() {
         <button
           onClick={() => handleToggleFavorite(beer.id)}
           disabled={wishlistLoading}
-          className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors disabled:opacity-50"
+          className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full transition-colors disabled:opacity-50 cursor-pointer"
           aria-label={
             isInWishlist(beer.id, beer)
               ? "Quitar de favoritos"
@@ -203,7 +203,9 @@ export default function ProductSlider() {
           </div>
         </div>
 
-        <h3 className="text-base font-bold text-gray-900 mb-4 line-clamp-2 sm:text-lg">{beer.name}</h3>
+        <h3 className="text-base font-bold text-gray-900 mb-4 line-clamp-2 sm:text-lg">
+          {beer.name}
+        </h3>
 
         {/* Botones de acción */}
         <div className="flex items-center space-x-2 mt-auto sm:space-x-3">
@@ -218,7 +220,10 @@ export default function ProductSlider() {
             }}
             aria-label="Contador del carrito"
           >
-            <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#B58E31" }} />
+            <ShoppingCart
+              className="w-4 h-4 sm:w-5 sm:h-5"
+              style={{ color: "#B58E31" }}
+            />
             {/* Contador en el ícono del carrito */}
             {isInCart(beer.id) && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold sm:h-5 sm:w-5">
@@ -317,12 +322,12 @@ export default function ProductSlider() {
             </div>
           </div>
         ) : (
-          <ProductCarousel 
+          <ProductCarousel
             itemsPerView={{
               mobile: 1,
               tablet: 2,
-              desktop: 3
-            }} 
+              desktop: 3,
+            }}
             className="px-2 sm:px-8"
           >
             {localBeers.map((beer) => renderProduct(beer))}
