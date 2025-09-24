@@ -32,6 +32,7 @@ export class CheckoutService {
         // Transformar datos al formato que espera el backend
         const backendShippingAddress = {
             name: `${shippingAddress.first_name} ${shippingAddress.last_name}`.trim(),
+            email: shippingAddress.email,
             address: shippingAddress.address_line_1,
             address_line_2: shippingAddress.address_line_2 || '',
             city: shippingAddress.city,
