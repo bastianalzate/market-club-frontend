@@ -75,7 +75,7 @@ export default function HeroSection() {
                 </div>
               </form>
 
-              <div className="mt-8 sm:mt-12">
+              {/* <div className="mt-8 sm:mt-12">
                 <p
                   className="text-lg font-normal text-white text-center lg:text-left"
                   style={{ fontFamily: "var(--font-inter)" }}
@@ -85,7 +85,6 @@ export default function HeroSection() {
 
                 <div className="flex items-center mt-3 justify-center lg:justify-start">
                   <div className="flex">
-                    {/* Star Rating */}
                     {[...Array(5)].map((_, i) => (
                       <svg
                         key={i}
@@ -127,11 +126,10 @@ export default function HeroSection() {
                     (14k Vistas)
                   </span>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <div className="relative min-h-[600px] hidden lg:block">
-              {/* Fondo con texto PAULANER repetido en toda la sección derecha */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <Image
                   src="/images/banner/fondo-banner.png?v=7"

@@ -746,24 +746,6 @@ export default function GiftBuilder() {
                             {beer.nationality}
                           </p>
 
-                          <div className="flex items-center mb-2">
-                            <div className="flex items-center">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`w-3 h-3 ${
-                                    i < Math.floor(beer.rating)
-                                      ? "text-yellow-400 fill-current"
-                                      : "text-gray-300"
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                            <span className="text-xs text-gray-500 ml-1">
-                              ({beer.rating})
-                            </span>
-                          </div>
-
                           <p className="text-sm font-bold text-[#B58E31]">
                             {formatPrice(beer.price)}
                           </p>
