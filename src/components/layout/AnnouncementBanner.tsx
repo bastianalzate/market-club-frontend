@@ -32,7 +32,7 @@ export default function AnnouncementBanner() {
           textTransform: "capitalize",
         }}
       >
-        SOLO REALIZAMOS DOMICILIOS EN MEDELLÍN
+        ENVÍOS A NIVEL NACIONAL
       </p>
     </div>
   );
