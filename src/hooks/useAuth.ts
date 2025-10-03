@@ -24,6 +24,7 @@ import {
 } from '../store/slices/authSlice';
 import { constants } from '../config/constants';
 import { syncCartAfterLogin } from '../utils/cartUtils';
+import { useProfileContext } from '../contexts/ProfileContext';
 
 // Traducciones de mensajes de error del servidor
 const errorTranslations: Record<string, string> = {
@@ -74,6 +75,7 @@ const translateError = (error: string): string => {
 
 export function useAuth() {
   const dispatch = useAppDispatch();
+  const { clearProfile } = useProfileContext();
   
   // Selectores
   const user = useAppSelector(selectUser);
@@ -273,8 +275,12 @@ export function useAuth() {
     localStorage.removeItem('token');
     localStorage.removeItem('user_id');
     localStorage.removeItem('user');
+    
+    // Limpiar el perfil del contexto
+    clearProfile();
+    
     dispatch(logout());
-  }, [dispatch]);
+  }, [dispatch, clearProfile]);
 
   // Restaurar usuario desde localStorage
   const restoreUser = useCallback(() => {

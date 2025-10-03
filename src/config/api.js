@@ -37,7 +37,7 @@ export const API_CONFIG = {
 
 // Utilidades de autenticación
 export const getAuthHeaders = () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

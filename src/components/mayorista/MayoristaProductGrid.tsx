@@ -3,8 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import { TransformedProduct } from "@/hooks/useMayoristaProducts";
 import LazyImage from "@/components/shared/LazyImage";
-import { ProductCardSkeleton } from "@/components/shared/ProductCardSkeleton";
-import { MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import ProductCardSkeleton from "@/components/shared/ProductCardSkeleton";
+import { MessageCircle, ChevronLeft, ChevronRight, ShoppingCart, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
+import { useWholesalerCartContext } from "@/contexts/WholesalerCartContext";
+import { useToast } from "@/hooks/useToast";
 
 interface Pagination {
   currentPage: number;
@@ -33,6 +35,19 @@ export default function MayoristaProductGrid({
   onPrevPage,
 }: MayoristaProductGridProps) {
   const [currentPage, setCurrentPage] = useState(pagination.currentPage);
+  
+  // Hook del carrito de mayoristas
+  const {
+    addToCart,
+    updateQuantity,
+    removeFromCart,
+    getProductQuantity,
+    isInCart,
+    loading: cartLoading,
+  } = useWholesalerCartContext();
+  
+  // Hook para notificaciones
+  const { showToast } = useToast();
 
   // Sincronizar el estado local con la paginación del hook
   useEffect(() => {
@@ -56,6 +71,110 @@ export default function MayoristaProductGrid({
       message
     )}`;
     window.open(whatsappUrl, "_blank");
+  };
+
+  // Función para agregar producto al carrito
+  const handleAddToCart = async (product: TransformedProduct) => {
+    try {
+      const result = await addToCart({
+        productId: product.id,
+        quantity: 1,
+      });
+      
+      if (result.success) {
+        showToast({
+          type: 'success',
+          message: 'Producto agregado al carrito mayorista',
+        });
+      } else {
+        showToast({
+          type: 'error',
+          message: result.message,
+        });
+      }
+    } catch (error) {
+      showToast({
+        type: 'error',
+        message: 'Error al agregar producto al carrito',
+      });
+    }
+  };
+
+  // Función para aumentar cantidad
+  const handleIncreaseQuantity = async (product: TransformedProduct) => {
+    const currentQuantity = getProductQuantity(product.id);
+    try {
+      const result = await updateQuantity({
+        productId: product.id,
+        quantity: currentQuantity + 1,
+      });
+      
+      if (!result.success) {
+        showToast({
+          type: 'error',
+          message: result.message,
+        });
+      }
+    } catch (error) {
+      showToast({
+        type: 'error',
+        message: 'Error al actualizar cantidad',
+      });
+    }
+  };
+
+  // Función para disminuir cantidad
+  const handleDecreaseQuantity = async (product: TransformedProduct) => {
+    const currentQuantity = getProductQuantity(product.id);
+    if (currentQuantity <= 1) {
+      // Si la cantidad es 1 o menos, remover del carrito
+      await handleRemoveFromCart(product);
+    } else {
+      try {
+        const result = await updateQuantity({
+          productId: product.id,
+          quantity: currentQuantity - 1,
+        });
+        
+        if (!result.success) {
+          showToast({
+            type: 'error',
+            message: result.message,
+          });
+        }
+      } catch (error) {
+        showToast({
+          type: 'error',
+          message: 'Error al actualizar cantidad',
+        });
+      }
+    }
+  };
+
+  // Función para remover del carrito
+  const handleRemoveFromCart = async (product: TransformedProduct) => {
+    try {
+      const result = await removeFromCart({
+        productId: product.id,
+      });
+      
+      if (result.success) {
+        showToast({
+          type: 'success',
+          message: 'Producto removido del carrito',
+        });
+      } else {
+        showToast({
+          type: 'error',
+          message: result.message,
+        });
+      }
+    } catch (error) {
+      showToast({
+        type: 'error',
+        message: 'Error al remover producto del carrito',
+      });
+    }
   };
 
   // Función para ir a una página específica
@@ -82,18 +201,6 @@ export default function MayoristaProductGrid({
 
   return (
     <div className="flex-1">
-      {/* Header con información de productos */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">
-          Productos Mayoristas
-        </h2>
-        <p className="text-gray-300">
-          {loading
-            ? "Cargando productos..."
-            : `${totalProducts} productos disponibles`}
-        </p>
-      </div>
-
       {/* Grid de productos */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {loading && products.length === 0 ? (
@@ -115,7 +222,7 @@ export default function MayoristaProductGrid({
           products.map((product) => (
             <div
               key={product.id}
-              className="bg-white rounded-lg overflow-hidden shadow-lg"
+              className="bg-white rounded-lg overflow-hidden shadow-lg flex flex-col"
             >
               {/* Imagen del producto */}
               <div className="relative">
@@ -132,23 +239,128 @@ export default function MayoristaProductGrid({
               </div>
 
               {/* Información del producto */}
-              <div className="p-6">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">
+              <div className="p-6 flex flex-col flex-grow">
+                <div className="mb-4">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">
                     {product.name}
                   </h3>
+                  
+                  {/* Precios */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500">Precio regular:</span>
+                      <span className="text-sm text-gray-600 line-through">
+                        {formatPrice(product.price)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-green-600">Precio mayorista:</span>
+                      <span className="text-lg font-bold text-green-600">
+                        {formatPrice(parseFloat(product.price) * 0.85)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-500">Ahorro:</span>
+                      <span className="text-xs font-medium text-green-600">
+                        {formatPrice(parseFloat(product.price) * 0.15)} (15%)
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Botón de cotizar */}
-                <button
-                  onClick={() => handleWhatsAppContact(product)}
-                  className="w-full flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 cursor-pointer"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>Cotizar WhatsApp</span>
-                </button>
-              </div>
-            </div>
+                {/* Controles del carrito */}
+                <div className="mt-auto">
+                {isInCart(product.id) ? (
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    {/* Botón de basura cuadrado - Solo visual */}
+                    <div
+                      className="relative p-2 sm:p-3 rounded-lg flex-shrink-0"
+                      style={{
+                        backgroundColor: "transparent",
+                        borderColor: "#D0D5DD",
+                        borderWidth: "1px",
+                        borderStyle: "solid",
+                      }}
+                      aria-label="Remover del carrito"
+                    >
+                      <Trash2
+                        className="w-4 h-4 sm:w-5 sm:h-5"
+                        style={{ color: "#DC2626" }}
+                      />
+                    </div>
+
+                    {/* Botón principal "Remover del carrito" */}
+                    <button
+                      onClick={() => handleRemoveFromCart(product)}
+                      disabled={cartLoading}
+                      className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                      style={{
+                        backgroundColor: "#DC2626",
+                      }}
+                      onMouseEnter={(e) =>
+                        !e.currentTarget.disabled &&
+                        (e.currentTarget.style.backgroundColor = "#B91C1C")
+                      }
+                      onMouseLeave={(e) =>
+                        !e.currentTarget.disabled &&
+                        (e.currentTarget.style.backgroundColor = "#DC2626")
+                      }
+                    >
+                      <span>Remover del carrito</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    {/* Botón de carrito cuadrado con contador - Solo visual */}
+                    <div
+                      className="relative p-2 sm:p-3 rounded-lg flex-shrink-0"
+                      style={{
+                        backgroundColor: "transparent",
+                        borderColor: "#D0D5DD",
+                        borderWidth: "1px",
+                        borderStyle: "solid",
+                      }}
+                      aria-label="Contador del carrito"
+                    >
+                      <ShoppingCart
+                        className="w-4 h-4 sm:w-5 sm:h-5"
+                        style={{ color: "#B58E31" }}
+                      />
+                      {/* Contador en el ícono del carrito */}
+                      {isInCart(product.id) && (
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center font-bold text-[10px] sm:text-xs">
+                          {getProductQuantity(product.id)}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Botón principal "Añadir al carrito" */}
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      disabled={cartLoading || !product.inStock}
+                      className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                      style={{
+                        backgroundColor: !product.inStock ? "#6B7280" : "#B58E31",
+                      }}
+                      onMouseEnter={(e) =>
+                        !e.currentTarget.disabled &&
+                        (e.currentTarget.style.backgroundColor = "#A07D2A")
+                      }
+                      onMouseLeave={(e) =>
+                        !e.currentTarget.disabled &&
+                        (e.currentTarget.style.backgroundColor = "#B58E31")
+                      }
+                    >
+                      <span>
+                        {cartLoading ? 'Agregando...' : 'Añadir al carrito'}
+                      </span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                   </div>
+                 )}
+                </div>
+               </div>
+             </div>
           ))
         )}
       </div>
@@ -162,6 +374,7 @@ export default function MayoristaProductGrid({
               <button
                 onClick={handleGoToPrevPage}
                 className="p-2 rounded-lg transition-colors text-white hover:text-gray-300 hover:bg-gray-800"
+                aria-label="Página anterior"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -219,6 +432,7 @@ export default function MayoristaProductGrid({
                   ? "text-gray-300 cursor-not-allowed"
                   : "text-white hover:text-gray-300 hover:bg-gray-800"
               }`}
+              aria-label="Página siguiente"
             >
               <ChevronRight className="w-5 h-5" />
             </button>

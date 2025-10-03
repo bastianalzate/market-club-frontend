@@ -376,8 +376,8 @@ export default function ProductGrid({
           {currentProducts.map((product) => (
             <div
               key={product.id}
-              className={`bg-white rounded-lg overflow-hidden shadow-lg ${
-                viewMode === "list" ? "flex" : ""
+              className={`bg-white rounded-lg overflow-hidden shadow-lg flex flex-col ${
+                viewMode === "list" ? "flex-row" : ""
               }`}
             >
               {/* Imagen del producto con botón de favorito */}
@@ -429,9 +429,9 @@ export default function ProductGrid({
 
               {/* Información del producto */}
               <div
-                className={`p-4 sm:p-6 ${
+                className={`p-4 sm:p-6 flex flex-col flex-grow ${
                   viewMode === "list"
-                    ? "flex-1 flex flex-col justify-between"
+                    ? "flex-1"
                     : ""
                 }`}
               >
@@ -451,7 +451,8 @@ export default function ProductGrid({
                 </div>
 
                 {/* Botones de acción */}
-                <div className="flex items-center gap-2 sm:gap-3">
+                <div className="mt-auto">
+                  <div className="flex items-center gap-2 sm:gap-3">
                   {/* Botón de carrito cuadrado con contador - Solo visual */}
                   <div
                     className="relative p-2 sm:p-3 rounded-lg flex-shrink-0"
@@ -510,6 +511,7 @@ export default function ProductGrid({
                         <ArrowRight className="w-4 h-4" />
                       )}
                   </button>
+                  </div>
                 </div>
               </div>
             </div>

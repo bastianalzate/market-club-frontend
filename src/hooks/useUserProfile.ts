@@ -110,7 +110,7 @@ interface PaginationMeta {
 }
 
 export const useUserProfile = () => {
-  const { profile, updateProfile: updateProfileContext } = useProfileContext();
+  const { profile, updateProfile: updateProfileContext, setLoading: setContextLoading } = useProfileContext();
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -118,16 +118,20 @@ export const useUserProfile = () => {
   // Cargar perfil del usuario
   const loadProfile = useCallback(async () => {
     try {
+      console.log('🔄 Loading profile...');
       setLoading(true);
+      setContextLoading(true); // Activar loading del contexto para el header
       setError(null);
       
       const response = await UserProfileService.getUserProfile();
+      console.log('📊 Profile response:', response);
       
       if (response.success) {
         // Manejar diferentes estructuras de respuesta del backend
         const userData = response.data.user || response.data;
         const statsData = response.data.stats || response.data;
         
+        console.log('✅ Profile loaded successfully:', userData);
         updateProfileContext(userData);
         setStats(statsData);
       } else {
@@ -136,11 +140,13 @@ export const useUserProfile = () => {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
       setError(errorMessage);
-      console.error('Error loading profile:', error);
+      console.error('❌ Error loading profile:', error);
     } finally {
+      console.log('🏁 Profile loading finished');
       setLoading(false);
+      setContextLoading(false); // Desactivar loading del contexto
     }
-  }, []);
+  }, [updateProfileContext, setContextLoading]);
 
   // Actualizar perfil
   const updateProfile = useCallback(async (profileData: Partial<UserProfile>) => {
@@ -192,10 +198,8 @@ export const useUserProfile = () => {
     }
   }, []);
 
-  // Cargar perfil al montar el componente
-  useEffect(() => {
-    loadProfile();
-  }, [loadProfile]);
+  // Removido el useEffect automático para evitar doble carga
+  // La carga se maneja manualmente desde los componentes
 
   return {
     profile,

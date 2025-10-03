@@ -4,12 +4,16 @@ import { useState, useCallback, Suspense } from "react";
 import CategoryIcons from "@/components/tienda/CategoryIcons";
 import ProductFilters from "@/components/tienda/ProductFilters";
 import MayoristaProductGrid from "./MayoristaProductGrid";
+import WholesalerCartDrawer from "./WholesalerCartDrawer";
 import MarketClubBanner from "@/components/home/MarketClubBanner";
 import ServicesBanner from "@/components/home/ServicesBanner";
 import { useMayoristaProducts } from "@/hooks/useMayoristaProducts";
+import { WholesalerCartProvider, useWholesalerCartContext } from "@/contexts/WholesalerCartContext";
+import { ShoppingCart } from "lucide-react";
 
 function MayoristaContentInner() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   // Hook para obtener productos desde la API
   const {
@@ -29,6 +33,9 @@ function MayoristaContentInner() {
     nextPage,
     prevPage,
   } = useMayoristaProducts();
+
+  // Hook del carrito de mayoristas
+  const { itemsCount } = useWholesalerCartContext();
 
   // Función para manejar cambios en la búsqueda
   const handleSearchChange = useCallback(
@@ -115,6 +122,43 @@ function MayoristaContentInner() {
         <CategoryIcons />
 
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-8">
+          {/* Header con título y botón del carrito */}
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Productos Mayoristas
+              </h2>
+              <p className="text-gray-300">
+                {loading
+                  ? "Cargando productos..."
+                  : `${pagination.total} productos disponibles`}
+              </p>
+            </div>
+            
+            {/* Botón del carrito */}
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="relative flex items-center space-x-2 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+              style={{
+                backgroundColor: "#B58E31",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = "#A07D2A")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "#B58E31")
+              }
+            >
+              <ShoppingCart className="w-5 h-5" />
+              <span>Carrito</span>
+              {itemsCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">
+                  {itemsCount}
+                </span>
+              )}
+            </button>
+          </div>
+
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar de filtros */}
             <ProductFilters
@@ -148,23 +192,31 @@ function MayoristaContentInner() {
 
       {/* Sección con fondo gris después del MarketClubBanner */}
       <div className="bg-gray-50"></div>
+
+      {/* Cart Drawer */}
+      <WholesalerCartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+      />
     </div>
   );
 }
 
 export default function MayoristaContent() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-            <p className="text-gray-600">Cargando tienda mayorista...</p>
+    <WholesalerCartProvider>
+      <Suspense
+        fallback={
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-500 mx-auto mb-4"></div>
+              <p className="text-gray-600">Cargando tienda mayorista...</p>
+            </div>
           </div>
-        </div>
-      }
-    >
-      <MayoristaContentInner />
-    </Suspense>
+        }
+      >
+        <MayoristaContentInner />
+      </Suspense>
+    </WholesalerCartProvider>
   );
 }

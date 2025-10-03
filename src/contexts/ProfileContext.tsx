@@ -28,8 +28,10 @@ interface UserProfile {
 
 interface ProfileContextType {
   profile: UserProfile | null;
+  isLoading: boolean;
   updateProfile: (newProfile: UserProfile) => void;
   clearProfile: () => void;
+  setLoading: (loading: boolean) => void;
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -50,19 +52,28 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({
   children,
 }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(false); // Cambiar a false por defecto
 
   const updateProfile = useCallback((newProfile: UserProfile) => {
     setProfile(newProfile);
+    setIsLoading(false); // Asegurar que se quite el loading cuando se actualiza
   }, []);
 
   const clearProfile = useCallback(() => {
     setProfile(null);
+    setIsLoading(true); // Poner loading al limpiar para mostrar skeleton en el header
+  }, []);
+
+  const setLoading = useCallback((loading: boolean) => {
+    setIsLoading(loading);
   }, []);
 
   const value = {
     profile,
+    isLoading,
     updateProfile,
     clearProfile,
+    setLoading,
   };
 
   return (
