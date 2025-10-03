@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { TransformedProduct } from "@/hooks/useMayoristaProducts";
 import LazyImage from "@/components/shared/LazyImage";
-import { ProductCardSkeleton } from "@/components/shared/ProductCardSkeleton";
+import ProductCardSkeleton from "@/components/shared/ProductCardSkeleton";
 import { MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Pagination {
@@ -162,6 +162,7 @@ export default function MayoristaProductGrid({
               <button
                 onClick={handleGoToPrevPage}
                 className="p-2 rounded-lg transition-colors text-white hover:text-gray-300 hover:bg-gray-800"
+                aria-label="Página anterior"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
