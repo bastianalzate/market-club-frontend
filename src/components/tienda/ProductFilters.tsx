@@ -1,6 +1,15 @@
 "use client";
 
-import { Filter, Search, Globe, Tag, DollarSign, X } from "lucide-react";
+import {
+  Filter,
+  Search,
+  Globe,
+  Tag,
+  DollarSign,
+  X,
+  Package,
+} from "lucide-react";
+import { useFilters } from "@/hooks/useFilters";
 
 interface ProductFiltersProps {
   searchTerm: string;
@@ -11,6 +20,8 @@ interface ProductFiltersProps {
   onCategoryChange: (category: string) => void;
   selectedPriceRange: string;
   onPriceRangeChange: (priceRange: string) => void;
+  selectedPackaging: string;
+  onPackagingChange: (packaging: string) => void;
   onClearFilters: () => void;
   hidePriceFilter?: boolean; // Nueva prop opcional para ocultar el filtro de precios
 }
@@ -24,48 +35,44 @@ export default function ProductFilters({
   onCategoryChange,
   selectedPriceRange,
   onPriceRangeChange,
+  selectedPackaging,
+  onPackagingChange,
   onClearFilters,
 }: ProductFiltersProps) {
+  // Obtener filtros desde el backend
+  const { filters, loading: filtersLoading } = useFilters();
+
+  // Transformar datos del backend al formato esperado
+  const countries = [
+    { value: "", label: "Todos" },
+    ...filters.countries.map((country) => ({
+      value: country,
+      label: country,
+    })),
+  ];
+
   const categories = [
     { value: "", label: "Todas" },
-    { value: "ale", label: "Cervezas Ale" },
-    { value: "blonde", label: "Cervezas Rubias" },
-    { value: "dark", label: "Cervezas Oscuras" },
-    { value: "ipa", label: "India Pale Ale" },
-    { value: "lager", label: "Cervezas Lager" },
-    { value: "pale_ale", label: "Pale Ale" },
-    { value: "pilsner", label: "Cervezas Pilsner" },
-    { value: "porter", label: "Cervezas Porter" },
-    { value: "wheat", label: "Cervezas de Trigo" },
+    ...filters.beer_styles.map((style) => ({
+      value: style,
+      label: style.charAt(0).toUpperCase() + style.slice(1).replace("_", " "),
+    })),
+  ];
+
+  const packagingTypes = [
+    { value: "", label: "Todos" },
+    ...filters.packaging_types.map((type) => ({
+      value: type,
+      label: type.charAt(0).toUpperCase() + type.slice(1),
+    })),
   ];
 
   const priceRanges = [
     { value: "", label: "Todos los precios" },
-    { value: "less_than_15000", label: "Menos de $15.000" },
-    { value: "15000_25000", label: "$15.000 - $25.000" },
-    { value: "25000_35000", label: "$25.000 - $35.000" },
-    { value: "35000_50000", label: "$35.000 - $50.000" },
-    { value: "50000_75000", label: "$50.000 - $75.000" },
-    { value: "75000_100000", label: "$75.000 - $100.000" },
-    { value: "more_than_100000", label: "Más de $100.000" },
-  ];
-
-  const countries = [
-    { value: "", label: "Todos" },
-    { value: "reino unido", label: "Reino Unido" },
-    { value: "colombia", label: "Colombia" },
-    { value: "alemania", label: "Alemania" },
-    { value: "italia", label: "Italia" },
-    { value: "escocia", label: "Escocia" },
-    { value: "belgica", label: "Bélgica" },
-    { value: "espana", label: "España" },
-    { value: "paises bajos", label: "Países Bajos" },
-    { value: "japon", label: "Japón" },
-    { value: "mexico", label: "México" },
-    { value: "peru", label: "Perú" },
-    { value: "republica checa", label: "República Checa" },
-    { value: "estados unidos", label: "Estados Unidos" },
-    { value: "tailandia", label: "Tailandia" },
+    ...filters.price_ranges.map((range) => ({
+      value: range,
+      label: range.replace("k", "k").replace("-", " - "),
+    })),
   ];
 
   return (
@@ -155,6 +162,34 @@ export default function ProductFilters({
                 {range.label}
               </option>
             ))}
+          </select>
+        </div>
+
+        {/* Tipo de Empaque */}
+        <div className="space-y-3 mt-6">
+          <h4 className="text-sm font-medium text-gray-700 flex items-center">
+            <Package className="w-4 h-4 mr-2" />
+            Tipo de empaque
+          </h4>
+          <select
+            value={selectedPackaging}
+            onChange={(e) => onPackagingChange(e.target.value)}
+            disabled={filtersLoading}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-sm text-gray-900 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {filtersLoading ? (
+              <option value="">Cargando...</option>
+            ) : (
+              packagingTypes.map((type) => (
+                <option
+                  key={type.value}
+                  value={type.value}
+                  className="text-gray-900 bg-white"
+                >
+                  {type.label}
+                </option>
+              ))
+            )}
           </select>
         </div>
 

@@ -42,9 +42,9 @@ const countries: Country[] = [
     flag: "/images/countries/ESCOCIA.png",
   },
   {
-    id: "reino unido",
-    name: "Reino Unido",
-    flag: "/images/countries/REINO_UNIDO.png",
+    id: "inglaterra",
+    name: "Inglaterra",
+    flag: "/images/countries/INGLATERRA.png",
   },
   {
     id: "italia",
@@ -97,10 +97,12 @@ export default function CountriesCarousel() {
   // Función para calcular items por vista según el tamaño de pantalla
   const updateItemsPerView = () => {
     const width = window.innerWidth;
-    if (width < 640) { // sm - móviles
+    if (width < 640) {
+      // sm - móviles
       setItemsPerView(1);
       setIsVerySmallScreen(width <= 375); // Pantallas muy pequeñas
-    } else { // sm+ - tablets y desktop
+    } else {
+      // sm+ - tablets y desktop
       setItemsPerView(6);
       setIsVerySmallScreen(false);
     }
@@ -110,8 +112,8 @@ export default function CountriesCarousel() {
   useEffect(() => {
     updateItemsPerView();
     const handleResize = () => updateItemsPerView();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Calcular el ancho de cada elemento dinámicamente
@@ -219,9 +221,14 @@ export default function CountriesCarousel() {
                 <div
                   key={country.id}
                   className="flex-shrink-0 py-2 sm:px-2"
-                  style={{ 
+                  style={{
                     width: `${itemWidth}%`,
-                    paddingLeft: itemsPerView === 1 ? (isVerySmallScreen ? '1.8%' : '2.3%') : undefined
+                    paddingLeft:
+                      itemsPerView === 1
+                        ? isVerySmallScreen
+                          ? "1.8%"
+                          : "2.3%"
+                        : undefined,
                   }}
                 >
                   <button

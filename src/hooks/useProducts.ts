@@ -81,6 +81,7 @@ export const useProducts = () => {
   const [selectedCountry, setSelectedCountry] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('');
+  const [selectedPackaging, setSelectedPackaging] = useState<string>('');
   const [pagination, setPagination] = useState({
     currentPage: 1,
     lastPage: 1,
@@ -100,7 +101,7 @@ export const useProducts = () => {
   });
 
   // Función para obtener productos de una página específica
-  const fetchProducts = async (page: number = 1, country?: string, category?: string, priceRange?: string) => {
+  const fetchProducts = async (page: number = 1, country?: string, category?: string, priceRange?: string, packaging?: string) => {
     try {
       setLoading(true);
       setError(null);
@@ -115,6 +116,9 @@ export const useProducts = () => {
       }
       if (priceRange && priceRange.trim()) {
         url += `&price_range=${encodeURIComponent(priceRange)}`;
+      }
+      if (packaging && packaging.trim()) {
+        url += `&packaging_type=${encodeURIComponent(packaging)}`;
       }
 
       console.log('🔍 Fetching products with auth headers from:', url);
@@ -158,7 +162,7 @@ export const useProducts = () => {
   // Función para cambiar de página
   const goToPage = (page: number) => {
     if (page >= 1 && page <= pagination.lastPage) {
-      fetchProducts(page, selectedCountry, selectedCategory, selectedPriceRange);
+      fetchProducts(page, selectedCountry, selectedCategory, selectedPriceRange, selectedPackaging);
     }
   };
 
@@ -179,19 +183,25 @@ export const useProducts = () => {
   // Función para filtrar por país
   const filterByCountry = async (country: string) => {
     setSelectedCountry(country);
-    fetchProducts(1, country, selectedCategory, selectedPriceRange);
+    fetchProducts(1, country, selectedCategory, selectedPriceRange, selectedPackaging);
   };
 
   // Función para filtrar por categoría
   const filterByCategory = async (category: string) => {
     setSelectedCategory(category);
-    fetchProducts(1, selectedCountry, category, selectedPriceRange);
+    fetchProducts(1, selectedCountry, category, selectedPriceRange, selectedPackaging);
   };
 
   // Función para filtrar por rango de precios
   const filterByPriceRange = async (priceRange: string) => {
     setSelectedPriceRange(priceRange);
-    fetchProducts(1, selectedCountry, selectedCategory, priceRange);
+    fetchProducts(1, selectedCountry, selectedCategory, priceRange, selectedPackaging);
+  };
+
+  // Función para filtrar por tipo de empaque
+  const filterByPackaging = async (packaging: string) => {
+    setSelectedPackaging(packaging);
+    fetchProducts(1, selectedCountry, selectedCategory, selectedPriceRange, packaging);
   };
 
   // Función para limpiar todos los filtros
@@ -199,13 +209,14 @@ export const useProducts = () => {
     setSelectedCountry('');
     setSelectedCategory('');
     setSelectedPriceRange('');
-    fetchProducts(1, '', '', '');
+    setSelectedPackaging('');
+    fetchProducts(1, '', '', '', '');
   };
 
   // Función para buscar productos
   const searchProducts = async (searchTerm: string) => {
     if (!searchTerm.trim()) {
-      fetchProducts(1, selectedCountry, selectedCategory, selectedPriceRange);
+      fetchProducts(1, selectedCountry, selectedCategory, selectedPriceRange, selectedPackaging);
       return;
     }
 
@@ -267,11 +278,13 @@ export const useProducts = () => {
     const countryFromUrl = searchParams.get('country') || '';
     const categoryFromUrl = searchParams.get('beer_style') || '';
     const priceFromUrl = searchParams.get('price_range') || '';
+    const packagingFromUrl = searchParams.get('packaging_type') || '';
     const searchFromUrl = searchParams.get('search') || '';
     
     setSelectedCountry(countryFromUrl);
     setSelectedCategory(categoryFromUrl);
     setSelectedPriceRange(priceFromUrl);
+    setSelectedPackaging(packagingFromUrl);
     
     // Si hay término de búsqueda en la URL, usarlo
     if (searchFromUrl.trim()) {
@@ -279,7 +292,7 @@ export const useProducts = () => {
       searchProducts(searchFromUrl);
     } else {
       // Cargar productos con filtros de URL
-      fetchProducts(1, countryFromUrl, categoryFromUrl, priceFromUrl);
+      fetchProducts(1, countryFromUrl, categoryFromUrl, priceFromUrl, packagingFromUrl);
     }
   }, [searchParams]);
 
@@ -291,11 +304,13 @@ export const useProducts = () => {
     selectedCountry,
     selectedCategory,
     selectedPriceRange,
+    selectedPackaging,
     fetchProducts,
     searchProducts,
     filterByCountry,
     filterByCategory,
     filterByPriceRange,
+    filterByPackaging,
     clearAllFilters,
     goToPage,
     nextPage,

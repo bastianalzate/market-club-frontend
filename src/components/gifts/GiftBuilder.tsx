@@ -16,6 +16,7 @@ import {
 import { useCartContext } from "@/contexts/CartContext";
 import { useNotification } from "@/hooks/useNotification";
 import { useProducts, TransformedProduct } from "@/hooks/useProducts";
+import { useFilters } from "@/hooks/useFilters";
 import NotificationToast from "@/components/shared/NotificationToast";
 import LazyImage from "@/components/shared/LazyImage";
 import { formatPrice } from "@/utils/formatters";
@@ -155,49 +156,34 @@ export default function GiftBuilder() {
   // Convertir productos del backend a formato Beer
   const availableBeers = backendProducts.map(transformToBeer);
 
-  // Categorías exactas como en la tienda
+  // Obtener filtros desde el backend
+  const { filters, loading: filtersLoading } = useFilters();
+
+  // Transformar datos del backend al formato esperado
   const categories = [
     { value: "", label: "Todas" },
-    { value: "ale", label: "Cervezas Ale" },
-    { value: "blonde", label: "Cervezas Rubias" },
-    { value: "dark", label: "Cervezas Oscuras" },
-    { value: "ipa", label: "India Pale Ale" },
-    { value: "lager", label: "Cervezas Lager" },
-    { value: "pale_ale", label: "Pale Ale" },
-    { value: "pilsner", label: "Cervezas Pilsner" },
-    { value: "porter", label: "Cervezas Porter" },
-    { value: "wheat", label: "Cervezas de Trigo" },
+    ...filters.beer_styles.map((style) => ({
+      value: style,
+      label: style.charAt(0).toUpperCase() + style.slice(1).replace("_", " "),
+    })),
   ];
 
-  // Países exactos como en la tienda
+  // Países desde el backend
   const countries = [
     { value: "", label: "Todos" },
-    { value: "reino unido", label: "Reino Unido" },
-    { value: "colombia", label: "Colombia" },
-    { value: "alemania", label: "Alemania" },
-    { value: "italia", label: "Italia" },
-    { value: "escocia", label: "Escocia" },
-    { value: "belgica", label: "Bélgica" },
-    { value: "espana", label: "España" },
-    { value: "paises bajos", label: "Países Bajos" },
-    { value: "japon", label: "Japón" },
-    { value: "mexico", label: "México" },
-    { value: "peru", label: "Perú" },
-    { value: "republica checa", label: "República Checa" },
-    { value: "estados unidos", label: "Estados Unidos" },
-    { value: "tailandia", label: "Tailandia" },
+    ...filters.countries.map((country) => ({
+      value: country,
+      label: country,
+    })),
   ];
 
-  // Rangos de precio exactos como en la tienda
+  // Rangos de precio desde el backend
   const priceRanges = [
     { value: "", label: "Todos los precios" },
-    { value: "less_than_15000", label: "Menos de $15.000" },
-    { value: "15000_25000", label: "$15.000 - $25.000" },
-    { value: "25000_35000", label: "$25.000 - $35.000" },
-    { value: "35000_50000", label: "$35.000 - $50.000" },
-    { value: "50000_75000", label: "$50.000 - $75.000" },
-    { value: "75000_100000", label: "$75.000 - $100.000" },
-    { value: "more_than_100000", label: "Más de $100.000" },
+    ...filters.price_ranges.map((range) => ({
+      value: range,
+      label: range.replace("k", "k").replace("-", " - "),
+    })),
   ];
 
   // Los productos ya vienen filtrados del hook useProducts
@@ -595,16 +581,21 @@ export default function GiftBuilder() {
                             onChange={(e) =>
                               handleCategoryChange(e.target.value)
                             }
-                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900"
+                            disabled={filtersLoading}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            {categories.map((category) => (
-                              <option
-                                key={category.value}
-                                value={category.value}
-                              >
-                                {category.label}
-                              </option>
-                            ))}
+                            {filtersLoading ? (
+                              <option value="">Cargando...</option>
+                            ) : (
+                              categories.map((category) => (
+                                <option
+                                  key={category.value}
+                                  value={category.value}
+                                >
+                                  {category.label}
+                                </option>
+                              ))
+                            )}
                           </select>
                         </div>
                         <div>

@@ -1,15 +1,9 @@
 # Block all crawlers for admin and sensitive areas
 User-agent: *
-Disallow: /admin/
 Disallow: /api/
 Disallow: /checkout/
 Disallow: /perfil/
-Disallow: /_next/
-Disallow: /private/
 
-# Allow all crawlers for public content
-User-agent: *
-Allow: /
 
 # Block specific bots that consume resources
 User-agent: AhrefsBot

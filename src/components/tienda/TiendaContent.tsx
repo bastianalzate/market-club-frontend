@@ -23,10 +23,12 @@ function TiendaContentInner() {
     selectedCountry,
     selectedCategory,
     selectedPriceRange,
+    selectedPackaging,
     searchProducts,
     filterByCountry,
     filterByCategory,
     filterByPriceRange,
+    filterByPackaging,
     clearAllFilters,
     goToPage,
     nextPage,
@@ -70,6 +72,14 @@ function TiendaContentInner() {
       filterByPriceRange(priceRange);
     },
     [filterByPriceRange]
+  );
+
+  // Función para manejar cambios en el filtro de empaque
+  const handlePackagingChange = useCallback(
+    (packaging: string) => {
+      filterByPackaging(packaging);
+    },
+    [filterByPackaging]
   );
 
   // Función para limpiar todos los filtros
@@ -135,6 +145,8 @@ function TiendaContentInner() {
               onCategoryChange={handleCategoryChange}
               selectedPriceRange={selectedPriceRange}
               onPriceRangeChange={handlePriceRangeChange}
+              selectedPackaging={selectedPackaging}
+              onPackagingChange={handlePackagingChange}
               onClearFilters={handleClearFilters}
             />
 
