@@ -28,7 +28,7 @@ interface GuestData {
   address: string;
 }
 
-type ModalMode = "options" | "login" | "register" | "guest";
+type ModalMode = "options" | "login" | "register" | "guest" | "wholesaler";
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const router = useRouter();
@@ -44,6 +44,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   >({});
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isWholesalerSelected, setIsWholesalerSelected] = useState<boolean | null>(null);
 
   // Estados para formularios
   const [loginData, setLoginData] = useState({ email: "", password: "" });
@@ -85,6 +86,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     setSuccessMessage("");
     setShowPassword(false);
     setShowConfirmPassword(false);
+    setIsWholesalerSelected(null);
     clearError();
   }, [clearError]);
 
@@ -333,12 +335,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               <h2 className="text-2xl font-bold text-gray-900">
                 {mode === "options" && "Bienvenido a Market Club"}
                 {mode === "login" && "Iniciar Sesión"}
+                {mode === "wholesaler" && "Tipo de Cuenta"}
                 {mode === "register" && "Crear Cuenta"}
                 {mode === "guest" && "Continuar como Invitado"}
               </h2>
               <p className="text-gray-600 mt-1">
                 {mode === "options" && "Elige cómo quieres continuar"}
                 {mode === "login" && "Ingresa a tu cuenta"}
+                {mode === "wholesaler" && "¿Eres mayorista?"}
                 {mode === "register" &&
                   "Crea tu cuenta para una mejor experiencia"}
                 {mode === "guest" && "Completa tus datos para la entrega"}
@@ -373,7 +377,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 </button>
 
                 <button
-                  onClick={() => setMode("register")}
+                  onClick={() => setMode("wholesaler")}
                   className="w-full flex items-center justify-center px-6 py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-colors cursor-pointer"
                 >
                   <User className="w-5 h-5 mr-2" />
@@ -399,12 +403,66 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               </div>
             )}
 
+            {mode === "wholesaler" && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <p className="text-gray-600">
+                    Selecciona el tipo de cuenta que mejor se adapte a tus necesidades
+                  </p>
+                </div>
+                
+                <button
+                  onClick={() => {
+                    setIsWholesalerSelected(false);
+                    setRegisterData(prev => ({ ...prev, isWholesaler: false }));
+                    setMode("register");
+                  }}
+                  className="w-full flex items-center justify-center px-6 py-4 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-xl font-semibold transition-colors cursor-pointer border-2 border-gray-300 hover:border-gray-400"
+                >
+                  <User className="w-5 h-5 mr-3" />
+                  <div className="text-left">
+                    <div className="font-semibold">Cliente Regular</div>
+                    <div className="text-sm text-gray-600">Compra productos para consumo personal</div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setIsWholesalerSelected(true);
+                    setRegisterData(prev => ({ ...prev, isWholesaler: true }));
+                    setMode("register");
+                  }}
+                  className="w-full flex items-center justify-center px-6 py-4 bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-white rounded-xl font-semibold transition-colors cursor-pointer"
+                >
+                  <User className="w-5 h-5 mr-3" />
+                  <div className="text-left">
+                    <div className="font-semibold">Mayorista</div>
+                    <div className="text-sm text-yellow-100">Compra productos para revender con precios especiales</div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setMode("options")}
+                  className="w-full mt-4 font-medium text-sm transition-colors cursor-pointer text-gray-500 hover:text-gray-700"
+                >
+                  ← Volver
+                </button>
+              </div>
+            )}
+
             {(mode === "login" || mode === "register" || mode === "guest") && (
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Back button */}
                 <button
                   type="button"
-                  onClick={() => setMode("options")}
+                  onClick={() => {
+                    if (mode === "register") {
+                      setMode("wholesaler");
+                    } else {
+                      setMode("options");
+                    }
+                  }}
                   className="font-medium text-sm transition-colors cursor-pointer"
                   style={{ color: "rgb(181, 142, 49)" }}
                   onMouseEnter={(e) => {
@@ -751,6 +809,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             ? "border-red-300"
                             : "border-gray-300"
                         }`}
+                        aria-label="Seleccionar país"
                       >
                         <option value="Colombia">Colombia</option>
                         <option value="México">México</option>
@@ -773,35 +832,34 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   </div>
                 )}
 
-                {/* Wholesaler checkbox (register only) */}
+                {/* Wholesaler info display (register only) */}
                 {mode === "register" && (
-                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                    <div className="flex items-start space-x-3">
-                      <div className="flex items-center h-5">
-                        <input
-                          id="isWholesaler"
-                          type="checkbox"
-                          checked={registerData.isWholesaler}
-                          onChange={(e) => {
-                            setRegisterData({
-                              ...registerData,
-                              isWholesaler: e.target.checked,
-                            });
-                          }}
-                          className="w-4 h-4 text-amber-600 bg-gray-100 border-gray-300 rounded focus:ring-amber-500 focus:ring-2"
-                        />
+                  <div className={`rounded-xl p-4 border ${
+                    registerData.isWholesaler 
+                      ? "bg-yellow-50 border-yellow-200" 
+                      : "bg-gray-50 border-gray-200"
+                  }`}>
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        registerData.isWholesaler 
+                          ? "bg-yellow-500 text-white" 
+                          : "bg-gray-400 text-white"
+                      }`}>
+                        <User className="w-4 h-4" />
                       </div>
-                      <div className="flex-1">
-                        <label
-                          htmlFor="isWholesaler"
-                          className="text-sm font-medium text-gray-900 cursor-pointer"
-                        >
-                          Soy mayorista
-                        </label>
-                        <p className="text-xs text-gray-600 mt-1">
-                          Marca esta opción si eres un distribuidor o compras en
-                          grandes cantidades. Tendrás acceso a precios
-                          especiales y descuentos por volumen.
+                      <div className="text-sm">
+                        <div className={`font-medium ${
+                          registerData.isWholesaler ? "text-yellow-800" : "text-gray-700"
+                        }`}>
+                          {registerData.isWholesaler ? "Cuenta Mayorista" : "Cuenta Regular"}
+                        </div>
+                        <p className={`text-xs ${
+                          registerData.isWholesaler ? "text-yellow-600" : "text-gray-500"
+                        }`}>
+                          {registerData.isWholesaler 
+                            ? "Acceso a precios especiales para revendedores"
+                            : "Compra productos para consumo personal"
+                          }
                         </p>
                       </div>
                     </div>
