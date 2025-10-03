@@ -3,7 +3,8 @@ Disallow: /admin/
 Disallow: /api/
 Disallow: /checkout/
 Disallow: /private/
-# Disallow: /perfil/     # <- Descomenta solo si NO quieres indexar perfiles
+Disallow: /perfil/     # <- Descomenta solo si NO quieres indexar perfiles
+Disallow: /mayorista
 # OJO: no bloquear /_next/ (recursos estáticos necesarios)
 
 # Bots que consumen recursos (opcional)
@@ -20,4 +21,4 @@ User-agent: DotBot
 Disallow: /
 
 # Sitemap (muy importante para acelerar descubrimiento)
-Sitemap: https://tudominio.com/sitemap.xml
+Sitemap: https://marketclub.com/sitemap.xml
