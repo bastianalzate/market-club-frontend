@@ -16,13 +16,48 @@ interface PerfilHeaderProps {
 }
 
 export default function PerfilHeader({ user }: PerfilHeaderProps) {
-  const { profile } = useProfileContext();
+  const { profile, isLoading } = useProfileContext();
 
   // Usar los datos actualizados del perfil si están disponibles, sino usar los datos del user prop
   const displayName = profile?.name || user.name;
   const displayEmail = profile?.email || user.email;
   const displayPhone = profile?.phone || user.phone;
   const isWholesaler = profile?.is_wholesaler || false;
+
+  // Si se está cargando el perfil, mostrar skeleton
+  if (isLoading) {
+    return (
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+            {/* Avatar Skeleton */}
+            <div className="relative">
+              <div className="w-24 h-24 bg-gray-200 rounded-full animate-pulse"></div>
+            </div>
+
+            {/* Información del usuario - Skeleton */}
+            <div className="flex-1">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="space-y-3">
+                  {/* Nombre skeleton */}
+                  <div className="h-8 bg-gray-200 rounded animate-pulse w-64"></div>
+                  
+                  {/* Email y teléfono skeleton */}
+                  <div className="flex flex-wrap items-center gap-4">
+                    <div className="h-4 bg-gray-200 rounded animate-pulse w-48"></div>
+                    <div className="h-4 bg-gray-200 rounded animate-pulse w-32"></div>
+                  </div>
+                </div>
+                
+                {/* Badge skeleton */}
+                <div className="h-6 bg-gray-200 rounded-full animate-pulse w-20"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white shadow-sm border-b border-gray-200">

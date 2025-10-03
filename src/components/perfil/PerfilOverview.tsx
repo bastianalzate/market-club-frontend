@@ -43,7 +43,11 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
     stats,
     loading: profileLoading,
     error: profileError,
+    loadProfile,
   } = useUserProfile();
+  
+  // Estado local para controlar si se está cargando el perfil
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const { orders, loading: ordersLoading, loadOrders } = useUserOrders();
   const {
     plans,
@@ -63,11 +67,26 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
 
   // Cargar datos al montar el componente
   useEffect(() => {
-    loadOrders({ per_page: 3 }); // Solo las 3 órdenes más recientes
-    loadCurrentSubscription(); // Cargar suscripción actual
-    loadPlans(); // Cargar planes disponibles
-    loadHistory(); // Cargar historial de suscripciones
-  }, [loadOrders, loadCurrentSubscription, loadPlans, loadHistory]);
+    const loadAllData = async () => {
+      try {
+        setIsLoadingProfile(true);
+        await loadProfile(); // Cargar datos del perfil
+        loadOrders({ per_page: 3 }); // Solo las 3 órdenes más recientes
+        loadCurrentSubscription(); // Cargar suscripción actual
+        loadPlans(); // Cargar planes disponibles
+        loadHistory(); // Cargar historial de suscripciones
+      } catch (error) {
+        console.error('Error loading profile data:', error);
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+    
+    loadAllData();
+  }, [loadProfile, loadOrders, loadCurrentSubscription, loadPlans, loadHistory]);
+
+  // El skeleton loader ahora solo aparece en el PerfilHeader
+  // Este componente siempre muestra el contenido, incluso mientras se cargan los datos del perfil
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("es-CO", {
@@ -316,8 +335,13 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                   {profile?.is_wholesaler ? "Mayorista desde" : "Miembro desde"}
                 </p>
                 <p className="text-lg font-bold text-gray-900">
-                  {stats?.member_since
-                    ? new Date(stats.member_since).toLocaleDateString("es-CO", {
+                  {profile?.created_at
+                    ? new Date(profile.created_at).toLocaleDateString("es-CO", {
+                        month: "short",
+                        year: "numeric",
+                      })
+                    : user.created_at 
+                    ? new Date(user.created_at).toLocaleDateString("es-CO", {
                         month: "short",
                         year: "numeric",
                       })

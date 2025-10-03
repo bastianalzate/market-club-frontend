@@ -4,20 +4,44 @@ export class UserProfileService {
     // 1. Datos del Usuario
     static async getUserProfile() {
         try {
+            const headers = getSessionHeaders();
+            console.log('🔑 Request headers:', headers);
+            console.log('🌐 Requesting:', `${API_CONFIG.BASE_URL}/user/profile`);
+            
+            // Verificar si el token existe
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                throw new Error('No hay token de autenticación');
+            }
+            
             const response = await fetch(`${API_CONFIG.BASE_URL}/user/profile`, {
                 method: 'GET',
-                headers: getSessionHeaders()
+                headers: headers
             });
+
+            console.log('📡 Response status:', response.status);
+            console.log('📡 Response ok:', response.ok);
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ message: 'Error desconocido' }));
+                console.error('❌ API Error:', errorData);
+                
+                // Si es error 401, limpiar el token
+                if (response.status === 401) {
+                    localStorage.removeItem('auth_token');
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user_id');
+                    localStorage.removeItem('user');
+                }
+                
                 throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
             }
 
             const result = await response.json();
+            console.log('✅ API Response:', result);
             return result;
         } catch (error) {
-            console.error('Error getting user profile:', error);
+            console.error('❌ Error getting user profile:', error);
             throw error;
         }
     }

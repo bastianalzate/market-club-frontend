@@ -9,6 +9,7 @@ import PerfilOverview from "./PerfilOverview";
 import PerfilOrders from "./PerfilOrders";
 import PerfilFavorites from "./PerfilFavorites";
 import PerfilSettings from "./PerfilSettings";
+import ProfileSkeleton from "../skeletons/ProfileSkeleton";
 
 type PerfilTab = "overview" | "orders" | "favorites" | "settings";
 
@@ -26,14 +27,7 @@ export default function PerfilContent() {
 
   // Mostrar loading mientras se verifica la autenticación
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando perfil...</p>
-        </div>
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
 
   // Si no está autenticado, no mostrar nada (se redirigirá)
