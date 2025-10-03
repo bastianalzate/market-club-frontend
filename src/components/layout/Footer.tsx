@@ -39,7 +39,7 @@ export default function Footer() {
 
               <li>
                 <Link
-                  href="/gifts"
+                  href="/arma-tu-regalo"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
                 >
                   Arma tu regalo
@@ -48,7 +48,7 @@ export default function Footer() {
 
               <li>
                 <Link
-                  href="/market-club"
+                  href="/club-socios"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
                 >
                   Club de socios
