@@ -220,6 +220,7 @@ export default function MayoristaProductGrid({
                   ? "text-gray-300 cursor-not-allowed"
                   : "text-white hover:text-gray-300 hover:bg-gray-800"
               }`}
+              aria-label="Página siguiente"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
