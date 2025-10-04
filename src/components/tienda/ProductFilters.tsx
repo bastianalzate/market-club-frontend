@@ -38,6 +38,7 @@ export default function ProductFilters({
   selectedPackaging,
   onPackagingChange,
   onClearFilters,
+  hidePriceFilter = false,
 }: ProductFiltersProps) {
   // Obtener filtros desde el backend
   const { filters, loading: filtersLoading } = useFilters();
@@ -69,10 +70,25 @@ export default function ProductFilters({
 
   const priceRanges = [
     { value: "", label: "Todos los precios" },
-    ...filters.price_ranges.map((range) => ({
-      value: range,
-      label: range.replace("k", "k").replace("-", " - "),
-    })),
+    ...filters.price_ranges
+      .sort((a, b) => {
+        // Extraer números para ordenar correctamente
+        const getMinValue = (range: string) => {
+          if (range.includes("+")) {
+            // Para rangos como "50k+", usar el valor base
+            return parseInt(range.replace("k+", "")) * 1000;
+          }
+          // Para rangos como "0-10k", "10k-25k", etc.
+          const match = range.match(/(\d+)k?-(\d+)k?/);
+          return match ? parseInt(match[1]) * 1000 : 0;
+        };
+        
+        return getMinValue(a) - getMinValue(b);
+      })
+      .map((range) => ({
+        value: range,
+        label: range.replace("k", "k").replace("-", " - "),
+      })),
   ];
 
   return (
@@ -143,27 +159,29 @@ export default function ProductFilters({
         </div>
 
         {/* Rango de Precios */}
-        <div className="space-y-3 mt-6">
-          <h4 className="text-sm font-medium text-gray-700 flex items-center">
-            <DollarSign className="w-4 h-4 mr-2" />
-            Rango de precios
-          </h4>
-          <select
-            value={selectedPriceRange}
-            onChange={(e) => onPriceRangeChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-sm text-gray-900 bg-white"
-          >
-            {priceRanges.map((range) => (
-              <option
-                key={range.value}
-                value={range.value}
-                className="text-gray-900 bg-white"
-              >
-                {range.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        {!hidePriceFilter && (
+          <div className="space-y-3 mt-6">
+            <h4 className="text-sm font-medium text-gray-700 flex items-center">
+              <DollarSign className="w-4 h-4 mr-2" />
+              Rango de precios
+            </h4>
+            <select
+              value={selectedPriceRange}
+              onChange={(e) => onPriceRangeChange(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-sm text-gray-900 bg-white"
+            >
+              {priceRanges.map((range) => (
+                <option
+                  key={range.value}
+                  value={range.value}
+                  className="text-gray-900 bg-white"
+                >
+                  {range.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {/* Tipo de Empaque */}
         <div className="space-y-3 mt-6">

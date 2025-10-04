@@ -262,10 +262,6 @@ export default function WholesalerCartDrawer({ isOpen, onClose }: WholesalerCart
                             </div>
 
                             <div className="flex flex-col items-end justify-between">
-                              <p className="flex-shrink-0 w-20 text-sm font-bold text-right text-gray-600">
-                                {formatPrice(item.total_price)}
-                              </p>
-
                               <button
                                 type="button"
                                 onClick={() => handleRemoveFromCart(item.product_id)}
@@ -295,34 +291,7 @@ export default function WholesalerCartDrawer({ isOpen, onClose }: WholesalerCart
             {/* Footer */}
             {itemsCount > 0 && (
               <div className="px-4 py-5 border-t border-gray-200 sm:p-6">
-                <ul className="space-y-4">
-                  <li className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-gray-900">Subtotal</p>
-                    <p className="text-sm font-bold text-gray-900">
-                      {formatPrice(subtotal)}
-                    </p>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-gray-900">Impuestos</p>
-                    <p className="text-sm font-bold text-gray-900">
-                      {formatPrice(taxAmount)}
-                    </p>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-gray-900">Envío</p>
-                    <p className="text-sm font-bold text-gray-900">
-                      {shippingAmount === 0 ? "Gratis" : formatPrice(shippingAmount)}
-                    </p>
-                  </li>
-                  <li className="flex items-center justify-between border-t pt-2">
-                    <p className="text-base font-bold text-gray-900">Total</p>
-                    <p className="text-base font-bold text-gray-900">
-                      {formatPrice(totalAmount)}
-                    </p>
-                  </li>
-                </ul>
-
-                <div className="mt-5 space-y-3">
+                <div className="space-y-3">
                   <button
                     type="button"
                     onClick={handleWhatsAppContact}
@@ -338,7 +307,7 @@ export default function WholesalerCartDrawer({ isOpen, onClose }: WholesalerCart
                     onClick={handleClose}
                     className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-gray-900 transition-all duration-200 bg-transparent border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 hover:bg-gray-200 focus:bg-gray-200 cursor-pointer"
                   >
-                    Continuar Comprando
+                    Continuar Cotizando
                   </button>
                 </div>
               </div>

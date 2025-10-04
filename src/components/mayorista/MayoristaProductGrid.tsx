@@ -7,6 +7,7 @@ import ProductCardSkeleton from "@/components/shared/ProductCardSkeleton";
 import { MessageCircle, ChevronLeft, ChevronRight, ShoppingCart, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
 import { useWholesalerCartContext } from "@/contexts/WholesalerCartContext";
 import { useToast } from "@/hooks/useToast";
+import Toast from "@/components/shared/Toast";
 
 interface Pagination {
   currentPage: number;
@@ -35,6 +36,8 @@ export default function MayoristaProductGrid({
   onPrevPage,
 }: MayoristaProductGridProps) {
   const [currentPage, setCurrentPage] = useState(pagination.currentPage);
+  const [addingToCart, setAddingToCart] = useState<number | null>(null);
+  const [removingFromCart, setRemovingFromCart] = useState<number | null>(null);
   
   // Hook del carrito de mayoristas
   const {
@@ -47,7 +50,7 @@ export default function MayoristaProductGrid({
   } = useWholesalerCartContext();
   
   // Hook para notificaciones
-  const { showToast } = useToast();
+  const { toast, showSuccess, showError, hideToast } = useToast();
 
   // Sincronizar el estado local con la paginación del hook
   useEffect(() => {
@@ -75,6 +78,16 @@ export default function MayoristaProductGrid({
 
   // Función para agregar producto al carrito
   const handleAddToCart = async (product: TransformedProduct) => {
+    // Verificar que el producto tenga stock antes de intentar agregarlo
+    if (!product.inStock) {
+      showError(
+        "Producto agotado",
+        `"${product.name}" no está disponible en este momento.`
+      );
+      return;
+    }
+
+    setAddingToCart(product.id);
     try {
       const result = await addToCart({
         productId: product.id,
@@ -82,21 +95,24 @@ export default function MayoristaProductGrid({
       });
       
       if (result.success) {
-        showToast({
-          type: 'success',
-          message: 'Producto agregado al carrito mayorista',
-        });
+        showSuccess(
+          "¡Producto agregado! 🍺",
+          `"${product.name}" se agregó a la cotización exitosamente.`
+        );
       } else {
-        showToast({
-          type: 'error',
-          message: result.message,
-        });
+        showError(
+          "Error al agregar producto",
+          result.message || "No se pudo agregar el producto a la cotización"
+        );
       }
     } catch (error) {
-      showToast({
-        type: 'error',
-        message: 'Error al agregar producto al carrito',
-      });
+      console.error("Error adding to cart:", error);
+      showError(
+        "Error al agregar producto",
+        "Ocurrió un error inesperado. Intenta nuevamente."
+      );
+    } finally {
+      setAddingToCart(null);
     }
   };
 
@@ -110,16 +126,17 @@ export default function MayoristaProductGrid({
       });
       
       if (!result.success) {
-        showToast({
-          type: 'error',
-          message: result.message,
-        });
+        showError(
+          "Error al actualizar cantidad",
+          result.message || "No se pudo actualizar la cantidad del producto"
+        );
       }
     } catch (error) {
-      showToast({
-        type: 'error',
-        message: 'Error al actualizar cantidad',
-      });
+      console.error("Error updating quantity:", error);
+      showError(
+        "Error al actualizar cantidad",
+        "Ocurrió un error inesperado. Intenta nuevamente."
+      );
     }
   };
 
@@ -137,43 +154,48 @@ export default function MayoristaProductGrid({
         });
         
         if (!result.success) {
-          showToast({
-            type: 'error',
-            message: result.message,
-          });
+          showError(
+            "Error al actualizar cantidad",
+            result.message || "No se pudo actualizar la cantidad del producto"
+          );
         }
       } catch (error) {
-        showToast({
-          type: 'error',
-          message: 'Error al actualizar cantidad',
-        });
+        console.error("Error updating quantity:", error);
+        showError(
+          "Error al actualizar cantidad",
+          "Ocurrió un error inesperado. Intenta nuevamente."
+        );
       }
     }
   };
 
   // Función para remover del carrito
   const handleRemoveFromCart = async (product: TransformedProduct) => {
+    setRemovingFromCart(product.id);
     try {
       const result = await removeFromCart({
         productId: product.id,
       });
       
       if (result.success) {
-        showToast({
-          type: 'success',
-          message: 'Producto removido del carrito',
-        });
+        showError(
+          "¡Producto removido!",
+          `"${product.name}" se removió de la cotización exitosamente.`
+        );
       } else {
-        showToast({
-          type: 'error',
-          message: result.message,
-        });
+        showError(
+          "Error al remover producto",
+          result.message || "No se pudo remover el producto de la cotización"
+        );
       }
     } catch (error) {
-      showToast({
-        type: 'error',
-        message: 'Error al remover producto del carrito',
-      });
+      console.error("Error removing from cart:", error);
+      showError(
+        "Error al remover producto",
+        "Ocurrió un error inesperado. Intenta nuevamente."
+      );
+    } finally {
+      setRemovingFromCart(null);
     }
   };
 
@@ -245,119 +267,54 @@ export default function MayoristaProductGrid({
                     {product.name}
                   </h3>
                   
-                  {/* Precios */}
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500">Precio regular:</span>
-                      <span className="text-sm text-gray-600 line-through">
-                        {formatPrice(product.price)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-green-600">Precio mayorista:</span>
-                      <span className="text-lg font-bold text-green-600">
-                        {formatPrice(parseFloat(product.price) * 0.85)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">Ahorro:</span>
-                      <span className="text-xs font-medium text-green-600">
-                        {formatPrice(parseFloat(product.price) * 0.15)} (15%)
-                      </span>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Controles del carrito */}
                 <div className="mt-auto">
                 {isInCart(product.id) ? (
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    {/* Botón de basura cuadrado - Solo visual */}
-                    <div
-                      className="relative p-2 sm:p-3 rounded-lg flex-shrink-0"
-                      style={{
-                        backgroundColor: "transparent",
-                        borderColor: "#D0D5DD",
-                        borderWidth: "1px",
-                        borderStyle: "solid",
-                      }}
-                      aria-label="Remover del carrito"
-                    >
-                      <Trash2
-                        className="w-4 h-4 sm:w-5 sm:h-5"
-                        style={{ color: "#DC2626" }}
-                      />
-                    </div>
-
-                    {/* Botón principal "Remover del carrito" */}
-                    <button
-                      onClick={() => handleRemoveFromCart(product)}
-                      disabled={cartLoading}
-                      className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                      style={{
-                        backgroundColor: "#DC2626",
-                      }}
-                      onMouseEnter={(e) =>
-                        !e.currentTarget.disabled &&
-                        (e.currentTarget.style.backgroundColor = "#B91C1C")
-                      }
-                      onMouseLeave={(e) =>
-                        !e.currentTarget.disabled &&
-                        (e.currentTarget.style.backgroundColor = "#DC2626")
-                      }
-                    >
-                      <span>Remover del carrito</span>
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => handleRemoveFromCart(product)}
+                    disabled={removingFromCart === product.id}
+                    className="w-full flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    style={{
+                      backgroundColor: "#DC2626",
+                    }}
+                    onMouseEnter={(e) =>
+                      !e.currentTarget.disabled &&
+                      (e.currentTarget.style.backgroundColor = "#B91C1C")
+                    }
+                    onMouseLeave={(e) =>
+                      !e.currentTarget.disabled &&
+                      (e.currentTarget.style.backgroundColor = "#DC2626")
+                    }
+                  >
+                    <span>
+                      {removingFromCart === product.id ? 'Removiendo...' : 'Remover de la cotización'}
+                    </span>
+                  </button>
                 ) : (
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    {/* Botón de carrito cuadrado con contador - Solo visual */}
-                    <div
-                      className="relative p-2 sm:p-3 rounded-lg flex-shrink-0"
-                      style={{
-                        backgroundColor: "transparent",
-                        borderColor: "#D0D5DD",
-                        borderWidth: "1px",
-                        borderStyle: "solid",
-                      }}
-                      aria-label="Contador del carrito"
-                    >
-                      <ShoppingCart
-                        className="w-4 h-4 sm:w-5 sm:h-5"
-                        style={{ color: "#B58E31" }}
-                      />
-                      {/* Contador en el ícono del carrito */}
-                      {isInCart(product.id) && (
-                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center font-bold text-[10px] sm:text-xs">
-                          {getProductQuantity(product.id)}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Botón principal "Añadir al carrito" */}
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      disabled={cartLoading || !product.inStock}
-                      className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                      style={{
-                        backgroundColor: !product.inStock ? "#6B7280" : "#B58E31",
-                      }}
-                      onMouseEnter={(e) =>
-                        !e.currentTarget.disabled &&
-                        (e.currentTarget.style.backgroundColor = "#A07D2A")
-                      }
-                      onMouseLeave={(e) =>
-                        !e.currentTarget.disabled &&
-                        (e.currentTarget.style.backgroundColor = "#B58E31")
-                      }
-                    >
-                      <span>
-                        {cartLoading ? 'Agregando...' : 'Añadir al carrito'}
-                      </span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                   </div>
-                 )}
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    disabled={addingToCart === product.id || !product.inStock}
+                    className="w-full flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    style={{
+                      backgroundColor: !product.inStock ? "#6B7280" : "#B58E31",
+                    }}
+                    onMouseEnter={(e) =>
+                      !e.currentTarget.disabled &&
+                      (e.currentTarget.style.backgroundColor = "#A07D2A")
+                    }
+                    onMouseLeave={(e) =>
+                      !e.currentTarget.disabled &&
+                      (e.currentTarget.style.backgroundColor = "#B58E31")
+                    }
+                  >
+                    <span>
+                      {addingToCart === product.id ? 'Agregando...' : 'Agregar a cotización'}
+                    </span>
+                    {addingToCart !== product.id && <ArrowRight className="w-4 h-4" />}
+                  </button>
+                )}
                 </div>
                </div>
              </div>
@@ -439,6 +396,15 @@ export default function MayoristaProductGrid({
           </div>
         </div>
       )}
+
+      {/* Toast de notificaciones */}
+      <Toast
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+        title={toast.title}
+        message={toast.message}
+        type={toast.type}
+      />
     </div>
   );
 }
