@@ -167,6 +167,9 @@ export function useAuth() {
     email: string;
     password: string;
     phone: string;
+    dateOfBirth?: string;
+    profession?: string;
+    nit?: string;
     country: string;
     isWholesaler: boolean;
   }) => {
@@ -184,6 +187,9 @@ export function useAuth() {
           email: data.email,
           password: data.password,
           phone: data.phone,
+          date_of_birth: data.dateOfBirth || null,
+          profession: data.profession || null,
+          nit: data.nit || null,
           country: data.country,
           is_wholesaler: data.isWholesaler,
         }),
