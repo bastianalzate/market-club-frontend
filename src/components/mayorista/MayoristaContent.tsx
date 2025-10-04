@@ -5,6 +5,7 @@ import CategoryIcons from "@/components/tienda/CategoryIcons";
 import ProductFilters from "@/components/tienda/ProductFilters";
 import MayoristaProductGrid from "./MayoristaProductGrid";
 import WholesalerCartDrawer from "./WholesalerCartDrawer";
+import FloatingWhatsAppButton from "./FloatingWhatsAppButton";
 import MarketClubBanner from "@/components/home/MarketClubBanner";
 import ServicesBanner from "@/components/home/ServicesBanner";
 import { useMayoristaProducts } from "@/hooks/useMayoristaProducts";
@@ -201,6 +202,9 @@ function MayoristaContentInner() {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
       />
+
+      {/* Floating WhatsApp Button */}
+      <FloatingWhatsAppButton onOpenCart={() => setIsCartOpen(true)} />
     </div>
   );
 }
