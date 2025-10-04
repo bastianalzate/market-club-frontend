@@ -1087,25 +1087,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   </div>
                 )}
 
-                {/* Información para mayoristas sobre contraseña */}
-                {mode === "register" && registerData.isWholesaler && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-blue-600 text-sm">ℹ</span>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium text-blue-900 mb-1">
-                          Información importante para mayoristas
-                        </h4>
-                        <p className="text-sm text-blue-700">
-                          No necesitas crear una contraseña. Después del registro exitoso, 
-                          pronto nos pondremos en contacto contigo.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
 
                 {/* Wholesaler info display (register only) */}
                 {mode === "register" && (
