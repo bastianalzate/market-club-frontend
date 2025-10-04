@@ -11,8 +11,8 @@ export default function GiftProcessSteps() {
             ¿Cómo funciona?
           </h2>
           <p className="max-w-lg mx-auto mt-4 text-base leading-relaxed text-gray-600">
-            Crea el regalo perfecto de cervezas en solo 3 simples pasos.
-            Personaliza tu caja y sorprende a quien más quieras.
+            Personaliza tu caja y sorprende a quien más quieras, creando el regalo perfecto de 
+            cervezas en sólo 3 simples pasos. 
           </p>
         </div>
 

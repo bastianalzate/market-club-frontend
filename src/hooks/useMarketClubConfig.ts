@@ -12,7 +12,7 @@ export const useMarketClubConfig = (): MarketClubPageConfig => {
     heroSection: {
       title: "¿Qué hace único a",
       subtitle: "Market Club ?",
-      description: "Botellas que inspiran: cada entrega es una invitación a descubrir cervezas únicas que sorprenden y encantan, lejos de lo convencional. Elige uno de nuestros planes y comienza tu viaje por los sabores del mundo."
+      description: "Somos tu espacio perfecto para compartir y descubrir los sabores del mundo. Te ofrecemos el mayor catálogo de cervezas globales para vivir experiencias únicas, lejos de lo convencional. Elige uno de nuestros planes e inicia tu viaje. "
     },
     subscriptionSection: {
       plans: [
@@ -20,7 +20,7 @@ export const useMarketClubConfig = (): MarketClubPageConfig => {
           id: "curioso-cervecero",
           name: "Curioso Cervecero",
           price: "$150.000 / mes.",
-          description: "Para quienes quieren iniciar en el mundo cervecero sin complicaciones. Tres cervezas seleccionadas de distintos estilos y países, siempre con propuestas equilibradas y fáciles de disfrutar. Algunas veces, la caja puede incluir un licor especial para ampliar la experiencia.",
+          description: "Para quienes quieren iniciarse en el mundo cervecero sin complicaciones. Incluye tres cervezas seleccionadas de distintos estilos y países, con propuestas equilibradas y fáciles de disfrutar. Ocasionalmente, la caja puede incluir un licor especial para ampliar la experiencia.",
           features: [
             "3 cervezas artesanales o importadas de distintos estilos",
             "Ocasionalmente, un licor del mundo en lugar de una cerveza",
@@ -51,7 +51,7 @@ export const useMarketClubConfig = (): MarketClubPageConfig => {
           id: "maestro-cervecero",
           name: "Maestro Cervecero",
           price: "$200.000 / mes.",
-          description: "Selección sin límites. Tres cervezas con lo mejor del mundo cervecero y los destilados, ediciones especiales, etiquetas de culto y, a veces, un licor experimental de encontrar.",
+          description: "Selección de Élite. La máxima expresión de lo premium y lo inalcanzable. Recibe tres cervezas de la cúspide del mundo cervecero y los destilados. Cada caja es un manifiesto de exclusividad que incluye etiquetas de culto, ediciones especiales y, ocasionalmente, una botella de licor excepcional seleccionada para llevar la experiencia al nivel de lo sublime.",
           features: [
             "3 cervezas de alta gama o ediciones limitadas",
             "Algunos meses, un espirituoso excepcional en lugar de una cerveza",
