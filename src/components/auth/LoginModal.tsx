@@ -45,6 +45,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isWholesalerSelected, setIsWholesalerSelected] = useState<boolean | null>(null);
+  const [isWholesalerRegistration, setIsWholesalerRegistration] = useState(false);
 
   // Estados para formularios
   const [loginData, setLoginData] = useState({ email: "", password: "" });
@@ -133,6 +134,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       setValidationErrors({});
       setSuccessMessage("");
       setShowSuccessModal(false);
+      setIsWholesalerRegistration(false);
     }
   }, [isOpen]);
 
@@ -239,17 +241,19 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       errors.email = "El email no es válido";
     }
 
-    // Validar contraseña
-    const passwordErrors = validatePassword(registerData.password);
-    if (passwordErrors.length > 0) {
-      errors.password = passwordErrors[0]; // Mostrar solo el primer error
-    }
+    // Validar contraseña (solo si NO es mayorista)
+    if (!registerData.isWholesaler) {
+      const passwordErrors = validatePassword(registerData.password);
+      if (passwordErrors.length > 0) {
+        errors.password = passwordErrors[0]; // Mostrar solo el primer error
+      }
 
-    // Validar confirmación de contraseña
-    if (!registerData.confirmPassword) {
-      errors.confirmPassword = "Debes confirmar tu contraseña";
-    } else if (registerData.password !== registerData.confirmPassword) {
-      errors.confirmPassword = "Las contraseñas no coinciden";
+      // Validar confirmación de contraseña
+      if (!registerData.confirmPassword) {
+        errors.confirmPassword = "Debes confirmar tu contraseña";
+      } else if (registerData.password !== registerData.confirmPassword) {
+        errors.confirmPassword = "Las contraseñas no coinciden";
+      }
     }
 
     // Validar teléfono
@@ -316,10 +320,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             return; // No continuar si hay errores de validación
           }
 
-          await register({
+          const result = await register({
             name: registerData.name,
             email: registerData.email,
-            password: registerData.password,
+            password: registerData.isWholesaler ? undefined : registerData.password,
             phone: registerData.phone,
             dateOfBirth: registerData.dateOfBirth,
             profession: registerData.profession,
@@ -332,7 +336,15 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           // Limpiar el formulario
           clearRegisterForm();
 
-          // Mostrar modal de éxito
+          // Para mayoristas: solo mostrar mensaje de éxito y cerrar modal
+          if (registerData.isWholesaler) {
+            setIsWholesalerRegistration(true);
+            setShowSuccessModal(true);
+            // No hacer login automático para mayoristas
+            return;
+          }
+
+          // Para usuarios normales: mostrar modal de éxito y hacer login
           setShowSuccessModal(true);
           break;
         case "guest":
@@ -672,8 +684,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   )}
                 </div>
 
-                {/* Password field (login and register) */}
-                {(mode === "login" || mode === "register") && (
+                {/* Password field (login and register, but not for wholesalers) */}
+                {(mode === "login" || (mode === "register" && !registerData.isWholesaler)) && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Contraseña
@@ -810,8 +822,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   </div>
                 )}
 
-                {/* Confirm Password field (register only) */}
-                {mode === "register" && (
+                {/* Confirm Password field (register only, but not for wholesalers) */}
+                {mode === "register" && !registerData.isWholesaler && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Confirmar Contraseña
@@ -1075,6 +1087,26 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   </div>
                 )}
 
+                {/* Información para mayoristas sobre contraseña */}
+                {mode === "register" && registerData.isWholesaler && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-blue-600 text-sm">ℹ</span>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-blue-900 mb-1">
+                          Información importante para mayoristas
+                        </h4>
+                        <p className="text-sm text-blue-700">
+                          No necesitas crear una contraseña. Después del registro exitoso, 
+                          pronto nos pondremos en contacto contigo.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Wholesaler info display (register only) */}
                 {mode === "register" && (
                   <div className={`rounded-xl p-4 border ${
@@ -1185,10 +1217,17 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         onClose={() => {
           setShowSuccessModal(false);
           handleClose(); // Cerrar el modal principal también
-          router.push("/perfil"); // Redirigir al perfil después del registro
+          // Solo redirigir al perfil si NO es mayorista
+          if (!isWholesalerRegistration) {
+            router.push("/perfil");
+          }
         }}
-        title="¡Cuenta Creada Exitosamente!"
-        message="Bienvenido a Market Club. Tu cuenta ha sido creada correctamente y ya puedes disfrutar de todos nuestros productos y servicios."
+        title={isWholesalerRegistration ? "¡Registro Exitoso!" : "¡Cuenta Creada Exitosamente!"}
+        message={
+          isWholesalerRegistration 
+            ? "Registro exitoso, pronto nos pondremos en contacto contigo para activar tu cuenta de mayorista."
+            : "Bienvenido a Market Club. Tu cuenta ha sido creada correctamente y ya puedes disfrutar de todos nuestros productos y servicios."
+        }
         autoClose={true}
         autoCloseDelay={4000}
       />

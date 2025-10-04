@@ -9,6 +9,7 @@ import {
   registerStart,
   registerSuccess,
   registerFailure,
+  wholesalerRegisterSuccess,
   guestCheckoutStart,
   guestCheckoutSuccess,
   guestCheckoutFailure,
@@ -222,7 +223,15 @@ export function useAuth() {
         is_wholesaler: result.user.is_wholesaler || data.isWholesaler,
       };
 
-      // Guardar el token y user_id en localStorage
+      // Si es mayorista, NO hacer login automático
+      if (result.is_wholesaler_pending) {
+        console.log('Registro de mayorista exitoso:', result.message);
+        // No guardar token ni hacer login para mayoristas
+        dispatch(wholesalerRegisterSuccess(user));
+        return; // Salir sin hacer login
+      }
+
+      // Solo para usuarios normales: guardar token y hacer login automático
       localStorage.setItem('auth_token', result.token);
       localStorage.setItem('token', result.token); // También guardar como 'token' para compatibilidad
       localStorage.setItem('user_id', result.user.id.toString()); // Guardar user_id por separado
