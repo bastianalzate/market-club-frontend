@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { X, Mail, Lock, User, Phone, MapPin, Eye, EyeOff, Calendar, Briefcase, Hash } from "lucide-react";
+import { X, Mail, Lock, User, Phone, MapPin, Eye, EyeOff, Calendar, Briefcase, Hash, Upload, FileText } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import SuccessModal from "@/components/shared/SuccessModal";
 
@@ -61,6 +61,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     country: "Colombia",
     isWholesaler: false,
   });
+  const [wholesalerDocument, setWholesalerDocument] = useState<File | null>(null);
   const [guestData, setGuestData] = useState({
     name: "",
     email: "",
@@ -83,6 +84,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       country: "Colombia",
       isWholesaler: false,
     });
+    setWholesalerDocument(null);
     setGuestData({
       name: "",
       email: "",
@@ -121,6 +123,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       country: "Colombia",
       isWholesaler: false,
     });
+    setWholesalerDocument(null);
     setValidationErrors({});
     setSuccessMessage("");
   };
@@ -215,6 +218,12 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         }
         return "";
 
+      case "wholesaler_document":
+        if (registerData.isWholesaler && !value) {
+          return "El documento de mayorista es obligatorio";
+        }
+        return "";
+
       default:
         return "";
     }
@@ -293,6 +302,11 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       } else if (!/^[0-9-]+$/.test(registerData.nit.trim())) {
         errors.nit = "El NIT solo puede contener números y guiones";
       }
+      
+      // Validar documento de mayorista
+      if (!wholesalerDocument) {
+        errors.wholesaler_document = "El documento de mayorista es obligatorio";
+      }
     }
 
     setValidationErrors(errors);
@@ -330,6 +344,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             nit: registerData.nit,
             country: registerData.country,
             isWholesaler: registerData.isWholesaler,
+            wholesalerDocument: wholesalerDocument,
           });
 
           // Si llegamos aquí, el registro fue exitoso
@@ -1087,6 +1102,51 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   </div>
                 )}
 
+                {/* Document upload field (register only, for wholesalers) */}
+                {mode === "register" && registerData.isWholesaler && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Documento de Mayorista *
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept=".jpg,.jpeg,.png,.pdf"
+                        aria-label="Seleccionar documento de mayorista"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0] || null;
+                          setWholesalerDocument(file);
+                          // Validar en tiempo real
+                          const error = validateField("wholesaler_document", file);
+                          setValidationErrors(prev => ({
+                            ...prev,
+                            wholesaler_document: error
+                          }));
+                        }}
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 ${
+                          validationErrors.wholesaler_document
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
+                      />
+                      <FileText className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Formatos permitidos: JPG, JPEG, PNG, PDF. Tamaño máximo: 5MB
+                    </p>
+                    {validationErrors.wholesaler_document && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {validationErrors.wholesaler_document}
+                      </p>
+                    )}
+                    {wholesalerDocument && (
+                      <p className="text-green-600 text-sm mt-1 flex items-center">
+                        <FileText className="w-4 h-4 mr-1" />
+                        Archivo seleccionado: {wholesalerDocument.name}
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {/* Wholesaler info display (register only) */}
                 {mode === "register" && (

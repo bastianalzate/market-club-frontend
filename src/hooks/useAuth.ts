@@ -166,34 +166,49 @@ export function useAuth() {
   const register = useCallback(async (data: {
     name: string;
     email: string;
-    password: string;
+    password?: string;
     phone: string;
     dateOfBirth?: string;
     profession?: string;
     nit?: string;
     country: string;
     isWholesaler: boolean;
+    wholesalerDocument?: File;
   }) => {
     dispatch(registerStart());
     
     try {
+      // Crear FormData si hay archivo, sino usar JSON
+      const formData = new FormData();
+      formData.append('name', data.name);
+      formData.append('email', data.email);
+      if (data.password) {
+        formData.append('password', data.password);
+      }
+      formData.append('phone', data.phone);
+      if (data.dateOfBirth) {
+        formData.append('date_of_birth', data.dateOfBirth);
+      }
+      if (data.profession) {
+        formData.append('profession', data.profession);
+      }
+      if (data.nit) {
+        formData.append('nit', data.nit);
+      }
+      formData.append('country', data.country);
+      formData.append('is_wholesaler', data.isWholesaler ? '1' : '0');
+      
+      // Agregar archivo si existe
+      if (data.wholesalerDocument) {
+        formData.append('wholesaler_document', data.wholesalerDocument);
+      }
+
       const response = await fetch(`${constants.api_url}/register`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          password: data.password,
-          phone: data.phone,
-          date_of_birth: data.dateOfBirth || null,
-          profession: data.profession || null,
-          nit: data.nit || null,
-          country: data.country,
-          is_wholesaler: data.isWholesaler,
-        }),
+        body: formData,
       });
 
       if (!response.ok) {
