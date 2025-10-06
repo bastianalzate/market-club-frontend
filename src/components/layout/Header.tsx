@@ -352,7 +352,7 @@ export default function Header() {
                 </NavLink>
 
                 <NavLink
-                  href="/gifts"
+                  href="/arma-tu-regalo"
                   title="Armá tu regalo"
                   isActive={isActive("/gifts")}
                   baseStyle={baseLinkStyle}
@@ -374,7 +374,7 @@ export default function Header() {
                 )}
 
                 <NavLink
-                  href="/market-club"
+                  href="/club-socios"
                   title="Club de socios"
                   isActive={isActive("/market-club")}
                   baseStyle={baseLinkStyle}
@@ -550,7 +550,7 @@ export default function Header() {
                       }`}
                     >
                       <MobileNavLink
-                        href="/gifts"
+                        href="/arma-tu-regalo"
                         title="Armá tu regalo"
                         isActive={isActive("/gifts")}
                         baseStyle={mobileLinkStyle}
@@ -590,7 +590,7 @@ export default function Header() {
                       }`}
                     >
                       <MobileNavLink
-                        href="/market-club"
+                        href="/club-socios"
                         title="Club de socios"
                         isActive={isActive("/market-club")}
                         baseStyle={mobileLinkStyle}

@@ -1,11 +1,13 @@
-# Block all crawlers for admin and sensitive areas
 User-agent: *
+Disallow: /admin/
 Disallow: /api/
 Disallow: /checkout/
-Disallow: /perfil/
+Disallow: /private/
+Disallow: /perfil/     # <- Descomenta solo si NO quieres indexar perfiles
+Disallow: /mayorista
+# OJO: no bloquear /_next/ (recursos estáticos necesarios)
 
-
-# Block specific bots that consume resources
+# Bots que consumen recursos (opcional)
 User-agent: AhrefsBot
 Disallow: /
 
@@ -17,3 +19,6 @@ Disallow: /
 
 User-agent: DotBot
 Disallow: /
+
+# Sitemap (muy importante para acelerar descubrimiento)
+Sitemap: https://marketclub.com/sitemap.xml
