@@ -73,6 +73,14 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.error = action.payload;
     },
+    // Registro de mayorista (sin login automático)
+    wholesalerRegisterSuccess: (state, action: PayloadAction<User>) => {
+      state.isLoading = false;
+      state.user = action.payload;
+      state.isAuthenticated = false; // NO autenticar para mayoristas
+      state.error = null;
+      state.loginModalOpen = false;
+    },
 
     // Checkout como invitado
     guestCheckoutStart: (state) => {
@@ -122,6 +130,7 @@ export const {
   registerStart,
   registerSuccess,
   registerFailure,
+  wholesalerRegisterSuccess,
   guestCheckoutStart,
   guestCheckoutSuccess,
   guestCheckoutFailure,

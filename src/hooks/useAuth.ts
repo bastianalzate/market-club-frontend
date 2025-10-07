@@ -9,6 +9,7 @@ import {
   registerStart,
   registerSuccess,
   registerFailure,
+  wholesalerRegisterSuccess,
   guestCheckoutStart,
   guestCheckoutSuccess,
   guestCheckoutFailure,
@@ -165,28 +166,49 @@ export function useAuth() {
   const register = useCallback(async (data: {
     name: string;
     email: string;
-    password: string;
+    password?: string;
     phone: string;
+    dateOfBirth?: string;
+    profession?: string;
+    nit?: string;
     country: string;
     isWholesaler: boolean;
+    wholesalerDocument?: File;
   }) => {
     dispatch(registerStart());
     
     try {
+      // Crear FormData si hay archivo, sino usar JSON
+      const formData = new FormData();
+      formData.append('name', data.name);
+      formData.append('email', data.email);
+      if (data.password) {
+        formData.append('password', data.password);
+      }
+      formData.append('phone', data.phone);
+      if (data.dateOfBirth) {
+        formData.append('date_of_birth', data.dateOfBirth);
+      }
+      if (data.profession) {
+        formData.append('profession', data.profession);
+      }
+      if (data.nit) {
+        formData.append('nit', data.nit);
+      }
+      formData.append('country', data.country);
+      formData.append('is_wholesaler', data.isWholesaler ? '1' : '0');
+      
+      // Agregar archivo si existe
+      if (data.wholesalerDocument) {
+        formData.append('wholesaler_document', data.wholesalerDocument);
+      }
+
       const response = await fetch(`${constants.api_url}/register`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          password: data.password,
-          phone: data.phone,
-          country: data.country,
-          is_wholesaler: data.isWholesaler,
-        }),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -216,7 +238,15 @@ export function useAuth() {
         is_wholesaler: result.user.is_wholesaler || data.isWholesaler,
       };
 
-      // Guardar el token y user_id en localStorage
+      // Si es mayorista, NO hacer login automático
+      if (result.is_wholesaler_pending) {
+        console.log('Registro de mayorista exitoso:', result.message);
+        // No guardar token ni hacer login para mayoristas
+        dispatch(wholesalerRegisterSuccess(user));
+        return; // Salir sin hacer login
+      }
+
+      // Solo para usuarios normales: guardar token y hacer login automático
       localStorage.setItem('auth_token', result.token);
       localStorage.setItem('token', result.token); // También guardar como 'token' para compatibilidad
       localStorage.setItem('user_id', result.user.id.toString()); // Guardar user_id por separado

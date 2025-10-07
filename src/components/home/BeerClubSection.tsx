@@ -20,7 +20,7 @@ export default function BeerClubSection() {
             textTransform: "capitalize",
           }}
         >
-          Únete Al Market Club
+          Únete Hoy y Recibe tu Primer Beneficio. 
         </h3>
 
         <p
@@ -33,8 +33,8 @@ export default function BeerClubSection() {
             letterSpacing: "0px",
           }}
         >
-          Beneficios del club: descuentos, acceso exclusivo, caja sorpresa
-          mensual.
+          Como miembro, tendrás privilegios únicos:  descuentos especiales, acceso exclusivo y 
+          preferencial a lanzamientos y una caja sorpresa mensual seleccionada solo para ti.
         </p>
 
         <button
@@ -61,18 +61,18 @@ export default function BeerClubSection() {
           className="w-full h-full object-cover"
         />
 
-        {/* Overlay solo en desktop */}
-        <div className="absolute inset-0 hidden lg:flex">
+        {/* Overlay solo en desktop grande */}
+        <div className="absolute inset-0 hidden xl:flex">
           <div className="w-1/2 relative"></div>
-          <div className="w-2/5 relative flex flex-col justify-center items-start lg:pl-24 py-16">
+          <div className="w-2/5 relative flex flex-col justify-center items-start xl:pl-24 py-16">
             <Content align="left" />
           </div>
         </div>
       </div>
 
-      {/* Tarjeta inferior en mobile/tablet */}
-      <div className="lg:hidden w-full px-4 sm:px-6">
-        <div className="text-white -mt-2 mb-4 px-6 py-8 text-center">
+      {/* Tarjeta inferior en mobile/tablet/desktop pequeño */}
+      <div className="xl:hidden w-full px-4 sm:px-6">
+        <div className=" text-white -mt-2 mb-4 px-6 py-8 text-center shadow-2xl">
           <Content align="center" />
         </div>
       </div>

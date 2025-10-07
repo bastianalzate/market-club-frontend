@@ -34,8 +34,7 @@ export default function NewFlavorsSection() {
                 letterSpacing: "0px",
               }}
             >
-              Descubre las novedades que tenemos para ti: productos únicos,
-              seleccionados para sorprenderte.
+              Descubre nuestra selección de productos únicos y de calidad, pensados para sorprenderte. 
             </p>
           </div>
         </div>

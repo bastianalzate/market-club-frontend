@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { X, Mail, Lock, User, Phone, MapPin, Eye, EyeOff } from "lucide-react";
+import { X, Mail, Lock, User, Phone, MapPin, Eye, EyeOff, Calendar, Briefcase, Hash, Upload, FileText } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import SuccessModal from "@/components/shared/SuccessModal";
 
@@ -45,6 +45,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isWholesalerSelected, setIsWholesalerSelected] = useState<boolean | null>(null);
+  const [isWholesalerRegistration, setIsWholesalerRegistration] = useState(false);
 
   // Estados para formularios
   const [loginData, setLoginData] = useState({ email: "", password: "" });
@@ -54,9 +55,13 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     password: "",
     confirmPassword: "",
     phone: "",
+    dateOfBirth: "",
+    profession: "",
+    nit: "",
     country: "Colombia",
     isWholesaler: false,
   });
+  const [wholesalerDocument, setWholesalerDocument] = useState<File | null>(null);
   const [guestData, setGuestData] = useState({
     name: "",
     email: "",
@@ -73,9 +78,13 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       password: "",
       confirmPassword: "",
       phone: "",
+      dateOfBirth: "",
+      profession: "",
+      nit: "",
       country: "Colombia",
       isWholesaler: false,
     });
+    setWholesalerDocument(null);
     setGuestData({
       name: "",
       email: "",
@@ -108,9 +117,13 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       password: "",
       confirmPassword: "",
       phone: "",
+      dateOfBirth: "",
+      profession: "",
+      nit: "",
       country: "Colombia",
       isWholesaler: false,
     });
+    setWholesalerDocument(null);
     setValidationErrors({});
     setSuccessMessage("");
   };
@@ -124,6 +137,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       setValidationErrors({});
       setSuccessMessage("");
       setShowSuccessModal(false);
+      setIsWholesalerRegistration(false);
     }
   }, [isOpen]);
 
@@ -154,6 +168,67 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     return errors;
   };
 
+  // Función para validar campos individuales en tiempo real
+  const validateField = (fieldName: string, value: string): string => {
+    switch (fieldName) {
+      case "name":
+        if (!value.trim()) {
+          return "El nombre es obligatorio";
+        } else if (value.trim().length < 2) {
+          return "El nombre debe tener al menos 2 caracteres";
+        } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value.trim())) {
+          return "El nombre solo puede contener letras";
+        }
+        return "";
+
+      case "email":
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value.trim()) {
+          return "El email es obligatorio";
+        } else if (!emailRegex.test(value.trim())) {
+          return "El email no es válido";
+        }
+        return "";
+
+      case "phone":
+        if (!value.trim()) {
+          return "El teléfono es obligatorio";
+        } else if (!/^[\d\s\-\+\(\)]+$/.test(value.trim())) {
+          return "El teléfono contiene caracteres inválidos";
+        } else if (value.replace(/\D/g, "").length < 10) {
+          return "El teléfono debe tener al menos 10 dígitos";
+        }
+        return "";
+
+      case "dateOfBirth":
+        if (value) {
+          const birthDate = new Date(value);
+          const today = new Date();
+          if (isNaN(birthDate.getTime())) {
+            return "La fecha de nacimiento debe ser una fecha válida";
+          } else if (birthDate >= today) {
+            return "La fecha de nacimiento debe ser anterior a hoy";
+          }
+        }
+        return "";
+
+      case "profession":
+        if (value && value.trim().length > 255) {
+          return "La profesión no puede exceder 255 caracteres";
+        }
+        return "";
+
+      case "wholesaler_document":
+        if (registerData.isWholesaler && !value) {
+          return "El documento de mayorista es obligatorio";
+        }
+        return "";
+
+      default:
+        return "";
+    }
+  };
+
   // Función para validar el formulario de registro
   const validateRegisterForm = (): boolean => {
     const errors: Record<string, string> = {};
@@ -163,6 +238,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       errors.name = "El nombre es obligatorio";
     } else if (registerData.name.trim().length < 2) {
       errors.name = "El nombre debe tener al menos 2 caracteres";
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(registerData.name.trim())) {
+      errors.name = "El nombre solo puede contener letras";
     }
 
     // Validar email
@@ -173,17 +250,19 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       errors.email = "El email no es válido";
     }
 
-    // Validar contraseña
-    const passwordErrors = validatePassword(registerData.password);
-    if (passwordErrors.length > 0) {
-      errors.password = passwordErrors[0]; // Mostrar solo el primer error
-    }
+    // Validar contraseña (solo si NO es mayorista)
+    if (!registerData.isWholesaler) {
+      const passwordErrors = validatePassword(registerData.password);
+      if (passwordErrors.length > 0) {
+        errors.password = passwordErrors[0]; // Mostrar solo el primer error
+      }
 
-    // Validar confirmación de contraseña
-    if (!registerData.confirmPassword) {
-      errors.confirmPassword = "Debes confirmar tu contraseña";
-    } else if (registerData.password !== registerData.confirmPassword) {
-      errors.confirmPassword = "Las contraseñas no coinciden";
+      // Validar confirmación de contraseña
+      if (!registerData.confirmPassword) {
+        errors.confirmPassword = "Debes confirmar tu contraseña";
+      } else if (registerData.password !== registerData.confirmPassword) {
+        errors.confirmPassword = "Las contraseñas no coinciden";
+      }
     }
 
     // Validar teléfono
@@ -196,6 +275,38 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     // Validar país
     if (!registerData.country.trim()) {
       errors.country = "El país es obligatorio";
+    }
+
+    // Validar fecha de nacimiento (opcional)
+    if (registerData.dateOfBirth) {
+      const birthDate = new Date(registerData.dateOfBirth);
+      const today = new Date();
+      if (isNaN(birthDate.getTime())) {
+        errors.dateOfBirth = "La fecha de nacimiento debe ser una fecha válida";
+      } else if (birthDate >= today) {
+        errors.dateOfBirth = "La fecha de nacimiento debe ser anterior a hoy";
+      }
+    }
+
+    // Validar profesión (opcional)
+    if (registerData.profession && registerData.profession.trim().length > 255) {
+      errors.profession = "La profesión no puede exceder 255 caracteres";
+    }
+
+    // Validar NIT (solo si es mayorista)
+    if (registerData.isWholesaler) {
+      if (!registerData.nit.trim()) {
+        errors.nit = "El NIT es obligatorio para mayoristas";
+      } else if (registerData.nit.trim().length < 8) {
+        errors.nit = "El NIT debe tener al menos 8 caracteres";
+      } else if (!/^[0-9-]+$/.test(registerData.nit.trim())) {
+        errors.nit = "El NIT solo puede contener números y guiones";
+      }
+      
+      // Validar documento de mayorista
+      if (!wholesalerDocument) {
+        errors.wholesaler_document = "El documento de mayorista es obligatorio";
+      }
     }
 
     setValidationErrors(errors);
@@ -223,20 +334,32 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             return; // No continuar si hay errores de validación
           }
 
-          await register({
+          const result = await register({
             name: registerData.name,
             email: registerData.email,
-            password: registerData.password,
+            password: registerData.isWholesaler ? undefined : registerData.password,
             phone: registerData.phone,
+            dateOfBirth: registerData.dateOfBirth,
+            profession: registerData.profession,
+            nit: registerData.nit,
             country: registerData.country,
             isWholesaler: registerData.isWholesaler,
+            wholesalerDocument: wholesalerDocument,
           });
 
           // Si llegamos aquí, el registro fue exitoso
           // Limpiar el formulario
           clearRegisterForm();
 
-          // Mostrar modal de éxito
+          // Para mayoristas: solo mostrar mensaje de éxito y cerrar modal
+          if (registerData.isWholesaler) {
+            setIsWholesalerRegistration(true);
+            setShowSuccessModal(true);
+            // No hacer login automático para mayoristas
+            return;
+          }
+
+          // Para usuarios normales: mostrar modal de éxito y hacer login
           setShowSuccessModal(true);
           break;
         case "guest":
@@ -497,6 +620,12 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               ...registerData,
                               name: e.target.value,
                             });
+                            // Validar en tiempo real
+                            const error = validateField("name", e.target.value);
+                            setValidationErrors(prev => ({
+                              ...prev,
+                              name: error
+                            }));
                           } else {
                             setGuestData({
                               ...guestData,
@@ -545,6 +674,12 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             ...registerData,
                             email: e.target.value,
                           });
+                          // Validar en tiempo real
+                          const error = validateField("email", e.target.value);
+                          setValidationErrors(prev => ({
+                            ...prev,
+                            email: error
+                          }));
                         } else {
                           setGuestData({ ...guestData, email: e.target.value });
                         }
@@ -564,8 +699,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   )}
                 </div>
 
-                {/* Password field (login and register) */}
-                {(mode === "login" || mode === "register") && (
+                {/* Password field (login and register, but not for wholesalers) */}
+                {(mode === "login" || (mode === "register" && !registerData.isWholesaler)) && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Contraseña
@@ -591,6 +726,13 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               ...registerData,
                               password: e.target.value,
                             });
+                            // Validar contraseña en tiempo real
+                            const passwordErrors = validatePassword(e.target.value);
+                            const error = passwordErrors.length > 0 ? passwordErrors[0] : "";
+                            setValidationErrors(prev => ({
+                              ...prev,
+                              password: error
+                            }));
                           }
                         }}
                         className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900 ${
@@ -695,8 +837,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   </div>
                 )}
 
-                {/* Confirm Password field (register only) */}
-                {mode === "register" && (
+                {/* Confirm Password field (register only, but not for wholesalers) */}
+                {mode === "register" && !registerData.isWholesaler && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Confirmar Contraseña
@@ -712,6 +854,17 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             ...registerData,
                             confirmPassword: e.target.value,
                           });
+                          // Validar confirmación de contraseña en tiempo real
+                          let error = "";
+                          if (!e.target.value) {
+                            error = "Debes confirmar tu contraseña";
+                          } else if (registerData.password !== e.target.value) {
+                            error = "Las contraseñas no coinciden";
+                          }
+                          setValidationErrors(prev => ({
+                            ...prev,
+                            confirmPassword: error
+                          }));
                         }}
                         className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900 ${
                           validationErrors.confirmPassword
@@ -764,6 +917,12 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               ...registerData,
                               phone: e.target.value,
                             });
+                            // Validar en tiempo real
+                            const error = validateField("phone", e.target.value);
+                            setValidationErrors(prev => ({
+                              ...prev,
+                              phone: error
+                            }));
                           } else {
                             setGuestData({
                               ...guestData,
@@ -827,6 +986,163 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     {validationErrors.country && (
                       <p className="text-red-500 text-sm mt-1">
                         {validationErrors.country}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Date of Birth field (register only) */}
+                {mode === "register" && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Fecha de nacimiento (opcional)
+                    </label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="date"
+                        value={registerData.dateOfBirth}
+                        onChange={(e) => {
+                          setRegisterData({
+                            ...registerData,
+                            dateOfBirth: e.target.value,
+                          });
+                          // Validar en tiempo real
+                          const error = validateField("dateOfBirth", e.target.value);
+                          setValidationErrors(prev => ({
+                            ...prev,
+                            dateOfBirth: error
+                          }));
+                        }}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900 ${
+                          validationErrors.dateOfBirth
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
+                        placeholder="Selecciona tu fecha de nacimiento"
+                      />
+                    </div>
+                    {validationErrors.dateOfBirth && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {validationErrors.dateOfBirth}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Profession field (register only) */}
+                {mode === "register" && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Profesión (opcional)
+                    </label>
+                    <div className="relative">
+                      <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="text"
+                        value={registerData.profession}
+                        onChange={(e) => {
+                          setRegisterData({
+                            ...registerData,
+                            profession: e.target.value,
+                          });
+                          // Validar en tiempo real
+                          const error = validateField("profession", e.target.value);
+                          setValidationErrors(prev => ({
+                            ...prev,
+                            profession: error
+                          }));
+                        }}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900 ${
+                          validationErrors.profession
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
+                        placeholder="Ej: Ingeniero, Médico, Estudiante..."
+                      />
+                    </div>
+                    {validationErrors.profession && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {validationErrors.profession}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* NIT field (register only, when isWholesaler is true) */}
+                {mode === "register" && registerData.isWholesaler && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      NIT <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="text"
+                        value={registerData.nit}
+                        onChange={(e) => {
+                          setRegisterData({
+                            ...registerData,
+                            nit: e.target.value,
+                          });
+                        }}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900 ${
+                          validationErrors.nit
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
+                        placeholder="12345678-9"
+                      />
+                    </div>
+                    {validationErrors.nit && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {validationErrors.nit}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Document upload field (register only, for wholesalers) */}
+                {mode === "register" && registerData.isWholesaler && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Documento de Mayorista *
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept=".jpg,.jpeg,.png,.pdf"
+                        aria-label="Seleccionar documento de mayorista"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0] || null;
+                          setWholesalerDocument(file);
+                          // Validar en tiempo real
+                          const error = validateField("wholesaler_document", file);
+                          setValidationErrors(prev => ({
+                            ...prev,
+                            wholesaler_document: error
+                          }));
+                        }}
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 ${
+                          validationErrors.wholesaler_document
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
+                      />
+                      <FileText className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Formatos permitidos: JPG, JPEG, PNG, PDF. Tamaño máximo: 5MB
+                    </p>
+                    {validationErrors.wholesaler_document && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {validationErrors.wholesaler_document}
+                      </p>
+                    )}
+                    {wholesalerDocument && (
+                      <p className="text-green-600 text-sm mt-1 flex items-center">
+                        <FileText className="w-4 h-4 mr-1" />
+                        Archivo seleccionado: {wholesalerDocument.name}
                       </p>
                     )}
                   </div>
@@ -942,10 +1258,17 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         onClose={() => {
           setShowSuccessModal(false);
           handleClose(); // Cerrar el modal principal también
-          router.push("/perfil"); // Redirigir al perfil después del registro
+          // Solo redirigir al perfil si NO es mayorista
+          if (!isWholesalerRegistration) {
+            router.push("/perfil");
+          }
         }}
-        title="¡Cuenta Creada Exitosamente!"
-        message="Bienvenido a Market Club. Tu cuenta ha sido creada correctamente y ya puedes disfrutar de todos nuestros productos y servicios."
+        title={isWholesalerRegistration ? "¡Registro Exitoso!" : "¡Cuenta Creada Exitosamente!"}
+        message={
+          isWholesalerRegistration 
+            ? "Registro exitoso, pronto nos pondremos en contacto contigo para activar tu cuenta de mayorista."
+            : "Bienvenido a Market Club. Tu cuenta ha sido creada correctamente y ya puedes disfrutar de todos nuestros productos y servicios."
+        }
         autoClose={true}
         autoCloseDelay={4000}
       />

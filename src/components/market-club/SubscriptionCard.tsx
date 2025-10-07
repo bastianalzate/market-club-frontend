@@ -104,7 +104,7 @@ export default function SubscriptionCard({
                 fontWeight: 600,
               }}
             >
-              Incluye:
+              Beneficios:
             </h4>
             <ul className="space-y-2">
               {features.map((feature, index) => (

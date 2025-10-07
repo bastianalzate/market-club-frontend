@@ -5,11 +5,12 @@ import CategoryIcons from "@/components/tienda/CategoryIcons";
 import ProductFilters from "@/components/tienda/ProductFilters";
 import MayoristaProductGrid from "./MayoristaProductGrid";
 import WholesalerCartDrawer from "./WholesalerCartDrawer";
+import FloatingWhatsAppButton from "./FloatingWhatsAppButton";
 import MarketClubBanner from "@/components/home/MarketClubBanner";
 import ServicesBanner from "@/components/home/ServicesBanner";
 import { useMayoristaProducts } from "@/hooks/useMayoristaProducts";
 import { WholesalerCartProvider, useWholesalerCartContext } from "@/contexts/WholesalerCartContext";
-import { ShoppingCart } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 
 function MayoristaContentInner() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -138,7 +139,7 @@ function MayoristaContentInner() {
             {/* Botón del carrito */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center space-x-2 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+              className="relative flex items-center space-x-2 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 cursor-pointer"
               style={{
                 backgroundColor: "#B58E31",
               }}
@@ -149,8 +150,8 @@ function MayoristaContentInner() {
                 (e.currentTarget.style.backgroundColor = "#B58E31")
               }
             >
-              <ShoppingCart className="w-5 h-5" />
-              <span>Carrito</span>
+              <MessageCircle className="w-5 h-5" />
+              <span>Cotizar WhatsApp</span>
               {itemsCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">
                   {itemsCount}
@@ -170,7 +171,10 @@ function MayoristaContentInner() {
               onCategoryChange={handleCategoryChange}
               selectedPriceRange={selectedPriceRange}
               onPriceRangeChange={handlePriceRangeChange}
+              selectedPackaging=""
+              onPackagingChange={() => {}}
               onClearFilters={handleClearFilters}
+              hidePriceFilter={true}
             />
 
             {/* Contenido principal */}
@@ -198,6 +202,9 @@ function MayoristaContentInner() {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
       />
+
+      {/* Floating WhatsApp Button */}
+      <FloatingWhatsAppButton onOpenCart={() => setIsCartOpen(true)} />
     </div>
   );
 }
