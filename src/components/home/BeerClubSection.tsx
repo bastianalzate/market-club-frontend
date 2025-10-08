@@ -38,7 +38,7 @@ export default function BeerClubSection() {
         </p>
 
         <button
-          onClick={() => (window.location.href = "/market-club")}
+          onClick={() => (window.location.href = "/club-socios")}
           className={`bg-black text-white px-6 py-3 lg:px-8 lg:py-4 rounded-lg font-bold uppercase tracking-wide flex items-center gap-3 hover:bg-gray-800 transition-colors duration-200 cursor-pointer ${
             align === "center" ? "mx-auto justify-center" : ""
           }`}
