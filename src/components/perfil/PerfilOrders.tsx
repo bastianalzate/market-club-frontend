@@ -21,7 +21,7 @@ interface User {
   name: string;
   email: string;
   phone: string;
-  isGuest: boolean;
+  isGuest?: boolean;
 }
 
 interface PerfilOrdersProps {

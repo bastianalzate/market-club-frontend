@@ -23,7 +23,7 @@ interface User {
   name: string;
   email: string;
   phone: string;
-  isGuest: boolean;
+  isGuest?: boolean;
 }
 
 interface PerfilFavoritesProps {
@@ -211,13 +211,20 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
       {/* Filtros y Búsqueda */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Buscar Favoritos</h3>
-          <p className="text-sm text-gray-600">Encuentra rápidamente tus productos favoritos</p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Buscar Favoritos
+          </h3>
+          <p className="text-sm text-gray-600">
+            Encuentra rápidamente tus productos favoritos
+          </p>
         </div>
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Búsqueda */}
           <div className="flex-1">
-            <label htmlFor="search-favorites" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="search-favorites"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Buscar producto
             </label>
             <form onSubmit={handleSearch}>

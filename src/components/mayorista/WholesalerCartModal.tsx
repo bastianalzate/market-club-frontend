@@ -3,7 +3,15 @@
 import { useState } from "react";
 import { useWholesalerCartContext } from "@/contexts/WholesalerCartContext";
 import { useToast } from "@/hooks/useToast";
-import { X, ShoppingCart, Plus, Minus, Trash2, CreditCard, MessageCircle } from "lucide-react";
+import {
+  X,
+  ShoppingCart,
+  Plus,
+  Minus,
+  Trash2,
+  CreditCard,
+  MessageCircle,
+} from "lucide-react";
 import LazyImage from "@/components/shared/LazyImage";
 import { constants } from "@/config/constants";
 
@@ -12,7 +20,10 @@ interface WholesalerCartModalProps {
   onClose: () => void;
 }
 
-export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartModalProps) {
+export default function WholesalerCartModal({
+  isOpen,
+  onClose,
+}: WholesalerCartModalProps) {
   const {
     cart,
     itemsCount,
@@ -28,7 +39,7 @@ export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartM
     addNotes,
   } = useWholesalerCartContext();
 
-  const { showToast } = useToast();
+  const { showError, showSuccess } = useToast();
   const [notes, setNotes] = useState(cart?.notes || "");
 
   // Función para formatear precios
@@ -41,7 +52,7 @@ export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartM
   };
 
   // Función para construir la URL completa de la imagen
-  const getImageUrl = (imagePath: string | null): string | null => {
+  const getImageUrl = (imagePath: string | null | undefined): string | null => {
     if (!imagePath || imagePath.trim() === "") {
       return null; // Devolver null para que LazyImage muestre el placeholder
     }
@@ -66,16 +77,10 @@ export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartM
     try {
       const result = await updateQuantity({ productId, quantity });
       if (!result.success) {
-        showToast({
-          type: 'error',
-          message: result.message,
-        });
+        showError("Error", result.message);
       }
     } catch (error) {
-      showToast({
-        type: 'error',
-        message: 'Error al actualizar cantidad',
-      });
+      showError("Error", "Error al actualizar cantidad");
     }
   };
 
@@ -84,45 +89,27 @@ export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartM
     try {
       const result = await removeFromCart({ productId });
       if (result.success) {
-        showToast({
-          type: 'success',
-          message: 'Producto removido del carrito',
-        });
+        showSuccess("Éxito", "Producto removido del carrito");
       } else {
-        showToast({
-          type: 'error',
-          message: result.message,
-        });
+        showError("Error", result.message);
       }
     } catch (error) {
-      showToast({
-        type: 'error',
-        message: 'Error al remover producto',
-      });
+      showError("Error", "Error al remover producto");
     }
   };
 
   // Función para limpiar carrito
   const handleClearCart = async () => {
-    if (window.confirm('¿Estás seguro de que quieres limpiar el carrito?')) {
+    if (window.confirm("¿Estás seguro de que quieres limpiar el carrito?")) {
       try {
         const result = await clearCart();
         if (result.success) {
-          showToast({
-            type: 'success',
-            message: 'Carrito limpiado',
-          });
+          showSuccess("Éxito", "Carrito limpiado");
         } else {
-          showToast({
-            type: 'error',
-            message: result.message,
-          });
+          showError("Error", result.message);
         }
       } catch (error) {
-        showToast({
-          type: 'error',
-          message: 'Error al limpiar carrito',
-        });
+        showError("Error", "Error al limpiar carrito");
       }
     }
   };
@@ -132,21 +119,12 @@ export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartM
     try {
       const result = await addNotes({ notes });
       if (result.success) {
-        showToast({
-          type: 'success',
-          message: 'Notas guardadas',
-        });
+        showSuccess("Éxito", "Notas guardadas");
       } else {
-        showToast({
-          type: 'error',
-          message: result.message,
-        });
+        showError("Error", result.message);
       }
     } catch (error) {
-      showToast({
-        type: 'error',
-        message: 'Error al guardar notas',
-      });
+      showError("Error", "Error al guardar notas");
     }
   };
 
@@ -155,11 +133,20 @@ export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartM
     if (!cart || !cart.items.length) return;
 
     const itemsText = cart.items
-      .map((item, index) => `${index + 1}. ${item.product?.name || 'Producto'} - ${formatPrice(item.total_price)}`)
-      .join('\n');
+      .map(
+        (item, index) =>
+          `${index + 1}. ${item.product?.name || "Producto"} - ${formatPrice(
+            item.total_price
+          )}`
+      )
+      .join("\n");
 
-    const message = `Hola! Me interesa cotizar los siguientes productos mayoristas:\n\n${itemsText}\n\nTotal: ${formatPrice(totalAmount)}`;
-    const whatsappUrl = `https://wa.me/573001234567?text=${encodeURIComponent(message)}`;
+    const message = `Hola! Me interesa cotizar los siguientes productos mayoristas:\n\n${itemsText}\n\nTotal: ${formatPrice(
+      totalAmount
+    )}`;
+    const whatsappUrl = `https://wa.me/573001234567?text=${encodeURIComponent(
+      message
+    )}`;
     window.open(whatsappUrl, "_blank");
   };
 
@@ -216,7 +203,7 @@ export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartM
                     <div className="w-16 h-16 flex-shrink-0">
                       <LazyImage
                         src={getImageUrl(item.product?.image)}
-                        alt={item.product?.name || 'Producto'}
+                        alt={item.product?.name || "Producto"}
                         className="w-full h-full object-cover rounded"
                       />
                     </div>
@@ -224,7 +211,7 @@ export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartM
                     {/* Información del producto */}
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-medium text-gray-900 truncate">
-                        {item.product?.name || 'Producto'}
+                        {item.product?.name || "Producto"}
                       </h4>
                       <p className="text-sm text-gray-500">
                         Precio unitario: {formatPrice(item.unit_price)}
@@ -236,21 +223,31 @@ export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartM
 
                     {/* Controles de cantidad */}
                     <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => handleUpdateQuantity(item.product_id, item.quantity - 1)}
-                      disabled={loading}
-                      title="Disminuir cantidad"
-                      className="p-1 rounded-full hover:bg-gray-200 disabled:opacity-50"
-                    >
-                      <Minus className="w-4 h-4" />
-                    </button>
-                      
+                      <button
+                        onClick={() =>
+                          handleUpdateQuantity(
+                            item.product_id,
+                            item.quantity - 1
+                          )
+                        }
+                        disabled={loading}
+                        title="Disminuir cantidad"
+                        className="p-1 rounded-full hover:bg-gray-200 disabled:opacity-50"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+
                       <span className="w-8 text-center font-medium">
                         {item.quantity}
                       </span>
-                      
+
                       <button
-                        onClick={() => handleUpdateQuantity(item.product_id, item.quantity + 1)}
+                        onClick={() =>
+                          handleUpdateQuantity(
+                            item.product_id,
+                            item.quantity + 1
+                          )
+                        }
                         disabled={loading}
                         title="Aumentar cantidad"
                         className="p-1 rounded-full hover:bg-gray-200 disabled:opacity-50"
@@ -308,7 +305,9 @@ export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartM
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Descuento mayorista (15%):</span>
-                  <span className="text-green-600">-{formatPrice(subtotal * 0.15)}</span>
+                  <span className="text-green-600">
+                    -{formatPrice(subtotal * 0.15)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>IVA (5%):</span>
@@ -317,7 +316,9 @@ export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartM
                 <div className="flex justify-between text-sm">
                   <span>Envío:</span>
                   <span>
-                    {shippingAmount === 0 ? 'Gratis' : formatPrice(shippingAmount)}
+                    {shippingAmount === 0
+                      ? "Gratis"
+                      : formatPrice(shippingAmount)}
                   </span>
                 </div>
                 {discountAmount > 0 && (
@@ -328,7 +329,9 @@ export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartM
                 )}
                 <div className="flex justify-between text-lg font-bold border-t pt-2">
                   <span>Total:</span>
-                  <span className="text-yellow-600">{formatPrice(totalAmount)}</span>
+                  <span className="text-yellow-600">
+                    {formatPrice(totalAmount)}
+                  </span>
                 </div>
               </div>
 
@@ -341,7 +344,7 @@ export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartM
                 >
                   Limpiar Carrito
                 </button>
-                
+
                 <button
                   onClick={handleWhatsAppContact}
                   className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
@@ -349,7 +352,7 @@ export default function WholesalerCartModal({ isOpen, onClose }: WholesalerCartM
                   <MessageCircle className="w-4 h-4" />
                   <span>Cotizar WhatsApp</span>
                 </button>
-                
+
                 <button
                   onClick={onClose}
                   className="flex-1 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"

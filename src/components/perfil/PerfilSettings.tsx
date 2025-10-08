@@ -26,7 +26,7 @@ interface User {
   name: string;
   email: string;
   phone: string;
-  isGuest: boolean;
+  isGuest?: boolean;
 }
 
 interface PerfilSettingsProps {
@@ -254,8 +254,8 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
         // Manejar errores específicos del backend
         let errorMessage = "Error al cambiar la contraseña";
 
-        if (result.errors) {
-          const errors = result.errors;
+        if ((result as any).errors) {
+          const errors = (result as any).errors;
 
           if (
             errors.new_password &&
@@ -725,7 +725,7 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
             )}
 
             {/* Sección de Notificaciones - OCULTA */}
-            {false && activeSection === "notifications" && (
+            {false && (
               <div className="space-y-6">
                 <div>
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">
@@ -848,7 +848,7 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
             )}
 
             {/* Sección de Facturación - OCULTA */}
-            {false && activeSection === "billing" && (
+            {false && (
               <div className="space-y-6">
                 <div>
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">
