@@ -1,7 +1,9 @@
+import { constants } from '@/config/constants';
+
 export const testBackendConnection = async () => {
   try {
     console.log('🔍 Testing backend connection...');
-    const response = await fetch('http://localhost:8000/api/me', {
+    const response = await fetch(`${constants.api_url}/me`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
