@@ -25,18 +25,47 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Eliminar outline por defecto en elementos clickeables */
+button:focus,
+div[role="button"]:focus,
+.clickable:focus {
+  outline: none !important;
+}
+
+/* Mantener accesibilidad con focus ring personalizado cuando sea necesario */
+button:focus-visible,
+div[role="button"]:focus-visible,
+.clickable:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
 /* Animación para el banner MARKET CLUB */
 @keyframes scroll {
   0% {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-33.33%);
+    transform: translateX(-50%);
   }
 }
 
 .animate-scroll {
   animation: scroll 15s linear infinite;
+}
+
+/* Animación específica para el carousel de logos */
+@keyframes scroll-logos {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-logos {
+  animation: scroll-logos 15s linear infinite;
 }
 
 /* Pausar animación en hover para mejor legibilidad */
@@ -48,4 +77,66 @@ body {
 .text-stroke-white {
   -webkit-text-stroke: 2px white;
   text-stroke: 2px white;
+}
+
+/* Efecto de destello interno simple para las letras PAULANER */
+@keyframes inner-sparkle {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.3);
+  }
+}
+
+.paulaner-sparkle {
+  animation: inner-sparkle 3s ease-in-out infinite;
+}
+
+/* Animación slideInLeft para el menú móvil */
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Animación slideInFromRight para el menú principal */
+@keyframes slideInFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Animación slideOutToRight para cerrar el menú */
+@keyframes slideOutToRight {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* Animación slideOutLeft para los elementos del menú */
+@keyframes slideOutLeft {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
 }

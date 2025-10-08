@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test Wompi Widget - Market Club</title>
+    <script src="https://checkout.wompi.co/widget.js"></script>
+  </head>
+  <body>
+    <h1>Test Wompi Widget</h1>
+    <button id="pay-button">Pagar con Wompi</button>
+
+    <script>
+      document
+        .getElementById("pay-button")
+        .addEventListener("click", async function () {
+          try {
+            console.log("🚀 Starting payment process...");
+
+            // 1. Obtener datos del backend dinámicamente
+            const response = await fetch("/api/payments/wompi/create-widget", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify({
+                order_id: 9, // Tu order_id
+                redirect_url:
+                  "http://localhost:3000/checkout/success?order_id=9",
+              }),
+            });
+
+            const result = await response.json();
+            console.log("📦 Backend response:", result);
+
+            if (result.success) {
+              console.log("✅ Backend success, creating widget...");
+
+              // 2. Configurar el widget con los datos recibidos
+              const widgetConfig = {
+                currency: result.data.currency,
+                amountInCents: result.data.amount,
+                reference: result.data.reference,
+                publicKey: result.data.publicKey,
+                redirectUrl: result.data.redirectUrl,
+                customerData: result.data.customerData,
+                shippingAddress: result.data.shippingAddress,
+              };
+
+              console.log("🎯 Widget config:", widgetConfig);
+
+              // Verificar que WidgetCheckout esté disponible
+              if (typeof WidgetCheckout === "undefined") {
+                throw new Error("WidgetCheckout no está disponible");
+              }
+
+              const checkout = new WidgetCheckout(widgetConfig);
+              console.log("✅ Widget created, opening...");
+
+              // 3. Abrir el widget
+              checkout.open(function (result) {
+                console.log("🎉 Transaction completed:", result);
+                if (result.transaction && result.transaction.id) {
+                  console.log("Transaction ID:", result.transaction.id);
+                  alert(
+                    "Pago exitoso! Transaction ID: " + result.transaction.id
+                  );
+                } else {
+                  alert("Error en el pago");
+                }
+              });
+            } else {
+              console.error("❌ Backend error:", result.message);
+              alert("Error: " + result.message);
+            }
+          } catch (error) {
+            console.error("❌ Error:", error);
+            alert("Error al procesar el pago: " + error.message);
+          }
+        });
+    </script>
+  </body>
+</html>

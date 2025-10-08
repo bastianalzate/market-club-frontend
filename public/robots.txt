@@ -1,0 +1,24 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+Disallow: /checkout/
+Disallow: /private/
+Disallow: /perfil/     # <- Descomenta solo si NO quieres indexar perfiles
+Disallow: /mayorista
+# OJO: no bloquear /_next/ (recursos estáticos necesarios)
+
+# Bots que consumen recursos (opcional)
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# Sitemap (muy importante para acelerar descubrimiento)
+Sitemap: https://marketclub.com/sitemap.xml

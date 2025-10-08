@@ -1,0 +1,28 @@
+// Configuración de Wompi
+export const WOMPI_CONFIG = {
+  // Clave pública de Wompi (debe venir de variables de entorno)
+  PUBLIC_KEY: process.env.NEXT_PUBLIC_WOMPI_PUBLIC_KEY || 'pub_test_123456789',
+  
+  // Configuración por defecto
+  CURRENCY: 'COP',
+  BASE_URL: 'https://checkout.wompi.co',
+  
+  // URLs de redirección
+  getRedirectUrl: (orderId: string) => {
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+    return `${baseUrl}/checkout/success?order_id=${orderId}`;
+  }
+};
+
+// Validar configuración
+export const validateWompiConfig = () => {
+  if (!WOMPI_CONFIG.PUBLIC_KEY || WOMPI_CONFIG.PUBLIC_KEY === 'pub_test_123456789') {
+    console.warn('⚠️  Wompi: Usando clave pública de prueba. Configura NEXT_PUBLIC_WOMPI_PUBLIC_KEY en producción.');
+  }
+  
+  return {
+    isValid: true,
+    isProduction: WOMPI_CONFIG.PUBLIC_KEY.startsWith('pub_prod_'),
+    isTest: WOMPI_CONFIG.PUBLIC_KEY.startsWith('pub_test_')
+  };
+};

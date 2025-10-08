@@ -1,346 +1,194 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import CategoryIcons from "./CategoryIcons";
 import ProductFilters from "./ProductFilters";
 import ProductGrid from "./ProductGrid";
 import MarketClubBanner from "@/components/home/MarketClubBanner";
 import ServicesBanner from "@/components/home/ServicesBanner";
 import CountriesBanner from "./CountriesBanner";
+import { useProducts, TransformedProduct } from "@/hooks/useProducts";
+import TiendaSEOText from "./TiendaSEOText";
 
-// Mock data para productos - Expandido para validar paginación
-const products = [
-  {
-    id: 1,
-    name: "Peroni Nastro Azzurro",
-    brand: "Peroni",
-    price: 25000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-1.png",
-    category: "Lager",
-    inStock: true,
-    rating: 4.5,
-    reviewCount: 128,
-  },
-  {
-    id: 2,
-    name: "Bitburger 0.0",
-    brand: "Bitburger",
-    price: 19000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-2.png",
-    category: "Sin Alcohol",
-    inStock: true,
-    rating: 4.2,
-    reviewCount: 89,
-  },
-  {
-    id: 3,
-    name: "Asahi Super Dry",
-    brand: "Asahi",
-    price: 19000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-3.png",
-    category: "Lager",
-    inStock: false,
-    rating: 4.7,
-    reviewCount: 156,
-  },
-  {
-    id: 4,
-    name: "Stella Artois",
-    brand: "Stella Artois",
-    price: 22000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-4.png",
-    category: "Lager",
-    inStock: true,
-    rating: 4.3,
-    reviewCount: 203,
-  },
-  {
-    id: 5,
-    name: "Heineken Premium",
-    brand: "Heineken",
-    price: 18000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-5.png",
-    category: "Lager",
-    inStock: true,
-    rating: 4.1,
-    reviewCount: 167,
-  },
-  {
-    id: 6,
-    name: "Corona Extra",
-    brand: "Corona",
-    price: 21000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-6.png",
-    category: "Lager",
-    inStock: true,
-    rating: 4.4,
-    reviewCount: 134,
-  },
-  {
-    id: 7,
-    name: "Budweiser",
-    brand: "Anheuser-Busch",
-    price: 16000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-1.png",
-    category: "Lager",
-    inStock: true,
-    rating: 3.8,
-    reviewCount: 98,
-  },
-  {
-    id: 8,
-    name: "Miller Lite",
-    brand: "MillerCoors",
-    price: 17000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-2.png",
-    category: "Lager",
-    inStock: true,
-    rating: 3.9,
-    reviewCount: 76,
-  },
-  {
-    id: 9,
-    name: "Coors Light",
-    brand: "Molson Coors",
-    price: 17500,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-3.png",
-    category: "Lager",
-    inStock: true,
-    rating: 3.7,
-    reviewCount: 65,
-  },
-  {
-    id: 10,
-    name: "Guinness Draught",
-    brand: "Diageo",
-    price: 28000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-4.png",
-    category: "Stout",
-    inStock: true,
-    rating: 4.8,
-    reviewCount: 234,
-  },
-  {
-    id: 11,
-    name: "Sierra Nevada Pale Ale",
-    brand: "Sierra Nevada",
-    price: 32000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-5.png",
-    category: "IPA",
-    inStock: true,
-    rating: 4.6,
-    reviewCount: 189,
-  },
-  {
-    id: 12,
-    name: "Blue Moon Belgian White",
-    brand: "Molson Coors",
-    price: 26000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-6.png",
-    category: "Wheat Beer",
-    inStock: false,
-    rating: 4.2,
-    reviewCount: 112,
-  },
-  {
-    id: 13,
-    name: "Samuel Adams Boston Lager",
-    brand: "Boston Beer Company",
-    price: 24000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-1.png",
-    category: "Lager",
-    inStock: true,
-    rating: 4.3,
-    reviewCount: 145,
-  },
-  {
-    id: 14,
-    name: "Newcastle Brown Ale",
-    brand: "Heineken",
-    price: 29000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-2.png",
-    category: "Brown Ale",
-    inStock: true,
-    rating: 4.1,
-    reviewCount: 87,
-  },
-  {
-    id: 15,
-    name: "Bass Pale Ale",
-    brand: "Anheuser-Busch",
-    price: 25000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-3.png",
-    category: "Pale Ale",
-    inStock: true,
-    rating: 4.0,
-    reviewCount: 73,
-  },
-  {
-    id: 16,
-    name: "Harp Lager",
-    brand: "Diageo",
-    price: 23000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-4.png",
-    category: "Lager",
-    inStock: true,
-    rating: 3.9,
-    reviewCount: 56,
-  },
-  {
-    id: 17,
-    name: "Killian's Irish Red",
-    brand: "Molson Coors",
-    price: 27000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-5.png",
-    category: "Red Ale",
-    inStock: true,
-    rating: 4.2,
-    reviewCount: 94,
-  },
-  {
-    id: 18,
-    name: "Leinenkugel's Summer Shandy",
-    brand: "Molson Coors",
-    price: 31000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-6.png",
-    category: "Shandy",
-    inStock: true,
-    rating: 4.4,
-    reviewCount: 128,
-  },
-  {
-    id: 19,
-    name: "Shock Top Belgian White",
-    brand: "Anheuser-Busch",
-    price: 22000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-1.png",
-    category: "Wheat Beer",
-    inStock: true,
-    rating: 3.8,
-    reviewCount: 67,
-  },
-  {
-    id: 20,
-    name: "Michelob Ultra",
-    brand: "Anheuser-Busch",
-    price: 20000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-2.png",
-    category: "Light Beer",
-    inStock: true,
-    rating: 3.6,
-    reviewCount: 89,
-  },
-  {
-    id: 21,
-    name: "Amstel Light",
-    brand: "Heineken",
-    price: 21000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-3.png",
-    category: "Light Beer",
-    inStock: true,
-    rating: 3.9,
-    reviewCount: 78,
-  },
-  {
-    id: 22,
-    name: "Beck's",
-    brand: "Anheuser-Busch",
-    price: 24000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-4.png",
-    category: "Lager",
-    inStock: true,
-    rating: 4.0,
-    reviewCount: 103,
-  },
-  {
-    id: 23,
-    name: "Foster's",
-    brand: "Heineken",
-    price: 19000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-5.png",
-    category: "Lager",
-    inStock: true,
-    rating: 3.7,
-    reviewCount: 82,
-  },
-  {
-    id: 24,
-    name: "Dos Equis Lager",
-    brand: "Heineken",
-    price: 23000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-6.png",
-    category: "Lager",
-    inStock: true,
-    rating: 4.1,
-    reviewCount: 95,
-  },
-  {
-    id: 25,
-    name: "Tecate",
-    brand: "Heineken",
-    price: 18000,
-    image:
-      "https://cdn.rareblocks.xyz/collection/clarity-ecommerce/images/item-cards/8/product-1.png",
-    category: "Lager",
-    inStock: true,
-    rating: 3.8,
-    reviewCount: 71,
-  },
-];
-
-export default function TiendaContent() {
+function TiendaContentInner() {
   const [searchTerm, setSearchTerm] = useState("");
+  const searchParams = useSearchParams();
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Iconos de categorías */}
-      <CategoryIcons />
+  // Hook para obtener productos desde la API
+  const {
+    products,
+    loading,
+    error,
+    pagination,
+    selectedCountry,
+    selectedCategory,
+    selectedPriceRange,
+    selectedPackaging,
+    searchProducts,
+    filterByCountry,
+    filterByCategory,
+    filterByPriceRange,
+    filterByPackaging,
+    clearAllFilters,
+    goToPage,
+    nextPage,
+    prevPage,
+  } = useProducts();
 
-      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar de filtros */}
-          <ProductFilters
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-          />
+  // Inicializar el término de búsqueda desde la URL
+  useEffect(() => {
+    const searchFromUrl = searchParams.get("search") || "";
+    setSearchTerm(searchFromUrl);
+  }, [searchParams]);
 
-          {/* Contenido principal */}
-          <ProductGrid products={products} />
+  // Función para manejar cambios en la búsqueda
+  const handleSearchChange = useCallback(
+    (term: string) => {
+      setSearchTerm(term);
+      searchProducts(term);
+    },
+    [searchProducts]
+  );
+
+  // Función para manejar cambios en el filtro de país
+  const handleCountryChange = useCallback(
+    (country: string) => {
+      filterByCountry(country);
+    },
+    [filterByCountry]
+  );
+
+  // Función para manejar cambios en el filtro de categoría
+  const handleCategoryChange = useCallback(
+    (category: string) => {
+      filterByCategory(category);
+    },
+    [filterByCategory]
+  );
+
+  // Función para manejar cambios en el filtro de rango de precios
+  const handlePriceRangeChange = useCallback(
+    (priceRange: string) => {
+      filterByPriceRange(priceRange);
+    },
+    [filterByPriceRange]
+  );
+
+  // Función para manejar cambios en el filtro de empaque
+  const handlePackagingChange = useCallback(
+    (packaging: string) => {
+      filterByPackaging(packaging);
+    },
+    [filterByPackaging]
+  );
+
+  // Función para limpiar todos los filtros
+  const handleClearFilters = useCallback(() => {
+    setSearchTerm(""); // Limpiar también la búsqueda
+    clearAllFilters();
+  }, [clearAllFilters]);
+
+  // Mostrar loading o error si es necesario
+  if (loading && products.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando productos...</p>
+          {pagination.total > 0 && (
+            <p className="text-sm text-gray-500 mt-2">
+              Página {pagination.currentPage} de {pagination.lastPage} -{" "}
+              {pagination.total} productos total
+            </p>
+          )}
         </div>
       </div>
+    );
+  }
 
-      {/* Market Club Banner */}
-      <MarketClubBanner />
+  if (error && products.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            Error al cargar productos
+          </h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-      {/* Countries Banner */}
-      <CountriesBanner />
+  return (
+    <div className="min-h-screen">
+      {/* Sección con fondo negro hasta el MarketClubBanner */}
+      <div className="bg-black">
+        {/* Iconos de categorías */}
+        <CategoryIcons />
 
-      {/* Services Banner */}
-      <ServicesBanner />
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Sidebar de filtros */}
+            <ProductFilters
+              searchTerm={searchTerm}
+              onSearchChange={handleSearchChange}
+              selectedCountry={selectedCountry}
+              onCountryChange={handleCountryChange}
+              selectedCategory={selectedCategory}
+              onCategoryChange={handleCategoryChange}
+              selectedPriceRange={selectedPriceRange}
+              onPriceRangeChange={handlePriceRangeChange}
+              selectedPackaging={selectedPackaging}
+              onPackagingChange={handlePackagingChange}
+              onClearFilters={handleClearFilters}
+            />
+
+            {/* Contenido principal */}
+            <ProductGrid
+              products={products}
+              loading={loading}
+              totalProducts={pagination.total}
+              pagination={pagination}
+              onPageChange={goToPage}
+              onNextPage={nextPage}
+              onPrevPage={prevPage}
+            />
+          </div>
+        </div>
+
+        {/* Market Club Banner */}
+        <MarketClubBanner />
+      </div>
+
+      {/* Sección con fondo gris después del MarketClubBanner */}
+      <div className="bg-gray-50">
+        <TiendaSEOText />
+      </div>
     </div>
+  );
+}
+
+export default function TiendaContent() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Cargando tienda...</p>
+          </div>
+        </div>
+      }
+    >
+      <TiendaContentInner />
+    </Suspense>
   );
 }

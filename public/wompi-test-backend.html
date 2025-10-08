@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test Wompi Widget - Backend Data</title>
+    <script src="https://checkout.wompi.co/widget.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .test-section {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+      }
+      button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      .log {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        font-family: monospace;
+        white-space: pre-wrap;
+      }
+      .success {
+        background: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+      }
+      .error {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🧪 Test Wompi Widget - Backend Data</h1>
+
+    <div class="test-section">
+      <h2>Test con Datos del Backend</h2>
+      <p>
+        Este test usa exactamente los datos que devuelve el backend sin
+        modificaciones.
+      </p>
+
+      <div>
+        <label for="orderId">Order ID:</label>
+        <input
+          type="number"
+          id="orderId"
+          value="12"
+          style="margin: 0 10px; padding: 5px"
+        />
+      </div>
+
+      <button onclick="testWithBackendData()">
+        Test con Datos del Backend
+      </button>
+      <div id="log" class="log"></div>
+    </div>
+
+    <script>
+      function log(message, type = "info") {
+        const logElement = document.getElementById("log");
+        const timestamp = new Date().toLocaleTimeString();
+        const className =
+          type === "success" ? "success" : type === "error" ? "error" : "";
+        logElement.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+      }
+
+      async function testWithBackendData() {
+        const orderId = document.getElementById("orderId").value;
+        log("🧪 Testing with backend data for order: " + orderId);
+
+        try {
+          // Obtener datos del backend
+          log("📡 Fetching data from backend...");
+          const response = await fetch(
+            "http://localhost:8000/api/payments/wompi/create-widget",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify({
+                order_id: parseInt(orderId),
+                redirect_url:
+                  "http://localhost:3000/checkout/success?order_id=" + orderId,
+              }),
+            }
+          );
+
+          const result = await response.json();
+          log("📡 Backend response: " + JSON.stringify(result, null, 2));
+
+          if (result.success) {
+            log("✅ Backend data received successfully", "success");
+
+            // Usar datos del backend + phoneNumberPrefix requerido
+            log("🎯 Creating widget with backend data + phoneNumberPrefix...");
+            const checkout = new WidgetCheckout({
+              currency: result.data.currency,
+              amountInCents: result.data.amount,
+              reference: result.data.reference,
+              publicKey: result.data.publicKey,
+              redirectUrl: result.data.redirectUrl,
+              customerData: {
+                ...result.data.customerData,
+                phoneNumberPrefix: "+57", // Wompi requiere este campo
+              },
+              shippingAddress: result.data.shippingAddress,
+            });
+
+            log("✅ Widget created successfully", "success");
+            log("🚀 Opening widget...");
+
+            checkout.open(function (result) {
+              log("✅ Widget completed: " + JSON.stringify(result), "success");
+              window.location.href = result.data.redirectUrl;
+            });
+          } else {
+            log("❌ Backend error: " + result.message, "error");
+          }
+        } catch (error) {
+          log("❌ Error: " + error.message, "error");
+          console.error("Error:", error);
+        }
+      }
+
+      // Log when page loads
+      window.addEventListener("load", () => {
+        log("🧪 Wompi Test Page Loaded");
+        log(
+          "WidgetCheckout available: " + (typeof WidgetCheckout !== "undefined")
+        );
+      });
+    </script>
+  </body>
+</html>

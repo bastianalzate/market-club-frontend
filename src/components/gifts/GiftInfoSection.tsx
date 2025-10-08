@@ -51,7 +51,7 @@ export default function GiftInfoSection() {
             >
               ¿Cómo comenzar a
               <br />
-              armar tu combo?
+              armar tu regalo?
             </h2>
           </div>
         </div>

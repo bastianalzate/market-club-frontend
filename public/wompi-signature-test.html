@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test de Firma Wompi</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .test-section {
+        border: 1px solid #ddd;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+      }
+      button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      .result {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+        font-family: monospace;
+        white-space: pre-wrap;
+      }
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .success {
+        background: #d4edda;
+        color: #155724;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🔐 Test de Firma de Integridad Wompi</h1>
+
+    <div class="test-section">
+      <h2>Test 1: Generar Firma desde Backend</h2>
+      <p>Prueba la generación de firma desde tu backend:</p>
+      <button onclick="testBackendSignature()">
+        Generar Firma desde Backend
+      </button>
+      <div id="backend-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 2: Verificar Firma Manual</h2>
+      <p>Verifica la firma con los datos exactos:</p>
+      <button onclick="testManualSignature()">Verificar Firma Manual</button>
+      <div id="manual-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 3: Test con Wompi Widget</h2>
+      <p>Prueba el widget con la firma generada:</p>
+      <button onclick="testWompiWidget()">Abrir Widget Wompi</button>
+      <div id="widget-result" class="result"></div>
+    </div>
+
+    <script src="https://checkout.wompi.co/widget.js"></script>
+    <script>
+      let backendData = null;
+
+      async function testBackendSignature() {
+        const resultDiv = document.getElementById("backend-result");
+        resultDiv.textContent = "Generando firma desde backend...";
+
+        try {
+          const response = await fetch(
+            "http://localhost:8000/api/payments/wompi/generate-signature",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify({
+                order_id: "24",
+              }),
+            }
+          );
+
+          const data = await response.json();
+          backendData = data;
+
+          resultDiv.className = "result success";
+          resultDiv.textContent = `✅ Firma generada exitosamente:
+${JSON.stringify(data, null, 2)}`;
+        } catch (error) {
+          resultDiv.className = "result error";
+          resultDiv.textContent = `❌ Error: ${error.message}`;
+        }
+      }
+
+      function testManualSignature() {
+        const resultDiv = document.getElementById("manual-result");
+
+        if (!backendData || !backendData.success) {
+          resultDiv.className = "result error";
+          resultDiv.textContent = "❌ Primero genera la firma desde el backend";
+          return;
+        }
+
+        const { reference, amount, currency, integrity_signature } =
+          backendData.data;
+
+        // Simular la generación de firma manual
+        const stringToSign =
+          reference + amount + currency + "your_integrity_secret_here";
+        const manualSignature = sha256(stringToSign);
+
+        resultDiv.className = "result";
+        resultDiv.textContent = `🔍 Verificación de firma:
+Referencia: ${reference}
+Monto: ${amount}
+Moneda: ${currency}
+String a firmar: ${stringToSign}
+Firma del backend: ${integrity_signature}
+Firma manual: ${manualSignature}
+¿Coinciden? ${integrity_signature === manualSignature ? "✅ SÍ" : "❌ NO"}`;
+      }
+
+      async function testWompiWidget() {
+        const resultDiv = document.getElementById("widget-result");
+
+        if (!backendData || !backendData.success) {
+          resultDiv.className = "result error";
+          resultDiv.textContent = "❌ Primero genera la firma desde el backend";
+          return;
+        }
+
+        if (typeof WidgetCheckout === "undefined") {
+          resultDiv.className = "result error";
+          resultDiv.textContent = "❌ WidgetCheckout no está disponible";
+          return;
+        }
+
+        const { reference, amount, currency, integrity_signature, public_key } =
+          backendData.data;
+
+        try {
+          const widgetConfig = {
+            currency: currency,
+            amountInCents: amount,
+            reference: reference,
+            publicKey: public_key,
+            redirectUrl: "http://localhost:3000/checkout/success?order_id=24",
+            signature: integrity_signature,
+            customerData: {
+              email: "test@ejemplo.com",
+              fullName: "Usuario Test",
+              phoneNumber: "3001234567",
+              phoneNumberPrefix: "+57",
+              legalId: "123456789",
+              legalIdType: "CC",
+            },
+          };
+
+          resultDiv.className = "result";
+          resultDiv.textContent = `🎯 Configuración del widget:
+${JSON.stringify(widgetConfig, null, 2)}
+
+🚀 Abriendo widget...`;
+
+          const checkout = new WidgetCheckout(widgetConfig);
+          checkout.open((result) => {
+            resultDiv.className = "result success";
+            resultDiv.textContent += `\n\n✅ Widget completado:
+${JSON.stringify(result, null, 2)}`;
+          });
+        } catch (error) {
+          resultDiv.className = "result error";
+          resultDiv.textContent = `❌ Error al abrir widget: ${error.message}`;
+        }
+      }
+
+      // Función SHA256 simple para testing
+      async function sha256(message) {
+        const msgBuffer = new TextEncoder().encode(message);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
+        return hashHex;
+      }
+    </script>
+  </body>
+</html>

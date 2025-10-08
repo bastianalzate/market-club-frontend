@@ -1,22 +1,31 @@
 "use client";
 
-export default function MarketClubBanner() {
+interface MarketClubBannerProps {
+  backgroundColor?: string;
+  textColor?: string;
+}
+
+export default function MarketClubBanner({
+  backgroundColor = "#B58E31",
+  textColor = "#FFFFFF",
+}: MarketClubBannerProps) {
   return (
     <section
-      className="py-8 overflow-hidden"
-      style={{ backgroundColor: "#B58E31" }}
+      className="overflow-hidden"
+      style={{ backgroundColor, height: "54px" }}
     >
-      <div className="relative">
+      <div className="relative h-full flex items-center">
         {/* Tira horizontal con MARKET CLUB repetido */}
-        <div className="whitespace-nowrap overflow-hidden">
+        <div className="whitespace-nowrap overflow-hidden w-full">
           <div className="inline-block animate-scroll">
             {/* Primera secuencia */}
             <span
-              className="text-white uppercase mx-12 inline-block"
+              className="uppercase mx-12 inline-block"
               style={{
+                color: textColor,
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
-                fontStyle: "normal",
+                fontStyle: "bold",
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "9px",
@@ -27,11 +36,12 @@ export default function MarketClubBanner() {
               MARKET CLUB
             </span>
             <span
-              className="text-white uppercase mx-12 inline-block"
+              className="uppercase mx-12 inline-block"
               style={{
+                color: textColor,
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
-                fontStyle: "normal",
+                fontStyle: "bold",
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "9px",
@@ -42,11 +52,12 @@ export default function MarketClubBanner() {
               MARKET CLUB
             </span>
             <span
-              className="text-white uppercase mx-12 inline-block"
+              className="uppercase mx-12 inline-block"
               style={{
+                color: textColor,
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
-                fontStyle: "normal",
+                fontStyle: "bold",
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "9px",
@@ -57,11 +68,12 @@ export default function MarketClubBanner() {
               MARKET CLUB
             </span>
             <span
-              className="text-white uppercase mx-12 inline-block"
+              className="uppercase mx-12 inline-block"
               style={{
+                color: textColor,
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
-                fontStyle: "normal",
+                fontStyle: "bold",
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "9px",
@@ -72,11 +84,12 @@ export default function MarketClubBanner() {
               MARKET CLUB
             </span>
             <span
-              className="text-white uppercase mx-12 inline-block"
+              className="uppercase mx-12 inline-block"
               style={{
+                color: textColor,
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
-                fontStyle: "normal",
+                fontStyle: "bold",
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "9px",
@@ -87,11 +100,12 @@ export default function MarketClubBanner() {
               MARKET CLUB
             </span>
             <span
-              className="text-white uppercase mx-12 inline-block"
+              className="uppercase mx-12 inline-block"
               style={{
+                color: textColor,
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
-                fontStyle: "normal",
+                fontStyle: "bold",
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "9px",
@@ -103,11 +117,12 @@ export default function MarketClubBanner() {
             </span>
             {/* Segunda secuencia (duplicada para scroll infinito) */}
             <span
-              className="text-white uppercase mx-12 inline-block"
+              className="uppercase mx-12 inline-block"
               style={{
+                color: textColor,
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
-                fontStyle: "normal",
+                fontStyle: "bold",
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "9px",
@@ -118,11 +133,12 @@ export default function MarketClubBanner() {
               MARKET CLUB
             </span>
             <span
-              className="text-white uppercase mx-12 inline-block"
+              className="uppercase mx-12 inline-block"
               style={{
+                color: textColor,
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
-                fontStyle: "normal",
+                fontStyle: "bold",
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "9px",
@@ -133,11 +149,12 @@ export default function MarketClubBanner() {
               MARKET CLUB
             </span>
             <span
-              className="text-white uppercase mx-12 inline-block"
+              className="uppercase mx-12 inline-block"
               style={{
+                color: textColor,
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
-                fontStyle: "normal",
+                fontStyle: "bold",
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "9px",
@@ -148,11 +165,12 @@ export default function MarketClubBanner() {
               MARKET CLUB
             </span>
             <span
-              className="text-white uppercase mx-12 inline-block"
+              className="uppercase mx-12 inline-block"
               style={{
+                color: textColor,
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
-                fontStyle: "normal",
+                fontStyle: "bold",
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "9px",
@@ -163,11 +181,12 @@ export default function MarketClubBanner() {
               MARKET CLUB
             </span>
             <span
-              className="text-white uppercase mx-12 inline-block"
+              className="uppercase mx-12 inline-block"
               style={{
+                color: textColor,
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
-                fontStyle: "normal",
+                fontStyle: "bold",
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "9px",
@@ -178,11 +197,12 @@ export default function MarketClubBanner() {
               MARKET CLUB
             </span>
             <span
-              className="text-white uppercase mx-12 inline-block"
+              className="uppercase mx-12 inline-block"
               style={{
+                color: textColor,
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
-                fontStyle: "normal",
+                fontStyle: "bold",
                 fontSize: "14px",
                 lineHeight: "100%",
                 letterSpacing: "9px",

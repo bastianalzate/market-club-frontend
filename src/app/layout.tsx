@@ -1,7 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Oswald, Inter } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Oswald,
+  Inter,
+  Plus_Jakarta_Sans,
+} from "next/font/google";
 import "./globals.css";
 import MainLayout from "@/components/layout/MainLayout";
+import ReduxProvider from "@/providers/ReduxProvider";
+import SuppressHydrationWarning from "@/components/shared/SuppressHydrationWarning";
+import WompiScript from "@/components/shared/WompiScript";
+import { CartProvider } from "@/contexts/CartContext";
+import { ProfileProvider } from "@/contexts/ProfileContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,6 +36,22 @@ const inter = Inter({
   weight: ["400"],
 });
 
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+// Constante estática para evitar errores de hidratación
+const FONT_CLASSES = [
+  geistSans.variable,
+  geistMono.variable,
+  oswald.variable,
+  inter.variable,
+  plusJakartaSans.variable,
+  "antialiased",
+].join(" ");
+
 export const metadata: Metadata = {
   title: "Market Club - Tu Destino para las Mejores Cervezas",
   description:
@@ -47,10 +74,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${inter.variable} antialiased`}
-      >
-        <MainLayout>{children}</MainLayout>
+      <body className={FONT_CLASSES}>
+        <SuppressHydrationWarning />
+        <WompiScript />
+        <ReduxProvider>
+          <ProfileProvider>
+            <CartProvider>
+              <MainLayout>{children}</MainLayout>
+            </CartProvider>
+          </ProfileProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

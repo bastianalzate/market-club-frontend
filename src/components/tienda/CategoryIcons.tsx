@@ -1,15 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Package,
-  ShoppingBag,
-  Store,
-  Plane,
-  Barrel,
-  Box,
-  Tag,
-} from "lucide-react";
+import Image from "next/image";
+import { ShoppingBag, Store, Plane, Barrel, Box, Tag } from "lucide-react";
+import beerIcon from "@/assets/images/icons/beer.svg";
 
 export default function CategoryIcons() {
   const [activeCategory, setActiveCategory] = useState(0);
@@ -18,7 +12,7 @@ export default function CategoryIcons() {
     {
       id: 0,
       name: "Cervezas",
-      icon: Package,
+      icon: "beer", // Usar icono personalizado
       description: "Variedad de cervezas",
     },
     {
@@ -29,30 +23,18 @@ export default function CategoryIcons() {
     },
     {
       id: 2,
-      name: "Tienda",
-      icon: Store,
-      description: "Productos de la tienda",
-    },
-    {
-      id: 3,
       name: "Importados",
       icon: Plane,
       description: "Productos internacionales",
     },
     {
-      id: 4,
-      name: "Barriles",
-      icon: Barrel,
-      description: "Cerveza de barril",
-    },
-    {
-      id: 5,
+      id: 3,
       name: "Cajas",
       icon: Box,
       description: "Packs y cajas especiales",
     },
     {
-      id: 6,
+      id: 4,
       name: "Ofertas",
       icon: Tag,
       description: "Descuentos especiales",
@@ -60,23 +42,22 @@ export default function CategoryIcons() {
   ];
 
   return (
-    <div className="bg-gray-50 py-8">
-      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div className="bg-gray-50 py-6 sm:py-8">
+      <div className="px-3 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Título de la sección */}
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
             Explora por Categorías
           </h2>
-          <p className="text-gray-600">
+          <p className="text-sm sm:text-base text-gray-600 px-4">
             Encuentra lo que buscas de manera rápida y fácil
           </p>
         </div>
 
         {/* Iconos de categorías */}
-        <div className="flex justify-center">
-          <div className="flex space-x-3 bg-white rounded-xl p-3 shadow-sm">
+        <div className="flex justify-center px-2 sm:px-2">
+          <div className="flex justify-center gap-2 sm:gap-3 bg-white rounded-xl p-3 sm:p-3 shadow-sm">
             {categories.map((category) => {
-              const IconComponent = category.icon;
               const isActive = activeCategory === category.id;
 
               return (
@@ -84,21 +65,41 @@ export default function CategoryIcons() {
                   key={category.id}
                   onClick={() => setActiveCategory(category.id)}
                   className={`
-                    relative p-4 rounded-xl transition-all duration-200 group
+                    relative p-3 sm:p-4 rounded-xl transition-all duration-200 group flex-shrink-0 cursor-pointer
                     ${
                       isActive
-                        ? "bg-amber-600 text-white shadow-lg scale-105"
+                        ? "text-white shadow-lg scale-105"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105"
                     }
                   `}
+                  style={isActive ? { backgroundColor: "#B58E31" } : {}}
                   title={category.description}
                 >
-                  <IconComponent className="w-8 h-8" />
+                  {/* Renderizar icono personalizado o de Lucide */}
+                  {category.icon === "beer" ? (
+                    <Image
+                      src={beerIcon}
+                      alt="Cerveza"
+                      width={32}
+                      height={32}
+                      className={`w-8 h-8 ${
+                        isActive ? "brightness-0 invert" : ""
+                      }`}
+                    />
+                  ) : (
+                    (() => {
+                      const IconComponent =
+                        category.icon as React.ComponentType<{
+                          className: string;
+                        }>;
+                      return <IconComponent className="w-8 h-8" />;
+                    })()
+                  )}
 
-                  {/* Tooltip */}
+                  {/* Tooltip - Solo visible en pantallas grandes */}
                   <div
                     className={`
-                    absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-2 text-sm text-white bg-gray-900 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10
+                    hidden sm:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-2 text-sm text-white bg-gray-900 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10
                   `}
                   >
                     {category.name}
@@ -111,10 +112,10 @@ export default function CategoryIcons() {
         </div>
 
         {/* Categoría activa */}
-        <div className="text-center mt-6">
-          <span className="text-sm text-gray-500">
+        <div className="text-center mt-4 sm:mt-6">
+          <span className="text-sm sm:text-base text-gray-500">
             Categoría seleccionada:{" "}
-            <span className="font-medium text-amber-600">
+            <span className="font-medium" style={{ color: "#B58E31" }}>
               {categories[activeCategory].name}
             </span>
           </span>
