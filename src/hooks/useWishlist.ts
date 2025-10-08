@@ -91,7 +91,7 @@ export const useWishlist = (options?: UseWishlistOptions & {
       const result = await wishlistService.toggleWishlist(productId);
       console.log(`📋 Hook: Resultado del servicio:`, result);
       
-      if (result.success) {
+      if (result.success && result.data) {
         const { action, is_in_wishlist, total_favorites, product } = result.data;
         console.log(`✅ Hook: Operación exitosa - ${action}`);
         
@@ -161,11 +161,12 @@ export const useWishlist = (options?: UseWishlistOptions & {
       }
     } catch (error) {
       console.error(`💥 Hook: Error crítico en toggle para producto ${productId}:`, error);
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
       showError(
         'Error inesperado', 
         'Ocurrió un error inesperado. Por favor, intenta nuevamente'
       );
-      return { success: false, error: error.message };
+      return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
       console.log(`🏁 Hook: Loading finalizado para producto ${productId}`);

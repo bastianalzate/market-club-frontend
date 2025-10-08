@@ -2,7 +2,11 @@
 import { useEffect, useMemo, useState } from "react";
 import SubscriptionCard from "./SubscriptionCard";
 import { SubscriptionSectionConfig } from "@/types/market-club";
-import { fetchSubscriptionPlans, getCurrentSubscription, subscribeToPlan } from "@/services/subscriptionsService";
+import {
+  fetchSubscriptionPlans,
+  getCurrentSubscription,
+  subscribeToPlan,
+} from "@/services/subscriptionsService";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 
@@ -18,7 +22,9 @@ export default function SubscriptionSection({
   const [error, setError] = useState<string | null>(null);
   const [backendPlans, setBackendPlans] = useState<any[]>([]);
   const { isAuthenticated, openLoginModal } = useAuth();
-  const [subscribingPlanId, setSubscribingPlanId] = useState<string | null>(null);
+  const [subscribingPlanId, setSubscribingPlanId] = useState<string | null>(
+    null
+  );
   const router = useRouter();
 
   useEffect(() => {
@@ -45,13 +51,18 @@ export default function SubscriptionSection({
     return backendPlans.map((p) => ({
       id: p.id,
       name: p.name,
-      price: new Intl.NumberFormat("es-CO").format(parseInt(p.price, 10)).replace(/,/g, ".") + " / mes.",
+      price:
+        new Intl.NumberFormat("es-CO")
+          .format(parseInt(p.price, 10))
+          .replace(/,/g, ".") + " / mes.",
       description: p.description,
       features: p.features,
       image: "/images/market-club/corona-beer.png",
       buttonText: "Suscríbete",
       buttonColor: "#B58E31",
-      imagePosition: p.id === "collector_brewer" ? "right" : "left",
+      imagePosition: (p.id === "collector_brewer" ? "right" : "left") as
+        | "left"
+        | "right",
     }));
   }, [backendPlans, plans]);
 
@@ -61,9 +72,23 @@ export default function SubscriptionSection({
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center py-16">
             <div className="flex items-center gap-3 text-gray-700">
-              <svg className="animate-spin h-5 w-5 text-yellow-600" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              <svg
+                className="animate-spin h-5 w-5 text-yellow-600"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                ></path>
               </svg>
               <span>Cargando…</span>
             </div>
@@ -76,9 +101,7 @@ export default function SubscriptionSection({
   return (
     <div className={containerClassName}>
       <div className="max-w-7xl mx-auto">
-        {error && (
-          <div className="mb-6 text-red-600 text-sm">{error}</div>
-        )}
+        {error && <div className="mb-6 text-red-600 text-sm">{error}</div>}
         <div className="space-y-12">
           {mapped.map((plan) => (
             <SubscriptionCard
@@ -94,13 +117,13 @@ export default function SubscriptionSection({
                     setSubscribingPlanId(plan.id as string);
                     const current = await getCurrentSubscription();
                     if (current && current.success && current.data) {
-                      router.push('/perfil');
+                      router.push("/perfil");
                       return;
                     }
                     await subscribeToPlan(plan.id as string, 1);
-                    router.push('/perfil');
+                    router.push("/perfil");
                   } catch (e) {
-                    router.push('/perfil');
+                    router.push("/perfil");
                   } finally {
                     setSubscribingPlanId(null);
                   }

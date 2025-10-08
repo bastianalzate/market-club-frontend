@@ -166,71 +166,77 @@ export default function CheckoutContent() {
                         key={item.id}
                         className="flex items-stretch justify-between space-x-5 py-6 hover:bg-white/50 transition-colors duration-200 rounded-lg px-3 -mx-3"
                       >
-                        <div className="flex items-stretch flex-1">
-                          <div className="flex-shrink-0">
-                            <div className="relative">
-                              <div
-                                className={`flex items-center justify-center ${
-                                  item.product.name.includes("Regalo")
-                                    ? "w-8 h-8 rounded-lg"
-                                    : "w-20 h-20"
-                                }`}
-                                style={
-                                  item.product.name.includes("Regalo")
-                                    ? { backgroundColor: "#B58E31" }
-                                    : {}
-                                }
-                              >
-                                <img
-                                  className={`border border-gray-200 rounded-xl object-cover shadow-sm ${
+                        {item.product && (
+                          <div className="flex items-stretch flex-1">
+                            <div className="flex-shrink-0">
+                              <div className="relative">
+                                <div
+                                  className={`flex items-center justify-center ${
                                     item.product.name.includes("Regalo")
-                                      ? "w-8 h-8"
+                                      ? "w-8 h-8 rounded-lg"
                                       : "w-20 h-20"
                                   }`}
-                                  src={item.product.image_url}
-                                  alt={item.product.name}
-                                />
+                                  style={
+                                    item.product.name.includes("Regalo")
+                                      ? { backgroundColor: "#B58E31" }
+                                      : {}
+                                  }
+                                >
+                                  <img
+                                    className={`border border-gray-200 rounded-xl object-cover shadow-sm ${
+                                      item.product.name.includes("Regalo")
+                                        ? "w-8 h-8"
+                                        : "w-20 h-20"
+                                    }`}
+                                    src={item.product.image_url}
+                                    alt={item.product.name}
+                                  />
+                                </div>
+                                <div
+                                  className="absolute -top-2 -right-2 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center"
+                                  style={{
+                                    backgroundColor: "rgb(180, 140, 43)",
+                                  }}
+                                >
+                                  {item.quantity}
+                                </div>
                               </div>
-                              <div
-                                className="absolute -top-2 -right-2 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center"
-                                style={{ backgroundColor: "rgb(180, 140, 43)" }}
+                            </div>
+
+                            <div className="flex flex-col justify-between ml-4">
+                              <div className="flex-1">
+                                <p className="text-sm font-bold text-gray-900 leading-tight">
+                                  {item.product.name}
+                                </p>
+                                <p className="mt-1 text-sm text-gray-500">
+                                  {item.product.name.split(" ")[0]}
+                                </p>
+                                <p className="mt-1 text-xs text-gray-400">
+                                  {formatPrice(item.unit_price)} c/u
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col items-end justify-between ml-auto">
+                              <p className="text-sm font-bold text-right text-gray-900">
+                                {formatPrice(item.total_price)}
+                              </p>
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  removeFromCart({
+                                    productId: item.product_id ?? undefined,
+                                  })
+                                }
+                                className="inline-flex p-2 -m-2 text-gray-400 transition-all duration-200 rounded-lg hover:bg-red-50 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                title="Eliminar producto"
                               >
-                                {item.quantity}
-                              </div>
+                                <X className="w-4 h-4" />
+                              </button>
                             </div>
                           </div>
-
-                          <div className="flex flex-col justify-between ml-4">
-                            <div className="flex-1">
-                              <p className="text-sm font-bold text-gray-900 leading-tight">
-                                {item.product.name}
-                              </p>
-                              <p className="mt-1 text-sm text-gray-500">
-                                {item.product.name.split(" ")[0]}
-                              </p>
-                              <p className="mt-1 text-xs text-gray-400">
-                                {formatPrice(item.unit_price)} c/u
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col items-end justify-between ml-auto">
-                          <p className="text-sm font-bold text-right text-gray-900">
-                            {formatPrice(item.total_price)}
-                          </p>
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              removeFromCart({ productId: item.product_id })
-                            }
-                            className="inline-flex p-2 -m-2 text-gray-400 transition-all duration-200 rounded-lg hover:bg-red-50 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                            title="Eliminar producto"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
+                        )}
                       </li>
                     ))}
                   </ul>

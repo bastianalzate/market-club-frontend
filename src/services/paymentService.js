@@ -140,6 +140,31 @@ export class PaymentService {
         return response.json();
     }
 
+    // Obtener métodos de pago disponibles
+    static async getPaymentMethods() {
+        try {
+            const response = await fetch(`${API_CONFIG.BASE_URL}/payments/methods`, {
+                method: 'GET',
+                headers: getAuthHeaders(),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al obtener métodos de pago');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('❌ Error getting payment methods:', error);
+            // Devolver métodos por defecto si falla
+            return {
+                success: true,
+                data: [
+                    { id: 'wompi', name: 'Wompi', enabled: true }
+                ]
+            };
+        }
+    }
+
     // Generar firma de integridad para Wompi
     static async generateSignature(data) {
         try {

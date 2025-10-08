@@ -61,7 +61,7 @@ export const useCheckout = () => {
   ): Promise<CreateOrderResponse> => {
     try {
       setCheckoutState(prev => ({ ...prev, loading: true, error: null }));
-      const response = await CheckoutService.createOrder(shippingAddress, billingAddress, notes);
+      const response = await CheckoutService.createOrder(shippingAddress, billingAddress as any, notes);
       
       if (response.success) {
         // Verificar todos los posibles IDs disponibles

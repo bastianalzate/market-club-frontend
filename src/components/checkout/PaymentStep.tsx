@@ -115,7 +115,9 @@ export default function PaymentStep({
       await openWompiWidget();
     } catch (error) {
       console.error("❌ Error opening Wompi checkout:", error);
-      showError("Error", "No se pudo inicializar el pago: " + error.message);
+      const errorMessage =
+        error instanceof Error ? error.message : "Error desconocido";
+      showError("Error", "No se pudo inicializar el pago: " + errorMessage);
     }
   };
 
@@ -245,9 +247,9 @@ export default function PaymentStep({
         "reference",
         "publicKey",
         "signature",
-      ];
+      ] as const;
       const missingFields = requiredFields.filter(
-        (field) => !widgetConfig[field]
+        (field) => !(widgetConfig as any)[field]
       );
 
       if (missingFields.length > 0) {
@@ -270,7 +272,11 @@ export default function PaymentStep({
         console.log("✅ WidgetCheckout instance created:", checkout);
       } catch (widgetError) {
         console.error("❌ Error creating WidgetCheckout:", widgetError);
-        throw new Error(`Error creando el widget: ${widgetError.message}`);
+        const errorMessage =
+          widgetError instanceof Error
+            ? widgetError.message
+            : "Error desconocido";
+        throw new Error(`Error creando el widget: ${errorMessage}`);
       }
 
       console.log("🚀 Opening widget...");
@@ -288,10 +294,9 @@ export default function PaymentStep({
       console.log("✅ Widget.open() called successfully");
     } catch (error) {
       console.error("❌ Error opening Wompi widget:", error);
-      showError(
-        "Error",
-        "No se pudo abrir el widget de pago: " + error.message
-      );
+      const errorMessage =
+        error instanceof Error ? error.message : "Error desconocido";
+      showError("Error", "No se pudo abrir el widget de pago: " + errorMessage);
     }
   };
 
