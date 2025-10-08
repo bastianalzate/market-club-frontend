@@ -9,6 +9,7 @@ import MarketClubBanner from "@/components/home/MarketClubBanner";
 import ServicesBanner from "@/components/home/ServicesBanner";
 import CountriesBanner from "./CountriesBanner";
 import { useProducts, TransformedProduct } from "@/hooks/useProducts";
+import TiendaSEOText from "./TiendaSEOText";
 
 function TiendaContentInner() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -168,7 +169,9 @@ function TiendaContentInner() {
       </div>
 
       {/* Sección con fondo gris después del MarketClubBanner */}
-      <div className="bg-gray-50"></div>
+      <div className="bg-gray-50">
+        <TiendaSEOText />
+      </div>
     </div>
   );
 }
