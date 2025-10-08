@@ -96,7 +96,7 @@ export const useMayoristaProducts = () => {
     rating: 4.5, // Valor por defecto
     reviewCount: Math.floor(Math.random() * 200) + 50, // Valor aleatorio
     inStock: product.stock_quantity > 0,
-    image: product.image ? `${constants.api_url.replace('/api', '')}/storage/${product.image}` : null,
+    image: product.image ? `${constants.api_url.replace('/api', '')}/${product.image}` : null,
   });
 
   // Función para obtener productos de una página específica

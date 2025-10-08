@@ -30,7 +30,8 @@ interface User {
   name: string;
   email: string;
   phone: string;
-  isGuest: boolean;
+  isGuest?: boolean;
+  created_at?: string;
 }
 
 interface PerfilOverviewProps {
@@ -45,7 +46,7 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
     error: profileError,
     loadProfile,
   } = useUserProfile();
-  
+
   // Estado local para controlar si se está cargando el perfil
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const { orders, loading: ordersLoading, loadOrders } = useUserOrders();
@@ -76,14 +77,20 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
         loadPlans(); // Cargar planes disponibles
         loadHistory(); // Cargar historial de suscripciones
       } catch (error) {
-        console.error('Error loading profile data:', error);
+        console.error("Error loading profile data:", error);
       } finally {
         setIsLoadingProfile(false);
       }
     };
-    
+
     loadAllData();
-  }, [loadProfile, loadOrders, loadCurrentSubscription, loadPlans, loadHistory]);
+  }, [
+    loadProfile,
+    loadOrders,
+    loadCurrentSubscription,
+    loadPlans,
+    loadHistory,
+  ]);
 
   // El skeleton loader ahora solo aparece en el PerfilHeader
   // Este componente siempre muestra el contenido, incluso mientras se cargan los datos del perfil
@@ -155,8 +162,8 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
     }
   };
 
-  const handleSubscribe = async (planId: number) => {
-    const result = await subscribe(planId);
+  const handleSubscribe = async (planId: string | number) => {
+    const result = await subscribe(String(planId));
     if (result.success) {
       showSuccess(
         "¡Suscripción exitosa!",
@@ -340,7 +347,7 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                         month: "short",
                         year: "numeric",
                       })
-                    : user.created_at 
+                    : user.created_at
                     ? new Date(user.created_at).toLocaleDateString("es-CO", {
                         month: "short",
                         year: "numeric",
@@ -941,8 +948,8 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
       {/* Toast notifications */}
       <Toast
         isVisible={toast.isVisible}
+        title={toast.title}
         message={toast.message}
-        description={toast.description}
         type={toast.type}
         onClose={hideToast}
       />

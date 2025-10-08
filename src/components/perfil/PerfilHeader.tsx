@@ -8,7 +8,7 @@ interface User {
   name: string;
   email: string;
   phone: string;
-  isGuest: boolean;
+  isGuest?: boolean;
 }
 
 interface PerfilHeaderProps {
@@ -41,14 +41,14 @@ export default function PerfilHeader({ user }: PerfilHeaderProps) {
                 <div className="space-y-3">
                   {/* Nombre skeleton */}
                   <div className="h-8 bg-gray-200 rounded animate-pulse w-64"></div>
-                  
+
                   {/* Email y teléfono skeleton */}
                   <div className="flex flex-wrap items-center gap-4">
                     <div className="h-4 bg-gray-200 rounded animate-pulse w-48"></div>
                     <div className="h-4 bg-gray-200 rounded animate-pulse w-32"></div>
                   </div>
                 </div>
-                
+
                 {/* Badge skeleton */}
                 <div className="h-6 bg-gray-200 rounded-full animate-pulse w-20"></div>
               </div>

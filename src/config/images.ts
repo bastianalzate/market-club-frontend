@@ -49,15 +49,15 @@ export const getImagePath = (category: keyof typeof IMAGE_PATHS, subcategory?: s
     return basePath;
   }
   
-  if (subcategory && filename) {
-    return `${basePath}${subcategory}/${filename}`;
+  if (subcategory && typeof basePath === 'object') {
+    const subPath = (basePath as any)[subcategory];
+    if (typeof subPath === 'string') {
+      return filename ? `${subPath}${filename}` : subPath;
+    }
   }
   
-  if (subcategory) {
-    return `${basePath}${subcategory}`;
-  }
-  
-  return basePath as string;
+  // If basePath is an object and no valid subcategory, throw an error
+  throw new Error(`Invalid image path: category="${category}", subcategory="${subcategory}". When category is an object, a valid subcategory must be provided.`);
 };
 
 /**

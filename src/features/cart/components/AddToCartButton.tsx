@@ -26,7 +26,7 @@ export default function AddToCartButton({
     // Simular una pequeña animación
     await new Promise((resolve) => setTimeout(resolve, 300));
 
-    addToCart(product, quantity);
+    addToCart({ productId: product.id, quantity });
     setIsAdding(false);
   };
 
