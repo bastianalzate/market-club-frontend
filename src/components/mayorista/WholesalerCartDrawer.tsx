@@ -12,7 +12,10 @@ interface WholesalerCartDrawerProps {
   onClose: () => void;
 }
 
-export default function WholesalerCartDrawer({ isOpen, onClose }: WholesalerCartDrawerProps) {
+export default function WholesalerCartDrawer({
+  isOpen,
+  onClose,
+}: WholesalerCartDrawerProps) {
   const {
     cart,
     itemsCount,
@@ -53,7 +56,7 @@ export default function WholesalerCartDrawer({ isOpen, onClose }: WholesalerCart
     }
 
     // Construir URL completa con la base del backend
-    return `http://localhost:8000/storage/${imagePath}`;
+    return `http://localhost:8000/${imagePath}`;
   };
 
   // Función para manejar la eliminación con loading
@@ -81,11 +84,20 @@ export default function WholesalerCartDrawer({ isOpen, onClose }: WholesalerCart
     if (!cart || !cart.items.length) return;
 
     const itemsText = cart.items
-      .map((item, index) => `${index + 1}. ${item.product?.name || 'Producto'} - ${formatPrice(item.total_price)}`)
-      .join('\n');
+      .map(
+        (item, index) =>
+          `${index + 1}. ${item.product?.name || "Producto"} - ${formatPrice(
+            item.total_price
+          )}`
+      )
+      .join("\n");
 
-    const message = `Hola! Me interesa cotizar los siguientes productos mayoristas:\n\n${itemsText}\n\nTotal: ${formatPrice(totalAmount)}`;
-    const whatsappUrl = `https://wa.me/573001234567?text=${encodeURIComponent(message)}`;
+    const message = `Hola! Me interesa cotizar los siguientes productos mayoristas:\n\n${itemsText}\n\nTotal: ${formatPrice(
+      totalAmount
+    )}`;
+    const whatsappUrl = `https://wa.me/573001234567?text=${encodeURIComponent(
+      message
+    )}`;
     window.open(whatsappUrl, "_blank");
   };
 
@@ -198,7 +210,9 @@ export default function WholesalerCartDrawer({ isOpen, onClose }: WholesalerCart
                 <div className="flow-root">
                   {!cart || cart.items.length === 0 ? (
                     <div className="text-center py-8">
-                      <p className="text-gray-500">Tu carrito mayorista está vacío</p>
+                      <p className="text-gray-500">
+                        Tu carrito mayorista está vacío
+                      </p>
                       <p className="text-sm text-gray-400">
                         Agrega algunos productos para cotizar
                       </p>
@@ -209,8 +223,16 @@ export default function WholesalerCartDrawer({ isOpen, onClose }: WholesalerCart
                         <li key={item.id} className="flex py-5">
                           <div className="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center bg-gray-100">
                             <LazyImage
-                              src={getImageUrl(item.product?.image || item.product_snapshot?.image || null)}
-                              alt={item.product?.name || item.product_snapshot?.name || 'Producto'}
+                              src={getImageUrl(
+                                item.product?.image ||
+                                  item.product_snapshot?.image ||
+                                  null
+                              )}
+                              alt={
+                                item.product?.name ||
+                                item.product_snapshot?.name ||
+                                "Producto"
+                              }
                               className="w-12 h-12 rounded-lg"
                             />
                           </div>
@@ -218,7 +240,9 @@ export default function WholesalerCartDrawer({ isOpen, onClose }: WholesalerCart
                           <div className="flex items-stretch justify-between flex-1 ml-5 space-x-5">
                             <div className="flex flex-col justify-between flex-1">
                               <p className="text-sm font-bold text-gray-900">
-                                {item.product?.name || item.product_snapshot?.name || 'Producto'}
+                                {item.product?.name ||
+                                  item.product_snapshot?.name ||
+                                  "Producto"}
                               </p>
 
                               {/* Controles de cantidad */}
@@ -232,7 +256,9 @@ export default function WholesalerCartDrawer({ isOpen, onClose }: WholesalerCart
                                         quantity: item.quantity - 1,
                                       });
                                     } else {
-                                      await handleRemoveFromCart(item.product_id);
+                                      await handleRemoveFromCart(
+                                        item.product_id
+                                      );
                                     }
                                   }}
                                   className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer"
@@ -264,7 +290,9 @@ export default function WholesalerCartDrawer({ isOpen, onClose }: WholesalerCart
                             <div className="flex flex-col items-end justify-between">
                               <button
                                 type="button"
-                                onClick={() => handleRemoveFromCart(item.product_id)}
+                                onClick={() =>
+                                  handleRemoveFromCart(item.product_id)
+                                }
                                 disabled={deletingItems.has(item.product_id)}
                                 className={`inline-flex p-2 -m-2 transition-all duration-200 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 ${
                                   deletingItems.has(item.product_id)

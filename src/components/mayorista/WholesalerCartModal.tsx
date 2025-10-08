@@ -64,7 +64,7 @@ export default function WholesalerCartModal({
 
     // Si es una ruta relativa, construir la URL completa
     const baseUrl = constants.api_url.replace("/api", "");
-    return `${baseUrl}/storage/${imagePath}`;
+    return `${baseUrl}/${imagePath}`;
   };
 
   // Función para actualizar cantidad
