@@ -116,7 +116,7 @@ export default function ProductFilters({
         <div className="space-y-3">
           <h4 className="text-sm font-medium text-gray-700 flex items-center">
             <Globe className="w-4 h-4 mr-2" />
-            País de origen
+            Países
           </h4>
           <select
             value={selectedCountry}
@@ -139,7 +139,7 @@ export default function ProductFilters({
         <div className="space-y-3 mt-6">
           <h4 className="text-sm font-medium text-gray-700 flex items-center">
             <Tag className="w-4 h-4 mr-2" />
-            Estilo de cerveza
+            Estilos
           </h4>
           <select
             value={selectedCategory}
@@ -187,7 +187,7 @@ export default function ProductFilters({
         <div className="space-y-3 mt-6">
           <h4 className="text-sm font-medium text-gray-700 flex items-center">
             <Package className="w-4 h-4 mr-2" />
-            Tipo de empaque
+            Presentación
           </h4>
           <select
             value={selectedPackaging}
