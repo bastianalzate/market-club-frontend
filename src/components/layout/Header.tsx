@@ -361,6 +361,16 @@ export default function Header() {
                   Armá tu regalo
                 </NavLink>
 
+                <NavLink
+                  href="/quienes-somos"
+                  title="Quiénes somos"
+                  isActive={isActive("/quienes-somos")}
+                  baseStyle={baseLinkStyle}
+                  activeStyle={activeLinkStyle}
+                >
+                  Quiénes somos
+                </NavLink>
+
                 {isAuthenticated && user?.is_wholesaler && (
                   <NavLink
                     href="/mayorista"
@@ -561,12 +571,31 @@ export default function Header() {
                       </MobileNavLink>
                     </div>
 
+                    <div
+                      className={`opacity-0 ${
+                        isClosing
+                          ? "animate-[slideOutLeft_0.2s_ease-in_0.15s_forwards]"
+                          : "animate-[slideInLeft_0.3s_ease-out_0.25s_forwards]"
+                      }`}
+                    >
+                      <MobileNavLink
+                        href="/quienes-somos"
+                        title="Quiénes somos"
+                        isActive={isActive("/quienes-somos")}
+                        baseStyle={mobileLinkStyle}
+                        activeStyle={mobileActiveLinkStyle}
+                        onClick={closeMenu}
+                      >
+                        Quiénes somos
+                      </MobileNavLink>
+                    </div>
+
                     {isAuthenticated && user?.is_wholesaler && (
                       <div
                         className={`opacity-0 ${
                           isClosing
-                            ? "animate-[slideOutLeft_0.2s_ease-in_0.15s_forwards]"
-                            : "animate-[slideInLeft_0.3s_ease-out_0.25s_forwards]"
+                            ? "animate-[slideOutLeft_0.2s_ease-in_0.2s_forwards]"
+                            : "animate-[slideInLeft_0.3s_ease-out_0.3s_forwards]"
                         }`}
                       >
                         <MobileNavLink
@@ -585,8 +614,8 @@ export default function Header() {
                     <div
                       className={`opacity-0 ${
                         isClosing
-                          ? "animate-[slideOutLeft_0.2s_ease-in_0.2s_forwards]"
-                          : "animate-[slideInLeft_0.3s_ease-out_0.3s_forwards]"
+                          ? "animate-[slideOutLeft_0.2s_ease-in_0.25s_forwards]"
+                          : "animate-[slideInLeft_0.3s_ease-out_0.35s_forwards]"
                       }`}
                     >
                       <MobileNavLink
@@ -604,8 +633,8 @@ export default function Header() {
                     <div
                       className={`opacity-0 ${
                         isClosing
-                          ? "animate-[slideOutLeft_0.2s_ease-in_0.25s_forwards]"
-                          : "animate-[slideInLeft_0.3s_ease-out_0.35s_forwards]"
+                          ? "animate-[slideOutLeft_0.2s_ease-in_0.3s_forwards]"
+                          : "animate-[slideInLeft_0.3s_ease-out_0.4s_forwards]"
                       }`}
                     >
                       <MobileNavLink
