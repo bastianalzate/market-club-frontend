@@ -92,7 +92,7 @@ export default function ProductFilters({
   ];
 
   return (
-    <div className="lg:w-64 space-y-6">
+    <div id="product-filters" className="lg:w-64 space-y-6">
       {/* Barra de búsqueda */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
