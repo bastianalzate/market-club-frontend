@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import PricingCard from "./PricingCard";
 import { PricingSectionConfig, PricingPlan } from "@/types/market-club";
-import { fetchSubscriptionPlans, subscribeToPlan, getCurrentSubscription } from "@/services/subscriptionsService";
+import { fetchSubscriptionPlans, getCurrentSubscription } from "@/services/subscriptionsService";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import SubscriptionPaymentModal from "@/components/subscriptions/SubscriptionPaymentModal";
 
 interface PricingSectionProps extends PricingSectionConfig {
   containerClassName?: string;
@@ -24,6 +25,8 @@ export default function PricingSection({
   const [backendPlans, setBackendPlans] = useState<any[]>([]);
   const { isAuthenticated, openLoginModal } = useAuth();
   const [subscribingPlanId, setSubscribingPlanId] = useState<string | null>(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -92,36 +95,56 @@ export default function PricingSection({
             <PricingCard
               key={plan.id}
               {...plan}
-              onActionClick={() => {
+              onActionClick={async () => {
                 if (!isAuthenticated) {
                   openLoginModal();
                   return;
                 }
-                // Si ya tiene suscripción activa, no cambiarla y redirigir al perfil inmediatamente
-                (async () => {
-                  try {
-                    setSubscribingPlanId(plan.id);
-                    const current = await getCurrentSubscription();
-                    if (current && current.success && current.data) {
-                      router.push('/perfil');
-                      return;
-                    }
-                    // Si no tiene suscripción, crearla y luego redirigir
-                    await subscribeToPlan(plan.id, 1);
+                
+                // Verificar si ya tiene suscripción activa
+                try {
+                  setSubscribingPlanId(plan.id);
+                  const current = await getCurrentSubscription();
+                  if (current && current.success && current.data) {
+                    // Ya tiene suscripción, ir al perfil
                     router.push('/perfil');
-                  } catch (e) {
-                    // Ante cualquier error, no intentar cambiar el plan actual
-                    router.push('/perfil');
-                  } finally {
-                    setSubscribingPlanId(null);
+                    return;
                   }
-                })();
+                  // No tiene suscripción, abrir modal de pago
+                  setSelectedPlan(plan);
+                  setIsPaymentModalOpen(true);
+                } catch (e) {
+                  console.error("Error verificando suscripción:", e);
+                } finally {
+                  setSubscribingPlanId(null);
+                }
               }}
               isBusy={subscribingPlanId === plan.id}
             />
           ))}
         </div>
       </div>
+
+      {/* Modal de pago */}
+      {selectedPlan && (
+        <SubscriptionPaymentModal
+          isOpen={isPaymentModalOpen}
+          onClose={() => {
+            setIsPaymentModalOpen(false);
+            setSelectedPlan(null);
+          }}
+          plan={{
+            id: selectedPlan.id,
+            name: selectedPlan.name,
+            price: selectedPlan.price.replace(/[$,]/g, '').trim(),
+            description: selectedPlan.description,
+          }}
+          onSuccess={() => {
+            // Redirigir al perfil después de suscripción exitosa
+            router.push('/perfil');
+          }}
+        />
+      )}
     </div>
   );
 }

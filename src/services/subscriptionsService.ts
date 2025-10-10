@@ -33,7 +33,42 @@ export async function fetchSubscriptionPlans(): Promise<GetPlansResponse> {
   return res.json();
 }
 
-export async function subscribeToPlan(planId: string, durationMonths = 1) {
+export interface SubscribeWithPaymentData {
+  plan_id: string;
+  payment_token: string;
+  payment_method_type: string;
+  last_four_digits?: string;
+  auto_renew?: boolean;
+  duration_months?: number;
+}
+
+export async function subscribeToPlan(data: SubscribeWithPaymentData) {
+  const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+  
+  if (!token) {
+    throw new Error("Debes iniciar sesión para suscribirte");
+  }
+
+  const res = await fetch(`${constants.api_url}/subscriptions/subscribe`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.message || "No se pudo procesar la suscripción");
+  }
+  
+  return res.json();
+}
+
+// Mantener la función anterior por compatibilidad (deprecated)
+export async function subscribeToPlanLegacy(planId: string, durationMonths = 1) {
   const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
   const res = await fetch(`${constants.api_url}/subscriptions/subscribe`, {
     method: "POST",
