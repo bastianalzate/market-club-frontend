@@ -191,7 +191,7 @@ export default function Header() {
     () => ({
       fontFamily: "var(--font-oswald)",
       fontWeight: 700,
-      fontSize: "13px",
+      fontSize: "16px",
       lineHeight: "100%",
       letterSpacing: "0.2px",
     }),
@@ -277,7 +277,7 @@ export default function Header() {
                   alt="Market Club Logo"
                   width={120}
                   height={0}
-                  className="h-auto w-[100px] xs:w-[120px] sm:w-[140px] md:w-[160px] lg:w-[180px] xl:w-[200px]"
+                  className="h-auto w-[90px] xs:w-[100px] sm:w-[110px] md:w-[120px] lg:w-[130px] xl:w-[140px]"
                   priority
                 />
               </Link>

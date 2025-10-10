@@ -64,7 +64,7 @@ export default function Copyright() {
             {/* TikTok */}
             <li>
               <a
-                href="https://www.tiktok.com/@market_club_"
+                href="https://www.tiktok.com/@somos_marketclub"
                 target="_blank"
                 title="TikTok"
                 className="inline-flex items-center justify-center w-10 h-10 text-gray-900 transition-all duration-200 rounded-full hover:bg-gray-100 hover:text-black focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
