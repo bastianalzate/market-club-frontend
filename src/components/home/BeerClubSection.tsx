@@ -71,7 +71,7 @@ export default function BeerClubSection() {
 
       {/* Tarjeta inferior en mobile/tablet/desktop pequeño */}
       <div className="xl:hidden w-full px-4 sm:px-6">
-        <div className=" text-white -mt-2 mb-4 px-6 py-8 text-center shadow-2xl">
+        <div className="flex flex-row text-white -mt-2 mb-4 px-6 py-8 text-center shadow-2xl">
           <Content align="center" />
         </div>
       </div>

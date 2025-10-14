@@ -28,12 +28,12 @@ export default function SubscriptionCard({
       className={`bg-white rounded-lg overflow-hidden max-w-5xl mx-auto ${className}`}
     >
       <div
-        className={`flex flex-col md:flex-row ${
-          !isImageLeft ? "md:flex-row-reverse" : ""
+        className={`flex flex-row ${
+          !isImageLeft ? "flex-row-reverse" : ""
         }`}
       >
         {/* Imagen del plan */}
-        <div className="md:w-2/5 relative overflow-hidden">
+        <div className="w-1/2 md:w-2/5 relative overflow-hidden">
           <div className="absolute top-4 left-4 z-10">
             <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
               <svg
@@ -54,18 +54,16 @@ export default function SubscriptionCard({
             alt={`Plan ${name}`}
             width={600}
             height={600}
-            className="w-full h-full object-cover rounded-4xl"
-            style={{ minHeight: "100%" }}
+            className="w-full h-full object-contain rounded-4xl"
           />
         </div>
 
         {/* Contenido del plan */}
-        <div className="md:w-3/5 p-10 md:p-12">
+        <div className="w-1/2 md:w-3/5 p-3 md:p-10 lg:p-12 flex flex-col justify-center">
           <h3
-            className="text-black mb-4"
+            className="text-black mb-1 md:mb-4 text-[14px] md:text-[32px]"
             style={{
               fontFamily: "var(--font-oswald)",
-              fontSize: "32px",
               fontWeight: 700,
             }}
           >
@@ -73,10 +71,9 @@ export default function SubscriptionCard({
           </h3>
 
           <div
-            className="text-black mb-4"
+            className="text-black mb-1 md:mb-4 text-[13px] md:text-[28px]"
             style={{
               fontFamily: "var(--font-oswald)",
-              fontSize: "28px",
               fontWeight: 400,
             }}
           >
@@ -84,37 +81,35 @@ export default function SubscriptionCard({
           </div>
 
           <p
-            className="text-gray-700 mb-6 text-left"
+            className="text-gray-700 mb-2 md:mb-6 text-left text-[9px] md:text-[16px]"
             style={{
               fontFamily: "var(--font-inter)",
-              fontSize: "16px",
               fontWeight: 400,
-              lineHeight: "1.5",
+              lineHeight: "1.2",
             }}
           >
             {description}
           </p>
 
-          <div className="mb-6">
+          <div className="mb-2 md:mb-6">
             <h4
-              className="text-black mb-3"
+              className="text-black mb-1 md:mb-3 text-[9px] md:text-[16px]"
               style={{
                 fontFamily: "var(--font-inter)",
-                fontSize: "16px",
                 fontWeight: 600,
               }}
             >
               Beneficios:
             </h4>
-            <ul className="space-y-2">
+            <ul className="space-y-0.5 md:space-y-2">
               {features.map((feature, index) => (
                 <li
                   key={index}
-                  className="text-gray-700"
+                  className="text-gray-700 text-[8px] md:text-[14px]"
                   style={{
                     fontFamily: "var(--font-inter)",
-                    fontSize: "14px",
                     fontWeight: 400,
+                    lineHeight: "1.2",
                   }}
                 >
                   • {feature}
@@ -124,11 +119,10 @@ export default function SubscriptionCard({
           </div>
 
           <button
-            className="px-8 py-3 text-white rounded-md font-medium hover:opacity-90 transition-opacity cursor-pointer"
+            className="px-4 py-2 md:w-40 md:px-6 md:py-3 text-white rounded-lg font-medium hover:opacity-90 transition-opacity cursor-pointer text-[10px] md:text-[16px]"
             style={{
               backgroundColor: buttonColor,
               fontFamily: "var(--font-inter)",
-              fontSize: "16px",
               fontWeight: 600,
             }}
             onClick={() => onSubscribeClick?.(id as unknown as string)}
