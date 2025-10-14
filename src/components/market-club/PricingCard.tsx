@@ -129,18 +129,14 @@ export default function PricingCard({
       <div className="mb-6">
         <button
           className={`w-full py-3 px-4 rounded-md font-medium transition-all duration-200 hover:scale-105 cursor-pointer ${
-            isMaestroPlan 
-              ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg hover:shadow-xl" 
-              : isHighlighted 
-                ? "bg-white text-black hover:bg-gray-100" 
-                : "text-white hover:opacity-90"
+            isHighlighted 
+              ? "bg-white text-black hover:bg-gray-100" 
+              : "text-white hover:opacity-90"
           }`}
           style={{
-            backgroundColor: isMaestroPlan 
-              ? undefined 
-              : isHighlighted 
-                ? "white" 
-                : buttonColor,
+            backgroundColor: isHighlighted 
+              ? "white" 
+              : buttonColor,
             fontFamily: "var(--font-inter)",
             fontSize: "14px",
             fontWeight: 600,
