@@ -2,7 +2,7 @@
 
 export default function GiftInfoSection() {
   return (
-    <section className="relative py-24 bg-black overflow-hidden">
+    <section className="relative py-8 bg-black overflow-hidden">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Lado izquierdo - Texto descriptivo */}

@@ -17,7 +17,7 @@ export default function HeroSection({
     fontWeight: 700,
   },
   descriptionClassName = "text-[#F5F5F5] font-inter text-[20px] leading-[26px] text-left",
-  containerClassName = "bg-black text-white py-16 px-4",
+  containerClassName = "bg-black text-white py-8 px-4",
 }: HeroSectionProps) {
   return (
     <div className={containerClassName}>
