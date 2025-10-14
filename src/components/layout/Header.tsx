@@ -193,7 +193,7 @@ export default function Header() {
       fontWeight: 700,
       fontSize: "16px",
       lineHeight: "100%",
-      letterSpacing: "0.2px",
+      letterSpacing: "0.1px",
     }),
     []
   );
@@ -242,18 +242,18 @@ export default function Header() {
     }
 
     return (
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-1">
         <Link
           href="/perfil"
-          className="flex items-center space-x-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors cursor-pointer"
+          className="flex items-center space-x-1.5 px-2 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors cursor-pointer"
           aria-label="Ver perfil"
         >
           <User className="w-4 h-4 text-gray-600" />
-          <span className="text-sm font-medium text-gray-900">{user.name}</span>
+          <span className="text-xs font-medium text-gray-900 max-w-32 truncate">{user.name}</span>
         </Link>
         <button
           onClick={logout}
-          className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
+          className="p-1.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
           title="Cerrar sesión"
         >
           <LogOut className="w-4 h-4" />
@@ -267,7 +267,7 @@ export default function Header() {
   return (
     <>
       <header className="py-3 bg-white shadow-sm border-b sm:py-4 md:py-6">
-        <div className="px-3 mx-auto max-w-7xl sm:px-4 md:px-6 lg:px-8">
+        <div className="px-2 mx-auto max-w-7xl sm:px-3 md:px-4 lg:px-6">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="shrink-0">
@@ -277,7 +277,7 @@ export default function Header() {
                   alt="Market Club Logo"
                   width={120}
                   height={0}
-                  className="h-auto w-[90px] xs:w-[100px] sm:w-[110px] md:w-[120px] lg:w-[130px] xl:w-[140px]"
+                  className="h-auto w-[80px] xs:w-[90px] sm:w-[100px] md:w-[110px] lg:w-[120px] xl:w-[130px]"
                   priority
                 />
               </Link>
@@ -329,8 +329,8 @@ export default function Header() {
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex lg:items-center lg:justify-center lg:ml-8 xl:ml-12 2xl:ml-20">
-              <div className="flex items-center space-x-4 xl:space-x-6 2xl:space-x-8">
+            <nav className="hidden lg:flex lg:items-center lg:justify-center lg:ml-6 xl:ml-8 2xl:ml-12">
+              <div className="flex items-center space-x-2 xl:space-x-3 2xl:space-x-4">
                 <NavLink
                   href="/"
                   title="Inicio"
@@ -371,6 +371,16 @@ export default function Header() {
                   Quiénes somos
                 </NavLink>
 
+                <NavLink
+                  href="/faq"
+                  title="FAQ"
+                  isActive={isActive("/faq")}
+                  baseStyle={baseLinkStyle}
+                  activeStyle={activeLinkStyle}
+                >
+                  FAQ
+                </NavLink>
+
                 {isAuthenticated && user?.is_wholesaler && (
                   <NavLink
                     href="/mayorista"
@@ -406,11 +416,11 @@ export default function Header() {
             </nav>
 
             {/* Desktop Actions */}
-            <div className="hidden lg:flex lg:items-center lg:space-x-3 xl:space-x-4">
+            <div className="hidden lg:flex lg:items-center lg:space-x-2 xl:space-x-3">
               {/* Search */}
               <button
                 onClick={handleOpenSearch}
-                className="p-2 text-gray-700 hover:text-gray-900 transition-colors cursor-pointer"
+                className="p-1.5 text-gray-700 hover:text-gray-900 transition-colors cursor-pointer"
                 aria-label="Buscar"
               >
                 <Search className="w-5 h-5" />
@@ -419,7 +429,7 @@ export default function Header() {
               {/* Cart */}
               <button
                 onClick={handleOpenCart}
-                className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative cursor-pointer"
+                className="p-1.5 text-gray-700 hover:text-gray-900 transition-colors relative cursor-pointer"
               >
                 <ShoppingCart className="w-5 h-5" />
                 {itemsCount > 0 && (
@@ -590,12 +600,31 @@ export default function Header() {
                       </MobileNavLink>
                     </div>
 
+                    <div
+                      className={`opacity-0 ${
+                        isClosing
+                          ? "animate-[slideOutLeft_0.2s_ease-in_0.2s_forwards]"
+                          : "animate-[slideInLeft_0.3s_ease-out_0.3s_forwards]"
+                      }`}
+                    >
+                      <MobileNavLink
+                        href="/faq"
+                        title="FAQ"
+                        isActive={isActive("/faq")}
+                        baseStyle={mobileLinkStyle}
+                        activeStyle={mobileActiveLinkStyle}
+                        onClick={closeMenu}
+                      >
+                        FAQ
+                      </MobileNavLink>
+                    </div>
+
                     {isAuthenticated && user?.is_wholesaler && (
                       <div
                         className={`opacity-0 ${
                           isClosing
-                            ? "animate-[slideOutLeft_0.2s_ease-in_0.2s_forwards]"
-                            : "animate-[slideInLeft_0.3s_ease-out_0.3s_forwards]"
+                            ? "animate-[slideOutLeft_0.2s_ease-in_0.25s_forwards]"
+                            : "animate-[slideInLeft_0.3s_ease-out_0.35s_forwards]"
                         }`}
                       >
                         <MobileNavLink
@@ -614,8 +643,8 @@ export default function Header() {
                     <div
                       className={`opacity-0 ${
                         isClosing
-                          ? "animate-[slideOutLeft_0.2s_ease-in_0.25s_forwards]"
-                          : "animate-[slideInLeft_0.3s_ease-out_0.35s_forwards]"
+                          ? "animate-[slideOutLeft_0.2s_ease-in_0.3s_forwards]"
+                          : "animate-[slideInLeft_0.3s_ease-out_0.4s_forwards]"
                       }`}
                     >
                       <MobileNavLink
@@ -633,8 +662,8 @@ export default function Header() {
                     <div
                       className={`opacity-0 ${
                         isClosing
-                          ? "animate-[slideOutLeft_0.2s_ease-in_0.3s_forwards]"
-                          : "animate-[slideInLeft_0.3s_ease-out_0.4s_forwards]"
+                          ? "animate-[slideOutLeft_0.2s_ease-in_0.35s_forwards]"
+                          : "animate-[slideInLeft_0.3s_ease-out_0.45s_forwards]"
                       }`}
                     >
                       <MobileNavLink

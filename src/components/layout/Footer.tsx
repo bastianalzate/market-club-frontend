@@ -57,6 +57,15 @@ export default function Footer() {
 
               <li>
                 <Link
+                  href="/faq"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                >
+                  FAQ
+                </Link>
+              </li>
+
+              <li>
+                <Link
                   href="/contacto"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
                 >
