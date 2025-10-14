@@ -17,10 +17,9 @@ export default function BeerClubSection() {
             fontSize: align === "center" ? "42px" : "64px",
             lineHeight: "100%",
             letterSpacing: "0px",
-            textTransform: "capitalize",
           }}
         >
-          Únete Hoy y Recibe tu Primer Beneficio. 
+          Únete hoy y recibe tu primer beneficio. 
         </h3>
 
         <p
