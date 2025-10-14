@@ -13,10 +13,10 @@ export default function HeroSection({
   description,
   titleStyle = {
     fontFamily: "var(--font-oswald)",
-    fontSize: "64px",
+    fontSize: "42px",
     fontWeight: 700,
   },
-  descriptionClassName = "text-[#F5F5F5] font-inter text-[32px] leading-[34px] text-left",
+  descriptionClassName = "text-[#F5F5F5] font-inter text-[20px] leading-[26px] text-left",
   containerClassName = "bg-black text-white py-16 px-4",
 }: HeroSectionProps) {
   return (

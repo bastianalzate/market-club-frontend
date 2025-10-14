@@ -2,7 +2,7 @@
 
 export default function NewFlavorsSection() {
   return (
-    <section className="relative py-16 bg-black overflow-hidden">
+    <section className="sticky top-0 z-50 py-16 bg-black overflow-hidden">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Bloque izquierdo - Título principal */}
@@ -12,8 +12,8 @@ export default function NewFlavorsSection() {
               style={{
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
-                fontSize: "58px",
-                lineHeight: "77px",
+                fontSize: "42px",
+                lineHeight: "56px",
                 letterSpacing: "0px",
                 verticalAlign: "middle",
               }}
@@ -29,8 +29,8 @@ export default function NewFlavorsSection() {
               style={{
                 fontFamily: "var(--font-inter)",
                 fontWeight: 400,
-                fontSize: "28px",
-                lineHeight: "34px",
+                fontSize: "20px",
+                lineHeight: "26px",
                 letterSpacing: "0px",
               }}
             >

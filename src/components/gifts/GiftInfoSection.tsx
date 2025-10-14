@@ -11,8 +11,8 @@ export default function GiftInfoSection() {
               className="text-white"
               style={{
                 fontFamily: "var(--font-inter)",
-                fontSize: "28px",
-                lineHeight: "34px",
+                fontSize: "20px",
+                lineHeight: "26px",
                 letterSpacing: "0px",
                 verticalAlign: "middle",
               }}
@@ -43,8 +43,8 @@ export default function GiftInfoSection() {
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
                 fontStyle: "Bold",
-                fontSize: "58px",
-                lineHeight: "77px",
+                fontSize: "42px",
+                lineHeight: "56px",
                 letterSpacing: "0px",
                 verticalAlign: "middle",
               }}
