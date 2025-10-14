@@ -789,21 +789,6 @@ export default function ContactoPage() {
 
           {/* Imagen */}
           <div className="relative lg:sticky lg:top-8">
-            {/* Imagen para móviles */}
-            <div className="lg:hidden mb-8">
-              <div className="relative overflow-hidden rounded-2xl shadow-lg">
-                <Image
-                  src="/images/contact/contacto-banner.png"
-                  alt="Personas brindando con cervezas"
-                  width={400}
-                  height={300}
-                  className="w-full h-64 object-cover"
-                  priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-              </div>
-            </div>
-            
             {/* Imagen para desktop */}
             <div className="hidden lg:block">
             <div className="relative overflow-hidden rounded-2xl shadow-2xl bg-gradient-to-br from-gray-50 to-gray-100">
@@ -845,50 +830,43 @@ export default function ContactoPage() {
             </div>
 
             {/* Horarios de Atención */}
-            <div className="text-white flex items-center px-16 py-12">
+            <div className="text-white flex items-center px-4 sm:px-8 lg:px-16 py-12">
               <div>
                 <h2
-                  className="text-white mb-10"
+                  className="text-white mb-10 text-2xl lg:text-6xl"
                   style={{
                     fontFamily: "var(--font-oswald)",
                     fontWeight: "bold",
-                    fontSize: "64px",
                   }}
                 >
-                  Encuentranos en: 
+                  Encuéntranos en: 
                 </h2>
                 <div>
                 <p
-                    className="text-white"
+                    className="text-white text-base lg:text-2xl leading-normal lg:leading-tight"
                     style={{
                       fontFamily: "Inter, sans-serif",
                       fontWeight: 400,
-                      fontSize: "24px",
-                      lineHeight: "1.2",
                       margin: 0,
                     }}
                   >
-                    Dirección: Cl. 43 #74-61 Local 3, <br /> Laureles - Estadio, Medellín, Laureles, Medellín, Antioquia. 
+                    Dirección: Cl. 43 #74-61 Local 3<br /> Laureles - Estadio, Medellín, Laureles, Medellín, Antioquia. 
                   </p>
                   <p
-                    className="text-white !mt-4"
+                    className="text-white !mt-4 text-base lg:text-2xl leading-normal lg:leading-tight"
                     style={{
                       fontFamily: "Inter, sans-serif",
                       fontWeight: 400,
-                      fontSize: "24px",
-                      lineHeight: "1.2",
                       margin: 0,
                     }}
                   >
                     Lunes a Sábado de 9:00 a.m. a 10:00 p.m.
                   </p>
                   <p
-                    className="text-white"
+                    className="text-white text-base lg:text-2xl leading-normal lg:leading-tight"
                     style={{
                       fontFamily: "Inter, sans-serif",
                       fontWeight: 400,
-                      fontSize: "24px",
-                      lineHeight: "1.2",
                       margin: 0,
                     }}
                   >

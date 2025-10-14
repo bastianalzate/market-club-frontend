@@ -38,7 +38,7 @@ export default function GiftInfoSection() {
           {/* Lado derecho - Pregunta principal */}
           <div className="lg:pl-8">
             <h2
-              className="text-white text-right"
+              className="text-white text-left lg:text-right"
               style={{
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
