@@ -131,8 +131,8 @@ function TiendaContentInner() {
     <div className="min-h-screen">
       {/* Sección con fondo negro hasta el MarketClubBanner */}
       <div className="bg-black">
-        {/* Iconos de categorías */}
-        <CategoryIcons />
+        {/* Iconos de categorías - OCULTO TEMPORALMENTE */}
+        {/* <CategoryIcons /> */}
 
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
