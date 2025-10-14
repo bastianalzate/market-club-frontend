@@ -180,10 +180,25 @@ export default function GiftBuilder() {
   // Rangos de precio desde el backend
   const priceRanges = [
     { value: "", label: "Todos los precios" },
-    ...filters.price_ranges.map((range) => ({
-      value: range,
-      label: range.replace("k", "k").replace("-", " - "),
-    })),
+    ...filters.price_ranges
+      .sort((a, b) => {
+        // Extraer números para ordenar correctamente
+        const getMinValue = (range: string) => {
+          if (range.includes("+")) {
+            // Para rangos como "50k+", usar el valor base
+            return parseInt(range.replace("k+", "")) * 1000;
+          }
+          // Para rangos como "0-10k", "10k-25k", etc.
+          const match = range.match(/(\d+)k?-(\d+)k?/);
+          return match ? parseInt(match[1]) * 1000 : 0;
+        };
+        
+        return getMinValue(a) - getMinValue(b);
+      })
+      .map((range) => ({
+        value: range,
+        label: range.replace("k", "k").replace("-", " - "),
+      })),
   ];
 
   // Los productos ya vienen filtrados del hook useProducts

@@ -12,6 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { useNotification } from "@/hooks/useNotification";
 import { useToast } from "@/hooks/useToast";
@@ -31,6 +32,7 @@ interface PerfilFavoritesProps {
 }
 
 export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(1);
@@ -425,7 +427,10 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
             <p className="text-gray-500 mb-6">
               Cuando agregues productos a tus favoritos, aparecerán aquí.
             </p>
-            <button className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2">
+            <button 
+              onClick={() => router.push('/tienda')}
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
+            >
               Explorar productos
             </button>
           </div>
