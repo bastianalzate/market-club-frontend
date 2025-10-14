@@ -24,10 +24,10 @@ export default function Footer() {
           {/* Menu */}
           <div>
             <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
-              Menu
+              Menú
             </h6>
 
-            <ul className="mt-8 space-y-5">
+            <ul className="mt-2 space-y-1">
               <li>
                 <Link
                   href="/tienda"
@@ -77,11 +77,11 @@ export default function Footer() {
 
           {/* Enlaces Directos */}
           <div>
-            <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
+            <h6 className="text-sm font-bold tracking-wide text-gray-900 uppercase font-pj whitespace-nowrap">
               Enlaces Directos
             </h6>
 
-            <ul className="mt-8 space-y-5">
+            <ul className="mt-2 space-y-1">
               <li>
                 <Link
                   href="/privacy-policy"
@@ -126,7 +126,7 @@ export default function Footer() {
               Medios de Pago
             </h6>
 
-            <ul className="mt-8 space-y-5">
+            <ul className="mt-2 space-y-1">
               <li>
                 <a
                   href="https://wompi.co"
@@ -146,8 +146,8 @@ export default function Footer() {
               Nuestros canales
             </h6>
 
-            <div className="mt-8">
-              <ul className="space-y-4">
+            <div className="mt-2">
+              <ul className="space-y-1">
                 <li>
                   <a
                     href="https://whatsapp.com/channel/0029VbBEIEF9xVJn7sTa943c"
@@ -167,7 +167,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <a
-                    href="https://www.instagram.com/channel/AbaHk3XG4UNKPhZ1/"
+                    href="https://www.instagram.com/somos_marketclub/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
@@ -185,12 +185,12 @@ export default function Footer() {
               </ul>
             </div>
 
-            <div className="grid grid-cols-1 mt-8 gap-y-8 sm:grid-cols-2 sm:gap-x-16">
+            <div className="grid grid-cols-1 mt-2 gap-y-8 sm:grid-cols-2 sm:gap-x-16">
               <div>
                 <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
                   Llámanos
                 </h6>
-                <p className="mt-2.5 text-xl font-pj text-gray-900 font-bold">
+                <p className=" text-xl font-pj text-gray-900 font-bold">
                   <a href="tel:+573168751700" title="">
                     (+57) 316 8751700
                   </a>
@@ -201,7 +201,7 @@ export default function Footer() {
                 <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
                   Escríbenos
                 </h6>
-                <p className="mt-2.5 text-xl font-pj text-gray-900 font-bold">
+                <p className=" text-xl font-pj text-gray-900 font-bold">
                   <a href="mailto:info@marketclub.com.co" title="">
                     info@marketclub.com.co
                   </a>

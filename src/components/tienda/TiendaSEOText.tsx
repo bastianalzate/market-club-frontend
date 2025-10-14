@@ -22,12 +22,14 @@ export default function TiendaSEOText() {
           marcas destacadas. Explora una selección curada por estilo, país de
           origen, precio y presentación para encontrar tu próxima favorita.
         </p>
+        <br />
         <p>
           Filtra por países como Alemania, Bélgica, Inglaterra o México, o
           navega por estilos populares como IPA, Lager, Stout, Witbier y más.
           También puedes ajustar por rango de precios y tipo de empaque para una
           experiencia de compra rápida y precisa.
         </p>
+        <br />
         <p>
           En Market Club te ofrecemos promociones, envíos confiables y un
           catálogo en constante actualización. Si buscas variedad, calidad y un
