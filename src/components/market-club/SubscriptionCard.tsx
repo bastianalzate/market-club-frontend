@@ -33,7 +33,7 @@ export default function SubscriptionCard({
         }`}
       >
         {/* Imagen del plan */}
-        <div className="md:w-1/2 relative overflow-hidden">
+        <div className="md:w-2/5 relative overflow-hidden">
           <div className="absolute top-4 left-4 z-10">
             <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
               <svg
@@ -54,13 +54,13 @@ export default function SubscriptionCard({
             alt={`Plan ${name}`}
             width={600}
             height={600}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-4xl"
             style={{ minHeight: "100%" }}
           />
         </div>
 
         {/* Contenido del plan */}
-        <div className="md:w-1/2 p-10 md:p-12">
+        <div className="md:w-3/5 p-10 md:p-12">
           <h3
             className="text-black mb-4"
             style={{
