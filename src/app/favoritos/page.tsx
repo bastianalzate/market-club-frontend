@@ -17,12 +17,14 @@ export default function FavoritosPage() {
     onProductFavoriteUpdate: () => {},
   });
   const { products: allProducts } = useProducts();
-  const [favoriteProducts, setFavoriteProducts] = useState<TransformedProduct[]>([]);
+  const [favoriteProducts, setFavoriteProducts] = useState<
+    TransformedProduct[]
+  >([]);
 
   useEffect(() => {
     if (wishlistItems.length > 0 && allProducts.length > 0) {
-      const favoriteProductsData = allProducts.filter(product =>
-        wishlistItems.some(item => item.product_id === product.id)
+      const favoriteProductsData = allProducts.filter((product) =>
+        wishlistItems.some((item) => item.product_id === product.id)
       );
       setFavoriteProducts(favoriteProductsData);
     } else {
@@ -33,6 +35,11 @@ export default function FavoritosPage() {
   const handleAddToWishlist = (product: Product) => {
     // Esta función se maneja desde el contexto
     console.log("Toggle wishlist:", product);
+  };
+
+  const handleAddToCart = (product: Product) => {
+    // Esta función se maneja desde el contexto del carrito
+    console.log("Add to cart:", product);
   };
 
   if (wishlistLoading) {
@@ -53,25 +60,33 @@ export default function FavoritosPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2" style={{ fontFamily: "var(--font-oswald)" }}>
+          <h1
+            className="text-3xl font-bold text-gray-900 mb-2"
+            style={{ fontFamily: "var(--font-oswald)" }}
+          >
             Mis Favoritos
           </h1>
           <p className="text-gray-600">
-            {favoriteProducts.length > 0 
-              ? `${favoriteProducts.length} producto${favoriteProducts.length !== 1 ? 's' : ''} en tu lista de favoritos`
-              : "No tienes productos favoritos aún"
-            }
+            {favoriteProducts.length > 0
+              ? `${favoriteProducts.length} producto${
+                  favoriteProducts.length !== 1 ? "s" : ""
+                } en tu lista de favoritos`
+              : "No tienes productos favoritos aún"}
           </p>
         </div>
 
         {favoriteProducts.length === 0 ? (
           <div className="text-center py-16">
             <Heart className="w-24 h-24 text-gray-300 mx-auto mb-6" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-4" style={{ fontFamily: "var(--font-oswald)" }}>
+            <h2
+              className="text-2xl font-bold text-gray-900 mb-4"
+              style={{ fontFamily: "var(--font-oswald)" }}
+            >
               No tienes favoritos aún
             </h2>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              Cuando agregues productos a tus favoritos, aparecerán aquí para que puedas encontrarlos fácilmente.
+              Cuando agregues productos a tus favoritos, aparecerán aquí para
+              que puedas encontrarlos fácilmente.
             </p>
             <Link
               href="/tienda"
@@ -90,7 +105,9 @@ export default function FavoritosPage() {
                 const productForCard: Product = {
                   id: product.id,
                   name: product.name,
-                  description: product.description || `${product.brand} - ${product.category.name}`,
+                  description:
+                    product.description ||
+                    `${product.brand} - ${product.category.name}`,
                   price: parseFloat(product.price),
                   image: product.image || "/images/products/placeholder.jpg",
                   images: [product.image || "/images/products/placeholder.jpg"],
@@ -111,9 +128,13 @@ export default function FavoritosPage() {
                 };
 
                 return (
-                  <div key={product.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
+                  <div
+                    key={product.id}
+                    className="bg-white rounded-lg shadow-lg overflow-hidden"
+                  >
                     <ProductCard
                       product={productForCard}
+                      onAddToCart={handleAddToCart}
                       onAddToWishlist={handleAddToWishlist}
                       isInWishlist={true}
                     />
