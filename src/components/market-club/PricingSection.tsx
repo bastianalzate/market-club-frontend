@@ -50,7 +50,8 @@ export default function PricingSection({
   const mappedPlans = useMemo(() => {
     if (backendPlans.length === 0) return plans; // fallback a los quemados si falla
     
-    return backendPlans.map((p): PricingPlan => ({
+    // Mapear los planes y reordenarlos: Curioso, Coleccionista, Maestro
+    const mapped = backendPlans.map((p): PricingPlan => ({
       id: p.id,
       name: p.name,
       price: `$${new Intl.NumberFormat("es-CO").format(parseInt(p.price, 10)).replace(/,/g, ".")}`,
@@ -61,6 +62,19 @@ export default function PricingSection({
       buttonColor: "#B58E31",
       isHighlighted: p.is_popular || false,
     }));
+
+    // Reordenar: Curioso (1), Maestro (2), Coleccionista (3)
+    const orderMap: { [key: string]: number } = {
+      'curioso-cervecero': 1,
+      'maestro-cervecero': 2,
+      'coleccionista-cervecero': 3,
+    };
+
+    return mapped.sort((a, b) => {
+      const orderA = orderMap[a.id] || 999;
+      const orderB = orderMap[b.id] || 999;
+      return orderA - orderB;
+    });
   }, [backendPlans, plans]);
 
   if (loading) {
@@ -81,7 +95,11 @@ export default function PricingSection({
   return (
     <div 
       className={finalClassName}
-      style={{ backgroundColor }}
+      style={{ 
+        background: 'linear-gradient(135deg, #B58E31 0%, #D4AF37 25%, #FFD700 50%, #D4AF37 75%, #B58E31 100%)',
+        backgroundSize: '400% 400%',
+        animation: 'goldenShimmer 8s ease-in-out infinite'
+      }}
     >
       <div className="max-w-7xl mx-auto">
         {error && (

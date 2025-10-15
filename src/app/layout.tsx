@@ -74,7 +74,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={FONT_CLASSES}>
+      <body className={FONT_CLASSES} suppressHydrationWarning={true}>
         <SuppressHydrationWarning />
         <WompiScript />
         <ReduxProvider>

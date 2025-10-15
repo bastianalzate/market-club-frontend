@@ -32,14 +32,14 @@ export default function HeroSection() {
           <div className="grid items-start grid-cols-1 gap-y-12 lg:grid-cols-2 gap-x-16 pt-16">
             <div className="text-center lg:text-left">
               <h1
-                className="font-bold text-white"
-                style={{ fontFamily: "var(--font-oswald)", fontSize: "80px" }}
+                className="font-bold text-white text-6xl sm:text-7xl md:text-8xl lg:text-7xl xl:text-8xl"
+                style={{ fontFamily: "var(--font-oswald)" }}
               >
                 <span className="block">Brindemos por</span>
                 <span className="block">el Oktoberfest</span>
               </h1>
               <p
-                className="mt-4 text-lg font-normal text-white sm:mt-8"
+                className="mt-8 text-lg font-normal text-white sm:mt-12"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
                 Directo desde Múnich, esta cerveza de trigo alemana es un ícono

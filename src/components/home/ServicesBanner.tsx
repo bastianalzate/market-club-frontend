@@ -23,14 +23,14 @@ export default function ServicesBanner() {
             {/* Contenido */}
             <div className="flex flex-col justify-start space-y-2 flex-1">
               <h3 
-                className="text-white uppercase text-[18px] lg:text-[26px]"
+                className="text-white text-[18px] lg:text-[26px]"
                 style={{
                   fontFamily: "var(--font-oswald)",
                   fontWeight: 700,
                   letterSpacing: "1px"
                 }}
               >
-                Atención al Cliente
+                Atención al cliente
               </h3>
               <p 
                 className="text-white text-[16px] lg:text-[24px]"
@@ -70,14 +70,14 @@ export default function ServicesBanner() {
             {/* Contenido */}
             <div className="flex flex-col justify-start space-y-2 flex-1">
               <h3 
-                className="text-white uppercase text-[18px] lg:text-[26px]"
+                className="text-white text-[18px] lg:text-[26px]"
                 style={{
                   fontFamily: "var(--font-oswald)",
                   fontWeight: 700,
                   letterSpacing: "1px"
                 }}
               >
-                Pago Seguro
+                Pago seguro
               </h3>
               <p 
                 className="text-white text-[16px] lg:text-[24px]"
@@ -117,7 +117,7 @@ export default function ServicesBanner() {
             {/* Contenido */}
             <div className="flex flex-col justify-start space-y-2 flex-1">
               <h3 
-                className="text-white uppercase text-[18px] lg:text-[26px]"
+                className="text-white text-[18px] lg:text-[26px]"
                 style={{
                   fontFamily: "var(--font-oswald)",
                   fontWeight: 700,
@@ -133,7 +133,7 @@ export default function ServicesBanner() {
                   fontWeight: 400
                 }}
               >
-                Fácil Y Gratis
+                Fácil
               </p>
               <p 
                 className="text-white text-[12px] lg:text-[16px]"

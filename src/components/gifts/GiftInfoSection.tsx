@@ -2,7 +2,7 @@
 
 export default function GiftInfoSection() {
   return (
-    <section className="relative py-24 bg-black overflow-hidden">
+    <section className="relative py-8 bg-black overflow-hidden">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Lado izquierdo - Texto descriptivo */}
@@ -11,8 +11,8 @@ export default function GiftInfoSection() {
               className="text-white"
               style={{
                 fontFamily: "var(--font-inter)",
-                fontSize: "28px",
-                lineHeight: "34px",
+                fontSize: "20px",
+                lineHeight: "26px",
                 letterSpacing: "0px",
                 verticalAlign: "middle",
               }}
@@ -38,13 +38,13 @@ export default function GiftInfoSection() {
           {/* Lado derecho - Pregunta principal */}
           <div className="lg:pl-8">
             <h2
-              className="text-white text-right"
+              className="text-white text-left lg:text-right"
               style={{
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
                 fontStyle: "Bold",
-                fontSize: "58px",
-                lineHeight: "77px",
+                fontSize: "42px",
+                lineHeight: "56px",
                 letterSpacing: "0px",
                 verticalAlign: "middle",
               }}

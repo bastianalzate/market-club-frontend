@@ -245,18 +245,18 @@ export default function ProductGrid({
 
   // Configuración de paginación - usar la paginación del servidor si está disponible
   const totalPages =
-    pagination?.lastPage || Math.ceil(localProducts.length / 9);
+    pagination?.lastPage || Math.ceil(localProducts.length / 10);
   const currentProducts = pagination
     ? localProducts
-    : localProducts.slice((currentPage - 1) * 9, currentPage * 9);
+    : localProducts.slice((currentPage - 1) * 10, currentPage * 10);
 
   // Para mostrar información de paginación
   const startIndex = pagination
     ? (pagination.currentPage - 1) * pagination.perPage + 1
-    : (currentPage - 1) * 9 + 1;
+    : (currentPage - 1) * 10 + 1;
   const endIndex = pagination
     ? Math.min(pagination.currentPage * pagination.perPage, pagination.total)
-    : Math.min(currentPage * 9, products.length);
+    : Math.min(currentPage * 10, products.length);
 
   const formatPrice = (price: string | number) => {
     const numericPrice = typeof price === "string" ? parseFloat(price) : price;
@@ -347,12 +347,12 @@ export default function ProductGrid({
         <div
           className={
             viewMode === "grid"
-              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              ? "grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6"
               : "space-y-4"
           }
         >
-          {/* Mostrar 9 skeletons para simular la carga */}
-          {Array.from({ length: 9 }, (_, index) => (
+          {/* Mostrar 10 skeletons para simular la carga */}
+          {Array.from({ length: 10 }, (_, index) => (
             <ProductCardSkeleton key={index} />
           ))}
         </div>
@@ -369,7 +369,7 @@ export default function ProductGrid({
         <div
           className={`grid gap-4 sm:gap-6 ${
             viewMode === "grid"
-              ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
+              ? "grid-cols-2 sm:grid-cols-2 xl:grid-cols-3"
               : "grid-cols-1"
           }`}
         >
@@ -387,8 +387,7 @@ export default function ProductGrid({
                 }`}
               >
                 <div
-                  className="overflow-hidden pt-4"
-                  style={{ height: "400px" }}
+                  className="overflow-hidden pt-4 h-[250px] xl:h-[400px]"
                 >
                   <LazyImage
                     src={product.image}
@@ -429,33 +428,33 @@ export default function ProductGrid({
 
               {/* Información del producto */}
               <div
-                className={`p-4 sm:p-6 flex flex-col flex-grow ${
+                className={`p-3 sm:p-4 xl:p-6 flex flex-col flex-grow ${
                   viewMode === "list"
                     ? "flex-1"
                     : ""
                 }`}
               >
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm text-gray-600 font-medium">
+                  <div className="flex items-center justify-between mb-2 xl:mb-3">
+                    <span className="text-xs xl:text-sm text-gray-600 font-medium">
                       MARKET CLUB
                     </span>
-                    <span className="text-lg font-bold text-gray-900">
+                    <span className="text-base xl:text-lg font-bold text-gray-900">
                       {formatPrice(product.price)}
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">
+                  <h3 className="text-sm xl:text-lg font-bold text-gray-900 mb-3 xl:mb-4 line-clamp-2">
                     {product.name}
                   </h3>
                 </div>
 
                 {/* Botones de acción */}
                 <div className="mt-auto">
-                  <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="flex items-center justify-center xl:justify-start gap-2 xl:gap-3">
                   {/* Botón de carrito cuadrado con contador - Solo visual */}
                   <div
-                    className="relative p-2 sm:p-3 rounded-lg flex-shrink-0"
+                    className="relative p-2 xl:p-3 rounded-lg flex-shrink-0"
                     style={{
                       backgroundColor: "transparent",
                       borderColor: "#D0D5DD",
@@ -465,12 +464,12 @@ export default function ProductGrid({
                     aria-label="Contador del carrito"
                   >
                     <ShoppingCart
-                      className="w-4 h-4 sm:w-5 sm:h-5"
+                      className="w-4 h-4 xl:w-5 xl:h-5"
                       style={{ color: "#B58E31" }}
                     />
                     {/* Contador en el ícono del carrito */}
                     {isInCart(product.id) && (
-                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center font-bold text-[10px] sm:text-xs">
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 xl:h-5 xl:w-5 flex items-center justify-center font-bold text-[10px] xl:text-xs">
                         {getProductQuantity(product.id)}
                       </span>
                     )}
@@ -483,7 +482,7 @@ export default function ProductGrid({
                       addingToCart === product.id ||
                       product.stock_quantity === 0
                     }
-                    className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    className="flex-1 flex items-center justify-center space-x-1 xl:space-x-2 text-white py-2 xl:py-3 px-3 xl:px-4 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     style={{
                       backgroundColor:
                         product.stock_quantity === 0 ? "#6B7280" : "#B58E31",
@@ -497,7 +496,7 @@ export default function ProductGrid({
                       (e.currentTarget.style.backgroundColor = "#B58E31")
                     }
                   >
-                    <span>
+                    <span className="text-xs xl:text-sm">
                       {addingToCart === product.id
                         ? "Agregando..."
                         : product.stock_quantity === 0
@@ -508,7 +507,7 @@ export default function ProductGrid({
                     </span>
                     {addingToCart !== product.id &&
                       product.stock_quantity > 0 && (
-                        <ArrowRight className="w-4 h-4" />
+                        <ArrowRight className="w-3 h-3 xl:w-4 xl:h-4" />
                       )}
                   </button>
                   </div>
