@@ -190,8 +190,8 @@ export default function Header() {
   const baseLinkStyle = useMemo(
     () => ({
       fontFamily: "var(--font-oswald)",
-      fontWeight: 700,
-      fontSize: "16px",
+      fontWeight: 600,
+      fontSize: "15px",
       lineHeight: "100%",
       letterSpacing: "0.1px",
     }),
@@ -249,7 +249,9 @@ export default function Header() {
           aria-label="Ver perfil"
         >
           <User className="w-4 h-4 text-gray-600" />
-          <span className="text-xs font-medium text-gray-900 max-w-32 truncate">{user.name}</span>
+          <span className="text-xs font-medium text-gray-900 max-w-32 truncate">
+            {user.name}
+          </span>
         </Link>
         <button
           onClick={logout}
@@ -369,16 +371,6 @@ export default function Header() {
                   activeStyle={activeLinkStyle}
                 >
                   Quiénes somos
-                </NavLink>
-
-                <NavLink
-                  href="/faq"
-                  title="FAQ"
-                  isActive={isActive("/faq")}
-                  baseStyle={baseLinkStyle}
-                  activeStyle={activeLinkStyle}
-                >
-                  FAQ
                 </NavLink>
 
                 {isAuthenticated && user?.is_wholesaler && (
@@ -597,25 +589,6 @@ export default function Header() {
                         onClick={closeMenu}
                       >
                         Quiénes somos
-                      </MobileNavLink>
-                    </div>
-
-                    <div
-                      className={`opacity-0 ${
-                        isClosing
-                          ? "animate-[slideOutLeft_0.2s_ease-in_0.2s_forwards]"
-                          : "animate-[slideInLeft_0.3s_ease-out_0.3s_forwards]"
-                      }`}
-                    >
-                      <MobileNavLink
-                        href="/faq"
-                        title="FAQ"
-                        isActive={isActive("/faq")}
-                        baseStyle={mobileLinkStyle}
-                        activeStyle={mobileActiveLinkStyle}
-                        onClick={closeMenu}
-                      >
-                        FAQ
                       </MobileNavLink>
                     </div>
 

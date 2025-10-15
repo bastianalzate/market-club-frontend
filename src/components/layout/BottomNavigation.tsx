@@ -1,28 +1,30 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { 
-  Home, 
-  ShoppingBag, 
-  Heart, 
-  User, 
+import {
+  Home,
+  ShoppingBag,
+  Heart,
+  User,
   MapPin,
   Store,
   Bell,
-  LogIn
+  LogIn,
 } from "lucide-react";
 import { useCartContext } from "@/contexts/CartContext";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function BottomNavigation() {
   const router = useRouter();
   const pathname = usePathname();
   const cartContext = useCartContext();
-  
+  const { openLoginModal } = useAuth();
+
   // Validar que el contexto esté disponible
   if (!cartContext) {
     return null;
   }
-  
+
   const { itemsCount } = cartContext;
 
   // Usar el itemsCount ya calculado del contexto
@@ -45,23 +47,27 @@ export default function BottomNavigation() {
       badge: totalCartItems > 0 ? totalCartItems : null,
     },
     {
-      id: "favoritos",
-      label: "Favoritos",
-      icon: Heart,
-      path: "/favoritos",
-      isActive: pathname === "/favoritos",
+      id: "contacto",
+      label: "Contacto",
+      icon: MapPin,
+      path: "/contacto",
+      isActive: pathname === "/contacto",
     },
     {
-      id: "perfil",
-      label: "Perfil",
-      icon: User,
-      path: "/perfil",
-      isActive: pathname === "/perfil",
+      id: "login",
+      label: "Login",
+      icon: LogIn,
+      path: null, // No navigation, will open modal
+      isActive: false,
     },
   ];
 
-  const handleNavigation = (path: string) => {
-    router.push(path);
+  const handleNavigation = (item: any) => {
+    if (item.id === "login") {
+      openLoginModal();
+    } else if (item.path) {
+      router.push(item.path);
+    }
   };
 
   return (
@@ -72,7 +78,7 @@ export default function BottomNavigation() {
           return (
             <button
               key={item.id}
-              onClick={() => handleNavigation(item.path)}
+              onClick={() => handleNavigation(item)}
               className={`flex flex-col items-center justify-center space-y-1 relative transition-colors ${
                 item.isActive
                   ? "text-[#B58E31]"

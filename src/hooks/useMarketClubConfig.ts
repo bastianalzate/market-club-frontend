@@ -24,7 +24,7 @@ export const useMarketClubConfig = (): MarketClubPageConfig => {
           features: [
             "3 cervezas artesanales o importadas de distintos estilos",
             "Ocasionalmente, un licor del mundo en lugar de una cerveza",
-            "Suscripción mensual por un año",
+            "Tarifa mensual por un año",
             "Cancela cuando quieras"
           ],
           image: "/images/market-club/corona-beer.png",
@@ -39,7 +39,7 @@ export const useMarketClubConfig = (): MarketClubPageConfig => {
           features: [
             "5 cervezas artesanales o importadas de distintos estilos",
             "Ocasionalmente, un licor del mundo en lugar de una cerveza",
-            "Suscripción mensual por un año",
+            "Tarifa mensual por un año",
             "Cancela cuando quieras"
           ],
           image: "/images/market-club/corona-beer.png",
@@ -55,7 +55,7 @@ export const useMarketClubConfig = (): MarketClubPageConfig => {
           features: [
             "3 cervezas de alta gama o ediciones limitadas",
             "Algunos meses, un espirituoso excepcional en lugar de una cerveza",
-            "Suscripción mensual por un año",
+            "Tarifa mensual por un año",
             "Cancela cuando quieras"
           ],
           image: "/images/market-club/corona-beer.png",

@@ -28,9 +28,7 @@ export default function SubscriptionCard({
       className={`bg-white rounded-lg overflow-hidden max-w-5xl mx-auto ${className}`}
     >
       <div
-        className={`flex flex-row ${
-          !isImageLeft ? "flex-row-reverse" : ""
-        }`}
+        className={`flex flex-row ${!isImageLeft ? "flex-row-reverse" : ""}`}
       >
         {/* Imagen del plan */}
         <div className="w-1/2 md:w-2/5 relative overflow-hidden">
@@ -52,8 +50,8 @@ export default function SubscriptionCard({
           <Image
             src={image}
             alt={`Plan ${name}`}
-            width={600}
-            height={600}
+            width={300}
+            height={450}
             className="w-full h-full object-contain rounded-4xl"
           />
         </div>

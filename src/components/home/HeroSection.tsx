@@ -31,19 +31,35 @@ export default function HeroSection() {
         <div className="px-4 mx-auto relative z-10 sm:px-6 lg:px-8 max-w-7xl">
           <div className="grid items-start grid-cols-1 gap-y-12 lg:grid-cols-2 gap-x-16 pt-16">
             <div className="text-center lg:text-left">
+              {/* Texto para mobile - sin salto de línea */}
               <h1
-                className="font-bold text-white text-6xl sm:text-7xl md:text-8xl lg:text-7xl xl:text-8xl"
-                style={{ fontFamily: "var(--font-oswald)" }}
+                className="font-bold text-white text-[80px] sm:hidden"
+                style={{
+                  fontFamily: "var(--font-oswald)",
+                  lineHeight: "100%",
+                }}
+              >
+                Brindemos por el Oktoberfest
+              </h1>
+
+              {/* Texto para desktop - con salto de línea */}
+              <h1
+                className="hidden sm:block font-bold text-white text-[90px]"
+                style={{
+                  fontFamily: "var(--font-oswald)",
+                  lineHeight: "100%",
+                }}
               >
                 <span className="block">Brindemos por</span>
-                <span className="block">el Oktoberfest</span>
+                <span className="block mt-2">el Oktoberfest</span>
               </h1>
               <p
                 className="mt-8 text-lg font-normal text-white sm:mt-12"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
                 Directo desde Múnich, esta cerveza de trigo alemana es un ícono
-                de sabor y tradición. Directa de Múnich. Una cerveza de  trigo que es el icono de la tradición y el sabor alemán. 
+                de sabor y tradición. Directa de Múnich. Una cerveza de trigo
+                que es el icono de la tradición y el sabor alemán.
               </p>
 
               <form

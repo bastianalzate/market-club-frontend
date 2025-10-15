@@ -51,11 +51,11 @@ export default function SubscriptionSection({
     return backendPlans.map((p) => {
       // Asignar imagen específica según el plan
       let image = "/images/market-club/corona-beer.png"; // Default para Curioso Cervecero
-      
+
       if (p.id === "collector_brewer") {
-        image = "/images/market-club/liefmans-coleccionista.png";
-      } else if (p.id === "master_brewer") {
         image = "/images/market-club/liefmans-maestro.png";
+      } else if (p.id === "master_brewer") {
+        image = "/images/market-club/liefmans-coleccionista.png";
       }
 
       return {

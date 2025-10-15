@@ -42,22 +42,23 @@ export default function PricingCard({
     <div
       className={`${
         isHighlighted ? "bg-black text-white" : "bg-white"
-      } rounded-lg p-8 flex flex-col h-full relative ${className}`}
+      } rounded-lg p-8 flex flex-col h-full relative ${className} ${
+        isMaestroPlan
+          ? "border-2 border-yellow-400 shadow-2xl shadow-yellow-400/20"
+          : ""
+      }`}
     >
-      {/* Estrella dorada para Maestro Cervecero */}
+      {/* Badge Premium para Maestro Cervecero */}
       {isMaestroPlan && (
-        <div className="absolute top-4 right-4 z-10">
-          <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg">
-            <svg 
-              className="w-5 h-5 text-yellow-800" 
-              fill="currentColor" 
-              viewBox="0 0 20 20"
-            >
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
+          <div className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-black px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
+            ⭐ Premium
           </div>
         </div>
       )}
+
+      {/* Estrella dorada mejorada para Maestro Cervecero */}
+
       {/* Header alineado */}
       <div
         className="mb-6 grid"
@@ -129,14 +130,15 @@ export default function PricingCard({
       <div className="mb-6">
         <button
           className={`w-full py-3 px-4 rounded-md font-medium transition-all duration-200 hover:scale-105 cursor-pointer ${
-            isHighlighted 
-              ? "bg-white text-black hover:bg-gray-100" 
+            isHighlighted && name !== "Maestro Cervecero"
+              ? "bg-white text-black hover:bg-gray-100"
               : "text-white hover:opacity-90"
           }`}
           style={{
-            backgroundColor: isHighlighted 
-              ? "white" 
-              : buttonColor,
+            backgroundColor:
+              isHighlighted && name !== "Maestro Cervecero"
+                ? "white"
+                : buttonColor,
             fontFamily: "var(--font-inter)",
             fontSize: "14px",
             fontWeight: 600,
