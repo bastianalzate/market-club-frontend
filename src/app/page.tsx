@@ -24,9 +24,14 @@ export default function HomePage() {
     <div className="min-h-screen">
       <HeroSection />
       <BrandsCarousel />
-      <NewFlavorsSection />
-      <ProductSlider />
-      <FavoriteProducts />
+      
+      {/* Contenedor para el banner sticky */}
+      <div className="relative">
+        <NewFlavorsSection />
+        <ProductSlider />
+        <FavoriteProducts />
+      </div>
+      
       <MarketClubBanner backgroundColor="#FFFFFF" textColor="#000000" />
       <BeerClubSection />
       <MarketClubBanner backgroundColor="#000000" textColor="#FFFFFF" />

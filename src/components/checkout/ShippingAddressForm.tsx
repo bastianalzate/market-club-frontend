@@ -48,7 +48,6 @@ export default function ShippingAddressForm({
       !formData.address_line_1 ||
       !formData.city ||
       !formData.state ||
-      !formData.postal_code ||
       !formData.phone
     ) {
       showError(
@@ -269,7 +268,7 @@ export default function ShippingAddressForm({
               htmlFor="postal_code"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Código Postal *
+              Código Postal
             </label>
             <input
               type="text"
@@ -279,7 +278,6 @@ export default function ShippingAddressForm({
               onChange={handleInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white"
               placeholder="110111"
-              required
             />
           </div>
 

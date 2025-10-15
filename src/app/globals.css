@@ -140,3 +140,13 @@ div[role="button"]:focus-visible,
     transform: translateX(-30px);
   }
 }
+
+/* Animación de brillo dorado para el fondo de los planes */
+@keyframes goldenShimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}

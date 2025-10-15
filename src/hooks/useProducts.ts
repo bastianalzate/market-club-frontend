@@ -86,7 +86,7 @@ export const useProducts = () => {
     currentPage: 1,
     lastPage: 1,
     total: 0,
-    perPage: 15,
+    perPage: 10,
   });
 
   // Función helper para transformar un producto

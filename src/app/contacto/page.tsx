@@ -789,21 +789,6 @@ export default function ContactoPage() {
 
           {/* Imagen */}
           <div className="relative lg:sticky lg:top-8">
-            {/* Imagen para móviles */}
-            <div className="lg:hidden mb-8">
-              <div className="relative overflow-hidden rounded-2xl shadow-lg">
-                <Image
-                  src="/images/contact/contacto-banner.png"
-                  alt="Personas brindando con cervezas"
-                  width={400}
-                  height={300}
-                  className="w-full h-64 object-cover"
-                  priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-              </div>
-            </div>
-            
             {/* Imagen para desktop */}
             <div className="hidden lg:block">
             <div className="relative overflow-hidden rounded-2xl shadow-2xl bg-gradient-to-br from-gray-50 to-gray-100">
@@ -831,64 +816,57 @@ export default function ContactoPage() {
             <div className="bg-black overflow-hidden h-full">
               <div className="h-full min-h-[600px]">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.2847937728846!2d-75.56068562503114!3d6.249850342859314!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e4428dfb80fad05%3A0x42137cfcc7b53b56!2sMedell%C3%ADn%2C+Antioquia%2C+Colombia!5e0!3m2!1ses!2sco!4v1700000000000"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.176863748393!2d-75.59309892503105!3d6.264343093733!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e4429531b4d6d5d%3A0x7d8c2d6f8e0b6b3c!2sCl.%2043%20%2374-61%2C%20Laureles%20-%20Estadio%2C%20Medell%C3%ADn%2C%20Laureles%2C%20Medell%C3%ADn%2C%20Antioquia%2C%20Colombia!5e0!3m2!1ses!2sco!4v1728599999999"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="Ubicación Market Club - Medellín"
+                  title="Ubicación Market Club - Cl. 43 #74-61 Local 3, Laureles"
                   className="w-full h-full"
                 ></iframe>
               </div>
             </div>
 
             {/* Horarios de Atención */}
-            <div className="text-white flex items-center px-16 py-12">
+            <div className="text-white flex items-center px-4 sm:px-8 lg:px-16 py-12">
               <div>
                 <h2
-                  className="text-white mb-10"
+                  className="text-white mb-10 text-2xl lg:text-6xl"
                   style={{
                     fontFamily: "var(--font-oswald)",
                     fontWeight: "bold",
-                    fontSize: "64px",
                   }}
                 >
-                  Encuentranos en: 
+                  Encuéntranos en: 
                 </h2>
                 <div>
                 <p
-                    className="text-white"
+                    className="text-white text-base lg:text-2xl leading-normal lg:leading-tight"
                     style={{
                       fontFamily: "Inter, sans-serif",
                       fontWeight: 400,
-                      fontSize: "24px",
-                      lineHeight: "1.2",
                       margin: 0,
                     }}
                   >
-                    Dirección: Cl. 43 #74-61 Local 3, Laureles - Estadio, Medellín, Laureles, Medellín, Antioquia. 
+                    Dirección: Cl. 43 #74-61 Local 3<br /> Laureles - Estadio, Medellín, Laureles, Medellín, Antioquia. 
                   </p>
                   <p
-                    className="text-white !mt-4"
+                    className="text-white !mt-4 text-base lg:text-2xl leading-normal lg:leading-tight"
                     style={{
                       fontFamily: "Inter, sans-serif",
                       fontWeight: 400,
-                      fontSize: "24px",
-                      lineHeight: "1.2",
                       margin: 0,
                     }}
                   >
                     Lunes a Sábado de 9:00 a.m. a 10:00 p.m.
                   </p>
                   <p
-                    className="text-white"
+                    className="text-white text-base lg:text-2xl leading-normal lg:leading-tight"
                     style={{
                       fontFamily: "Inter, sans-serif",
                       fontWeight: 400,
-                      fontSize: "24px",
-                      lineHeight: "1.2",
                       margin: 0,
                     }}
                   >

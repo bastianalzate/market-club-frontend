@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
+import BottomNavigation from "./BottomNavigation";
 import AnnouncementBanner from "./AnnouncementBanner";
 import AgeVerificationWrapper from "@/components/shared/AgeVerificationWrapper";
 import LegalWarning from "./LegalWarning";
@@ -28,12 +29,13 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <AgeVerificationWrapper />
       <AnnouncementBanner />
       <Header />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pb-16 lg:pb-0">{children}</main>
       <CountriesCarousel />
       <ServicesBanner />
       <Footer />
       <LegalWarning />
       <Copyright />
+      <BottomNavigation />
     </div>
   );
 }

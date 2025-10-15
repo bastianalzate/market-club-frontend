@@ -48,22 +48,33 @@ export default function SubscriptionSection({
 
   const mapped = useMemo(() => {
     if (backendPlans.length === 0) return plans; // fallback a los quemados si falla
-    return backendPlans.map((p) => ({
-      id: p.id,
-      name: p.name,
-      price:
-        new Intl.NumberFormat("es-CO")
-          .format(parseInt(p.price, 10))
-          .replace(/,/g, ".") + " / mes.",
-      description: p.description,
-      features: p.features,
-      image: "/images/market-club/corona-beer.png",
-      buttonText: "Suscríbete",
-      buttonColor: "#B58E31",
-      imagePosition: (p.id === "collector_brewer" ? "right" : "left") as
-        | "left"
-        | "right",
-    }));
+    return backendPlans.map((p) => {
+      // Asignar imagen específica según el plan
+      let image = "/images/market-club/corona-beer.png"; // Default para Curioso Cervecero
+
+      if (p.id === "collector_brewer") {
+        image = "/images/market-club/liefmans-maestro.png";
+      } else if (p.id === "master_brewer") {
+        image = "/images/market-club/liefmans-coleccionista.png";
+      }
+
+      return {
+        id: p.id,
+        name: p.name,
+        price:
+          new Intl.NumberFormat("es-CO")
+            .format(parseInt(p.price, 10))
+            .replace(/,/g, ".") + " / mes.",
+        description: p.description,
+        features: p.features,
+        image: image,
+        buttonText: "Suscríbete",
+        buttonColor: "#B58E31",
+        imagePosition: (p.id === "collector_brewer" ? "right" : "left") as
+          | "left"
+          | "right",
+      };
+    });
   }, [backendPlans, plans]);
 
   if (loading) {
