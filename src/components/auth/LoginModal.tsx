@@ -448,9 +448,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-50"
+        className="fixed inset-0"
         style={{
           backgroundColor: "#00000091",
+          zIndex: 9999,
           animation: isAnimating
             ? "fadeIn 0.25s ease-in-out"
             : "fadeOut 0.25s ease-in-out",
@@ -460,8 +461,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
       {/* Modal */}
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 flex items-center justify-center p-4"
         style={{
+          zIndex: 10000,
           animation: isAnimating
             ? "fadeIn 0.25s ease-in-out"
             : "fadeOut 0.25s ease-in-out",

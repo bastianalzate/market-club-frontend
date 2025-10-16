@@ -23,7 +23,9 @@ export default function SuppressHydrationWarning() {
       "did not match. Server:",
       "Client:",
       "at body",
-      "at html"
+      "at html",
+      "className",
+      "FONT_CLASSES"
     ];
 
     // Función para verificar si un mensaje debe ser filtrado
@@ -35,29 +37,54 @@ export default function SuppressHydrationWarning() {
 
     console.error = (...args) => {
       // Filtrar errores de hidratación
-      if (
-        typeof args[0] === "string" && 
-        shouldSuppressMessage(args[0])
-      ) {
+      const message = args[0];
+      if (typeof message === "string" && shouldSuppressMessage(message)) {
         return;
       }
+      
+      // También filtrar arrays de errores que contengan mensajes de hidratación
+      if (Array.isArray(args) && args.some(arg => 
+        typeof arg === "string" && shouldSuppressMessage(arg)
+      )) {
+        return;
+      }
+      
       originalError.apply(console, args);
     };
 
     console.warn = (...args) => {
       // También filtrar warnings de hidratación
-      if (
-        typeof args[0] === "string" && 
-        shouldSuppressMessage(args[0])
-      ) {
+      const message = args[0];
+      if (typeof message === "string" && shouldSuppressMessage(message)) {
         return;
       }
+      
+      // También filtrar arrays de warnings que contengan mensajes de hidratación
+      if (Array.isArray(args) && args.some(arg => 
+        typeof arg === "string" && shouldSuppressMessage(arg)
+      )) {
+        return;
+      }
+      
       originalWarn.apply(console, args);
+    };
+
+    // Suprimir específicamente errores de React Hydration
+    const originalOnError = window.onerror;
+    window.onerror = (message, source, lineno, colno, error) => {
+      if (typeof message === "string" && shouldSuppressMessage(message)) {
+        return true; // Suprimir el error
+      }
+      if (originalOnError) {
+        return originalOnError(message, source, lineno, colno, error);
+      }
+      return false;
     };
 
     return () => {
       console.error = originalError;
       console.warn = originalWarn;
+      window.onerror = originalOnError;
     };
   }, []);
 

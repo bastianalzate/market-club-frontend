@@ -1,21 +1,28 @@
 "use client";
 
 import { Heart, ShoppingCart, Star } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Product } from "../types/product";
 
 interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
   onAddToWishlist: (product: Product) => void;
+  isInWishlist?: boolean;
 }
 
 export default function ProductCard({
   product,
   onAddToCart,
   onAddToWishlist,
+  isInWishlist = false,
 }: ProductCardProps) {
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isWishlisted, setIsWishlisted] = useState(isInWishlist);
+
+  // Actualizar el estado cuando cambie la prop
+  useEffect(() => {
+    setIsWishlisted(isInWishlist);
+  }, [isInWishlist]);
 
   const handleWishlistToggle = () => {
     setIsWishlisted(!isWishlisted);

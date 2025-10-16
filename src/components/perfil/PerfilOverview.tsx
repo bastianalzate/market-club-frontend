@@ -631,55 +631,62 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                       {plans.map((plan) => (
                         <div
                           key={plan.id}
-                          className={`bg-white/80 backdrop-blur-sm rounded-lg p-4 border transition-all duration-200 hover:shadow-md hover:scale-105 ${
+                          className={`bg-white/80 backdrop-blur-sm rounded-lg p-4 border transition-all duration-200 hover:shadow-md hover:scale-105 flex flex-col h-full ${
                             plan.is_popular
                               ? "border-blue-300 ring-2 ring-blue-100"
                               : "border-gray-200"
                           }`}
                         >
-                          {plan.is_popular && (
-                            <div className="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">
-                              Más Popular
-                            </div>
-                          )}
-                          <h3 className="font-semibold text-gray-900 mb-1">
-                            {plan.name}
-                          </h3>
-                          <p className="text-2xl font-bold text-blue-600 mb-2">
-                            {formatPrice(parseFloat(plan.price))} /{" "}
-                            {plan.period}
-                          </p>
-                          <p className="text-sm text-gray-600 mb-3">
-                            {plan.description}
-                          </p>
+                          {/* Contenido principal que se expande */}
+                          <div className="flex-1 flex flex-col">
+                            {plan.is_popular && (
+                              <div className="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">
+                                Más Popular
+                              </div>
+                            )}
+                            <h3 className="font-semibold text-gray-900 mb-1">
+                              {plan.name}
+                            </h3>
+                            <p className="text-2xl font-bold text-blue-600 mb-2">
+                              {formatPrice(parseFloat(plan.price))} /{" "}
+                              {plan.period}
+                            </p>
+                            <p className="text-sm text-gray-600 mb-3">
+                              {plan.description}
+                            </p>
 
-                          {/* Mostrar algunas características principales */}
-                          <div className="mb-3">
-                            <div className="space-y-1">
-                              {plan.features
-                                .slice(0, 2)
-                                .map((feature, index) => (
-                                  <div
-                                    key={index}
-                                    className="flex items-start gap-2"
-                                  >
-                                    <div className="w-1 h-1 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                                    <p className="text-xs text-gray-500">
-                                      {feature}
-                                    </p>
-                                  </div>
-                                ))}
+                            {/* Mostrar algunas características principales */}
+                            <div className="flex-1 mb-3">
+                              <div className="space-y-1">
+                                {plan.features
+                                  .slice(0, 2)
+                                  .map((feature, index) => (
+                                    <div
+                                      key={index}
+                                      className="flex items-start gap-2"
+                                    >
+                                      <div className="w-1 h-1 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                      <p className="text-xs text-gray-500">
+                                        {feature}
+                                      </p>
+                                    </div>
+                                  ))}
+                              </div>
                             </div>
                           </div>
-                          <button
-                            onClick={() => handleSubscribe(plan.id)}
-                            disabled={subscriptionLoading}
-                            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                          >
-                            {subscriptionLoading
-                              ? "Procesando..."
-                              : "Suscribirme"}
-                          </button>
+
+                          {/* Botón siempre en la parte inferior */}
+                          <div className="mt-auto">
+                            <button
+                              onClick={() => handleSubscribe(plan.id)}
+                              disabled={subscriptionLoading}
+                              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                            >
+                              {subscriptionLoading
+                                ? "Procesando..."
+                                : "Suscribirme"}
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>

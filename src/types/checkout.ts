@@ -8,7 +8,7 @@ export interface ShippingAddress {
   address_line_2?: string;
   city: string;
   state: string;
-  postal_code: string;
+  postal_code?: string;
   country: string;
   phone?: string;
 }

@@ -52,29 +52,6 @@ export default function AgeVerificationWrapper() {
 
         {/* Contenido del modal */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
-          {/* Logo */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7 4V2C7 1.45 7.45 1 8 1H16C16.55 1 17 1.45 17 2V4H20C20.55 4 21 4.45 21 5S20.55 6 20 6H19V19C19 20.1 18.1 21 17 21H7C5.9 21 5 20.1 5 19V6H4C3.45 6 3 5.55 3 5S3.45 4 4 4H7ZM9 3V4H15V3H9ZM7 6V19H17V6H7Z"
-                  fill="black"
-                />
-                <path d="M9 8V17H11V8H9ZM13 8V17H15V8H13Z" fill="black" />
-              </svg>
-            </div>
-            <div className="w-px h-6 bg-white"></div>
-            <span className="text-white text-xl font-bold tracking-wider">
-              MARKET CLUB
-            </span>
-          </div>
-
           {/* Pregunta principal */}
           <h2 className="text-white text-3xl font-bold mb-6 leading-tight">
             ¿Eres mayor de edad?

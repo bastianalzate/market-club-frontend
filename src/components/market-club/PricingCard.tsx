@@ -20,6 +20,16 @@ export default function PricingCard({
   onActionClick,
   isBusy = false,
 }: PricingCardProps) {
+  // Función para obtener los iconos de cerveza según el plan
+  const getBeerIcons = (planName: string) => {
+    if (planName.includes("Curioso")) return "🍺";
+    if (planName.includes("Coleccionista")) return "🍺🍺";
+    if (planName.includes("Maestro")) return "🍺🍺🍺";
+    return "🍺";
+  };
+
+  // Función para determinar si es el plan Maestro
+  const isMaestroPlan = name.includes("Maestro");
   const [expanded, setExpanded] = useState(false);
   const MAX_CHARS = 220;
   const truncated = useMemo(() => {
@@ -32,8 +42,23 @@ export default function PricingCard({
     <div
       className={`${
         isHighlighted ? "bg-black text-white" : "bg-white"
-      } rounded-lg p-8 flex flex-col h-full ${className}`}
+      } rounded-lg p-8 flex flex-col h-full relative ${className} ${
+        isMaestroPlan
+          ? "border-2 border-yellow-400 shadow-2xl shadow-yellow-400/20"
+          : ""
+      }`}
     >
+      {/* Badge Premium para Maestro Cervecero */}
+      {isMaestroPlan && (
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
+          <div className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-black px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
+            ⭐ Premium
+          </div>
+        </div>
+      )}
+
+      {/* Estrella dorada mejorada para Maestro Cervecero */}
+
       {/* Header alineado */}
       <div
         className="mb-6 grid"
@@ -47,7 +72,7 @@ export default function PricingCard({
             fontWeight: 600,
           }}
         >
-          {name}
+          {name} <span className="text-2xl ml-2">{getBeerIcons(name)}</span>
         </h3>
 
         <p
@@ -104,11 +129,16 @@ export default function PricingCard({
       {/* Botón en posición consistente */}
       <div className="mb-6">
         <button
-          className={`w-full py-3 px-4 rounded-md font-medium transition-opacity hover:opacity-90 cursor-pointer ${
-            isHighlighted ? "bg-white text-black" : "text-white"
+          className={`w-full py-3 px-4 rounded-md font-medium transition-all duration-200 hover:scale-105 cursor-pointer ${
+            isHighlighted && name !== "Maestro Cervecero"
+              ? "bg-white text-black hover:bg-gray-100"
+              : "text-white hover:opacity-90"
           }`}
           style={{
-            backgroundColor: isHighlighted ? "white" : buttonColor,
+            backgroundColor:
+              isHighlighted && name !== "Maestro Cervecero"
+                ? "white"
+                : buttonColor,
             fontFamily: "var(--font-inter)",
             fontSize: "14px",
             fontWeight: 600,
