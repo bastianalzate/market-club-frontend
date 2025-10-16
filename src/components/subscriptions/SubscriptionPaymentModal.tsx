@@ -35,12 +35,13 @@ export default function SubscriptionPaymentModal({
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [shippingAddress, setShippingAddress] = useState<ShippingAddress | null>(null);
+  const [shippingAddress, setShippingAddress] =
+    useState<ShippingAddress | null>(null);
   const [wompiScriptLoaded, setWompiScriptLoaded] = useState(false);
   const [paymentReference, setPaymentReference] = useState<string | null>(null);
   const [formData, setFormData] = useState<ShippingAddress>({
-    first_name: customerName?.split(' ')[0] || "",
-    last_name: customerName?.split(' ').slice(1).join(' ') || "",
+    first_name: customerName?.split(" ")[0] || "",
+    last_name: customerName?.split(" ").slice(1).join(" ") || "",
     email: customerEmail || "",
     address_line_1: "",
     address_line_2: "",
@@ -129,7 +130,9 @@ export default function SubscriptionPaymentModal({
       !formData.state ||
       !formData.phone
     ) {
-      setError("Por favor completa todos los campos obligatorios incluyendo el email y teléfono");
+      setError(
+        "Por favor completa todos los campos obligatorios incluyendo el email y teléfono"
+      );
       return;
     }
 
@@ -155,7 +158,10 @@ export default function SubscriptionPaymentModal({
       // Verificar que Wompi esté cargado
       if (typeof (window as any).WidgetCheckout === "undefined") {
         console.error("❌ WidgetCheckout not available");
-        showToast("Widget de Wompi no está disponible. Por favor, recarga la página.", "error");
+        showToast(
+          "Widget de Wompi no está disponible. Por favor, recarga la página.",
+          "error"
+        );
         return;
       }
 
@@ -170,7 +176,8 @@ export default function SubscriptionPaymentModal({
 
       console.log("🔐 Subscription payment session data:", signatureData);
 
-      const signatureResponse = await PaymentService.generateSubscriptionSignature(signatureData);
+      const signatureResponse =
+        await PaymentService.generateSubscriptionSignature(signatureData);
 
       console.log("🔍 Full signature response:", signatureResponse);
 
@@ -187,12 +194,12 @@ export default function SubscriptionPaymentModal({
       // PASO 2: Usar EXACTAMENTE los datos que devuelve el backend (igual que checkout)
       const widgetData = signatureResponse.data.widget_data;
       console.log("🔍 Raw widget data from backend:", widgetData);
-      
+
       const { reference, amount, currency, signature, public_key } = widgetData;
 
       // Guardar la referencia para usar en la confirmación
       setPaymentReference(reference);
-      
+
       // También guardar en una variable local para usar inmediatamente
       const currentPaymentReference = reference;
 
@@ -203,15 +210,18 @@ export default function SubscriptionPaymentModal({
         signature,
         public_key,
       });
-      
+
       // Validar que la public_key no esté undefined
-      if (!public_key || public_key === 'undefined') {
+      if (!public_key || public_key === "undefined") {
         console.error("❌ Public key is undefined or invalid:", public_key);
         throw new Error("Clave pública de Wompi no válida");
       }
 
       // Validar formato de la clave pública
-      if (!public_key.startsWith('pub_test_') && !public_key.startsWith('pub_prod_')) {
+      if (
+        !public_key.startsWith("pub_test_") &&
+        !public_key.startsWith("pub_prod_")
+      ) {
         console.error("❌ Public key format is invalid:", public_key);
         throw new Error("Formato de clave pública de Wompi no válido");
       }
@@ -219,16 +229,16 @@ export default function SubscriptionPaymentModal({
       // PASO 3: Configurar el widget con los datos EXACTOS del backend (igual que checkout)
       // Usar la clave pública que viene del backend
       const finalPublicKey = public_key;
-      
+
       console.log("🔑 Backend public_key:", public_key);
       console.log("🔑 Frontend PUBLIC_KEY:", WOMPI_CONFIG.PUBLIC_KEY);
       console.log("🔑 Final publicKey being used:", finalPublicKey);
-      
+
       // Validar que la clave pública tenga el formato correcto
-      if (!finalPublicKey || !finalPublicKey.startsWith('pub_test_')) {
+      if (!finalPublicKey || !finalPublicKey.startsWith("pub_test_")) {
         throw new Error("Clave pública de Wompi no válida: " + finalPublicKey);
       }
-      
+
       // Usar EXACTAMENTE la misma configuración que el checkout que funciona
       const widgetConfig = {
         currency: currency,
@@ -239,7 +249,8 @@ export default function SubscriptionPaymentModal({
         signature: signature,
         customerData: {
           email: formData.email?.trim() || "usuario@ejemplo.com",
-          fullName: `${formData.first_name} ${formData.last_name}`.trim() || "Usuario",
+          fullName:
+            `${formData.first_name} ${formData.last_name}`.trim() || "Usuario",
           phoneNumber: formData.phone?.replace(/\D/g, "") || "3001234567",
           phoneNumberPrefix: "+57",
           legalId: "123456789",
@@ -247,18 +258,31 @@ export default function SubscriptionPaymentModal({
         },
       };
 
-      console.log("🔧 Final widget config before creating WidgetCheckout:", widgetConfig);
+      console.log(
+        "🔧 Final widget config before creating WidgetCheckout:",
+        widgetConfig
+      );
       console.log("🔑 PublicKey value specifically:", widgetConfig.publicKey);
       console.log("🔑 PublicKey type:", typeof widgetConfig.publicKey);
       console.log("🔑 PublicKey length:", widgetConfig.publicKey?.length);
 
       // Validar que todos los campos críticos estén presentes
-      const criticalFields = ['publicKey', 'reference', 'amountInCents', 'currency', 'signature'];
-      const missingCriticalFields = criticalFields.filter(field => !widgetConfig[field as keyof typeof widgetConfig]);
-      
+      const criticalFields = [
+        "publicKey",
+        "reference",
+        "amountInCents",
+        "currency",
+        "signature",
+      ];
+      const missingCriticalFields = criticalFields.filter(
+        (field) => !widgetConfig[field as keyof typeof widgetConfig]
+      );
+
       if (missingCriticalFields.length > 0) {
         console.error("❌ Missing critical fields:", missingCriticalFields);
-        throw new Error(`Campos críticos faltantes: ${missingCriticalFields.join(", ")}`);
+        throw new Error(
+          `Campos críticos faltantes: ${missingCriticalFields.join(", ")}`
+        );
       }
 
       console.log("🎯 Widget config with signature:", widgetConfig);
@@ -266,7 +290,7 @@ export default function SubscriptionPaymentModal({
       // Validar que todos los campos requeridos estén presentes
       const requiredFields = [
         "currency",
-        "amountInCents", 
+        "amountInCents",
         "reference",
         "publicKey",
         "signature",
@@ -287,36 +311,59 @@ export default function SubscriptionPaymentModal({
 
       // Verificar que el script esté completamente cargado
       if (typeof (window as any).WidgetCheckout === "undefined") {
-        throw new Error("WidgetCheckout no está disponible. Asegúrate de que el script de Wompi esté cargado.");
+        throw new Error(
+          "WidgetCheckout no está disponible. Asegúrate de que el script de Wompi esté cargado."
+        );
       }
 
-      console.log("✅ WidgetCheckout constructor available:", typeof (window as any).WidgetCheckout);
+      console.log(
+        "✅ WidgetCheckout constructor available:",
+        typeof (window as any).WidgetCheckout
+      );
       console.log("✅ Window.WidgetCheckout:", (window as any).WidgetCheckout);
-      
+
       // Verificar que no haya errores en el script de Wompi
       if ((window as any).WompiError) {
-        console.error("❌ Wompi script has errors:", (window as any).WompiError);
+        console.error(
+          "❌ Wompi script has errors:",
+          (window as any).WompiError
+        );
         throw new Error("Error en el script de Wompi");
       }
 
       // Verificar que el script esté completamente inicializado
       if (typeof (window as any).WidgetCheckout !== "function") {
-        console.error("❌ WidgetCheckout is not a function:", typeof (window as any).WidgetCheckout);
+        console.error(
+          "❌ WidgetCheckout is not a function:",
+          typeof (window as any).WidgetCheckout
+        );
         throw new Error("WidgetCheckout no está inicializado correctamente");
       }
 
       // Esperar un poco más para asegurar que el script esté completamente cargado
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       let checkout;
       try {
-      console.log("🔧 About to create WidgetCheckout with config:", widgetConfig);
-      console.log("🔧 WidgetCheckout constructor type:", typeof (window as any).WidgetCheckout);
-      console.log("🔧 PublicKey being passed to widget:", widgetConfig.publicKey);
-      console.log("🔧 PublicKey length:", widgetConfig.publicKey?.length);
-      console.log("🔧 PublicKey starts with pub_test:", widgetConfig.publicKey?.startsWith('pub_test_'));
-      console.log("🔧 All widget config keys:", Object.keys(widgetConfig));
-        
+        console.log(
+          "🔧 About to create WidgetCheckout with config:",
+          widgetConfig
+        );
+        console.log(
+          "🔧 WidgetCheckout constructor type:",
+          typeof (window as any).WidgetCheckout
+        );
+        console.log(
+          "🔧 PublicKey being passed to widget:",
+          widgetConfig.publicKey
+        );
+        console.log("🔧 PublicKey length:", widgetConfig.publicKey?.length);
+        console.log(
+          "🔧 PublicKey starts with pub_test:",
+          widgetConfig.publicKey?.startsWith("pub_test_")
+        );
+        console.log("🔧 All widget config keys:", Object.keys(widgetConfig));
+
         checkout = new (window as any).WidgetCheckout(widgetConfig);
         console.log("✅ WidgetCheckout instance created:", checkout);
       } catch (widgetError) {
@@ -342,10 +389,10 @@ export default function SubscriptionPaymentModal({
         }
       });
       console.log("✅ Widget.open() called successfully");
-
     } catch (error) {
       console.error("❌ Error opening Wompi widget:", error);
-      const errorMessage = error instanceof Error ? error.message : "Error desconocido";
+      const errorMessage =
+        error instanceof Error ? error.message : "Error desconocido";
       setError(errorMessage);
       showToast("No se pudo abrir el widget de pago: " + errorMessage, "error");
     } finally {
@@ -359,49 +406,52 @@ export default function SubscriptionPaymentModal({
       console.log("Pago exitoso:", transaction);
       console.log("Reference guardada:", paymentReference);
       console.log("Reference pasada como parámetro:", reference);
-      
+
       // Usar la referencia pasada como parámetro o la del estado
       const paymentRef = reference || paymentReference;
-      
+
       if (!paymentRef) {
         throw new Error("No se encontró la referencia de pago");
       }
-      
+
       // Confirmar suscripción en el backend
-      const confirmResponse = await fetch(`${constants.api_url}/subscriptions/confirm-subscription`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...getAuthHeaders(),
-        },
-        body: JSON.stringify({
-          reference: paymentRef, // Usar la referencia disponible
-          transaction_id: transaction.transaction.id,
-          plan_id: planId,
-          duration_months: durationMonths,
-        }),
-      });
+      const confirmResponse = await fetch(
+        `${constants.api_url}/subscriptions/confirm-subscription`,
+        {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            reference: paymentRef, // Usar la referencia disponible
+            transaction_id: transaction.transaction.id,
+            plan_id: planId,
+            duration_months: durationMonths,
+          }),
+        }
+      );
 
       const confirmData = await confirmResponse.json();
 
       if (!confirmData.success) {
-        throw new Error(confirmData.message || "Error al confirmar la suscripción");
+        throw new Error(
+          confirmData.message || "Error al confirmar la suscripción"
+        );
       }
 
       // Llamar callback de éxito
       onSuccess(transaction.transaction.id, paymentRef);
-      
+
       // Cerrar modal
       onClose();
-
     } catch (error) {
       console.error("Error confirming subscription:", error);
-      const errorMessage = error instanceof Error ? error.message : "Error al confirmar la suscripción";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Error al confirmar la suscripción";
       setError(errorMessage);
       showToast(errorMessage, "error");
     }
   };
-
 
   if (!isOpen) return null;
 
@@ -413,9 +463,23 @@ export default function SubscriptionPaymentModal({
           <h2 className="text-xl font-bold text-gray-900">
             Suscripción a Plan {planId}
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600" title="Cerrar modal">
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+            title="Cerrar modal"
+          >
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -463,7 +527,9 @@ export default function SubscriptionPaymentModal({
           {currentStep === 1 && (
             <div className="text-center">
               <div className="bg-gray-50 rounded-lg p-6 mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Resumen de tu Suscripción</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Resumen de tu Suscripción
+                </h3>
                 <div className="space-y-3 text-lg">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Plan:</span>
@@ -471,7 +537,9 @@ export default function SubscriptionPaymentModal({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Duración:</span>
-                    <span className="font-semibold">{durationMonths} mes{durationMonths > 1 ? 'es' : ''}</span>
+                    <span className="font-semibold">
+                      {durationMonths} mes{durationMonths > 1 ? "es" : ""}
+                    </span>
                   </div>
                   <div className="flex justify-between text-2xl font-bold border-t pt-3">
                     <span>Total:</span>
@@ -481,7 +549,7 @@ export default function SubscriptionPaymentModal({
                   </div>
                 </div>
               </div>
-              
+
               <button
                 onClick={handleStep1Continue}
                 className="bg-yellow-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-yellow-700 transition-colors"
@@ -506,7 +574,10 @@ export default function SubscriptionPaymentModal({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Nombre */}
                 <div>
-                  <label htmlFor="first_name" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="first_name"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Nombre *
                   </label>
                   <input
@@ -523,7 +594,10 @@ export default function SubscriptionPaymentModal({
 
                 {/* Apellido */}
                 <div>
-                  <label htmlFor="last_name" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="last_name"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Apellido *
                   </label>
                   <input
@@ -540,7 +614,10 @@ export default function SubscriptionPaymentModal({
 
                 {/* Email */}
                 <div className="md:col-span-2">
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Email *
                   </label>
                   <input
@@ -557,7 +634,10 @@ export default function SubscriptionPaymentModal({
 
                 {/* Dirección Principal */}
                 <div className="md:col-span-2">
-                  <label htmlFor="address_line_1" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="address_line_1"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Dirección Principal *
                   </label>
                   <input
@@ -574,7 +654,10 @@ export default function SubscriptionPaymentModal({
 
                 {/* Dirección Secundaria */}
                 <div className="md:col-span-2">
-                  <label htmlFor="address_line_2" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="address_line_2"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Dirección Secundaria (Opcional)
                   </label>
                   <input
@@ -590,7 +673,10 @@ export default function SubscriptionPaymentModal({
 
                 {/* Ciudad */}
                 <div>
-                  <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="city"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Ciudad *
                   </label>
                   <input
@@ -607,7 +693,10 @@ export default function SubscriptionPaymentModal({
 
                 {/* Departamento */}
                 <div>
-                  <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="state"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Departamento *
                   </label>
                   <select
@@ -635,7 +724,9 @@ export default function SubscriptionPaymentModal({
                     <option value="Magdalena">Magdalena</option>
                     <option value="Meta">Meta</option>
                     <option value="Nariño">Nariño</option>
-                    <option value="Norte de Santander">Norte de Santander</option>
+                    <option value="Norte de Santander">
+                      Norte de Santander
+                    </option>
                     <option value="Quindío">Quindío</option>
                     <option value="Risaralda">Risaralda</option>
                     <option value="Santander">Santander</option>
@@ -647,7 +738,10 @@ export default function SubscriptionPaymentModal({
 
                 {/* Código Postal */}
                 <div>
-                  <label htmlFor="postal_code" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="postal_code"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Código Postal
                   </label>
                   <input
@@ -663,7 +757,10 @@ export default function SubscriptionPaymentModal({
 
                 {/* Teléfono */}
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Teléfono *
                   </label>
                   <input
@@ -708,7 +805,9 @@ export default function SubscriptionPaymentModal({
           {currentStep === 3 && (
             <div>
               <div className="bg-gray-50 rounded-lg p-6 mb-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Resumen Final</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  Resumen Final
+                </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Plan:</span>
@@ -716,15 +815,21 @@ export default function SubscriptionPaymentModal({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Duración:</span>
-                    <span className="font-semibold">{durationMonths} mes{durationMonths > 1 ? 'es' : ''}</span>
+                    <span className="font-semibold">
+                      {durationMonths} mes{durationMonths > 1 ? "es" : ""}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Cliente:</span>
-                    <span className="font-semibold">{shippingAddress?.first_name} {shippingAddress?.last_name}</span>
+                    <span className="font-semibold">
+                      {shippingAddress?.first_name} {shippingAddress?.last_name}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Email:</span>
-                    <span className="font-semibold">{shippingAddress?.email}</span>
+                    <span className="font-semibold">
+                      {shippingAddress?.email}
+                    </span>
                   </div>
                   <div className="flex justify-between text-xl font-bold border-t pt-3">
                     <span>Total a Pagar:</span>
@@ -739,19 +844,40 @@ export default function SubscriptionPaymentModal({
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                 <div className="flex items-start">
                   <div className="flex-shrink-0">
-                    <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      className="w-5 h-5 text-blue-600 mt-0.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <h3 className="text-sm font-bold text-blue-900">Pago Seguro con Wompi</h3>
+                    <h3 className="text-sm font-bold text-blue-900">
+                      Pago Seguro con Wompi
+                    </h3>
                     <p className="text-sm text-blue-800 mt-1">
-                      Wompi es la plataforma de pagos más segura de Colombia. Al hacer clic en "Pagar con Wompi" podrás elegir entre tarjetas de crédito/débito, PSE, Nequi, Daviplata y más métodos de pago.
+                      Wompi es la plataforma de pagos más segura de Colombia. Al
+                      hacer clic en "Pagar con Wompi" podrás elegir entre
+                      tarjetas de crédito/débito, PSE, Nequi, Daviplata y más
+                      métodos de pago.
                     </p>
                     <div className="mt-2 flex items-center">
-                      <div className={`w-2 h-2 rounded-full mr-2 ${wompiScriptLoaded ? "bg-green-500" : "bg-yellow-500"}`}></div>
+                      <div
+                        className={`w-2 h-2 rounded-full mr-2 ${
+                          wompiScriptLoaded ? "bg-green-500" : "bg-yellow-500"
+                        }`}
+                      ></div>
                       <span className="text-xs font-medium text-blue-700">
-                        {wompiScriptLoaded ? "Wompi listo" : "Cargando Wompi..."}
+                        {wompiScriptLoaded
+                          ? "Wompi listo"
+                          : "Cargando Wompi..."}
                       </span>
                     </div>
                   </div>
@@ -773,7 +899,7 @@ export default function SubscriptionPaymentModal({
                 >
                   Atrás
                 </button>
-                
+
                 <button
                   onClick={handleStartPayment}
                   disabled={isLoading || !wompiScriptLoaded}
@@ -798,8 +924,16 @@ export default function SubscriptionPaymentModal({
               {/* Footer de seguridad */}
               <div className="text-center mt-6">
                 <p className="text-sm text-gray-500 flex items-center justify-center">
-                  <svg className="w-4 h-4 mr-1 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  <svg
+                    className="w-4 h-4 mr-1 text-green-500"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                   🔒 Pago 100% seguro con Wompi
                 </p>
@@ -810,7 +944,6 @@ export default function SubscriptionPaymentModal({
             </div>
           )}
         </div>
-
       </div>
     </div>
   );
