@@ -279,7 +279,7 @@ export default function FavoriteProducts() {
   );
 
   return (
-    <section className="py-16 bg-black relative overflow-hidden">
+    <section className="py-8 bg-black relative overflow-hidden">
       {/* Watermark de MARKET CLUB */}
       <div className="absolute inset-0 opacity-5">
         <div
@@ -304,7 +304,7 @@ export default function FavoriteProducts() {
 
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
         {/* Header con título y botón */}
-        <div className="flex items-center justify-center lg:justify-between mb-8">
+        <div className="flex items-center justify-center lg:justify-between mb-6">
           <h2 className="text-2xl font-bold text-white sm:text-3xl">
             Cervezas Destacadas
           </h2>

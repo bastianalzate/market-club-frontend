@@ -20,25 +20,25 @@ export default function QuienesSomosPage() {
       {/* Hero Section */}
       <section className="relative bg-black overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#B58E31]/20 to-transparent"></div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 relative z-10">
           <div className="max-w-5xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-[#B58E31]/10 backdrop-blur-sm border border-[#B58E31]/20 rounded-full px-6 py-3 mb-8">
+            <div className="inline-flex items-center gap-2 bg-[#B58E31]/10 backdrop-blur-sm border border-[#B58E31]/20 rounded-full px-6 py-3 mb-4">
               <Beer className="w-5 h-5 text-[#B58E31]" />
               <span className="text-[#B58E31] font-medium">
                 Nuestra Historia
               </span>
             </div>
             <h1
-              className="text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+              className="text-5xl lg:text-7xl font-bold text-white mb-4 leading-tight"
               style={{ fontFamily: "var(--font-oswald)", fontWeight: 700 }}
             >
               ¿Quiénes somos?
             </h1>
-            <p className="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-6">
               En Market Club creemos que la vida se disfruta mejor entre risas,
               buena música y una pola bien fría
             </p>
-            <div className="flex items-center justify-center gap-3 mt-12">
+            <div className="flex items-center justify-center gap-3 mt-6">
               <div className="w-16 h-1 bg-[#B58E31] rounded-full"></div>
               <Beer className="w-6 h-6 text-[#B58E31]" />
               <div className="w-16 h-1 bg-[#B58E31] rounded-full"></div>
@@ -48,7 +48,7 @@ export default function QuienesSomosPage() {
       </section>
 
       {/* Nuestra Historia */}
-      <section className="py-20 lg:py-32 bg-white relative overflow-hidden">
+      <section className="py-8 lg:py-8 bg-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#B58E31]/5 rounded-full blur-3xl"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto">
@@ -126,11 +126,11 @@ export default function QuienesSomosPage() {
       </section>
 
       {/* Lo que nos hace únicos */}
-      <section className="py-20 lg:py-32 bg-gradient-to-b from-gray-50 to-white relative">
+      <section className="py-8 lg:py-8 bg-gradient-to-b from-gray-50 to-white relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
             {/* Header de sección */}
-            <div className="text-center mb-16">
+            <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-white rounded-full px-6 py-3 mb-6 shadow-sm border border-gray-200">
                 <Trophy className="w-5 h-5 text-[#B58E31]" />
                 <span className="text-gray-900 font-medium">
@@ -138,12 +138,12 @@ export default function QuienesSomosPage() {
                 </span>
               </div>
               <h2
-                className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6"
+                className="text-4xl lg:text-6xl font-bold text-gray-900 mb-4"
                 style={{ fontFamily: "var(--font-oswald)", fontWeight: 700 }}
               >
                 Lo que nos hace únicos
               </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-6">
                 En Market Club creemos que cada cerveza cuenta una historia, y
                 nosotros te traemos las mejores del mundo para que las vivás a
                 tu manera.
@@ -151,7 +151,7 @@ export default function QuienesSomosPage() {
             </div>
 
             {/* Cards mejoradas */}
-            <div className="grid lg:grid-cols-3 gap-8 mb-20">
+            <div className="grid lg:grid-cols-3 gap-8 mb-8">
               {/* Card 1 */}
               <div className="group bg-white rounded-3xl p-10 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
                 <div className="text-center">
@@ -246,12 +246,12 @@ export default function QuienesSomosPage() {
       </section>
 
       {/* Beto Section */}
-      <section className="py-20 lg:py-32 bg-white relative overflow-hidden">
+      <section className="py-8 lg:py-8 bg-white relative overflow-hidden">
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#B58E31]/5 rounded-full blur-3xl"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto">
             {/* Header */}
-            <div className="text-center mb-16">
+            <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-[#B58E31]/10 rounded-full px-6 py-3 mb-6 border border-[#B58E31]/20">
                 <Smile className="w-5 h-5 text-[#B58E31]" />
                 <span className="text-[#B58E31] font-medium">
@@ -332,7 +332,7 @@ export default function QuienesSomosPage() {
       </section>
 
       {/* Call to Action */}
-      <section className="relative py-24 lg:py-32 bg-black overflow-hidden">
+      <section className="relative py-12 lg:py-16 bg-black overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#B58E31]/20 to-transparent"></div>
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#B58E31]/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#B58E31]/10 rounded-full blur-3xl"></div>
@@ -347,13 +347,13 @@ export default function QuienesSomosPage() {
             </div>
 
             <h2
-              className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight"
+              className="text-4xl lg:text-6xl font-bold text-white mb-4 leading-tight"
               style={{ fontFamily: "var(--font-oswald)", fontWeight: 700 }}
             >
               ¿Listo para vivir la experiencia Market Club?
             </h2>
 
-            <p className="text-xl lg:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl lg:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
               Descubre nuestras cervezas importadas, arma tu regalo perfecto y
               únete al club donde cada momento cuenta
             </p>
@@ -377,7 +377,7 @@ export default function QuienesSomosPage() {
               </a>
             </div>
 
-            <div className="flex items-center justify-center gap-3 mt-16 opacity-50">
+            <div className="flex items-center justify-center gap-3 mt-12 opacity-50">
               <div className="w-12 h-1 bg-[#B58E31] rounded-full"></div>
               <Beer className="w-5 h-5 text-[#B58E31]" />
               <div className="w-12 h-1 bg-[#B58E31] rounded-full"></div>

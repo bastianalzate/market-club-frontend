@@ -269,10 +269,10 @@ export default function ProductSlider() {
   );
 
   return (
-    <section className="py-12 bg-black sm:py-16 lg:py-20">
+    <section className="py-6 bg-black sm:py-8 lg:py-12">
       <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
         {/* Header con título y botón */}
-        <div className="flex flex-col items-center text-center mb-6 sm:mb-8 lg:flex-row lg:justify-between lg:text-left">
+        <div className="flex flex-col items-center text-center mb-4 sm:mb-6 lg:flex-row lg:justify-between lg:text-left">
           <h2 className="text-xl font-bold text-white mb-4 sm:text-2xl lg:text-3xl lg:mb-0">
             Últimas Cervezas
           </h2>
