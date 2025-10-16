@@ -57,7 +57,7 @@ interface GiftBuilderState {
 const giftBoxes: GiftBox[] = [
   {
     id: "small",
-    name: "Caja Pequeña",
+    name: "Caja pequeña",
     description: "Perfecta para una sorpresa especial",
     maxBeers: 4,
     price: 5000,
@@ -67,7 +67,7 @@ const giftBoxes: GiftBox[] = [
   },
   {
     id: "medium",
-    name: "Caja Mediana",
+    name: "Caja mediana",
     description: "Ideal para compartir con amigos",
     maxBeers: 8,
     price: 8000,
@@ -78,7 +78,7 @@ const giftBoxes: GiftBox[] = [
   },
   {
     id: "large",
-    name: "Caja Grande",
+    name: "Caja grande",
     description: "Para las ocasiones más especiales",
     maxBeers: 12,
     price: 12000,
@@ -164,7 +164,7 @@ export default function GiftBuilder() {
     { value: "", label: "Todas" },
     ...filters.beer_styles.map((style) => ({
       value: style,
-      label: style.charAt(0).toUpperCase() + style.slice(1).replace("_", " "),
+      label: style.charAt(0) + style.slice(1).replace("_", " "),
     })),
   ];
 
@@ -430,7 +430,7 @@ export default function GiftBuilder() {
         {/* Título y Descripción */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-6">
-            Construí tu Regalo Perfecto
+            Construye tu regalo perfecto
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Elige tu caja favorita y personalízala con las cervezas que más te
@@ -449,7 +449,7 @@ export default function GiftBuilder() {
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">
-                    Elige tu Caja
+                    Elige tu caja
                   </h2>
                   <p className="text-sm text-gray-600">
                     Selecciona el tamaño perfecto para tu regalo
@@ -535,7 +535,7 @@ export default function GiftBuilder() {
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold text-gray-900">
-                      Elige tus Cervezas
+                      Elige tus cervezas
                     </h2>
                     <p className="text-sm text-gray-600">
                       Personaliza tu regalo con las cervezas que más te gusten
@@ -571,7 +571,7 @@ export default function GiftBuilder() {
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            País de Origen
+                            País de origen
                           </label>
                           <select
                             value={selectedCountry}
@@ -589,7 +589,7 @@ export default function GiftBuilder() {
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Estilo de Cerveza
+                            Estilo de cerveza
                           </label>
                           <select
                             value={selectedCategory}
@@ -615,7 +615,7 @@ export default function GiftBuilder() {
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Rango de Precio
+                            Rango de precio
                           </label>
                           <select
                             value={selectedPriceRange}
@@ -636,7 +636,7 @@ export default function GiftBuilder() {
                             onClick={handleClearFilters}
                             className="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors font-medium"
                           >
-                            Limpiar Filtros
+                            Limpiar filtros
                           </button>
                         </div>
                       </div>
@@ -869,7 +869,7 @@ export default function GiftBuilder() {
             <div className="bg-white rounded-xl shadow-lg p-6 sticky top-6 border border-gray-100">
               <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
                 <Gift className="w-6 h-6 mr-2 text-[#B58E31]" />
-                Resumen de tu Regalo
+                Resumen de tu regalo
               </h3>
 
               {/* Caja Seleccionada */}

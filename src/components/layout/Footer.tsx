@@ -78,7 +78,7 @@ export default function Footer() {
                   href="/privacy-policy"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
                 >
-                  Políticas de Privacidad
+                  Políticas de privacidad
                 </Link>
               </li>
 
@@ -87,7 +87,7 @@ export default function Footer() {
                   href="/shipping-policy"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
                 >
-                  Políticas de Envío
+                  Políticas de envío
                 </Link>
               </li>
 
@@ -96,7 +96,7 @@ export default function Footer() {
                   href="/terms-and-conditions"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
                 >
-                  Términos y Condiciones
+                  Términos y condiciones
                 </Link>
               </li>
             </ul>
@@ -105,7 +105,7 @@ export default function Footer() {
           {/* Medios de Pago */}
           <div className="col-span-2 sm:col-span-1">
             <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
-              Medios de Pago
+              Medios de pago
             </h6>
 
             <ul className="mt-2 space-y-1">

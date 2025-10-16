@@ -32,7 +32,7 @@ export default function QuienesSomosPage() {
               className="text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight"
               style={{ fontFamily: "var(--font-oswald)", fontWeight: 700 }}
             >
-              ¿Quiénes Somos?
+              ¿Quiénes somos?
             </h1>
             <p className="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               En Market Club creemos que la vida se disfruta mejor entre risas,
@@ -89,31 +89,31 @@ export default function QuienesSomosPage() {
               {/* Elemento destacado - Card grande */}
               <div className="relative">
                 <div className="absolute -top-6 -right-6 w-24 h-24 bg-[#B58E31]/20 rounded-full blur-xl"></div>
-                <div className="relative bg-gradient-to-br from-[#B58E31] to-[#A67D2A] rounded-3xl p-10 lg:p-12 text-white shadow-2xl transform hover:scale-105 transition-transform duration-300">
-                  <div className="flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl mb-8 mx-auto">
-                    <Heart className="w-10 h-10" />
+                <div className="relative bg-gradient-to-br from-[#B58E31] to-[#A67D2A] rounded-3xl p-6 lg:p-8 text-white shadow-2xl transform hover:scale-105 transition-transform duration-300">
+                  <div className="flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-6 mx-auto">
+                    <Heart className="w-8 h-8" />
                   </div>
 
-                  <div className="space-y-6 text-center">
-                    <p className="text-lg leading-relaxed">
+                  <div className="space-y-4 text-center">
+                    <p className="text-base leading-relaxed">
                       Así, Market Club se volvió{" "}
                       <span className="font-bold">más que una marca</span>: un
                       punto de encuentro, un espacio para compartir, reírse y
                       desconectarse del día a día.
                     </p>
-                    <p className="text-lg leading-relaxed">
+                    <p className="text-base leading-relaxed">
                       Somos esa cerveza que acompaña los momentos simples, pero
                       que se sienten grandes cuando estás rodeado de buena
                       gente.
                     </p>
-                    <p className="text-lg leading-relaxed font-medium">
+                    <p className="text-base leading-relaxed font-medium">
                       Hecha con berraquera, sabor y el toque justo pa' compartir
                       con los que más querés.
                     </p>
 
-                    <div className="border-t border-white/30 pt-8 mt-8">
-                      <Quote className="w-8 h-8 mx-auto mb-4 opacity-50" />
-                      <p className="text-2xl lg:text-3xl font-bold italic">
+                    <div className="border-t border-white/30 pt-6 mt-6">
+                      <Quote className="w-6 h-6 mx-auto mb-3 opacity-50" />
+                      <p className="text-xl lg:text-2xl font-bold italic">
                         "Market Club no solo se toma… se vive."
                       </p>
                     </div>
@@ -162,7 +162,7 @@ export default function QuienesSomosPage() {
                     className="text-2xl font-bold text-gray-900 mb-4"
                     style={{ fontFamily: "var(--font-oswald)" }}
                   >
-                    Historias que Cuentan
+                    Historias que cuentan
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-lg">
                     Cada cerveza cuenta una historia, y nosotros te traemos las
@@ -181,7 +181,7 @@ export default function QuienesSomosPage() {
                     className="text-2xl font-bold text-gray-900 mb-4"
                     style={{ fontFamily: "var(--font-oswald)" }}
                   >
-                    Variedad Mundial
+                    Variedad mundial
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-lg">
                     Reunimos en un solo lugar cervezas importadas de casi todos
@@ -201,7 +201,7 @@ export default function QuienesSomosPage() {
                     className="text-2xl font-bold text-gray-900 mb-4"
                     style={{ fontFamily: "var(--font-oswald)" }}
                   >
-                    Punto de Encuentro
+                    Punto de encuentro
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-lg">
                     Market Club es ese punto de encuentro donde se juntan los
@@ -265,12 +265,12 @@ export default function QuienesSomosPage() {
               <div className="order-2 lg:order-1">
                 <div className="relative">
                   <div className="absolute -top-4 -left-4 w-32 h-32 bg-[#B58E31]/20 rounded-full blur-2xl"></div>
-                  <div className="relative bg-gradient-to-br from-[#B58E31] via-[#A67D2A] to-[#8B6F1F] rounded-3xl p-16 text-white text-center shadow-2xl transform hover:scale-105 transition-transform duration-300">
-                    <div className="inline-flex items-center justify-center w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full mb-8 shadow-xl">
-                      <Users className="w-16 h-16" />
+                  <div className="relative bg-gradient-to-br from-[#B58E31] via-[#A67D2A] to-[#8B6F1F] rounded-3xl p-20 text-white text-center shadow-2xl transform hover:scale-105 transition-transform duration-300">
+                    <div className="inline-flex items-center justify-center w-40 h-40 bg-white/20 backdrop-blur-sm rounded-full mb-10 shadow-xl">
+                      <Users className="w-20 h-20" />
                     </div>
                     <h3
-                      className="text-5xl lg:text-6xl font-bold mb-6"
+                      className="text-6xl lg:text-7xl font-bold mb-8"
                       style={{
                         fontFamily: "var(--font-oswald)",
                         fontWeight: 700,
@@ -278,14 +278,14 @@ export default function QuienesSomosPage() {
                     >
                       Beto
                     </h3>
-                    <div className="w-20 h-1 bg-white/50 mx-auto mb-6 rounded-full"></div>
-                    <p className="text-2xl font-medium">
+                    <div className="w-24 h-1 bg-white/50 mx-auto mb-8 rounded-full"></div>
+                    <p className="text-2xl lg:text-3xl font-medium mb-6">
                       El corazón de Market Club
                     </p>
-                    <div className="mt-8 flex items-center justify-center gap-2">
-                      <Heart className="w-6 h-6 text-white/80" />
-                      <Heart className="w-8 h-8" />
-                      <Heart className="w-6 h-6 text-white/80" />
+                    <div className="mt-12 flex items-center justify-center gap-3">
+                      <Heart className="w-8 h-8 text-white/80" />
+                      <Heart className="w-10 h-10" />
+                      <Heart className="w-8 h-8 text-white/80" />
                     </div>
                   </div>
                 </div>
@@ -365,7 +365,7 @@ export default function QuienesSomosPage() {
                 style={{ fontFamily: "var(--font-oswald)" }}
               >
                 <Beer className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" />
-                Explorar Tienda
+                Explorar tienda
               </a>
               <a
                 href="/arma-tu-regalo"
@@ -373,7 +373,7 @@ export default function QuienesSomosPage() {
                 style={{ fontFamily: "var(--font-oswald)" }}
               >
                 <Heart className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                Armá tu Regalo
+                Armá tu regalo
               </a>
             </div>
 

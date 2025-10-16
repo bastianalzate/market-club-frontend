@@ -409,14 +409,13 @@ export default function ContactoPage() {
 
             <div>
               <h1
-                className="text-black mb-4"
+                className="text-black mb-4 text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl"
                 style={{
                   fontFamily: "var(--font-oswald)",
                   fontWeight: 700,
-                  fontSize: "64px",
                 }}
               >
-                ¿Tienes dudas? Contáctanos
+                ¿Tienes dudas? contáctanos
               </h1>
               <p
                 className="text-gray-600"
@@ -850,7 +849,7 @@ export default function ContactoPage() {
                       margin: 0,
                     }}
                   >
-                    Dirección: Cl. 43 #74-61 Local 3<br /> Laureles - Estadio, Medellín, Laureles, Medellín, Antioquia. 
+                    Dirección: Cl. 43 #74-61 Local 3<br /> Laureles - Estadio, Medellín, Antioquia. 
                   </p>
                   <p
                     className="text-white !mt-4 text-base lg:text-2xl leading-normal lg:leading-tight"

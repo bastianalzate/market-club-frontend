@@ -131,14 +131,11 @@ export default function PricingCard({
         <button
           className={`w-full py-3 px-4 rounded-md font-medium transition-all duration-200 hover:scale-105 cursor-pointer ${
             isHighlighted && name !== "Maestro Cervecero"
-              ? "bg-white text-black hover:bg-gray-100"
+              ? "text-white hover:opacity-90"
               : "text-white hover:opacity-90"
           }`}
           style={{
-            backgroundColor:
-              isHighlighted && name !== "Maestro Cervecero"
-                ? "white"
-                : buttonColor,
+            backgroundColor: buttonColor,
             fontFamily: "var(--font-inter)",
             fontSize: "14px",
             fontWeight: 600,

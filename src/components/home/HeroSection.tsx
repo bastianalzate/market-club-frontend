@@ -31,9 +31,9 @@ export default function HeroSection() {
         <div className="px-4 mx-auto relative z-10 sm:px-6 lg:px-8 max-w-7xl">
           <div className="grid items-start grid-cols-1 gap-y-12 lg:grid-cols-2 gap-x-16 pt-16">
             <div className="text-center lg:text-left">
-              {/* Texto para mobile - sin salto de línea */}
+              {/* Texto responsivo - sin salto de línea en móviles */}
               <h1
-                className="font-bold text-white text-[80px] sm:hidden"
+                className="font-bold text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl sm:hidden"
                 style={{
                   fontFamily: "var(--font-oswald)",
                   lineHeight: "100%",
@@ -42,9 +42,9 @@ export default function HeroSection() {
                 Brindemos por el Oktoberfest
               </h1>
 
-              {/* Texto para desktop - con salto de línea */}
+              {/* Texto responsivo - con salto de línea en desktop */}
               <h1
-                className="hidden sm:block font-bold text-white text-[90px]"
+                className="hidden sm:block font-bold text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl"
                 style={{
                   fontFamily: "var(--font-oswald)",
                   lineHeight: "100%",

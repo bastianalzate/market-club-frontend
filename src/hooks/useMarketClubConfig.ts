@@ -51,7 +51,7 @@ export const useMarketClubConfig = (): MarketClubPageConfig => {
           id: "maestro-cervecero",
           name: "Maestro Cervecero",
           price: "$200.000 / mes.",
-          description: "Selección de Élite. La máxima expresión de lo premium y lo inalcanzable. Recibe tres cervezas de la cúspide del mundo cervecero y los destilados. Cada caja es un manifiesto de exclusividad que incluye etiquetas de culto, ediciones especiales y, ocasionalmente, una botella de licor excepcional seleccionada para llevar la experiencia al nivel de lo sublime.",
+          description: "Selección de élite. La máxima expresión de lo premium y lo inalcanzable. Recibe tres cervezas de la cúspide del mundo cervecero y los destilados. Cada caja es un manifiesto de exclusividad que incluye etiquetas de culto, ediciones especiales y, ocasionalmente, una botella de licor excepcional seleccionada para llevar la experiencia al nivel de lo sublime.",
           features: [
             "3 cervezas de alta gama o ediciones limitadas",
             "Algunos meses, un espirituoso excepcional en lugar de una cerveza",
@@ -102,7 +102,7 @@ export const useMarketClubConfig = (): MarketClubPageConfig => {
             "Cupones descuentos para regular experiencia en fechas especiales (cumpleaños, aniversarios)"
           ],
           buttonText: "Empieza ahora",
-          buttonColor: "#FFFFFF",
+          buttonColor: "#B58E31",
           isHighlighted: true
         },
         {

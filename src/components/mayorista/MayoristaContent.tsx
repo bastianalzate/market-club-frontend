@@ -127,7 +127,7 @@ function MayoristaContentInner() {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-2xl font-bold text-white mb-2">
-                Productos Mayoristas
+                Productos mayoristas
               </h2>
               <p className="text-gray-300">
                 {loading

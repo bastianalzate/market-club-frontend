@@ -15,30 +15,31 @@ export default function CategoryIcons() {
       icon: "beer", // Usar icono personalizado
       description: "Variedad de cervezas",
     },
-    {
-      id: 1,
-      name: "Snacks",
-      icon: ShoppingBag,
-      description: "Aperitivos y snacks",
-    },
-    {
-      id: 2,
-      name: "Importados",
-      icon: Plane,
-      description: "Productos internacionales",
-    },
-    {
-      id: 3,
-      name: "Cajas",
-      icon: Box,
-      description: "Packs y cajas especiales",
-    },
-    {
-      id: 4,
-      name: "Ofertas",
-      icon: Tag,
-      description: "Descuentos especiales",
-    },
+    // Temporalmente ocultas las demás categorías
+    // {
+    //   id: 1,
+    //   name: "Snacks",
+    //   icon: ShoppingBag,
+    //   description: "Aperitivos y snacks",
+    // },
+    // {
+    //   id: 2,
+    //   name: "Importados",
+    //   icon: Plane,
+    //   description: "Productos internacionales",
+    // },
+    // {
+    //   id: 3,
+    //   name: "Cajas",
+    //   icon: Box,
+    //   description: "Packs y cajas especiales",
+    // },
+    // {
+    //   id: 4,
+    //   name: "Ofertas",
+    //   icon: Tag,
+    //   description: "Descuentos especiales",
+    // },
   ];
 
   return (
