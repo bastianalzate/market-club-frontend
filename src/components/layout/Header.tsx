@@ -287,14 +287,6 @@ export default function Header() {
 
             {/* Mobile Actions */}
             <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 lg:hidden">
-              {/* Search */}
-              <button
-                onClick={handleOpenSearch}
-                className="p-2 text-gray-700 hover:text-gray-900 transition-colors cursor-pointer"
-                aria-label="Buscar"
-              >
-                <Search className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
 
               {/* Cart */}
               <button
@@ -409,14 +401,6 @@ export default function Header() {
 
             {/* Desktop Actions */}
             <div className="hidden lg:flex lg:items-center lg:space-x-2 xl:space-x-3">
-              {/* Search */}
-              <button
-                onClick={handleOpenSearch}
-                className="p-1.5 text-gray-700 hover:text-gray-900 transition-colors cursor-pointer"
-                aria-label="Buscar"
-              >
-                <Search className="w-5 h-5" />
-              </button>
 
               {/* Cart */}
               <button
