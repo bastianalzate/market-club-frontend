@@ -7,10 +7,19 @@ export const WOMPI_CONFIG = {
   CURRENCY: 'COP',
   BASE_URL: 'https://checkout.wompi.co',
   
+  // URL del widget de Wompi
+  WIDGET_URL: 'https://checkout.wompi.co/widget.js',
+  
   // URLs de redirección
   getRedirectUrl: (orderId: string) => {
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
     return `${baseUrl}/checkout/success?order_id=${orderId}`;
+  },
+  
+  // URL de redirección para suscripciones
+  getSubscriptionRedirectUrl: () => {
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+    return `${baseUrl}/club-socios?subscription=success`;
   }
 };
 
