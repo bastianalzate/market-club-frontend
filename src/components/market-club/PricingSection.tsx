@@ -3,9 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import PricingCard from "./PricingCard";
 import { PricingSectionConfig, PricingPlan } from "@/types/market-club";
-import { fetchSubscriptionPlans, subscribeToPlan, getCurrentSubscription } from "@/services/subscriptionsService";
+import { fetchSubscriptionPlans, getCurrentSubscription } from "@/services/subscriptionsService";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import SubscriptionPaymentModal from "@/components/subscriptions/SubscriptionPaymentModal";
+import { useToast } from "@/hooks/useToast";
 
 interface PricingSectionProps extends PricingSectionConfig {
   containerClassName?: string;
@@ -22,8 +24,10 @@ export default function PricingSection({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [backendPlans, setBackendPlans] = useState<any[]>([]);
-  const { isAuthenticated, openLoginModal } = useAuth();
-  const [subscribingPlanId, setSubscribingPlanId] = useState<string | null>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
+  const { isAuthenticated, openLoginModal, user } = useAuth();
+  const { showToast } = useToast();
   const router = useRouter();
 
   useEffect(() => {
@@ -55,6 +59,7 @@ export default function PricingSection({
       id: p.id,
       name: p.name,
       price: `$${new Intl.NumberFormat("es-CO").format(parseInt(p.price, 10)).replace(/,/g, ".")}`,
+      numericPrice: parseInt(p.price, 10), // Precio numérico para el modal
       period: ` / ${p.period}`,
       description: p.description,
       features: p.features,
@@ -115,31 +120,39 @@ export default function PricingSection({
                   openLoginModal();
                   return;
                 }
-                // Si ya tiene suscripción activa, no cambiarla y redirigir al perfil inmediatamente
-                (async () => {
-                  try {
-                    setSubscribingPlanId(plan.id);
-                    const current = await getCurrentSubscription();
-                    if (current && current.success && current.data) {
-                      router.push('/perfil');
-                      return;
-                    }
-                    // Si no tiene suscripción, crearla y luego redirigir
-                    await subscribeToPlan(plan.id, 1);
-                    router.push('/perfil');
-                  } catch (e) {
-                    // Ante cualquier error, no intentar cambiar el plan actual
-                    router.push('/perfil');
-                  } finally {
-                    setSubscribingPlanId(null);
-                  }
-                })();
+                // Abrir modal de pago
+                setSelectedPlan(plan);
+                setShowPaymentModal(true);
               }}
-              isBusy={subscribingPlanId === plan.id}
+              isBusy={false}
             />
           ))}
         </div>
       </div>
+
+      {/* Modal de pago de suscripción */}
+      {selectedPlan && (
+        <SubscriptionPaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => {
+            setShowPaymentModal(false);
+            setSelectedPlan(null);
+          }}
+          planId={selectedPlan.id}
+          durationMonths={1}
+          totalAmount={selectedPlan.numericPrice || 0}
+          customerEmail={user?.email || ""}
+          customerName={user?.name}
+          customerMobile={user?.phone}
+          onSuccess={(transactionId, reference) => {
+            showToast("¡Suscripción activada exitosamente!", "success");
+            setShowPaymentModal(false);
+            setSelectedPlan(null);
+            // Recargar datos si es necesario
+            router.refresh();
+          }}
+        />
+      )}
     </div>
   );
 }

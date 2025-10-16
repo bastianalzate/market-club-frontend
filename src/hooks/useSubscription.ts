@@ -152,29 +152,9 @@ export const useSubscription = () => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`${constants.api_url}/subscriptions/subscribe`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({
-          plan_id: planId,
-          payment_method: paymentMethod,
-          duration_months: durationMonths,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al suscribirse');
-      }
-
-      const data = await response.json();
-      if (data.success) {
-        // Recargar suscripción actual
-        await loadCurrentSubscription();
-        return { success: true, message: data.message };
-      } else {
-        throw new Error(data.message || 'Error al procesar la suscripción');
-      }
+      // Esta función ya no redirige - el modal se maneja desde SubscriptionSection
+      console.warn("useSubscription.subscribe: Esta función está deprecada. Use el modal de pago desde SubscriptionSection.");
+      return { success: false, message: "Use el modal de pago desde la sección de suscripciones" };
     } catch (err) {
       console.error('Error subscribing:', err);
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido';

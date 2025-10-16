@@ -24,6 +24,7 @@ import { useToast } from "@/hooks/useToast";
 import { useEffect, useState } from "react";
 import Toast from "@/components/shared/Toast";
 import CancelSubscriptionModal from "@/components/shared/CancelSubscriptionModal";
+import SubscriptionPaymentModal from "@/components/subscriptions/SubscriptionPaymentModal";
 
 interface User {
   id: string;
@@ -65,6 +66,8 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
   } = useSubscription();
   const { toast, showSuccess, showError, hideToast } = useToast();
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
 
   // Cargar datos al montar el componente
   useEffect(() => {
@@ -163,16 +166,13 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
   };
 
   const handleSubscribe = async (planId: string | number) => {
-    const result = await subscribe(String(planId));
-    if (result.success) {
-      showSuccess(
-        "¡Suscripción exitosa!",
-        "Te has suscrito exitosamente a Market Club Premium."
-      );
-      // Recargar historial después de suscribirse
-      loadHistory();
+    // Buscar el plan en los datos del backend
+    const plan = plans?.find(p => p.id === String(planId));
+    if (plan) {
+      setSelectedPlan(plan);
+      setShowPaymentModal(true);
     } else {
-      showError("Error", result.message);
+      showError("Error", "Plan no encontrado");
     }
   };
 
@@ -960,6 +960,31 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
         type={toast.type}
         onClose={hideToast}
       />
+
+      {/* Modal de pago de suscripción */}
+      {selectedPlan && (
+        <SubscriptionPaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => {
+            setShowPaymentModal(false);
+            setSelectedPlan(null);
+          }}
+          planId={selectedPlan.id}
+          durationMonths={1}
+          totalAmount={selectedPlan.numericPrice || 0}
+          customerEmail={user?.email || ""}
+          customerName={user?.name}
+          customerMobile={user?.phone}
+          onSuccess={(transactionId, reference) => {
+            showSuccess("¡Suscripción activada exitosamente!", "Tu suscripción ha sido activada correctamente.");
+            setShowPaymentModal(false);
+            setSelectedPlan(null);
+            // Recargar datos
+            loadCurrentSubscription();
+            loadHistory();
+          }}
+        />
+      )}
     </>
   );
 }

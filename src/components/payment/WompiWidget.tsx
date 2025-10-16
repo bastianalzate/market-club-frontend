@@ -42,8 +42,8 @@ export default function WompiWidget({
     const loadWompiScript = () => {
       return new Promise((resolve, reject) => {
         // Verificar si el script ya está cargado
-        if (window.WompiWidget) {
-          resolve(window.WompiWidget);
+        if (window.WidgetCheckout) {
+          resolve(window.WidgetCheckout);
           return;
         }
 
@@ -51,8 +51,14 @@ export default function WompiWidget({
         const script = document.createElement("script");
         script.src = "https://checkout.wompi.co/widget.js";
         script.async = true;
-        script.onload = () => resolve(window.WompiWidget);
-        script.onerror = () => reject(new Error("Error loading Wompi script"));
+        script.onload = () => {
+          console.log("Wompi script loaded successfully");
+          resolve(window.WidgetCheckout);
+        };
+        script.onerror = (error) => {
+          console.error("Error loading Wompi script:", error);
+          reject(new Error("Error loading Wompi script"));
+        };
 
         document.head.appendChild(script);
       });
@@ -63,22 +69,45 @@ export default function WompiWidget({
         setIsLoading(true);
         setError(null);
 
+        console.log("Starting Wompi widget initialization...");
+        console.log("Public key:", publicKey);
+        console.log("Currency:", currency);
+        console.log("Amount in cents:", amountInCents);
+        console.log("Reference:", reference);
         await loadWompiScript();
 
-        if (!window.WompiWidget) {
+        console.log("Wompi script loaded, checking widget availability...");
+        console.log("window.WidgetCheckout:", window.WidgetCheckout);
+
+        if (!window.WidgetCheckout) {
           throw new Error("Wompi widget not available");
         }
 
+        // Validar datos del cliente
+        if (!customerEmail || !customerName) {
+          throw new Error("Datos del cliente incompletos");
+        }
+
+        console.log("Customer data:", {
+          name: customerName,
+          email: customerEmail,
+          phoneNumber: customerMobile ? customerMobile.replace(/\D/g, "") : "",
+          phoneNumberPrefix: "+57"
+        });
+
         // Configurar el widget de Wompi
-        const wompiWidget = new window.WompiWidget({
+        const wompiWidget = new window.WidgetCheckout({
           publicKey: publicKey,
           currency: currency,
           amountInCents: amountInCents,
           reference: reference,
           redirectUrl: redirectUrl,
-          customerEmail: customerEmail,
-          customerName: customerName,
-          customerMobile: customerMobile,
+          customerData: {
+            name: customerName || "",
+            email: customerEmail || "",
+            phoneNumber: customerMobile ? customerMobile.replace(/\D/g, "") : "",
+            phoneNumberPrefix: "+57",
+          },
           onSuccess: (transaction: any) => {
             console.log("Wompi payment success:", transaction);
             if (onSuccess) {
@@ -92,7 +121,7 @@ export default function WompiWidget({
               onError(error);
             }
           },
-          onClose: () => {
+          onExit: () => {
             console.log("Wompi widget closed");
             if (onClose) {
               onClose();
@@ -101,9 +130,18 @@ export default function WompiWidget({
         });
 
         // Mostrar el widget
-        wompiWidget.show();
+        wompiWidget.open();
       } catch (error) {
         console.error("Error initializing Wompi widget:", error);
+        console.error("Error details:", {
+          message: error instanceof Error ? error.message : "Unknown error",
+          stack: error instanceof Error ? error.stack : undefined,
+          windowWidgetCheckout: window.WidgetCheckout,
+          publicKey: publicKey,
+          currency: currency,
+          amountInCents: amountInCents,
+          reference: reference
+        });
         setError(
           error instanceof Error
             ? error.message
