@@ -4,7 +4,7 @@ import { Mail, Phone, MapPin } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="py-12 bg-white sm:pt-16 lg:pt-20">
+    <footer className="py-8 bg-white sm:pt-10 lg:pt-12">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Logo */}
         <div className="flex items-center">
@@ -20,7 +20,7 @@ export default function Footer() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 mt-16 sm:grid-cols-3 gap-y-16 lg:grid-cols-6 gap-x-16">
+        <div className="grid grid-cols-2 mt-10 sm:grid-cols-3 gap-y-10 lg:grid-cols-6 gap-x-16">
           {/* Menu */}
           <div>
             <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
@@ -167,7 +167,7 @@ export default function Footer() {
               </ul>
             </div>
 
-            <div className="grid grid-cols-1 mt-2 gap-y-8 sm:grid-cols-2 sm:gap-x-16">
+            <div className="grid grid-cols-1 mt-2 gap-y-6 sm:grid-cols-2 sm:gap-x-16">
               <div>
                 <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
                   Llámanos
@@ -193,7 +193,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <hr className="mt-16 border-gray-200" />
+        <hr className="mt-10 border-gray-200" />
       </div>
     </footer>
   );
