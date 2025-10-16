@@ -22,10 +22,13 @@ export default function HeroSection({
   return (
     <div className={containerClassName}>
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center">
           {/* Título */}
           <div>
-            <h2 className="text-white mb-8 leading-tight" style={titleStyle}>
+            <h2 className="text-white mb-4 lg:mb-8 leading-tight text-[30px] sm:text-[42px]" style={{
+              fontFamily: "var(--font-oswald)",
+              fontWeight: 700,
+            }}>
               {title}
               {subtitle && <span className="block">{subtitle}</span>}
             </h2>

@@ -832,7 +832,7 @@ export default function ContactoPage() {
             <div className="text-white flex items-center px-4 sm:px-8 lg:px-16 py-12">
               <div>
                 <h2
-                  className="text-white mb-10 text-2xl lg:text-6xl"
+                  className="text-white mb-10 text-[30px]  lg:text-6xl"
                   style={{
                     fontFamily: "var(--font-oswald)",
                     fontWeight: "bold",

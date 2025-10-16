@@ -429,7 +429,7 @@ export default function GiftBuilder() {
       <div className="max-w-7xl mx-auto">
         {/* Título y Descripción */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-6">
+          <h1 className="text-[30px] font-bold text-gray-900 mb-6 sm:text-4xl">
             Construye tu regalo perfecto
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -448,7 +448,7 @@ export default function GiftBuilder() {
                   1
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">
+                  <h2 className="text-[30px] font-bold text-gray-900 sm:text-2xl">
                     Elige tu caja
                   </h2>
                   <p className="text-sm text-gray-600">
@@ -534,7 +534,7 @@ export default function GiftBuilder() {
                     2
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900">
+                    <h2 className="text-[30px] font-bold text-gray-900 sm:text-2xl">
                       Elige tus cervezas
                     </h2>
                     <p className="text-sm text-gray-600">

@@ -29,7 +29,7 @@ export default function QuienesSomosPage() {
               </span>
             </div>
             <h1
-              className="text-5xl lg:text-7xl font-bold text-white mb-4 leading-tight"
+              className="text-[30px] sm:text-5xl lg:text-7xl font-bold text-white mb-4 leading-tight"
               style={{ fontFamily: "var(--font-oswald)", fontWeight: 700 }}
             >
               ¿Quiénes somos?
@@ -138,7 +138,7 @@ export default function QuienesSomosPage() {
                 </span>
               </div>
               <h2
-                className="text-4xl lg:text-6xl font-bold text-gray-900 mb-4"
+                className="text-[30px] sm:text-4xl lg:text-6xl font-bold text-gray-900 mb-4"
                 style={{ fontFamily: "var(--font-oswald)", fontWeight: 700 }}
               >
                 Lo que nos hace únicos
@@ -232,7 +232,7 @@ export default function QuienesSomosPage() {
                   <div className="w-20 h-1 bg-[#B58E31] mx-auto mb-8 rounded-full"></div>
 
                   <p
-                    className="text-3xl lg:text-4xl font-bold leading-tight"
+                    className="text-[30px] sm:text-3xl lg:text-4xl font-bold leading-tight"
                     style={{ fontFamily: "var(--font-oswald)" }}
                   >
                     No somos un bar cualquiera: Somos el club donde cada cerveza
@@ -270,7 +270,7 @@ export default function QuienesSomosPage() {
                       <Users className="w-20 h-20" />
                     </div>
                     <h3
-                      className="text-6xl lg:text-7xl font-bold mb-8"
+                      className="text-[30px] sm:text-6xl lg:text-7xl font-bold mb-8"
                       style={{
                         fontFamily: "var(--font-oswald)",
                         fontWeight: 700,
@@ -347,7 +347,7 @@ export default function QuienesSomosPage() {
             </div>
 
             <h2
-              className="text-4xl lg:text-6xl font-bold text-white mb-4 leading-tight"
+              className="text-[30px] sm:text-4xl lg:text-6xl font-bold text-white mb-4 leading-tight"
               style={{ fontFamily: "var(--font-oswald)", fontWeight: 700 }}
             >
               ¿Listo para vivir la experiencia Market Club?

@@ -12,8 +12,8 @@ export default function NewFlavorsSection() {
               style={{
                 fontFamily: "var(--font-oswald)",
                 fontWeight: 700,
-                fontSize: "42px",
-                lineHeight: "56px",
+                fontSize: "30px",
+                lineHeight: "40px",
                 letterSpacing: "0px",
                 verticalAlign: "middle",
               }}

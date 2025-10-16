@@ -305,7 +305,7 @@ export default function FavoriteProducts() {
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
         {/* Header con título y botón */}
         <div className="flex items-center justify-center lg:justify-between mb-6">
-          <h2 className="text-2xl font-bold text-white sm:text-3xl">
+          <h2 className="text-[30px] font-bold text-white sm:text-3xl">
             Cervezas Destacadas
           </h2>
 

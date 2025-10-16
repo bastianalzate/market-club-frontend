@@ -33,7 +33,7 @@ export default function HeroSection() {
             <div className="text-center lg:text-left">
               {/* Texto responsivo - sin salto de línea en móviles */}
               <h1
-                className="font-bold text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl sm:hidden"
+                className="font-bold text-white text-[80px] sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl sm:hidden"
                 style={{
                   fontFamily: "var(--font-oswald)",
                   lineHeight: "100%",
@@ -44,7 +44,7 @@ export default function HeroSection() {
 
               {/* Texto responsivo - con salto de línea en desktop */}
               <h1
-                className="hidden sm:block font-bold text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl"
+                className="hidden sm:block font-bold text-white text-[80px] sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl"
                 style={{
                   fontFamily: "var(--font-oswald)",
                   lineHeight: "100%",

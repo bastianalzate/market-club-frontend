@@ -8,7 +8,7 @@ export default function BeerClubSection() {
     <div className={`relative z-10 ${align === "center" ? "text-center" : ""}`}>
       <div>
         <h3
-          className={`text-white mb-4 lg:mb-6 text-2xl sm:text-3xl md:text-5xl lg:text-6xl ${
+          className={`text-white mb-4 lg:mb-6 text-[30px] sm:text-3xl md:text-5xl lg:text-6xl ${
             align === "center" ? "mx-auto" : ""
           }`}
           style={{
@@ -16,7 +16,6 @@ export default function BeerClubSection() {
             fontWeight: 700,
             lineHeight: "100%",
             letterSpacing: "0px",
-            fontSize: "clamp(24px, 4.5vw, 72px)",
           }}
         >
           Únete hoy y recibe tu primer beneficio. 

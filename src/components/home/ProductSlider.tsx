@@ -273,7 +273,7 @@ export default function ProductSlider() {
       <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
         {/* Header con título y botón */}
         <div className="flex flex-col items-center text-center mb-4 sm:mb-6 lg:flex-row lg:justify-between lg:text-left">
-          <h2 className="text-xl font-bold text-white mb-4 sm:text-2xl lg:text-3xl lg:mb-0">
+          <h2 className="text-[30px] font-bold text-white mb-4 lg:mb-0">
             Últimas Cervezas
           </h2>
 
