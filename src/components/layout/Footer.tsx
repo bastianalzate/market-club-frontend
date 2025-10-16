@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="flex items-center">
           <Link href="/" title="Market Club">
             <Image
-              src="/images/logo/logo.png"
+              src="/images/logo/logo-svg.svg"
               alt="Market Club Logo"
               width={200}
               height={0}
