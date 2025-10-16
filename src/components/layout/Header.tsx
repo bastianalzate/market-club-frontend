@@ -275,11 +275,11 @@ export default function Header() {
             <div className="shrink-0">
               <Link href="/" title="Market Club" className="flex items-center">
                 <Image
-                  src="/images/logo/logo.png"
+                  src="/images/logo/logo-svg.svg"
                   alt="Market Club Logo"
                   width={120}
                   height={0}
-                  className="h-auto w-[80px] xs:w-[90px] sm:w-[100px] md:w-[110px] lg:w-[120px] xl:w-[130px]"
+                  className="h-auto w-[130px] xs:w-[140px] sm:w-[120px] md:w-[130px] lg:w-[140px] xl:w-[150px]"
                   priority
                 />
               </Link>

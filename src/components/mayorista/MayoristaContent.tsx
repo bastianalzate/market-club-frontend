@@ -124,12 +124,12 @@ function MayoristaContentInner() {
 
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-8">
           {/* Header con título y botón del carrito */}
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div>
-              <h2 className="text-2xl font-bold text-white mb-2">
-                Productos Mayoristas
+              <h2 className="text-[30px] sm:text-2xl font-bold text-white mb-2">
+                Productos mayoristas
               </h2>
-              <p className="text-gray-300">
+              <p className="text-gray-300 text-sm sm:text-base">
                 {loading
                   ? "Cargando productos..."
                   : `${pagination.total} productos disponibles`}
@@ -139,7 +139,7 @@ function MayoristaContentInner() {
             {/* Botón del carrito */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center space-x-2 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 cursor-pointer"
+              className="relative flex items-center space-x-1 sm:space-x-2 text-white px-2 py-2 sm:px-4 rounded-lg font-medium transition-colors duration-200 cursor-pointer text-xs sm:text-base"
               style={{
                 backgroundColor: "#B58E31",
               }}
@@ -150,8 +150,8 @@ function MayoristaContentInner() {
                 (e.currentTarget.style.backgroundColor = "#B58E31")
               }
             >
-              <MessageCircle className="w-5 h-5" />
-              <span>Cotizar WhatsApp</span>
+              <MessageCircle className="w-3 h-3 sm:w-5 sm:h-5" />
+              <span className="whitespace-nowrap">Cotizar WhatsApp</span>
               {itemsCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">
                   {itemsCount}

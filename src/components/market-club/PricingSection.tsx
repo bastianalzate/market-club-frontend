@@ -103,10 +103,7 @@ export default function PricingSection({
     <div
       className={finalClassName}
       style={{
-        background:
-          "linear-gradient(135deg, #B58E31 0%, #D4AF37 25%, #FFD700 50%, #D4AF37 75%, #B58E31 100%)",
-        backgroundSize: "400% 400%",
-        animation: "goldenShimmer 8s ease-in-out infinite",
+        backgroundColor: "#B58E31",
       }}
     >
       <div className="max-w-7xl mx-auto">

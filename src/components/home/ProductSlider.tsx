@@ -139,7 +139,7 @@ export default function ProductSlider() {
       {/* Imagen del producto con botón de favorito */}
       <div className="relative">
         <div
-          className="aspect-w-1 aspect-h-1 overflow-hidden pt-4"
+          className="aspect-w-1 aspect-h-1 overflow-hidden pt-1 sm:pt-4 max-sm:!h-[180px]"
           style={{ height: "400px" }}
         >
           <LazyImage
@@ -180,8 +180,8 @@ export default function ProductSlider() {
       </div>
 
       {/* Información del producto */}
-      <div className="p-4 flex-1 flex flex-col sm:p-6">
-        <div className="flex items-center justify-between mb-3">
+      <div className="p-2 flex-1 flex flex-col sm:p-4 lg:p-6">
+        <div className="flex items-center justify-between mb-0 sm:mb-3">
           <span className="text-xs text-gray-600 font-medium sm:text-sm">
             BOTELLA 500ML
           </span>
@@ -203,15 +203,15 @@ export default function ProductSlider() {
           </div>
         </div>
 
-        <h3 className="text-base font-bold text-gray-900 mb-4 line-clamp-2 sm:text-lg">
+        <h3 className="text-xs font-bold text-gray-900 mb-0 line-clamp-1 sm:text-base sm:mb-4 sm:line-clamp-2 sm:text-lg">
           {beer.name}
         </h3>
 
         {/* Botones de acción */}
-        <div className="flex items-center space-x-2 mt-auto sm:space-x-3">
+        <div className="flex items-center mt-auto sm:space-x-3">
           {/* Ícono de carrito cuadrado con contador - Solo visual */}
-          <div
-            className="relative p-2 rounded-lg sm:p-3"
+           <div
+             className="relative p-0 rounded-lg sm:p-2 lg:p-3 hidden sm:block"
             style={{
               backgroundColor: "transparent",
               borderColor: "#D0D5DD",
@@ -236,7 +236,7 @@ export default function ProductSlider() {
           <button
             onClick={() => handleAddToCart(beer)}
             disabled={addingToCart === beer.id || beer.stock_quantity === 0}
-            className="flex-1 flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+             className="flex-1 flex items-center justify-center space-x-2 text-white py-2 px-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer sm:py-3 sm:px-4"
             style={{
               backgroundColor:
                 beer.stock_quantity === 0 ? "#6B7280" : "#B58E31",
@@ -269,11 +269,11 @@ export default function ProductSlider() {
   );
 
   return (
-    <section className="py-12 bg-black sm:py-16 lg:py-20">
+    <section className="py-6 bg-black sm:py-8 lg:py-12">
       <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
         {/* Header con título y botón */}
-        <div className="flex flex-col items-center text-center mb-6 sm:mb-8 lg:flex-row lg:justify-between lg:text-left">
-          <h2 className="text-xl font-bold text-white mb-4 sm:text-2xl lg:text-3xl lg:mb-0">
+        <div className="flex flex-col items-center text-center mb-4 sm:mb-6 lg:flex-row lg:justify-between lg:text-left">
+          <h2 className="text-[30px] font-bold text-white mb-4 lg:mb-0">
             Últimas Cervezas
           </h2>
 
@@ -324,7 +324,7 @@ export default function ProductSlider() {
         ) : (
           <ProductCarousel
             itemsPerView={{
-              mobile: 1,
+              mobile: 2,
               tablet: 2,
               desktop: 3,
             }}

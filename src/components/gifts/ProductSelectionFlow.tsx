@@ -8,8 +8,8 @@ export default function ProductSelectionFlow() {
       <div className="px-8 mx-auto max-w-7xl sm:px-12 lg:px-16">
         {/* Título de la sección */}
         <div className="text-center mb-20">
-          <h2 className="text-4xl font-bold leading-tight text-black sm:text-5xl lg:text-6xl mb-6">
-            Construí tu Regalo
+          <h2 className="text-[30px] font-bold leading-tight text-black sm:text-5xl lg:text-6xl mb-6">
+            Construye tu regalo
           </h2>
           <p className="max-w-2xl mx-auto text-lg text-gray-600 leading-relaxed">
             Seleccioná los productos que quieras incluir en tu regalo

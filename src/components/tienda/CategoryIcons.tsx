@@ -15,30 +15,31 @@ export default function CategoryIcons() {
       icon: "beer", // Usar icono personalizado
       description: "Variedad de cervezas",
     },
-    {
-      id: 1,
-      name: "Snacks",
-      icon: ShoppingBag,
-      description: "Aperitivos y snacks",
-    },
-    {
-      id: 2,
-      name: "Importados",
-      icon: Plane,
-      description: "Productos internacionales",
-    },
-    {
-      id: 3,
-      name: "Cajas",
-      icon: Box,
-      description: "Packs y cajas especiales",
-    },
-    {
-      id: 4,
-      name: "Ofertas",
-      icon: Tag,
-      description: "Descuentos especiales",
-    },
+    // Temporalmente ocultas las demás categorías
+    // {
+    //   id: 1,
+    //   name: "Snacks",
+    //   icon: ShoppingBag,
+    //   description: "Aperitivos y snacks",
+    // },
+    // {
+    //   id: 2,
+    //   name: "Importados",
+    //   icon: Plane,
+    //   description: "Productos internacionales",
+    // },
+    // {
+    //   id: 3,
+    //   name: "Cajas",
+    //   icon: Box,
+    //   description: "Packs y cajas especiales",
+    // },
+    // {
+    //   id: 4,
+    //   name: "Ofertas",
+    //   icon: Tag,
+    //   description: "Descuentos especiales",
+    // },
   ];
 
   return (
@@ -46,7 +47,7 @@ export default function CategoryIcons() {
       <div className="px-3 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Título de la sección */}
         <div className="text-center mb-6 sm:mb-8">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-[30px] sm:text-2xl font-bold text-gray-900 mb-2">
             Explora por Categorías
           </h2>
           <p className="text-sm sm:text-base text-gray-600 px-4">
@@ -88,6 +89,22 @@ export default function CategoryIcons() {
                     />
                   ) : (
                     (() => {
+                      // Si es un string, usar el icono de cerveza
+                      if (typeof category.icon === "string") {
+                        return (
+                          <Image
+                            src={beerIcon}
+                            alt={category.name}
+                            width={32}
+                            height={32}
+                            className={`w-8 h-8 ${
+                              isActive ? "brightness-0 invert" : ""
+                            }`}
+                          />
+                        );
+                      }
+
+                      // Si es un componente React
                       const IconComponent =
                         category.icon as React.ComponentType<{
                           className: string;

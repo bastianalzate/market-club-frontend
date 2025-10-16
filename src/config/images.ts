@@ -33,7 +33,7 @@ export const IMAGE_PATHS = {
 
   // Imágenes comunes compartidas
   COMMON: {
-    LOGO: '/images/common/logo.png',
+    LOGO: '/images/logo/logo-svg.svg',
     FAVICON: '/images/common/favicon.ico',
     PLACEHOLDER: '/images/common/placeholder.jpg',
   },

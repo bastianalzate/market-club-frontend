@@ -49,7 +49,7 @@ export default function ServicesBanner() {
                   lineHeight: "1.4"
                 }}
               >
-                Puedes Escribirnos Por Whatsapp O A Través De Nuestras Redes.
+                Puedes escribirnos por Whatsapp o a través de nuestras redes.
               </p>
             </div>
           </div>
@@ -86,7 +86,7 @@ export default function ServicesBanner() {
                   fontWeight: 400
                 }}
               >
-                Seguro Y Rápido
+                Seguro y rápido
               </p>
               <p 
                 className="text-white text-[12px] lg:text-[16px]"
@@ -96,7 +96,7 @@ export default function ServicesBanner() {
                   lineHeight: "1.4"
                 }}
               >
-                Transacciones 100% Seguras.
+                Transacciones 100% seguras.
               </p>
             </div>
           </div>
@@ -143,7 +143,7 @@ export default function ServicesBanner() {
                   lineHeight: "1.4"
                 }}
               >
-                100% De Garantía De Devolución De Dinero.
+                100% de garantía y devolución de dinero.
               </p>
             </div>
           </div>

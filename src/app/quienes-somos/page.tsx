@@ -20,25 +20,25 @@ export default function QuienesSomosPage() {
       {/* Hero Section */}
       <section className="relative bg-black overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#B58E31]/20 to-transparent"></div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 relative z-10">
           <div className="max-w-5xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-[#B58E31]/10 backdrop-blur-sm border border-[#B58E31]/20 rounded-full px-6 py-3 mb-8">
+            <div className="inline-flex items-center gap-2 bg-[#B58E31]/10 backdrop-blur-sm border border-[#B58E31]/20 rounded-full px-6 py-3 mb-4">
               <Beer className="w-5 h-5 text-[#B58E31]" />
               <span className="text-[#B58E31] font-medium">
                 Nuestra Historia
               </span>
             </div>
             <h1
-              className="text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+              className="text-[30px] sm:text-5xl lg:text-7xl font-bold text-white mb-4 leading-tight"
               style={{ fontFamily: "var(--font-oswald)", fontWeight: 700 }}
             >
-              ¿Quiénes Somos?
+              ¿Quiénes somos?
             </h1>
-            <p className="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-6">
               En Market Club creemos que la vida se disfruta mejor entre risas,
               buena música y una pola bien fría
             </p>
-            <div className="flex items-center justify-center gap-3 mt-12">
+            <div className="flex items-center justify-center gap-3 mt-6">
               <div className="w-16 h-1 bg-[#B58E31] rounded-full"></div>
               <Beer className="w-6 h-6 text-[#B58E31]" />
               <div className="w-16 h-1 bg-[#B58E31] rounded-full"></div>
@@ -48,7 +48,7 @@ export default function QuienesSomosPage() {
       </section>
 
       {/* Nuestra Historia */}
-      <section className="py-20 lg:py-32 bg-white relative overflow-hidden">
+      <section className="py-8 lg:py-8 bg-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#B58E31]/5 rounded-full blur-3xl"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto">
@@ -89,31 +89,31 @@ export default function QuienesSomosPage() {
               {/* Elemento destacado - Card grande */}
               <div className="relative">
                 <div className="absolute -top-6 -right-6 w-24 h-24 bg-[#B58E31]/20 rounded-full blur-xl"></div>
-                <div className="relative bg-gradient-to-br from-[#B58E31] to-[#A67D2A] rounded-3xl p-10 lg:p-12 text-white shadow-2xl transform hover:scale-105 transition-transform duration-300">
-                  <div className="flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl mb-8 mx-auto">
-                    <Heart className="w-10 h-10" />
+                <div className="relative bg-gradient-to-br from-[#B58E31] to-[#A67D2A] rounded-3xl p-6 lg:p-8 text-white shadow-2xl transform hover:scale-105 transition-transform duration-300">
+                  <div className="flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-6 mx-auto">
+                    <Heart className="w-8 h-8" />
                   </div>
 
-                  <div className="space-y-6 text-center">
-                    <p className="text-lg leading-relaxed">
+                  <div className="space-y-4 text-center">
+                    <p className="text-base leading-relaxed">
                       Así, Market Club se volvió{" "}
                       <span className="font-bold">más que una marca</span>: un
                       punto de encuentro, un espacio para compartir, reírse y
                       desconectarse del día a día.
                     </p>
-                    <p className="text-lg leading-relaxed">
+                    <p className="text-base leading-relaxed">
                       Somos esa cerveza que acompaña los momentos simples, pero
                       que se sienten grandes cuando estás rodeado de buena
                       gente.
                     </p>
-                    <p className="text-lg leading-relaxed font-medium">
+                    <p className="text-base leading-relaxed font-medium">
                       Hecha con berraquera, sabor y el toque justo pa' compartir
                       con los que más querés.
                     </p>
 
-                    <div className="border-t border-white/30 pt-8 mt-8">
-                      <Quote className="w-8 h-8 mx-auto mb-4 opacity-50" />
-                      <p className="text-2xl lg:text-3xl font-bold italic">
+                    <div className="border-t border-white/30 pt-6 mt-6">
+                      <Quote className="w-6 h-6 mx-auto mb-3 opacity-50" />
+                      <p className="text-xl lg:text-2xl font-bold italic">
                         "Market Club no solo se toma… se vive."
                       </p>
                     </div>
@@ -126,11 +126,11 @@ export default function QuienesSomosPage() {
       </section>
 
       {/* Lo que nos hace únicos */}
-      <section className="py-20 lg:py-32 bg-gradient-to-b from-gray-50 to-white relative">
+      <section className="py-8 lg:py-8 bg-gradient-to-b from-gray-50 to-white relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
             {/* Header de sección */}
-            <div className="text-center mb-16">
+            <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-white rounded-full px-6 py-3 mb-6 shadow-sm border border-gray-200">
                 <Trophy className="w-5 h-5 text-[#B58E31]" />
                 <span className="text-gray-900 font-medium">
@@ -138,12 +138,12 @@ export default function QuienesSomosPage() {
                 </span>
               </div>
               <h2
-                className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6"
+                className="text-[30px] sm:text-4xl lg:text-6xl font-bold text-gray-900 mb-4"
                 style={{ fontFamily: "var(--font-oswald)", fontWeight: 700 }}
               >
                 Lo que nos hace únicos
               </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-6">
                 En Market Club creemos que cada cerveza cuenta una historia, y
                 nosotros te traemos las mejores del mundo para que las vivás a
                 tu manera.
@@ -151,7 +151,7 @@ export default function QuienesSomosPage() {
             </div>
 
             {/* Cards mejoradas */}
-            <div className="grid lg:grid-cols-3 gap-8 mb-20">
+            <div className="grid lg:grid-cols-3 gap-8 mb-8">
               {/* Card 1 */}
               <div className="group bg-white rounded-3xl p-10 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
                 <div className="text-center">
@@ -162,7 +162,7 @@ export default function QuienesSomosPage() {
                     className="text-2xl font-bold text-gray-900 mb-4"
                     style={{ fontFamily: "var(--font-oswald)" }}
                   >
-                    Historias que Cuentan
+                    Historias que cuentan
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-lg">
                     Cada cerveza cuenta una historia, y nosotros te traemos las
@@ -181,7 +181,7 @@ export default function QuienesSomosPage() {
                     className="text-2xl font-bold text-gray-900 mb-4"
                     style={{ fontFamily: "var(--font-oswald)" }}
                   >
-                    Variedad Mundial
+                    Variedad mundial
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-lg">
                     Reunimos en un solo lugar cervezas importadas de casi todos
@@ -201,7 +201,7 @@ export default function QuienesSomosPage() {
                     className="text-2xl font-bold text-gray-900 mb-4"
                     style={{ fontFamily: "var(--font-oswald)" }}
                   >
-                    Punto de Encuentro
+                    Punto de encuentro
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-lg">
                     Market Club es ese punto de encuentro donde se juntan los
@@ -232,7 +232,7 @@ export default function QuienesSomosPage() {
                   <div className="w-20 h-1 bg-[#B58E31] mx-auto mb-8 rounded-full"></div>
 
                   <p
-                    className="text-3xl lg:text-4xl font-bold leading-tight"
+                    className="text-[30px] sm:text-3xl lg:text-4xl font-bold leading-tight"
                     style={{ fontFamily: "var(--font-oswald)" }}
                   >
                     No somos un bar cualquiera: Somos el club donde cada cerveza
@@ -246,12 +246,12 @@ export default function QuienesSomosPage() {
       </section>
 
       {/* Beto Section */}
-      <section className="py-20 lg:py-32 bg-white relative overflow-hidden">
+      <section className="py-8 lg:py-8 bg-white relative overflow-hidden">
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#B58E31]/5 rounded-full blur-3xl"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto">
             {/* Header */}
-            <div className="text-center mb-16">
+            <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-[#B58E31]/10 rounded-full px-6 py-3 mb-6 border border-[#B58E31]/20">
                 <Smile className="w-5 h-5 text-[#B58E31]" />
                 <span className="text-[#B58E31] font-medium">
@@ -265,12 +265,12 @@ export default function QuienesSomosPage() {
               <div className="order-2 lg:order-1">
                 <div className="relative">
                   <div className="absolute -top-4 -left-4 w-32 h-32 bg-[#B58E31]/20 rounded-full blur-2xl"></div>
-                  <div className="relative bg-gradient-to-br from-[#B58E31] via-[#A67D2A] to-[#8B6F1F] rounded-3xl p-16 text-white text-center shadow-2xl transform hover:scale-105 transition-transform duration-300">
-                    <div className="inline-flex items-center justify-center w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full mb-8 shadow-xl">
-                      <Users className="w-16 h-16" />
+                  <div className="relative bg-gradient-to-br from-[#B58E31] via-[#A67D2A] to-[#8B6F1F] rounded-3xl p-20 text-white text-center shadow-2xl transform hover:scale-105 transition-transform duration-300">
+                    <div className="inline-flex items-center justify-center w-40 h-40 bg-white/20 backdrop-blur-sm rounded-full mb-10 shadow-xl">
+                      <Users className="w-20 h-20" />
                     </div>
                     <h3
-                      className="text-5xl lg:text-6xl font-bold mb-6"
+                      className="text-[30px] sm:text-6xl lg:text-7xl font-bold mb-8"
                       style={{
                         fontFamily: "var(--font-oswald)",
                         fontWeight: 700,
@@ -278,14 +278,14 @@ export default function QuienesSomosPage() {
                     >
                       Beto
                     </h3>
-                    <div className="w-20 h-1 bg-white/50 mx-auto mb-6 rounded-full"></div>
-                    <p className="text-2xl font-medium">
+                    <div className="w-24 h-1 bg-white/50 mx-auto mb-8 rounded-full"></div>
+                    <p className="text-2xl lg:text-3xl font-medium mb-6">
                       El corazón de Market Club
                     </p>
-                    <div className="mt-8 flex items-center justify-center gap-2">
-                      <Heart className="w-6 h-6 text-white/80" />
-                      <Heart className="w-8 h-8" />
-                      <Heart className="w-6 h-6 text-white/80" />
+                    <div className="mt-12 flex items-center justify-center gap-3">
+                      <Heart className="w-8 h-8 text-white/80" />
+                      <Heart className="w-10 h-10" />
+                      <Heart className="w-8 h-8 text-white/80" />
                     </div>
                   </div>
                 </div>
@@ -332,7 +332,7 @@ export default function QuienesSomosPage() {
       </section>
 
       {/* Call to Action */}
-      <section className="relative py-24 lg:py-32 bg-black overflow-hidden">
+      <section className="relative py-12 lg:py-16 bg-black overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#B58E31]/20 to-transparent"></div>
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#B58E31]/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#B58E31]/10 rounded-full blur-3xl"></div>
@@ -347,13 +347,13 @@ export default function QuienesSomosPage() {
             </div>
 
             <h2
-              className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight"
+              className="text-[30px] sm:text-4xl lg:text-6xl font-bold text-white mb-4 leading-tight"
               style={{ fontFamily: "var(--font-oswald)", fontWeight: 700 }}
             >
               ¿Listo para vivir la experiencia Market Club?
             </h2>
 
-            <p className="text-xl lg:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl lg:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
               Descubre nuestras cervezas importadas, arma tu regalo perfecto y
               únete al club donde cada momento cuenta
             </p>
@@ -365,7 +365,7 @@ export default function QuienesSomosPage() {
                 style={{ fontFamily: "var(--font-oswald)" }}
               >
                 <Beer className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" />
-                Explorar Tienda
+                Explorar tienda
               </a>
               <a
                 href="/arma-tu-regalo"
@@ -373,11 +373,11 @@ export default function QuienesSomosPage() {
                 style={{ fontFamily: "var(--font-oswald)" }}
               >
                 <Heart className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                Armá tu Regalo
+                Armá tu regalo
               </a>
             </div>
 
-            <div className="flex items-center justify-center gap-3 mt-16 opacity-50">
+            <div className="flex items-center justify-center gap-3 mt-12 opacity-50">
               <div className="w-12 h-1 bg-[#B58E31] rounded-full"></div>
               <Beer className="w-5 h-5 text-[#B58E31]" />
               <div className="w-12 h-1 bg-[#B58E31] rounded-full"></div>

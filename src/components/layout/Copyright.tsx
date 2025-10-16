@@ -2,7 +2,7 @@
 
 export default function Copyright() {
   return (
-    <div className="bg-gray-50 py-4">
+    <div className="bg-gray-50 py-4 pb-20 lg:pb-4">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           {/* Copyright */}

@@ -8,13 +8,12 @@ export default function BeerClubSection() {
     <div className={`relative z-10 ${align === "center" ? "text-center" : ""}`}>
       <div>
         <h3
-          className={`text-white mb-4 lg:mb-6 ${
+          className={`text-white mb-4 lg:mb-6 text-[30px] sm:text-3xl md:text-5xl lg:text-6xl ${
             align === "center" ? "mx-auto" : ""
           }`}
           style={{
             fontFamily: "var(--font-oswald)",
             fontWeight: 700,
-            fontSize: align === "center" ? "42px" : "64px",
             lineHeight: "100%",
             letterSpacing: "0px",
           }}
@@ -23,13 +22,13 @@ export default function BeerClubSection() {
         </h3>
 
         <p
-          className="text-white mb-6 lg:mb-8"
+          className="text-white mb-6 lg:mb-8 text-sm sm:text-base md:text-xl lg:text-2xl"
           style={{
             fontFamily: "var(--font-inter)",
             fontWeight: 400,
-            fontSize: align === "center" ? "18px" : "32px",
-            lineHeight: align === "center" ? "26px" : "34px",
+            lineHeight: "1.4",
             letterSpacing: "0px",
+            fontSize: "clamp(14px, 1.8vw, 28px)",
           }}
         >
           Como miembro, tendrás privilegios únicos:  descuentos especiales, acceso exclusivo y 

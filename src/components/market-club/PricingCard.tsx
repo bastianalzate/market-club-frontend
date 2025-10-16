@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Beer } from "lucide-react";
 import { PricingPlan } from "@/types/market-club";
 
 interface PricingCardProps extends PricingPlan {
@@ -22,10 +23,21 @@ export default function PricingCard({
 }: PricingCardProps) {
   // Función para obtener los iconos de cerveza según el plan
   const getBeerIcons = (planName: string) => {
-    if (planName.includes("Curioso")) return "🍺";
-    if (planName.includes("Coleccionista")) return "🍺🍺";
-    if (planName.includes("Maestro")) return "🍺🍺🍺";
-    return "🍺";
+    if (planName.includes("Curioso")) return <Beer className="w-5 h-5 inline" style={{ color: "#B58E31" }} />;
+    if (planName.includes("Coleccionista")) return (
+      <>
+        <Beer className="w-5 h-5 inline" style={{ color: "#B58E31" }} />
+        <Beer className="w-5 h-5 inline ml-1" style={{ color: "#B58E31" }} />
+      </>
+    );
+    if (planName.includes("Maestro")) return (
+      <>
+        <Beer className="w-5 h-5 inline" style={{ color: "#B58E31" }} />
+        <Beer className="w-5 h-5 inline ml-1" style={{ color: "#B58E31" }} />
+        <Beer className="w-5 h-5 inline ml-1" style={{ color: "#B58E31" }} />
+      </>
+    );
+    return <Beer className="w-5 h-5 inline" style={{ color: "#B58E31" }} />;
   };
 
   // Función para determinar si es el plan Maestro
@@ -72,7 +84,7 @@ export default function PricingCard({
             fontWeight: 600,
           }}
         >
-          {name} <span className="text-2xl ml-2">{getBeerIcons(name)}</span>
+          {name} <span className="ml-2">{getBeerIcons(name)}</span>
         </h3>
 
         <p
@@ -131,14 +143,11 @@ export default function PricingCard({
         <button
           className={`w-full py-3 px-4 rounded-md font-medium transition-all duration-200 hover:scale-105 cursor-pointer ${
             isHighlighted && name !== "Maestro Cervecero"
-              ? "bg-white text-black hover:bg-gray-100"
+              ? "text-white hover:opacity-90"
               : "text-white hover:opacity-90"
           }`}
           style={{
-            backgroundColor:
-              isHighlighted && name !== "Maestro Cervecero"
-                ? "white"
-                : buttonColor,
+            backgroundColor: buttonColor,
             fontFamily: "var(--font-inter)",
             fontSize: "14px",
             fontWeight: 600,

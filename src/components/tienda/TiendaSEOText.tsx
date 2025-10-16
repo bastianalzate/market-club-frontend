@@ -13,7 +13,7 @@ export default function TiendaSEOText() {
   return (
     <section className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-12">
       <div className="prose prose-lg max-w-none text-gray-700">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+        <h2 className="text-[30px] sm:text-2xl font-bold text-gray-900 mb-4">
           Compra cervezas artesanales e importadas en Market Club
         </h2>
         <p>
@@ -36,7 +36,7 @@ export default function TiendaSEOText() {
           buen precio, aquí encontrarás la mejor selección para armar tu pedido
           ideal.
         </p>
-        <h3 className="text-xl font-semibold text-gray-900 mt-8 mb-3">
+        <h3 className="text-[30px] sm:text-xl font-semibold text-gray-900 mt-8 mb-3">
           ¿Qué cervezas puedes encontrar?
         </h3>
         <ul className="list-disc pl-6">

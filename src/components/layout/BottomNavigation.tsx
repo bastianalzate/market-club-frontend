@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import {
   Home,
   ShoppingBag,
@@ -19,6 +20,39 @@ export default function BottomNavigation() {
   const pathname = usePathname();
   const cartContext = useCartContext();
   const { openLoginModal } = useAuth();
+  const navRef = useRef<HTMLDivElement>(null);
+
+  // Hook para mantener el menú siempre visible
+  useEffect(() => {
+    const handleScroll = () => {
+      if (navRef.current) {
+        navRef.current.style.transform = 'translateY(0)';
+        navRef.current.style.transition = 'transform 0.2s ease-in-out';
+      }
+    };
+
+    const handleResize = () => {
+      if (navRef.current) {
+        navRef.current.style.transform = 'translateY(0)';
+      }
+    };
+
+    // Forzar visibilidad inicial
+    if (navRef.current) {
+      navRef.current.style.transform = 'translateY(0)';
+    }
+
+    // Agregar listeners
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+    };
+  }, []);
 
   // Validar que el contexto esté disponible
   if (!cartContext) {
@@ -71,7 +105,15 @@ export default function BottomNavigation() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg lg:hidden">
+    <div 
+      ref={navRef}
+      className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg lg:hidden"
+      style={{
+        zIndex: 9999,
+        transform: 'translateZ(0)',
+        willChange: 'transform',
+      }}
+    >
       <div className="grid grid-cols-4 h-16">
         {navigationItems.map((item) => {
           const IconComponent = item.icon;
