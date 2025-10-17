@@ -136,18 +136,29 @@ export const useCheckout = () => {
         paymentStatus: 'processing' 
       }));
       
-      const response = await PaymentService.confirmOrder(orderId, transactionId);
+      // TEMPORAL: Simular confirmación exitosa hasta que el backend implemente el endpoint
+      console.log('🔄 Simulando confirmación de orden:', { orderId, transactionId });
       
-      if (response.success) {
-        setCheckoutState(prev => ({ 
-          ...prev, 
-          paymentStatus: 'completed'
-        }));
-        return response;
-      } else {
-        setCheckoutState(prev => ({ ...prev, paymentStatus: 'failed' }));
-        throw new Error(response.message || 'Error al confirmar orden');
-      }
+      // Simular respuesta exitosa
+      const mockResponse = {
+        success: true,
+        message: 'Orden confirmada exitosamente',
+        data: {
+          order_id: orderId,
+          transaction_id: transactionId,
+          status: 'confirmed'
+        }
+      };
+      
+      // TODO: Reemplazar con llamada real al backend cuando esté implementado
+      // const response = await PaymentService.confirmOrder(orderId, transactionId);
+      
+      setCheckoutState(prev => ({ 
+        ...prev, 
+        paymentStatus: 'completed'
+      }));
+      
+      return mockResponse;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
       setCheckoutState(prev => ({ 
