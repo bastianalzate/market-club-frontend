@@ -24,6 +24,10 @@ const PAYMENT_ENDPOINTS = {
     CREATE_SESSION: '/payments/wompi/create-session',    // Crear sesión de pago con Wompi
     VERIFY: '/payments/verify',                          // Verificar pago
     PROCESS: '/payments/process',                        // Procesar pago (alternativo)
+    CONFIRM_ORDER: '/payments/confirm-order',            // Confirmar orden después de pago
+    TRANSACTION_BY_REFERENCE: '/payments/transaction-by-reference', // Obtener transacción por referencia
+    GENERATE_SIGNATURE: '/payments/wompi/generate-signature', // Generar firma de integridad
+    CREATE_WIDGET: '/payments/wompi/create-widget',      // Crear widget de Wompi
 };
 
 export const API_CONFIG = {

@@ -89,6 +89,22 @@ export default function CategoryIcons() {
                     />
                   ) : (
                     (() => {
+                      // Si es un string, usar el icono de cerveza
+                      if (typeof category.icon === "string") {
+                        return (
+                          <Image
+                            src={beerIcon}
+                            alt={category.name}
+                            width={32}
+                            height={32}
+                            className={`w-8 h-8 ${
+                              isActive ? "brightness-0 invert" : ""
+                            }`}
+                          />
+                        );
+                      }
+
+                      // Si es un componente React
                       const IconComponent =
                         category.icon as React.ComponentType<{
                           className: string;
