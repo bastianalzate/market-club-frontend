@@ -44,7 +44,7 @@ export default function HeroSection() {
 
               {/* Texto responsivo - con salto de línea en desktop */}
               <h1
-                className="hidden sm:block font-bold text-white text-[80px] sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl"
+                className="hidden sm:block font-bold text-white text-[80px] sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-[94px]"
                 style={{
                   fontFamily: "var(--font-oswald)",
                   lineHeight: "100%",

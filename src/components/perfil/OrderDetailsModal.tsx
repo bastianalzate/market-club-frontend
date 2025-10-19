@@ -118,7 +118,12 @@ export default function OrderDetailsModal({
       return `${baseUrl}/${cleanPath}`;
     }
 
-    // Para rutas que no empiezan con storage/, asumir que van en storage/
+    // Para rutas que empiezan con uploads/, usar directamente
+    if (imageUrl.startsWith("uploads/")) {
+      return `${baseUrl}/${imageUrl}`;
+    }
+
+    // Para otras rutas, asumir que van en storage/
     return `${baseUrl}/storage/${imageUrl}`;
   };
 
@@ -206,7 +211,7 @@ export default function OrderDetailsModal({
                 const baseUrl = constants.api_url.replace("/api", "");
                 return product.image.startsWith("http")
                   ? product.image
-                  : `${baseUrl}/storage/${product.image}`;
+                  : `${baseUrl}/${product.image}`;
               })();
 
             console.log(`🍺 Using image URL for beer ${beerId}:`, imageUrl);
@@ -253,7 +258,7 @@ export default function OrderDetailsModal({
       }
       // Si es una ruta relativa, construir la URL completa
       const baseUrl = constants.api_url.replace("/api", "");
-      return `${baseUrl}/storage/${beer.image}`;
+      return `${baseUrl}/${beer.image}`;
     }
     return "/images/cervezas/bottella-01.png";
   };

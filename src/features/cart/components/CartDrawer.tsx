@@ -61,7 +61,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     }
 
     // Construir URL completa con la base del backend
-    return `http://localhost:8000/storage/${imagePath}`;
+    return `http://localhost:8000/${imagePath}`;
   };
 
   // Función para obtener el nombre del item (producto o regalo)

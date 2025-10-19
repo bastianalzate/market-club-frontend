@@ -571,7 +571,7 @@ export default function GiftBuilder() {
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            País de origen
+                            Paises
                           </label>
                           <select
                             value={selectedCountry}
@@ -589,7 +589,7 @@ export default function GiftBuilder() {
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Estilo de cerveza
+                            Estilos
                           </label>
                           <select
                             value={selectedCategory}

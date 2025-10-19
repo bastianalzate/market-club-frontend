@@ -51,7 +51,7 @@ export default function CheckoutFlow() {
       }
       // Si es una ruta relativa, construir la URL completa
       const baseUrl = constants.api_url.replace("/api", "");
-      return `${baseUrl}/storage/${product.image}`;
+      return `${baseUrl}/${product.image}`;
     }
     return "/images/cervezas/bottella-01.png";
   };
@@ -169,7 +169,9 @@ export default function CheckoutFlow() {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Checkout</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+            Checkout
+          </h1>
           <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2 px-4">
             Completa tu pedido de forma segura
           </p>

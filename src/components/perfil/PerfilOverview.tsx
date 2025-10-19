@@ -24,6 +24,8 @@ import { useToast } from "@/hooks/useToast";
 import { useEffect, useState } from "react";
 import Toast from "@/components/shared/Toast";
 import CancelSubscriptionModal from "@/components/shared/CancelSubscriptionModal";
+import SubscriptionCheckout from "@/components/subscriptions/SubscriptionCheckout";
+import { useRouter } from "next/navigation";
 
 interface User {
   id: string;
@@ -65,6 +67,9 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
   } = useSubscription();
   const { toast, showSuccess, showError, hideToast } = useToast();
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
+  const router = useRouter();
 
   // Cargar datos al montar el componente
   useEffect(() => {
@@ -163,16 +168,13 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
   };
 
   const handleSubscribe = async (planId: string | number) => {
-    const result = await subscribe(String(planId));
-    if (result.success) {
-      showSuccess(
-        "¡Suscripción exitosa!",
-        "Te has suscrito exitosamente a Market Club Premium."
-      );
-      // Recargar historial después de suscribirse
-      loadHistory();
-    } else {
-      showError("Error", result.message);
+    // Encontrar el plan seleccionado
+    const plan = plans.find(p => p.id === planId);
+    if (plan) {
+      console.log("🔍 Selected plan for checkout:", plan);
+      console.log("🔍 Plan slug:", plan.slug);
+      setSelectedPlan(plan);
+      setShowCheckout(true);
     }
   };
 
@@ -960,6 +962,49 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
         type={toast.type}
         onClose={hideToast}
       />
+
+      {/* Modal de Checkout de Suscripción */}
+      {showCheckout && selectedPlan && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold text-gray-900">
+                  Suscribirse a {selectedPlan.name}
+                </h2>
+                <button
+                  onClick={() => setShowCheckout(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                  title="Cerrar"
+                  aria-label="Cerrar modal"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <SubscriptionCheckout
+                planId={selectedPlan.slug}
+                planName={selectedPlan.name}
+                totalAmount={parseInt(selectedPlan.price)}
+                onSuccess={() => {
+                  setShowCheckout(false);
+                  showSuccess(
+                    "¡Suscripción exitosa!",
+                    "Te has suscrito exitosamente a Market Club Premium."
+                  );
+                  // Recargar datos después del pago exitoso
+                  loadCurrentSubscription();
+                  loadHistory();
+                  loadPlans();
+                }}
+                onClose={() => setShowCheckout(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

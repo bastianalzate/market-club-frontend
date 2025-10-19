@@ -68,7 +68,12 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
       return `${baseUrl}/${cleanPath}`;
     }
 
-    // Para rutas que no empiezan con storage/, asumir que van en storage/
+    // Para rutas que empiezan con uploads/, usar directamente
+    if (imageUrl.startsWith("uploads/")) {
+      return `${baseUrl}/${imageUrl}`;
+    }
+
+    // Para otras rutas, asumir que van en storage/
     return `${baseUrl}/storage/${imageUrl}`;
   };
 
@@ -443,8 +448,8 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
             <p className="text-gray-500 mb-6">
               Cuando realices tu primera compra, aparecerá aquí.
             </p>
-            <button 
-              onClick={() => router.push('/tienda')}
+            <button
+              onClick={() => router.push("/tienda")}
               className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
             >
               Ir a la tienda

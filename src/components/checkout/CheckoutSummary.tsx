@@ -33,7 +33,7 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
       }
       // Si es una ruta relativa, construir la URL completa
       const baseUrl = constants.api_url.replace("/api", "");
-      return `${baseUrl}/storage/${product.image}`;
+      return `${baseUrl}/${product.image}`;
     }
     return "/images/cervezas/bottella-01.png";
   };
