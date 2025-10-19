@@ -140,6 +140,62 @@ export class PaymentService {
         return response.json();
     }
 
+    // Generar firma de integridad para Wompi (órdenes)
+    static async generateSignature(data) {
+        console.log('🔐 Generating signature for order:', data);
+        
+        const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PAYMENTS.GENERATE_SIGNATURE}`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(data)
+        });
+        
+        console.log('🔐 Signature response:', response.status);
+        const result = await response.json();
+        console.log('🔐 Signature result:', result);
+        
+        return result;
+    }
+
+    // Generar firma de integridad para suscripciones
+    static async generateSubscriptionSignature(data) {
+        console.log('🔐 Generating signature for subscription:', data);
+        
+        const response = await fetch(`${API_CONFIG.BASE_URL}/payments/wompi/generate-subscription-signature`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(data)
+        });
+        
+        console.log('🔐 Subscription signature response:', response.status);
+        const result = await response.json();
+        console.log('🔐 Subscription signature result:', result);
+        
+        return result;
+    }
+
+    // Procesar pago de suscripción
+    static async processSubscriptionPayment(planId, transactionId, reference, amount) {
+        console.log('💳 Processing subscription payment:', { planId, transactionId, reference, amount });
+        
+        const response = await fetch(`${API_CONFIG.BASE_URL}/payments/process-subscription`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({
+                plan_id: planId,
+                transaction_id: transactionId,
+                reference: reference,
+                amount: amount
+            })
+        });
+        
+        console.log('💳 Subscription payment response:', response.status);
+        const result = await response.json();
+        console.log('💳 Subscription payment result:', result);
+        
+        return result;
+    }
+
     // Obtener métodos de pago disponibles
     static async getPaymentMethods() {
         try {

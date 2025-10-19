@@ -28,9 +28,13 @@ export const WOMPI_CONFIG = {
   },
   
   // URL de redirección para suscripciones
-  getSubscriptionRedirectUrl: () => {
+  getSubscriptionRedirectUrl: (planId?: string, transactionId?: string, reference?: string) => {
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
-    return `${baseUrl}/club-socios?subscription=success`;
+    const params = new URLSearchParams();
+    if (planId) params.set('plan_id', planId);
+    if (transactionId) params.set('transaction_id', transactionId);
+    if (reference) params.set('reference', reference);
+    return `${baseUrl}/club-socios/success?${params.toString()}`;
   },
   
   // URL del webhook para notificaciones de Wompi

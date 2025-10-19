@@ -30,6 +30,7 @@ export interface SubscriptionSectionConfig {
 
 export interface PricingPlan {
   id: string;
+  slug?: string;
   name: string;
   price: string;
   period: string;

@@ -42,6 +42,9 @@ export const API_CONFIG = {
 // Utilidades de autenticación
 export const getAuthHeaders = () => {
     const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
+    console.log('🔐 Getting auth headers, token found:', !!token);
+    console.log('🔐 Token value:', token ? token.substring(0, 20) + '...' : 'null');
+    
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -49,6 +52,9 @@ export const getAuthHeaders = () => {
     
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
+        console.log('🔐 Authorization header set:', `Bearer ${token.substring(0, 20)}...`);
+    } else {
+        console.warn('⚠️ No token found in localStorage');
     }
     
     return headers;
