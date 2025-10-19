@@ -14,6 +14,7 @@ export interface HeroSectionConfig {
 
 export interface SubscriptionPlan {
   id: string;
+  slug?: string;
   name: string;
   price: string;
   description: string;

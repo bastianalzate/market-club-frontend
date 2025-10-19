@@ -10,7 +10,8 @@ export async function POST(request: NextRequest) {
     console.log('📦 Webhook payload:', JSON.stringify(body, null, 2));
     
     // Verificar la firma del webhook (IMPORTANTE para seguridad)
-    const signature = headers().get('x-wompi-signature');
+    const headersList = await headers();
+    const signature = headersList.get('x-wompi-signature');
     if (!signature) {
       console.error('❌ Missing webhook signature');
       return NextResponse.json({ error: 'Missing signature' }, { status: 400 });

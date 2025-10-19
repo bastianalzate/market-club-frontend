@@ -4,6 +4,7 @@ import { getAuthHeaders } from '@/utils/authHeaders';
 
 interface SubscriptionPlan {
   id: string; // Ahora es slug (string)
+  slug?: string;
   name: string;
   price: string; // Ahora es string
   currency: string;
