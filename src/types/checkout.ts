@@ -38,16 +38,19 @@ export interface CheckoutSummary {
 
 export interface CartItem {
   id: number;
-  product_id: number;
+  product_id: number | null;
+  gift_id?: string;
   quantity: number;
-  unit_price: number;
-  total_price: number;
+  unit_price: string | number;
+  total_price: string | number;
   product: {
     id: number;
     name: string;
     image?: string;
     image_url?: string;
-  };
+  } | null;
+  is_gift?: boolean;
+  gift_data?: any;
 }
 
 export interface PaymentMethod {

@@ -13,7 +13,8 @@ import {
   PaymentTokenResponse,
   ProcessPaymentResponse,
   VerifyPaymentResponse,
-  PaymentMethod
+  PaymentMethod,
+  CartItem
 } from '../types/checkout';
 
 export const useCheckout = () => {
