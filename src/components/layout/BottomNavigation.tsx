@@ -107,9 +107,9 @@ export default function BottomNavigation() {
   return (
     <div 
       ref={navRef}
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg lg:hidden"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-lg lg:hidden"
       style={{
-        zIndex: 9999,
+        zIndex: 40,
         transform: 'translateZ(0)',
         willChange: 'transform',
       }}
