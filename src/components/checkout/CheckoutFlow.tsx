@@ -158,9 +158,8 @@ export default function CheckoutFlow() {
         const TAX_RATE = 0.19; // 19%
         const calculatedTaxAmount = Math.round(manualSubtotal * TAX_RATE);
 
-        // Usar impuestos calculados si el backend no los proporciona
-        const finalTaxAmount =
-          parseFloat(String(cart.tax_amount || 0)) || calculatedTaxAmount;
+        // Usar siempre el cálculo local del IVA (19%)
+        const finalTaxAmount = calculatedTaxAmount;
         const shippingAmount = parseFloat(String(cart.shipping_amount || 0));
 
         const orderData = {
@@ -763,10 +762,7 @@ export default function CheckoutFlow() {
                                   const calculatedTax = Math.round(
                                     subtotal * TAX_RATE
                                   );
-                                  return (
-                                    parseFloat(String(cart?.tax_amount || 0)) ||
-                                    calculatedTax
-                                  );
+                                  return calculatedTax;
                                 })()
                               : orderData?.tax_amount || 0
                           )}
@@ -793,9 +789,7 @@ export default function CheckoutFlow() {
                                   const calculatedTax = Math.round(
                                     subtotal * TAX_RATE
                                   );
-                                  const finalTax =
-                                    parseFloat(String(cart?.tax_amount || 0)) ||
-                                    calculatedTax;
+                                  const finalTax = calculatedTax;
                                   return subtotal + shipping + finalTax;
                                 })()
                               : orderData?.total_amount || 0

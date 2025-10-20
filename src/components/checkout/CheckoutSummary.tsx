@@ -48,9 +48,8 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
   const TAX_RATE = 0.19; // 19%
   const calculatedTaxAmount = Math.round(manualSubtotal * TAX_RATE);
 
-  // Usar impuestos calculados si el backend no los proporciona
-  const finalTaxAmount =
-    parseFloat(String(cart?.tax_amount || 0)) || calculatedTaxAmount;
+  // Usar siempre el cálculo local del IVA (19%)
+  const finalTaxAmount = calculatedTaxAmount;
 
   // Calcular total manualmente
   const manualTotal =
