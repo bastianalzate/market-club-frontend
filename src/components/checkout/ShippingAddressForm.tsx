@@ -60,16 +60,12 @@ export default function ShippingAddressForm({
     setIsLoading(true);
 
     try {
-      // Simular un pequeño delay para mostrar el loading
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       // Continuar directamente sin validar la dirección
       console.log("📍 Dirección ingresada:", formData);
       showSuccess("Dirección guardada", "Continuando con el proceso de pago");
       onNext(formData);
     } catch (error) {
       showError("Error", "Hubo un problema al procesar la dirección");
-    } finally {
       setIsLoading(false);
     }
   };
