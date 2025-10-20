@@ -128,6 +128,13 @@ export interface CheckoutState {
   error: string | null;
   orderId: string | null;
   paymentStatus: 'pending' | 'processing' | 'completed' | 'failed';
+  orderData: {
+    items: CartItem[];
+    subtotal: number;
+    shipping_amount: number;
+    tax_amount: number;
+    total_amount: number;
+  } | null;
 }
 
 export interface PaymentFormData {

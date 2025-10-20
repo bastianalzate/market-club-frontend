@@ -26,7 +26,8 @@ export const useCheckout = () => {
     loading: false,
     error: null,
     orderId: null,
-    paymentStatus: 'pending'
+    paymentStatus: 'pending',
+    orderData: null
   });
 
   const [summary, setSummary] = useState<CheckoutSummary | null>(null);
@@ -216,6 +217,17 @@ export const useCheckout = () => {
     }
   }, []);
 
+  // Guardar datos de la orden
+  const saveOrderData = useCallback((orderData: {
+    items: CartItem[];
+    subtotal: number;
+    shipping_amount: number;
+    tax_amount: number;
+    total_amount: number;
+  }) => {
+    setCheckoutState(prev => ({ ...prev, orderData }));
+  }, []);
+
   // Actualizar paso actual
   const setCurrentStep = useCallback((step: number) => {
     setCheckoutState(prev => ({ ...prev, currentStep: step }));
@@ -237,7 +249,8 @@ export const useCheckout = () => {
       loading: false,
       error: null,
       orderId: null,
-      paymentStatus: 'pending'
+      paymentStatus: 'pending',
+      orderData: null
     });
     setSummary(null);
   }, []);
@@ -252,6 +265,7 @@ export const useCheckout = () => {
     verifyPayment,
     setCurrentStep,
     clearError,
-    resetCheckout
+    resetCheckout,
+    saveOrderData
   };
 };

@@ -15,7 +15,7 @@ import { constants } from "@/config/constants";
 export default function CheckoutFlow() {
   const router = useRouter();
   const { cart, itemsCount, loadCart } = useCartContext();
-  const { checkoutState, createOrder, setCurrentStep, resetCheckout } =
+  const { checkoutState, createOrder, setCurrentStep, resetCheckout, saveOrderData } =
     useCheckout();
   const { toast, showSuccess, showError, hideToast } = useToast();
 
@@ -79,7 +79,7 @@ export default function CheckoutFlow() {
     try {
       setShippingAddress(address);
 
-      // Guardar los datos del carrito antes de crear la orden
+      // Guardar los datos de la orden antes de crear la orden
       if (cart) {
         console.log("🔍 Cart data before saving:", cart);
 
@@ -98,15 +98,18 @@ export default function CheckoutFlow() {
           parseFloat(String(cart.tax_amount || 0)) || calculatedTaxAmount;
         const shippingAmount = parseFloat(String(cart.shipping_amount || 0));
 
-        const savedData = {
+        const orderData = {
           items: cart.items,
           subtotal: manualSubtotal,
           shipping_amount: shippingAmount,
           tax_amount: finalTaxAmount,
           total_amount: manualSubtotal + shippingAmount + finalTaxAmount,
         };
-        console.log("💾 Saving order data:", savedData);
-        setOrderData(savedData);
+        console.log("💾 Saving order data:", orderData);
+        
+        // Guardar en Redux
+        saveOrderData(orderData);
+        setOrderData(orderData);
       }
 
       const orderResponse = await createOrder(address, undefined, "");
@@ -154,10 +157,12 @@ export default function CheckoutFlow() {
   };
 
   const handleCompleteOrder = async () => {
+    // Limpiar el carrito - el carrito ya se limpia automáticamente después del pago
+    // Solo necesitamos limpiar el estado del checkout
     resetCheckout();
     // Asegurar sincronización final del carrito antes de redirigir
     await loadCart();
-    router.push("/");
+    router.push("/tienda");
   };
 
   if (itemsCount === 0 && !checkoutState.orderId) {
@@ -313,14 +318,118 @@ export default function CheckoutFlow() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 order-2 lg:order-1">
-            {currentStep === 1 && (
-              <CheckoutSummary onContinue={() => handleStepChange(2)} />
-            )}
+        {currentStep === 4 ? (
+          // Para el paso 4 (confirmación), no usar grid
+          <div className="flex items-center justify-center min-h-[60vh] px-4">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 max-w-4xl w-full">
+              <div className="bg-white rounded-lg shadow-sm border">
+                <div className="px-6 py-8 text-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg
+                      className="w-8 h-8 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
 
-            {currentStep === 2 && (
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    ¡Pedido Completado!
+                  </h2>
+
+                  <p className="text-gray-600 mb-6">
+                    Tu pedido ha sido procesado exitosamente. Recibirás un email
+                    de confirmación pronto.
+                  </p>
+
+                  {checkoutState.orderId && (
+                    <div className="bg-gray-50 rounded-lg p-6 mb-6">
+                      <div className="text-center mb-4">
+                        <p className="text-lg font-semibold text-gray-900">
+                          Número de orden: {checkoutState.orderId}
+                        </p>
+                      </div>
+                      
+                      {/* Detalles de productos */}
+                      {checkoutState.orderData && checkoutState.orderData.items && checkoutState.orderData.items.length > 0 && (
+                        <div className="border-t pt-4">
+                          <h4 className="text-sm font-semibold text-gray-900 mb-3">Productos comprados:</h4>
+                          <div className="space-y-2">
+                            {checkoutState.orderData.items.map((item: any, index: number) => (
+                              <div key={index} className="flex justify-between items-center text-sm">
+                                <div className="text-left">
+                                  <p className="font-medium text-gray-900">
+                                    {item.product?.name || 'Producto'}
+                                  </p>
+                                  <p className="text-gray-600">
+                                    Cantidad: {item.quantity}
+                                  </p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="font-semibold text-gray-900">
+                                    ${new Intl.NumberFormat('es-CO').format(item.total_price)}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {/* Resumen de totales */}
+                          <div className="border-t pt-4 mt-4">
+                            <div className="space-y-1 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-gray-900">Subtotal:</span>
+                                <span className="font-medium text-gray-900">${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.subtotal || 0)}</span>
+                              </div>
+                              {checkoutState.orderData.tax_amount > 0 && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-900">IVA (19%):</span>
+                                  <span className="font-medium text-gray-900">${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.tax_amount)}</span>
+                                </div>
+                              )}
+                              {checkoutState.orderData.shipping_amount > 0 && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-900">Envío:</span>
+                                  <span className="font-medium text-gray-900">${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.shipping_amount)}</span>
+                                </div>
+                              )}
+                              <div className="flex justify-between border-t pt-2 font-semibold text-lg">
+                                <span>Total:</span>
+                                <span>${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.total_amount || 0)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={handleCompleteOrder}
+                    className="bg-yellow-600 text-white py-3 px-8 rounded-lg font-medium hover:bg-yellow-700 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                  >
+                    Continuar Comprando
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-2 order-2 lg:order-1">
+              {currentStep === 1 && (
+                <CheckoutSummary onContinue={() => handleStepChange(2)} />
+              )}
+
+              {currentStep === 2 && (
               <>
                 {serverError && (
                   <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
@@ -418,53 +527,6 @@ export default function CheckoutFlow() {
                     </div>
                   </div>
                 )}
-              </div>
-            )}
-
-            {currentStep === 4 && (
-              <div className="bg-white rounded-lg shadow-sm border">
-                <div className="px-6 py-8 text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg
-                      className="w-8 h-8 text-green-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    ¡Pedido Completado!
-                  </h2>
-
-                  <p className="text-gray-600 mb-6">
-                    Tu pedido ha sido procesado exitosamente. Recibirás un email
-                    de confirmación pronto.
-                  </p>
-
-                  {checkoutState.orderId && (
-                    <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                      <p className="text-sm text-gray-600">
-                        <strong>Número de orden:</strong>{" "}
-                        {checkoutState.orderId}
-                      </p>
-                    </div>
-                  )}
-
-                  <button
-                    onClick={handleCompleteOrder}
-                    className="bg-yellow-600 text-white py-3 px-8 rounded-lg font-medium hover:bg-yellow-700 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
-                  >
-                    Continuar Comprando
-                  </button>
-                </div>
               </div>
             )}
           </div>
@@ -645,6 +707,7 @@ export default function CheckoutFlow() {
             </div>
           )}
         </div>
+        )}
 
         {/* Toast */}
         <Toast
