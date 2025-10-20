@@ -167,35 +167,52 @@ export default function SubscriptionPaymentModal({
 
       console.log("✅ Wompi ready, generating signature...");
 
-      // PASO 1: Crear sesión de pago para suscripción (endpoint específico)
-      const signatureData = {
+      // PASO 1: Crear widget de Wompi para suscripción (ESTE ES EL PASO CLAVE)
+      // Este endpoint guarda la payment_reference en la suscripción ANTES de abrir el widget
+      const widgetData = {
         plan_id: planId,
-        duration_months: durationMonths,
+        amount: totalAmount,
         redirect_url: WOMPI_CONFIG.getSubscriptionRedirectUrl(),
+        customer_email: customerEmail?.trim(),
+        customer_name: customerName?.trim(),
+        customer_phone: customerMobile?.replace(/\D/g, ""),
       };
 
-      console.log("🔐 Subscription payment session data:", signatureData);
+      console.log("🎯 Creating subscription widget with data:", widgetData);
 
-      const signatureResponse =
-        await PaymentService.generateSubscriptionSignature(signatureData);
+      const widgetResponse = await PaymentService.createWompiSubscriptionWidget(
+        planId,
+        totalAmount,
+        WOMPI_CONFIG.getSubscriptionRedirectUrl(),
+        {
+          email: customerEmail?.trim(),
+          name: customerName?.trim(),
+          phone: customerMobile?.replace(/\D/g, ""),
+        }
+      );
 
-      console.log("🔍 Full signature response:", signatureResponse);
+      console.log("🔍 Full widget response:", widgetResponse);
 
-      if (!signatureResponse.success || !signatureResponse.data?.widget_data) {
-        console.error("❌ Signature response validation failed:", {
-          success: signatureResponse.success,
-          hasData: !!signatureResponse.data,
-          hasWidgetData: !!signatureResponse.data?.widget_data,
-          fullResponse: signatureResponse,
+      if (!widgetResponse.success || !widgetResponse.data?.reference) {
+        console.error("❌ Widget response validation failed:", {
+          success: widgetResponse.success,
+          hasData: !!widgetResponse.data,
+          hasReference: !!widgetResponse.data?.reference,
+          fullResponse: widgetResponse,
         });
-        throw new Error("No se pudo crear la sesión de pago");
+        throw new Error("No se pudo crear el widget de suscripción");
       }
 
-      // PASO 2: Usar EXACTAMENTE los datos que devuelve el backend (igual que checkout)
-      const widgetData = signatureResponse.data.widget_data;
-      console.log("🔍 Raw widget data from backend:", widgetData);
-
-      const { reference, amount, currency, signature, public_key } = widgetData;
+      // PASO 2: Usar EXACTAMENTE los datos que devuelve el backend
+      const { reference, amount, currency, integrity_signature, publicKey } =
+        widgetResponse.data;
+      console.log("🔍 Raw widget data from backend:", {
+        reference,
+        amount,
+        currency,
+        integrity_signature,
+        publicKey,
+      });
 
       // Guardar la referencia para usar en la confirmación
       setPaymentReference(reference);
@@ -207,46 +224,38 @@ export default function SubscriptionPaymentModal({
         reference,
         amount,
         currency,
-        signature,
-        public_key,
+        integrity_signature,
+        publicKey,
       });
 
-      // Validar que la public_key no esté undefined
-      if (!public_key || public_key === "undefined") {
-        console.error("❌ Public key is undefined or invalid:", public_key);
+      // Validar que la publicKey no esté undefined
+      if (!publicKey || publicKey === "undefined") {
+        console.error("❌ Public key is undefined or invalid:", publicKey);
         throw new Error("Clave pública de Wompi no válida");
       }
 
       // Validar formato de la clave pública
       if (
-        !public_key.startsWith("pub_test_") &&
-        !public_key.startsWith("pub_prod_")
+        !publicKey.startsWith("pub_test_") &&
+        !publicKey.startsWith("pub_prod_")
       ) {
-        console.error("❌ Public key format is invalid:", public_key);
+        console.error("❌ Public key format is invalid:", publicKey);
         throw new Error("Formato de clave pública de Wompi no válido");
       }
 
-      // PASO 3: Configurar el widget con los datos EXACTOS del backend (igual que checkout)
-      // Usar la clave pública que viene del backend
-      const finalPublicKey = public_key;
-
-      console.log("🔑 Backend public_key:", public_key);
+      console.log("🔑 Backend publicKey:", publicKey);
       console.log("🔑 Frontend PUBLIC_KEY:", WOMPI_CONFIG.PUBLIC_KEY);
-      console.log("🔑 Final publicKey being used:", finalPublicKey);
-
-      // Validar que la clave pública tenga el formato correcto
-      if (!finalPublicKey || !finalPublicKey.startsWith("pub_test_")) {
-        throw new Error("Clave pública de Wompi no válida: " + finalPublicKey);
-      }
 
       // Usar EXACTAMENTE la misma configuración que el checkout que funciona
       const widgetConfig = {
         currency: currency,
         amountInCents: amount,
         reference: reference,
-        publicKey: finalPublicKey,
+        publicKey: publicKey,
         redirectUrl: WOMPI_CONFIG.getSubscriptionRedirectUrl(),
-        signature: signature,
+        signature: {
+          integrity: integrity_signature,
+        },
         customerData: {
           email: formData.email?.trim() || "usuario@ejemplo.com",
           fullName:

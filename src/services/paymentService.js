@@ -105,6 +105,43 @@ export class PaymentService {
         return data;
     }
 
+    // Crear widget de Wompi para suscripciones
+    static async createWompiSubscriptionWidget(planId, totalAmount, redirectUrl, customerData = {}) {
+        console.log('🎯 Creating Wompi widget for subscription:', planId);
+        
+        const requestBody = {
+            plan_id: planId,
+            amount: totalAmount,
+            currency: 'COP',
+            redirect_url: redirectUrl
+        };
+        
+        // Solo agregar datos del cliente si están disponibles (opcional)
+        if (customerData.email) {
+            requestBody.customer_email = customerData.email;
+        }
+        if (customerData.name) {
+            requestBody.customer_name = customerData.name;
+        }
+        if (customerData.phone) {
+            requestBody.customer_phone = customerData.phone;
+        }
+        
+        console.log('🎯 Subscription widget request body:', requestBody);
+        
+        const response = await fetch(`${API_CONFIG.BASE_URL}/payments/wompi/create-subscription-widget`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(requestBody)
+        });
+        
+        console.log('🎯 Subscription widget response:', response.status);
+        const data = await response.json();
+        console.log('🎯 Subscription widget data:', data);
+        
+        return data;
+    }
+
     // Verificar el estado del pago después de que Wompi redirige
     static async verifyPayment(transactionId) {
         const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PAYMENTS.VERIFY}`, {
