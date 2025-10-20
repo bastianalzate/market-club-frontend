@@ -167,35 +167,52 @@ export default function SubscriptionPaymentModal({
 
       console.log("✅ Wompi ready, generating signature...");
 
-      // PASO 1: Crear sesión de pago para suscripción (endpoint específico)
-      const signatureData = {
+      // PASO 1: Crear widget de Wompi para suscripción (ESTE ES EL PASO CLAVE)
+      // Este endpoint guarda la payment_reference en la suscripción ANTES de abrir el widget
+      const widgetData = {
         plan_id: planId,
-        duration_months: durationMonths,
+        amount: totalAmount,
         redirect_url: WOMPI_CONFIG.getSubscriptionRedirectUrl(),
+        customer_email: customerEmail?.trim(),
+        customer_name: customerName?.trim(),
+        customer_phone: customerMobile?.replace(/\D/g, ""),
       };
 
-      console.log("🔐 Subscription payment session data:", signatureData);
+      console.log("🎯 Creating subscription widget with data:", widgetData);
 
-      const signatureResponse =
-        await PaymentService.generateSubscriptionSignature(signatureData);
+      const widgetResponse = await PaymentService.createWompiSubscriptionWidget(
+        planId,
+        totalAmount,
+        WOMPI_CONFIG.getSubscriptionRedirectUrl(),
+        {
+          email: customerEmail?.trim(),
+          name: customerName?.trim(),
+          phone: customerMobile?.replace(/\D/g, ""),
+        }
+      );
 
-      console.log("🔍 Full signature response:", signatureResponse);
+      console.log("🔍 Full widget response:", widgetResponse);
 
-      if (!signatureResponse.success || !signatureResponse.data?.widget_data) {
-        console.error("❌ Signature response validation failed:", {
-          success: signatureResponse.success,
-          hasData: !!signatureResponse.data,
-          hasWidgetData: !!signatureResponse.data?.widget_data,
-          fullResponse: signatureResponse,
+      if (!widgetResponse.success || !widgetResponse.data?.reference) {
+        console.error("❌ Widget response validation failed:", {
+          success: widgetResponse.success,
+          hasData: !!widgetResponse.data,
+          hasReference: !!widgetResponse.data?.reference,
+          fullResponse: widgetResponse,
         });
-        throw new Error("No se pudo crear la sesión de pago");
+        throw new Error("No se pudo crear el widget de suscripción");
       }
 
-      // PASO 2: Usar EXACTAMENTE los datos que devuelve el backend (igual que checkout)
-      const widgetData = signatureResponse.data.widget_data;
-      console.log("🔍 Raw widget data from backend:", widgetData);
-
-      const { reference, amount, currency, signature, public_key } = widgetData;
+      // PASO 2: Usar EXACTAMENTE los datos que devuelve el backend
+      const { reference, amount, currency, signature, public_key } =
+        widgetResponse.data;
+      console.log("🔍 Raw widget data from backend:", {
+        reference,
+        amount,
+        currency,
+        signature,
+        public_key,
+      });
 
       // Guardar la referencia para usar en la confirmación
       setPaymentReference(reference);
