@@ -18,6 +18,71 @@ export default function CheckoutFlow() {
   const { checkoutState, createOrder, setCurrentStep, resetCheckout, saveOrderData } =
     useCheckout();
   const { toast, showSuccess, showError, hideToast } = useToast();
+  
+  // Estado para controlar el mensaje del paso 4
+  const [orderStatus, setOrderStatus] = useState<'loading' | 'success' | 'failed' | 'pending'>('loading');
+
+  // Ejecutar consulta cuando llegue al paso 4
+  useEffect(() => {
+    if (checkoutState.currentStep === 4) {
+      console.log("🚀 STEP 4 REACHED - Making API call to get order status");
+      
+      // Obtener orderId de la URL o del estado
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('order_id') || checkoutState.orderId;
+      
+      if (orderId) {
+        console.log("🔍 Fetching order status for:", orderId);
+        
+        // HACER LA CONSULTA A LA API
+        fetch(`http://localhost:8000/api/user/orders/${orderId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        .then(response => {
+          console.log("🔍 API Response status:", response.status);
+          return response.json();
+        })
+        .then(data => {
+          console.log("🔍 API Response data:", data);
+          console.log("🔍 Full order object:", data.data);
+          
+          if (data.success && data.data) {
+            const order = data.data;
+            const paymentStatus = order.payment_status;
+            
+            console.log("🔍 Payment status from API:", paymentStatus);
+            console.log("🔍 Order status from API:", order.status);
+            console.log("🔍 All order fields:", Object.keys(order));
+            
+            if (paymentStatus === 'paid') {
+              console.log("✅ Payment is PAID - showing success");
+              setOrderStatus('success');
+            } else if (paymentStatus === 'failed') {
+              console.log("❌ Payment is FAILED - showing failed");
+              setOrderStatus('failed');
+            } else if (paymentStatus === 'pending') {
+              console.log("⏳ Payment is PENDING - showing pending");
+              setOrderStatus('pending');
+            } else {
+              console.log("❓ Unknown payment status:", paymentStatus, "- showing failed");
+              setOrderStatus('failed');
+            }
+          } else {
+            console.log("❌ Invalid API response - showing failed");
+            setOrderStatus('failed');
+          }
+        })
+        .catch(error => {
+          console.error("❌ API Error:", error);
+          setOrderStatus('failed');
+        });
+      }
+    }
+  }, [checkoutState.currentStep]);
 
   // Helper function para formatear precios
   const formatPrice = (price: number | string) => {
@@ -324,30 +389,67 @@ export default function CheckoutFlow() {
             <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 max-w-4xl w-full">
               <div className="bg-white rounded-lg shadow-sm border">
                 <div className="px-6 py-8 text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg
-                      className="w-8 h-8 text-green-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    ¡Pedido Completado!
-                  </h2>
-
-                  <p className="text-gray-600 mb-6">
-                    Tu pedido ha sido procesado exitosamente. Recibirás un email
-                    de confirmación pronto.
-                  </p>
+                  {orderStatus === 'loading' ? (
+                    // Estado de carga
+                    <>
+                      <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-yellow-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                        Verificando Pago...
+                      </h2>
+                      <p className="text-gray-600 mb-6">
+                        Estamos verificando el estado de tu pago. Por favor espera un momento.
+                      </p>
+                    </>
+                  ) : orderStatus === 'success' ? (
+                    // Estado de éxito
+                    <>
+                      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                        ¡Pedido Completado!
+                      </h2>
+                      <p className="text-gray-600 mb-6">
+                        Tu pago ha sido procesado exitosamente. Recibirás un email de confirmación pronto.
+                      </p>
+                    </>
+                  ) : orderStatus === 'failed' ? (
+                    // Estado de fallo
+                    <>
+                      <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </div>
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                        Pago Fallido
+                      </h2>
+                      <p className="text-gray-600 mb-6">
+                        Tu pago no pudo ser procesado. Por favor intenta nuevamente o contacta con soporte.
+                      </p>
+                    </>
+                  ) : orderStatus === 'pending' ? (
+                    // Estado pendiente
+                    <>
+                      <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-yellow-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                        Pago Pendiente
+                      </h2>
+                      <p className="text-gray-600 mb-6">
+                        Tu pago está siendo procesado. Te notificaremos cuando esté confirmado.
+                      </p>
+                    </>
+                  ) : null}
 
                   {checkoutState.orderId && (
                     <div className="bg-gray-50 rounded-lg p-6 mb-6">
