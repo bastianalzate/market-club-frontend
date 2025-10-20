@@ -171,45 +171,52 @@ export default function PaymentStep({
 
       console.log("✅ WidgetCheckout found, generating signature...");
 
-      // PASO 1: Generar la firma de integridad desde el backend
-      // Enviar el order_id y el totalAmount para asegurar consistencia
-      const signatureData = {
+      // PASO 1: Crear el widget de Wompi desde el backend (ESTE ES EL PASO CLAVE)
+      // Este endpoint guarda la payment_reference en la orden ANTES de abrir el widget
+      const widgetData = {
         order_id: orderId,
-        amount: totalAmount, // Asegurar que el backend use el mismo total que mostramos
+        amount: totalAmount,
+        redirect_url:
+          window.location.origin + "/checkout/success?order_id=" + orderId,
+        customer_email: customerEmail?.trim(),
+        customer_name: customerName?.trim(),
+        customer_phone: customerMobile?.replace(/\D/g, ""),
       };
 
-      console.log("🔐 Signature data with totalAmount:", signatureData);
+      console.log("🎯 Creating Wompi widget with data:", widgetData);
 
-      console.log("🔐 Requesting signature for order:", orderId);
-
-      const signatureResponse = await PaymentService.generateSignature(
-        signatureData
+      const widgetResponse = await PaymentService.createWompiWidget(
+        orderId,
+        totalAmount,
+        window.location.origin + "/checkout/success?order_id=" + orderId,
+        {
+          email: customerEmail?.trim(),
+          name: customerName?.trim(),
+          phone: customerMobile?.replace(/\D/g, ""),
+        }
       );
 
-      console.log("🔍 Full signature response:", signatureResponse);
-      console.log(
-        "🔍 Backend returned amount:",
-        signatureResponse.data?.amount
-      );
+      console.log("🔍 Full widget response:", widgetResponse);
+      console.log("🔍 Backend returned amount:", widgetResponse.data?.amount);
       console.log("🔍 Frontend totalAmount:", totalAmount);
       console.log(
         "🔍 Amount match:",
-        signatureResponse.data?.amount === totalAmount
+        widgetResponse.data?.amount === totalAmount
       );
 
-      if (!signatureResponse.success || !signatureResponse.data?.signature) {
-        console.error("❌ Signature response validation failed:", {
-          success: signatureResponse.success,
-          hasData: !!signatureResponse.data,
-          hasSignature: !!signatureResponse.data?.signature,
-          fullResponse: signatureResponse,
+      if (!widgetResponse.success || !widgetResponse.data?.reference) {
+        console.error("❌ Widget response validation failed:", {
+          success: widgetResponse.success,
+          hasData: !!widgetResponse.data,
+          hasReference: !!widgetResponse.data?.reference,
+          fullResponse: widgetResponse,
         });
-        throw new Error("No se pudo generar la firma de integridad");
+        throw new Error("No se pudo crear el widget de Wompi");
       }
 
       // PASO 2: Usar EXACTAMENTE los datos que devuelve el backend
       const { reference, amount, currency, signature, public_key } =
-        signatureResponse.data;
+        widgetResponse.data;
 
       console.log("✅ Using backend data:", {
         reference,
