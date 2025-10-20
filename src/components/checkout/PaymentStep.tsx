@@ -215,15 +215,15 @@ export default function PaymentStep({
       }
 
       // PASO 2: Usar EXACTAMENTE los datos que devuelve el backend
-      const { reference, amount, currency, signature, public_key } =
+      const { reference, amount, currency, integrity_signature, publicKey } =
         widgetResponse.data;
 
       console.log("✅ Using backend data:", {
         reference,
         amount,
         currency,
-        signature,
-        public_key,
+        integrity_signature,
+        publicKey,
       });
 
       // PASO 3: Configurar el widget con los datos EXACTOS del backend
@@ -231,10 +231,12 @@ export default function PaymentStep({
         currency: currency, // ← Usar currency del backend
         amountInCents: amount, // ← Usar amount del backend (ya en centavos)
         reference: reference, // ← Usar reference del backend
-        publicKey: public_key, // ← Usar public_key del backend
+        publicKey: publicKey, // ← Usar publicKey del backend
         redirectUrl:
           window.location.origin + "/checkout/success?order_id=" + orderId,
-        signature: signature, // ← Usar signature del backend (formato {integrity: 'firma'})
+        signature: {
+          integrity: integrity_signature, // ← Usar integrity_signature del backend
+        },
         customerData: {
           email: customerEmail?.trim() || "usuario@ejemplo.com",
           fullName: customerName?.trim() || "Usuario",
