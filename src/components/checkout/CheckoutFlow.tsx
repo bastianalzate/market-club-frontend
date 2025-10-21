@@ -15,9 +15,74 @@ import { constants } from "@/config/constants";
 export default function CheckoutFlow() {
   const router = useRouter();
   const { cart, itemsCount, loadCart } = useCartContext();
-  const { checkoutState, createOrder, setCurrentStep, resetCheckout } =
+  const { checkoutState, createOrder, setCurrentStep, resetCheckout, saveOrderData } =
     useCheckout();
   const { toast, showSuccess, showError, hideToast } = useToast();
+  
+  // Estado para controlar el mensaje del paso 4
+  const [orderStatus, setOrderStatus] = useState<'loading' | 'success' | 'failed' | 'pending'>('loading');
+
+  // Ejecutar consulta cuando llegue al paso 4
+  useEffect(() => {
+    if (checkoutState.currentStep === 4) {
+      console.log("🚀 STEP 4 REACHED - Making API call to get order status");
+      
+      // Obtener orderId de la URL o del estado
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('order_id') || checkoutState.orderId;
+      
+      if (orderId) {
+        console.log("🔍 Fetching order status for:", orderId);
+        
+        // HACER LA CONSULTA A LA API
+        fetch(`http://localhost:8000/api/user/orders/${orderId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        .then(response => {
+          console.log("🔍 API Response status:", response.status);
+          return response.json();
+        })
+        .then(data => {
+          console.log("🔍 API Response data:", data);
+          console.log("🔍 Full order object:", data.data);
+          
+          if (data.success && data.data) {
+            const order = data.data;
+            const paymentStatus = order.payment_status;
+            
+            console.log("🔍 Payment status from API:", paymentStatus);
+            console.log("🔍 Order status from API:", order.status);
+            console.log("🔍 All order fields:", Object.keys(order));
+            
+            if (paymentStatus === 'paid') {
+              console.log("✅ Payment is PAID - showing success");
+              setOrderStatus('success');
+            } else if (paymentStatus === 'failed') {
+              console.log("❌ Payment is FAILED - showing failed");
+              setOrderStatus('failed');
+            } else if (paymentStatus === 'pending') {
+              console.log("⏳ Payment is PENDING - showing pending");
+              setOrderStatus('pending');
+            } else {
+              console.log("❓ Unknown payment status:", paymentStatus, "- showing failed");
+              setOrderStatus('failed');
+            }
+          } else {
+            console.log("❌ Invalid API response - showing failed");
+            setOrderStatus('failed');
+          }
+        })
+        .catch(error => {
+          console.error("❌ API Error:", error);
+          setOrderStatus('failed');
+        });
+      }
+    }
+  }, [checkoutState.currentStep]);
 
   // Helper function para formatear precios
   const formatPrice = (price: number | string) => {
@@ -79,7 +144,7 @@ export default function CheckoutFlow() {
     try {
       setShippingAddress(address);
 
-      // Guardar los datos del carrito antes de crear la orden
+      // Guardar los datos de la orden antes de crear la orden
       if (cart) {
         console.log("🔍 Cart data before saving:", cart);
 
@@ -93,20 +158,22 @@ export default function CheckoutFlow() {
         const TAX_RATE = 0.19; // 19%
         const calculatedTaxAmount = Math.round(manualSubtotal * TAX_RATE);
 
-        // Usar impuestos calculados si el backend no los proporciona
-        const finalTaxAmount =
-          parseFloat(String(cart.tax_amount || 0)) || calculatedTaxAmount;
+        // Usar siempre el cálculo local del IVA (19%)
+        const finalTaxAmount = calculatedTaxAmount;
         const shippingAmount = parseFloat(String(cart.shipping_amount || 0));
 
-        const savedData = {
+        const orderData = {
           items: cart.items,
           subtotal: manualSubtotal,
           shipping_amount: shippingAmount,
           tax_amount: finalTaxAmount,
           total_amount: manualSubtotal + shippingAmount + finalTaxAmount,
         };
-        console.log("💾 Saving order data:", savedData);
-        setOrderData(savedData);
+        console.log("💾 Saving order data:", orderData);
+        
+        // Guardar en Redux
+        saveOrderData(orderData);
+        setOrderData(orderData);
       }
 
       const orderResponse = await createOrder(address, undefined, "");
@@ -154,10 +221,12 @@ export default function CheckoutFlow() {
   };
 
   const handleCompleteOrder = async () => {
+    // Limpiar el carrito - el carrito ya se limpia automáticamente después del pago
+    // Solo necesitamos limpiar el estado del checkout
     resetCheckout();
     // Asegurar sincronización final del carrito antes de redirigir
     await loadCart();
-    router.push("/");
+    router.push("/tienda");
   };
 
   if (itemsCount === 0 && !checkoutState.orderId) {
@@ -313,14 +382,155 @@ export default function CheckoutFlow() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 order-2 lg:order-1">
-            {currentStep === 1 && (
-              <CheckoutSummary onContinue={() => handleStepChange(2)} />
-            )}
+        {currentStep === 4 ? (
+          // Para el paso 4 (confirmación), no usar grid
+          <div className="flex items-center justify-center min-h-[60vh] px-4">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 max-w-4xl w-full">
+              <div className="bg-white rounded-lg shadow-sm border">
+                <div className="px-6 py-8 text-center">
+                  {orderStatus === 'loading' ? (
+                    // Estado de carga
+                    <>
+                      <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-yellow-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                        Verificando Pago...
+                      </h2>
+                      <p className="text-gray-600 mb-6">
+                        Estamos verificando el estado de tu pago. Por favor espera un momento.
+                      </p>
+                    </>
+                  ) : orderStatus === 'success' ? (
+                    // Estado de éxito
+                    <>
+                      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                        ¡Pedido Completado!
+                      </h2>
+                      <p className="text-gray-600 mb-6">
+                        Tu pago ha sido procesado exitosamente. Recibirás un email de confirmación pronto.
+                      </p>
+                    </>
+                  ) : orderStatus === 'failed' ? (
+                    // Estado de fallo
+                    <>
+                      <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </div>
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                        Pago Fallido
+                      </h2>
+                      <p className="text-gray-600 mb-6">
+                        Tu pago no pudo ser procesado. Por favor intenta nuevamente o contacta con soporte.
+                      </p>
+                    </>
+                  ) : orderStatus === 'pending' ? (
+                    // Estado pendiente
+                    <>
+                      <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-yellow-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                        Pago Pendiente
+                      </h2>
+                      <p className="text-gray-600 mb-6">
+                        Tu pago está siendo procesado. Te notificaremos cuando esté confirmado.
+                      </p>
+                    </>
+                  ) : null}
 
-            {currentStep === 2 && (
+                  {checkoutState.orderId && (
+                    <div className="bg-gray-50 rounded-lg p-6 mb-6">
+                      <div className="text-center mb-4">
+                        <p className="text-lg font-semibold text-gray-900">
+                          Número de orden: {checkoutState.orderId}
+                        </p>
+                      </div>
+                      
+                      {/* Detalles de productos */}
+                      {checkoutState.orderData && checkoutState.orderData.items && checkoutState.orderData.items.length > 0 && (
+                        <div className="border-t pt-4">
+                          <h4 className="text-sm font-semibold text-gray-900 mb-3">Productos comprados:</h4>
+                          <div className="space-y-2">
+                            {checkoutState.orderData.items.map((item: any, index: number) => (
+                              <div key={index} className="flex justify-between items-center text-sm">
+                                <div className="text-left">
+                                  <p className="font-medium text-gray-900">
+                                    {item.product?.name || 'Producto'}
+                                  </p>
+                                  <p className="text-gray-600">
+                                    Cantidad: {item.quantity}
+                                  </p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="font-semibold text-gray-900">
+                                    ${new Intl.NumberFormat('es-CO').format(item.total_price)}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {/* Resumen de totales */}
+                          <div className="border-t pt-4 mt-4">
+                            <div className="space-y-1 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-gray-900">Subtotal:</span>
+                                <span className="font-medium text-gray-900">${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.subtotal || 0)}</span>
+                              </div>
+                              {checkoutState.orderData.tax_amount > 0 && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-900">IVA (19%):</span>
+                                  <span className="font-medium text-gray-900">${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.tax_amount)}</span>
+                                </div>
+                              )}
+                              {checkoutState.orderData.shipping_amount > 0 && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-900">Envío:</span>
+                                  <span className="font-medium text-gray-900">${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.shipping_amount)}</span>
+                                </div>
+                              )}
+                              <div className="flex justify-between border-t pt-2 font-semibold text-lg">
+                                <span>Total:</span>
+                                <span>${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.total_amount || 0)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={handleCompleteOrder}
+                    className="bg-yellow-600 text-white py-3 px-8 rounded-lg font-medium hover:bg-yellow-700 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                  >
+                    Continuar Comprando
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-2 order-2 lg:order-1">
+              {currentStep === 1 && (
+                <CheckoutSummary onContinue={() => handleStepChange(2)} />
+              )}
+
+              {currentStep === 2 && (
               <>
                 {serverError && (
                   <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
@@ -418,53 +628,6 @@ export default function CheckoutFlow() {
                     </div>
                   </div>
                 )}
-              </div>
-            )}
-
-            {currentStep === 4 && (
-              <div className="bg-white rounded-lg shadow-sm border">
-                <div className="px-6 py-8 text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg
-                      className="w-8 h-8 text-green-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    ¡Pedido Completado!
-                  </h2>
-
-                  <p className="text-gray-600 mb-6">
-                    Tu pedido ha sido procesado exitosamente. Recibirás un email
-                    de confirmación pronto.
-                  </p>
-
-                  {checkoutState.orderId && (
-                    <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                      <p className="text-sm text-gray-600">
-                        <strong>Número de orden:</strong>{" "}
-                        {checkoutState.orderId}
-                      </p>
-                    </div>
-                  )}
-
-                  <button
-                    onClick={handleCompleteOrder}
-                    className="bg-yellow-600 text-white py-3 px-8 rounded-lg font-medium hover:bg-yellow-700 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
-                  >
-                    Continuar Comprando
-                  </button>
-                </div>
               </div>
             )}
           </div>
@@ -599,10 +762,7 @@ export default function CheckoutFlow() {
                                   const calculatedTax = Math.round(
                                     subtotal * TAX_RATE
                                   );
-                                  return (
-                                    parseFloat(String(cart?.tax_amount || 0)) ||
-                                    calculatedTax
-                                  );
+                                  return calculatedTax;
                                 })()
                               : orderData?.tax_amount || 0
                           )}
@@ -629,9 +789,7 @@ export default function CheckoutFlow() {
                                   const calculatedTax = Math.round(
                                     subtotal * TAX_RATE
                                   );
-                                  const finalTax =
-                                    parseFloat(String(cart?.tax_amount || 0)) ||
-                                    calculatedTax;
+                                  const finalTax = calculatedTax;
                                   return subtotal + shipping + finalTax;
                                 })()
                               : orderData?.total_amount || 0
@@ -645,6 +803,7 @@ export default function CheckoutFlow() {
             </div>
           )}
         </div>
+        )}
 
         {/* Toast */}
         <Toast

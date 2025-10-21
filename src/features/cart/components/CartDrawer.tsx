@@ -183,7 +183,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
       {/* Backdrop/Overlay */}
       <div
-        className="fixed inset-0 z-40"
+        className="fixed inset-0 z-[60]"
         style={{
           backgroundColor: "#00000091",
           animation: isAnimating
@@ -195,7 +195,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
       {/* Cart Drawer */}
       <div
-        className="fixed inset-y-0 right-0 w-full h-full max-w-xs sm:max-w-sm z-50"
+        className="fixed inset-y-0 right-0 w-full h-full max-w-xs sm:max-w-sm z-[70]"
         style={{
           animation: isAnimating
             ? "slideInFromRight 0.3s ease-in-out"
@@ -214,6 +214,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   type="button"
                   onClick={handleClose}
                   className="p-2 -m-2 text-gray-500 transition-all duration-200 bg-transparent rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 cursor-pointer"
+                  aria-label="Cerrar carrito"
                 >
                   <X className="w-5 h-5" />
                 </button>
