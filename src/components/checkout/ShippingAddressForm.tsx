@@ -74,10 +74,10 @@ export default function ShippingAddressForm({
     <div className="bg-white rounded-lg shadow-sm border">
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
           Dirección de Envío
         </h2>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-gray-600 mt-1" style={{ fontFamily: "var(--font-lato)" }}>
           Ingresa la dirección donde quieres recibir tu pedido
         </p>
       </div>
@@ -89,7 +89,7 @@ export default function ShippingAddressForm({
           <div>
             <label
               htmlFor="first_name"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}
             >
               Nombre *
             </label>
@@ -99,7 +99,7 @@ export default function ShippingAddressForm({
               name="first_name"
               value={formData.first_name}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white" style={{ fontFamily: "var(--font-lato)" }}
               placeholder="Ingresa tu nombre"
               required
             />
@@ -109,7 +109,7 @@ export default function ShippingAddressForm({
           <div>
             <label
               htmlFor="last_name"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}
             >
               Apellido *
             </label>
@@ -119,7 +119,7 @@ export default function ShippingAddressForm({
               name="last_name"
               value={formData.last_name}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white" style={{ fontFamily: "var(--font-lato)" }}
               placeholder="Ingresa tu apellido"
               required
             />
@@ -129,7 +129,7 @@ export default function ShippingAddressForm({
           <div className="md:col-span-2">
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}
             >
               Email *
             </label>
@@ -139,7 +139,7 @@ export default function ShippingAddressForm({
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white" style={{ fontFamily: "var(--font-lato)" }}
               placeholder="tu@email.com"
               required
             />
@@ -149,7 +149,7 @@ export default function ShippingAddressForm({
           <div className="md:col-span-2">
             <label
               htmlFor="address_line_1"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}
             >
               Dirección Principal *
             </label>
@@ -159,7 +159,7 @@ export default function ShippingAddressForm({
               name="address_line_1"
               value={formData.address_line_1}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white" style={{ fontFamily: "var(--font-lato)" }}
               placeholder="Calle, carrera, avenida, etc."
               required
             />
@@ -169,7 +169,7 @@ export default function ShippingAddressForm({
           <div className="md:col-span-2">
             <label
               htmlFor="address_line_2"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}
             >
               Dirección Secundaria (Opcional)
             </label>
@@ -179,7 +179,7 @@ export default function ShippingAddressForm({
               name="address_line_2"
               value={formData.address_line_2}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white" style={{ fontFamily: "var(--font-lato)" }}
               placeholder="Apartamento, casa, piso, etc."
             />
           </div>
@@ -188,7 +188,7 @@ export default function ShippingAddressForm({
           <div>
             <label
               htmlFor="city"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}
             >
               Ciudad *
             </label>
@@ -198,7 +198,7 @@ export default function ShippingAddressForm({
               name="city"
               value={formData.city}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white" style={{ fontFamily: "var(--font-lato)" }}
               placeholder="Ingresa tu ciudad"
               required
             />
@@ -208,7 +208,7 @@ export default function ShippingAddressForm({
           <div>
             <label
               htmlFor="state"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}
             >
               Departamento *
             </label>
@@ -217,7 +217,7 @@ export default function ShippingAddressForm({
               name="state"
               value={formData.state}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white" style={{ fontFamily: "var(--font-lato)" }}
               required
             >
               <option value="">Selecciona un departamento</option>
@@ -262,7 +262,7 @@ export default function ShippingAddressForm({
           <div>
             <label
               htmlFor="postal_code"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}
             >
               Código Postal
             </label>
@@ -272,7 +272,7 @@ export default function ShippingAddressForm({
               name="postal_code"
               value={formData.postal_code}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white" style={{ fontFamily: "var(--font-lato)" }}
               placeholder="110111"
             />
           </div>
@@ -281,7 +281,7 @@ export default function ShippingAddressForm({
           <div>
             <label
               htmlFor="phone"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}
             >
               Teléfono *
             </label>
@@ -291,7 +291,7 @@ export default function ShippingAddressForm({
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500 bg-white" style={{ fontFamily: "var(--font-lato)" }}
               placeholder="+57 300 123 4567"
               required
             />
@@ -303,7 +303,7 @@ export default function ShippingAddressForm({
           <button
             type="button"
             onClick={onBack}
-            className="w-full md:w-auto bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-medium hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+            className="w-full md:w-auto bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-medium hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2" style={{ fontFamily: "var(--font-lato)" }}
           >
             Volver
           </button>
@@ -316,7 +316,8 @@ export default function ShippingAddressForm({
                 ? "bg-gray-400 cursor-not-allowed text-white"
                 : "bg-yellow-600 hover:bg-yellow-700 text-white"
             }`}
-          >
+            style={{ fontFamily: "var(--font-lato)" }}
+            >
             {isLoading ? (
               <div className="flex items-center justify-center">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>

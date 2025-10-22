@@ -313,8 +313,8 @@ export default function PaymentStep({
     <>
       <div className="bg-white rounded-lg shadow-sm border">
         <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-          <h2 className="text-xl font-bold text-gray-900">Método de Pago</h2>
-          <p className="text-sm font-medium text-gray-700 mt-1">
+          <h2 className="text-xl font-bold text-gray-900" style={{ fontFamily: 'var(--font-lato)' }}>Método de Pago</h2>
+          <p className="text-sm font-medium text-gray-700 mt-1" style={{ fontFamily: 'var(--font-lato)' }}>
             Pagar de forma segura con Wompi
           </p>
         </div>
@@ -322,17 +322,17 @@ export default function PaymentStep({
         <div className="px-6 py-6">
           {/* Información del pedido */}
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <h3 className="text-sm font-medium text-gray-900 mb-2">
+            <h3 className="text-sm font-medium text-gray-900 mb-2" style={{ fontFamily: 'var(--font-lato)' }}>
               Resumen del Pago
             </h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-700">Número de orden:</span>
-                <span className="font-medium text-gray-900">{orderId}</span>
+                <span className="text-gray-700" style={{ fontFamily: 'var(--font-lato)' }}>Número de orden:</span>
+                <span className="font-medium text-gray-900" style={{ fontFamily: 'var(--font-lato)' }}>{orderId}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-700">Total a pagar:</span>
-                <span className="font-bold text-lg text-gray-900">
+                <span className="text-gray-700" style={{ fontFamily: 'var(--font-lato)' }}>Total a pagar:</span>
+                <span className="font-bold text-lg text-gray-900" style={{ fontFamily: 'var(--font-lato)' }}>
                   ${totalAmount.toLocaleString()} COP
                 </span>
               </div>
@@ -358,10 +358,10 @@ export default function PaymentStep({
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-bold text-blue-900">
+                <h3 className="text-sm font-bold text-blue-900" style={{ fontFamily: 'var(--font-lato)' }}>
                   Pago Seguro con Wompi
                 </h3>
-                <p className="text-sm text-blue-800 mt-1">
+                <p className="text-sm text-blue-800 mt-1" style={{ fontFamily: 'var(--font-lato)' }}>
                   Wompi es la plataforma de pagos más segura de Colombia. Al
                   hacer clic en "Pagar con Wompi" podrás elegir entre tarjetas
                   de crédito/débito, PSE, Nequi, Daviplata y más métodos de
@@ -373,7 +373,7 @@ export default function PaymentStep({
                       wompiScriptLoaded ? "bg-green-500" : "bg-yellow-500"
                     }`}
                   ></div>
-                  <span className="text-xs font-medium text-blue-700">
+                  <span className="text-xs font-medium text-blue-700" style={{ fontFamily: 'var(--font-lato)' }}>
                     {wompiScriptLoaded ? "Wompi listo" : "Cargando Wompi..."}
                   </span>
                 </div>
@@ -389,6 +389,7 @@ export default function PaymentStep({
                 checkoutState.loading || showWompiWidget || !wompiScriptLoaded
               }
               className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center"
+              style={{ fontFamily: 'var(--font-lato)' }}
             >
               {!wompiScriptLoaded ? (
                 <>
@@ -424,23 +425,23 @@ export default function PaymentStep({
 
             {/* Métodos de pago aceptados */}
             <div className="text-center">
-              <p className="text-xs font-medium text-gray-700 mb-2">
+              <p className="text-xs font-medium text-gray-700 mb-2" style={{ fontFamily: 'var(--font-lato)' }}>
                 Métodos de pago aceptados:
               </p>
               <div className="flex justify-center space-x-2 flex-wrap gap-2">
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5">
+                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5" style={{ fontFamily: 'var(--font-lato)' }}>
                   <CreditCard className="w-3 h-3" />
                   Tarjetas
                 </span>
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5">
+                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5" style={{ fontFamily: 'var(--font-lato)' }}>
                   <Building2 className="w-3 h-3" />
                   PSE
                 </span>
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5">
+                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5" style={{ fontFamily: 'var(--font-lato)' }}>
                   <Smartphone className="w-3 h-3" />
                   Nequi
                 </span>
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5">
+                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5" style={{ fontFamily: 'var(--font-lato)' }}>
                   <Banknote className="w-3 h-3" />
                   Daviplata
                 </span>
@@ -455,10 +456,10 @@ export default function PaymentStep({
                 <Shield className="w-5 h-5 text-yellow-600 mt-0.5" />
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-yellow-800">
+                <h3 className="text-sm font-medium text-yellow-800" style={{ fontFamily: 'var(--font-lato)' }}>
                   Orden en Proceso
                 </h3>
-                <p className="text-sm text-yellow-700 mt-1">
+                <p className="text-sm text-yellow-700 mt-1" style={{ fontFamily: 'var(--font-lato)' }}>
                   Tu orden ya fue creada exitosamente. Complete el pago para
                   finalizar tu compra.
                 </p>

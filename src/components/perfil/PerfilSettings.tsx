@@ -348,8 +348,16 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Configuración</h1>
-          <p className="text-gray-600">
+          <h1 
+            className="text-2xl font-bold text-gray-900"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
+            Configuración
+          </h1>
+          <p 
+            className="text-gray-600"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Gestiona tu información personal y preferencias
           </p>
         </div>
@@ -379,7 +387,12 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                         isActive ? "text-yellow-600" : "text-gray-400"
                       }`}
                     />
-                    <span className="font-medium">{section.label}</span>
+                    <span 
+                      className="font-medium"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      {section.label}
+                    </span>
                   </button>
                 );
               })}
@@ -394,12 +407,18 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
             {activeSection === "profile" && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                  <h2 
+                    className="text-lg font-semibold text-gray-900 mb-4"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Información Personal
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label 
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         Nombre completo
                       </label>
                       <input
@@ -412,10 +431,14 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                           })
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                        style={{ fontFamily: "var(--font-lato)" }}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label 
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         Email
                       </label>
                       <input
@@ -423,13 +446,20 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                         value={profileData.email}
                         readOnly
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
+                        style={{ fontFamily: "var(--font-lato)" }}
                       />
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p 
+                        className="text-xs text-gray-500 mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         El email no se puede modificar
                       </p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label 
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         Teléfono
                       </label>
                       <input
@@ -442,6 +472,7 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                           })
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                        style={{ fontFamily: "var(--font-lato)" }}
                       />
                     </div>
                   </div>
@@ -462,6 +493,7 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                     onClick={handleSaveProfile}
                     disabled={loading || !hasProfileChanges()}
                     className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     {loading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -478,12 +510,18 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
             {activeSection === "security" && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                  <h2 
+                    className="text-lg font-semibold text-gray-900 mb-4"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Cambiar Contraseña
                   </h2>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label 
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         Contraseña actual
                       </label>
                       <div className="relative">
@@ -497,6 +535,7 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                             })
                           }
                           className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                          style={{ fontFamily: "var(--font-lato)" }}
                         />
                         <button
                           type="button"
@@ -514,7 +553,10 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label 
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         Nueva contraseña
                       </label>
                       <div className="relative">
@@ -535,6 +577,7 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                               ? "border-green-300 bg-green-50"
                               : "border-gray-300"
                           }`}
+                          style={{ fontFamily: "var(--font-lato)" }}
                         />
                         <button
                           type="button"
@@ -558,6 +601,7 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                               ? "text-green-600"
                               : "text-gray-500"
                           }`}
+                          style={{ fontFamily: "var(--font-lato)" }}
                         >
                           Mínimo 8 caracteres
                           {passwordData.newPassword.length > 0 && (
@@ -569,7 +613,10 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label 
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         Confirmar nueva contraseña
                       </label>
                       <div className="relative">
@@ -593,6 +640,7 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                               ? "border-green-300 bg-green-50"
                               : "border-gray-300"
                           }`}
+                          style={{ fontFamily: "var(--font-lato)" }}
                         />
                         <button
                           type="button"
@@ -617,6 +665,7 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                                 ? "text-red-600"
                                 : "text-green-600"
                             }`}
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             {passwordData.newPassword !==
                             passwordData.confirmPassword
@@ -637,7 +686,10 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                   passwordData.newPassword !==
                     passwordData.confirmPassword) && (
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                    <p className="text-sm text-gray-600 mb-2 font-medium">
+                    <p 
+                      className="text-sm text-gray-600 mb-2 font-medium"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Para cambiar tu contraseña, completa los siguientes
                       requisitos:
                     </p>
@@ -648,6 +700,7 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                             ? "text-green-600"
                             : "text-gray-500"
                         }`}
+                        style={{ fontFamily: "var(--font-lato)" }}
                       >
                         <span
                           className={`w-2 h-2 rounded-full ${
@@ -665,6 +718,7 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                             ? "text-green-600"
                             : "text-gray-500"
                         }`}
+                        style={{ fontFamily: "var(--font-lato)" }}
                       >
                         <span
                           className={`w-2 h-2 rounded-full ${
@@ -684,6 +738,7 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                             ? "text-green-600"
                             : "text-gray-500"
                         }`}
+                        style={{ fontFamily: "var(--font-lato)" }}
                       >
                         <span
                           className={`w-2 h-2 rounded-full ${
@@ -712,6 +767,7 @@ export default function PerfilSettings({ user }: PerfilSettingsProps) {
                       passwordData.newPassword !== passwordData.confirmPassword
                     }
                     className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     {loading ? (
                       <Loader2 className="w-4 h-4 animate-spin" />

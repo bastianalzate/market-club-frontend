@@ -271,7 +271,7 @@ export default function CheckoutContent() {
 
                 {/* Resumen de Totales */}
                 <div className="mt-6 p-4 bg-white rounded-lg border border-gray-200">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-3 " style={{ fontFamily: "var(--font-lato)" }}>
                     Resumen del pedido
                   </h3>
                   <div className="space-y-2">

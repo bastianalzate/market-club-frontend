@@ -34,29 +34,58 @@ export default function CheckoutFlow() {
       if (orderId) {
         console.log("🔍 Fetching order status for:", orderId);
         
+        // Verificar si el usuario está autenticado
+        const token = localStorage.getItem('token');
+        const isAuthenticated = !!token;
+        
+        console.log("🔍 User authentication status:", isAuthenticated);
+        
+        // Usar ruta diferente según el estado de autenticación
+        const apiUrl = isAuthenticated 
+          ? `${process.env.NEXT_PUBLIC_API_URL}/user/orders/${orderId}`
+          : `${process.env.NEXT_PUBLIC_API_URL}/payments/check-status`;
+        
+        const requestOptions: RequestInit = isAuthenticated 
+          ? {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              }
+            }
+          : {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ order_id: orderId })
+            };
+        
         // HACER LA CONSULTA A LA API
-        fetch(`http://localhost:8000/api/user/orders/${orderId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        })
+        fetch(apiUrl, requestOptions)
         .then(response => {
           console.log("🔍 API Response status:", response.status);
           return response.json();
         })
         .then(data => {
           console.log("🔍 API Response data:", data);
-          console.log("🔍 Full order object:", data.data);
+          console.log("🔍 Full response object:", data.data);
           
           if (data.success && data.data) {
-            const order = data.data;
-            const paymentStatus = order.payment_status;
+            const responseData = data.data;
+            
+            // Manejar diferentes estructuras de respuesta según la ruta
+            const paymentStatus = isAuthenticated 
+              ? responseData.payment_status  // Ruta autenticada: /user/orders/{id}
+              : responseData.payment_status; // Ruta pública: /payments/check-status
+            
+            const orderStatus = isAuthenticated 
+              ? responseData.status 
+              : responseData.order_status;
             
             console.log("🔍 Payment status from API:", paymentStatus);
-            console.log("🔍 Order status from API:", order.status);
-            console.log("🔍 All order fields:", Object.keys(order));
+            console.log("🔍 Order status from API:", orderStatus);
+            console.log("🔍 All response fields:", Object.keys(responseData));
             
             // Normalizar el payment_status para comparación robusta
             const normalizedPaymentStatus = paymentStatus?.toString().toLowerCase().trim();
@@ -64,24 +93,30 @@ export default function CheckoutFlow() {
             if (normalizedPaymentStatus === 'paid') {
               console.log("✅ Payment is PAID - showing success");
               setOrderStatus('success');
+              showSuccess("Pago exitoso", "Tu pago ha sido procesado exitosamente");
             } else if (normalizedPaymentStatus === 'failed') {
               console.log("❌ Payment is FAILED - showing failed");
               setOrderStatus('failed');
+              showError("Pago fallido", "Tu pago no pudo ser procesado. Por favor intenta nuevamente.");
             } else if (normalizedPaymentStatus === 'pending') {
               console.log("⏳ Payment is PENDING - showing pending");
               setOrderStatus('pending');
+              showError("Pago pendiente", "Tu pago está siendo procesado. Te notificaremos cuando esté confirmado.");
             } else {
               console.log("❓ Unknown payment status:", paymentStatus, "- showing failed");
               setOrderStatus('failed');
+              showError("Error de pago", "No se pudo verificar el estado de tu pago. Por favor contacta con soporte.");
             }
           } else {
             console.log("❌ Invalid API response - showing failed");
             setOrderStatus('failed');
+            showError("Error de pago", "No se pudo verificar el estado de tu pago. Por favor contacta con soporte.");
           }
         })
         .catch(error => {
           console.error("❌ API Error:", error);
           setOrderStatus('failed');
+          showError("Error de pago", "No se pudo verificar el estado de tu pago. Por favor contacta con soporte.");
         });
       }
     }
@@ -217,10 +252,9 @@ export default function CheckoutFlow() {
   };
 
   const handlePaymentSuccess = async () => {
-    showSuccess("Pago exitoso", "Tu pago ha sido procesado exitosamente");
-    // Sincronizar el carrito después del pago exitoso
+    // Sincronizar el carrito después del pago
     await loadCart();
-    handleStepChange(4); // Move to success step
+    handleStepChange(4); // Move to confirmation step where we'll check the actual payment status
   };
 
   const handleCompleteOrder = async () => {
@@ -241,10 +275,10 @@ export default function CheckoutFlow() {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
             Checkout
           </h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2 px-4">
+          <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2 px-4" style={{ fontFamily: "var(--font-lato)" }}>
             Completa tu pedido de forma segura
           </p>
         </div>
@@ -367,6 +401,7 @@ export default function CheckoutFlow() {
                   )}
                 </div>
                 <span
+                  style={{ fontFamily: "var(--font-lato)" }}
                   className={`ml-2 sm:ml-3 text-xs sm:text-sm font-medium transition-colors duration-200 hidden sm:block ${
                     currentStep >= step ? "text-gray-900" : "text-gray-400"
                   }`}
@@ -399,10 +434,10 @@ export default function CheckoutFlow() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
-                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
                         Verificando Pago...
                       </h2>
-                      <p className="text-gray-600 mb-6">
+                      <p className="text-gray-600 mb-6" style={{ fontFamily: "var(--font-lato)" }}>
                         Estamos verificando el estado de tu pago. Por favor espera un momento.
                       </p>
                     </>
@@ -414,10 +449,10 @@ export default function CheckoutFlow() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
-                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
                         ¡Pedido Completado!
                       </h2>
-                      <p className="text-gray-600 mb-6">
+                      <p className="text-gray-600 mb-6" style={{ fontFamily: "var(--font-lato)" }}>
                         Tu pago ha sido procesado exitosamente. Recibirás un email de confirmación pronto.
                       </p>
                     </>
@@ -429,10 +464,10 @@ export default function CheckoutFlow() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                       </div>
-                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
                         Pago Fallido
                       </h2>
-                      <p className="text-gray-600 mb-6">
+                      <p className="text-gray-600 mb-6" style={{ fontFamily: "var(--font-lato)" }}>
                         Tu pago no pudo ser procesado. Por favor intenta nuevamente o contacta con soporte.
                       </p>
                     </>
@@ -444,10 +479,10 @@ export default function CheckoutFlow() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
-                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
                         Pago Pendiente
                       </h2>
-                      <p className="text-gray-600 mb-6">
+                      <p className="text-gray-600 mb-6" style={{ fontFamily: "var(--font-lato)" }}>
                         Tu pago está siendo procesado. Te notificaremos cuando esté confirmado.
                       </p>
                     </>
@@ -456,7 +491,7 @@ export default function CheckoutFlow() {
                   {checkoutState.orderId && (
                     <div className="bg-gray-50 rounded-lg p-6 mb-6">
                       <div className="text-center mb-4">
-                        <p className="text-lg font-semibold text-gray-900">
+                        <p className="text-lg font-semibold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
                           Número de orden: {checkoutState.orderId}
                         </p>
                       </div>
@@ -464,20 +499,20 @@ export default function CheckoutFlow() {
                       {/* Detalles de productos */}
                       {checkoutState.orderData && checkoutState.orderData.items && checkoutState.orderData.items.length > 0 && (
                         <div className="border-t pt-4">
-                          <h4 className="text-sm font-semibold text-gray-900 mb-3">Productos comprados:</h4>
+                          <h4 className="text-sm font-semibold text-gray-900 mb-3" style={{ fontFamily: "var(--font-lato)" }}>Productos comprados:</h4>
                           <div className="space-y-2">
                             {checkoutState.orderData.items.map((item: any, index: number) => (
                               <div key={index} className="flex justify-between items-center text-sm">
                                 <div className="text-left">
-                                  <p className="font-medium text-gray-900">
+                                  <p className="font-medium text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
                                     {item.product?.name || 'Producto'}
                                   </p>
-                                  <p className="text-gray-600">
+                                  <p className="text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>
                                     Cantidad: {item.quantity}
                                   </p>
                                 </div>
                                 <div className="text-right">
-                                  <p className="font-semibold text-gray-900">
+                                  <p className="font-semibold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
                                     ${new Intl.NumberFormat('es-CO').format(item.total_price)}
                                   </p>
                                 </div>
@@ -489,24 +524,24 @@ export default function CheckoutFlow() {
                           <div className="border-t pt-4 mt-4">
                             <div className="space-y-1 text-sm">
                               <div className="flex justify-between">
-                                <span className="text-gray-900">Subtotal:</span>
-                                <span className="font-medium text-gray-900">${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.subtotal || 0)}</span>
+                                <span className="text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>Subtotal:</span>
+                                <span className="font-medium text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.subtotal || 0)}</span>
                               </div>
                               {checkoutState.orderData.tax_amount > 0 && (
                                 <div className="flex justify-between">
-                                  <span className="text-gray-900">IVA (19%):</span>
-                                  <span className="font-medium text-gray-900">${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.tax_amount)}</span>
+                                  <span className="text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>IVA (19%):</span>
+                                  <span className="font-medium text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.tax_amount)}</span>
                                 </div>
                               )}
                               {checkoutState.orderData.shipping_amount > 0 && (
                                 <div className="flex justify-between">
-                                  <span className="text-gray-900">Envío:</span>
-                                  <span className="font-medium text-gray-900">${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.shipping_amount)}</span>
+                                  <span className="text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>Envío:</span>
+                                  <span className="font-medium text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.shipping_amount)}</span>
                                 </div>
                               )}
                               <div className="flex justify-between border-t pt-2 font-semibold text-lg">
-                                <span>Total:</span>
-                                <span>${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.total_amount || 0)}</span>
+                                <span className="text-black" style={{ fontFamily: "var(--font-lato)" }}>Total:</span>
+                                <span className="text-black" style={{ fontFamily: "var(--font-lato)" }}>${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.total_amount || 0)}</span>
                               </div>
                             </div>
                           </div>
@@ -518,6 +553,7 @@ export default function CheckoutFlow() {
                   <button
                     onClick={handleCompleteOrder}
                     className="bg-yellow-600 text-white py-3 px-8 rounded-lg font-medium hover:bg-yellow-700 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     Continuar Comprando
                   </button>
@@ -552,16 +588,17 @@ export default function CheckoutFlow() {
                         </svg>
                       </div>
                       <div className="ml-3 flex-1">
-                        <h3 className="text-sm font-medium text-red-800">
+                        <h3 className="text-sm font-medium text-red-800" style={{ fontFamily: "var(--font-lato)" }}>
                           Error del servidor
                         </h3>
-                        <p className="mt-1 text-sm text-red-700">
+                        <p className="mt-1 text-sm text-red-700" style={{ fontFamily: "var(--font-lato)" }}>
                           {serverError}
                         </p>
                         <div className="mt-3">
                           <button
                             onClick={() => setServerError(null)}
                             className="bg-red-100 text-red-800 px-3 py-1 rounded-md text-sm font-medium hover:bg-red-200 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             Reintentar
                           </button>
@@ -616,15 +653,16 @@ export default function CheckoutFlow() {
                           />
                         </svg>
                       </div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      <h3 className="text-lg font-medium text-gray-900 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
                         Error al crear la orden
                       </h3>
-                      <p className="text-gray-600 mb-4">
+                      <p className="text-gray-600 mb-4" style={{ fontFamily: "var(--font-lato)" }}>
                         No se pudo crear la orden. Por favor intenta de nuevo.
                       </p>
                       <button
                         onClick={() => handleStepChange(2)}
                         className="bg-yellow-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-yellow-700 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                        style={{ fontFamily: "var(--font-lato)" }}
                       >
                         Volver a Dirección
                       </button>
@@ -655,7 +693,7 @@ export default function CheckoutFlow() {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-sm sm:text-lg font-bold text-gray-900">
+                  <h3 className="text-sm sm:text-lg font-bold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
                     Resumen del Pedido
                   </h3>
                 </div>
@@ -684,16 +722,16 @@ export default function CheckoutFlow() {
                               }}
                             />
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold text-gray-900 truncate">
+                              <p className="text-sm font-semibold text-gray-900 truncate" style={{ fontFamily: "var(--font-lato)" }}>
                                 {item.product?.name ||
                                   item.gift_data?.name ||
                                   "Producto personalizado"}
                               </p>
-                              <p className="text-xs sm:text-sm text-gray-500">
+                              <p className="text-xs sm:text-sm text-gray-500" style={{ fontFamily: "var(--font-lato)" }}>
                                 Cantidad: {item.quantity}
                               </p>
                             </div>
-                            <p className="text-xs sm:text-sm font-bold text-gray-900">
+                            <p className="text-xs sm:text-sm font-bold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
                               {formatPrice(
                                 parseFloat(String(item.unit_price)) *
                                   item.quantity
@@ -706,7 +744,7 @@ export default function CheckoutFlow() {
                         (currentStep < 3 ? cart?.items : orderData?.items)
                           .length > 3 && (
                           <div className="text-center py-2">
-                            <p className="text-sm text-gray-500 bg-gray-100 rounded-lg py-2 px-3">
+                            <p className="text-sm text-gray-500 bg-gray-100 rounded-lg py-2 px-3" style={{ fontFamily: "var(--font-lato)" }}>
                               +
                               {(currentStep < 3
                                 ? cart?.items
@@ -720,8 +758,8 @@ export default function CheckoutFlow() {
 
                     <div className="border-t border-gray-200 pt-3 sm:pt-4 space-y-2 sm:space-y-3 bg-gray-50 rounded-lg p-3 sm:p-4">
                       <div className="flex justify-between text-xs sm:text-sm">
-                        <span className="text-gray-600">Subtotal:</span>
-                        <span className="font-semibold text-gray-900">
+                        <span className="text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>Subtotal:</span>
+                        <span className="font-semibold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
                           {formatPrice(
                             currentStep < 3
                               ? cart?.items?.reduce(
@@ -736,8 +774,8 @@ export default function CheckoutFlow() {
                         </span>
                       </div>
                       <div className="flex justify-between text-xs sm:text-sm">
-                        <span className="text-gray-600">Envío:</span>
-                        <span className="font-semibold text-gray-900">
+                        <span className="text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>Envío:</span>
+                        <span className="font-semibold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
                           {formatPrice(
                             currentStep < 3
                               ? parseFloat(String(cart?.shipping_amount || 0))
@@ -746,10 +784,10 @@ export default function CheckoutFlow() {
                         </span>
                       </div>
                       <div className="flex justify-between text-xs sm:text-sm">
-                        <span className="text-gray-600">
+                        <span className="text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>
                           Impuestos (IVA 19%):
                         </span>
-                        <span className="font-semibold text-gray-900">
+                        <span className="font-semibold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
                           {formatPrice(
                             currentStep < 3
                               ? (() => {
@@ -772,8 +810,8 @@ export default function CheckoutFlow() {
                         </span>
                       </div>
                       <div className="flex justify-between text-base sm:text-lg font-bold border-t border-gray-200 pt-2 sm:pt-3">
-                        <span className="text-gray-900">Total:</span>
-                        <span className="text-gray-900">
+                        <span className="text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>Total:</span>
+                        <span className="text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
                           {formatPrice(
                             currentStep < 3
                               ? (() => {
