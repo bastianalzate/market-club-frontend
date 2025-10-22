@@ -61,7 +61,8 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     }
 
     // Construir URL completa con la base del backend
-    return `http://localhost:8000/${imagePath}`;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:8000";
+    return `${baseUrl}/${imagePath}`;
   };
 
   // Función para obtener el nombre del item (producto o regalo)
