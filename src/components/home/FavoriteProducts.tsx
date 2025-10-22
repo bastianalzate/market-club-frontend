@@ -161,7 +161,10 @@ export default function FavoriteProducts() {
 
         {/* Etiqueta de Agotado */}
         {product.stock_quantity === 0 && (
-          <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg sm:top-4 sm:left-4 sm:px-3 sm:text-sm">
+          <div 
+            className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg sm:top-4 sm:left-4 sm:px-3 sm:text-sm"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             AGOTADO
           </div>
         )}
@@ -190,28 +193,43 @@ export default function FavoriteProducts() {
       {/* Información del producto */}
       <div className="p-2 flex-1 flex flex-col sm:p-4 lg:p-6">
         <div className="flex items-center justify-between mb-0 sm:mb-3">
-          <span className="text-xs text-gray-600 font-medium sm:text-sm">
+          <span 
+            className="text-xs text-gray-600 font-medium sm:text-sm"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             BOTELLA 500ML
           </span>
           <div className="text-right">
             {product.sale_price && product.sale_price < product.price ? (
               <div>
-                <span className="text-xs text-gray-500 line-through sm:text-sm">
+                <span 
+                  className="text-xs text-gray-500 line-through sm:text-sm"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {formatPrice(product.price)}
                 </span>
-                <span className="text-base font-bold text-gray-900 ml-1 sm:text-lg sm:ml-2">
+                <span 
+                  className="text-base font-bold text-gray-900 ml-1 sm:text-lg sm:ml-2"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {formatPrice(product.sale_price)}
                 </span>
               </div>
             ) : (
-              <span className="text-base font-bold text-gray-900 sm:text-lg">
+              <span 
+                className="text-base font-bold text-gray-900 sm:text-lg"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 {formatPrice(product.current_price)}
               </span>
             )}
           </div>
         </div>
 
-        <h3 className="text-xs font-bold text-gray-900 mb-0 line-clamp-1 sm:text-base sm:mb-4 sm:line-clamp-2 sm:text-lg">
+        <h3 
+          className="text-xs font-bold text-gray-900 mb-0 line-clamp-1 sm:text-base sm:mb-4 sm:line-clamp-2 sm:text-lg"
+          style={{ fontFamily: "var(--font-lato)" }}
+        >
           {product.name}
         </h3>
 
@@ -260,7 +278,10 @@ export default function FavoriteProducts() {
               (e.currentTarget.style.backgroundColor = "#B58E31")
             }
           >
-            <span className="truncate">
+            <span 
+              className="truncate"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               {addingToCart === product.id
                 ? "Agregando..."
                 : product.stock_quantity === 0
@@ -305,7 +326,10 @@ export default function FavoriteProducts() {
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
         {/* Header con título y botón */}
         <div className="flex items-center justify-center lg:justify-between mb-6">
-          <h2 className="text-[30px] font-bold text-white sm:text-3xl">
+          <h2 
+            className="text-[30px] font-bold text-white sm:text-3xl"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Cervezas Destacadas
           </h2>
 
@@ -313,6 +337,7 @@ export default function FavoriteProducts() {
             <Link
               href="/tienda"
               className="inline-flex items-center justify-center p-1 -m-1 text-sm font-bold text-gray-300 transition-all duration-200 rounded-md focus:outline-none hover:text-white"
+              style={{ fontFamily: "var(--font-lato)" }}
             >
               Ver todas las cervezas
               <svg

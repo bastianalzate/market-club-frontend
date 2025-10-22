@@ -336,7 +336,10 @@ export default function ProductGrid({
           */}
         </div>
 
-        <div className="text-sm text-gray-500">
+        <div 
+          className="text-sm text-gray-500"
+          style={{ fontFamily: "var(--font-lato)" }}
+        >
           Mostrando {startIndex}-{endIndex} de{" "}
           {pagination?.total || totalProducts || localProducts.length} productos
         </div>
@@ -401,7 +404,10 @@ export default function ProductGrid({
 
                 {/* Etiqueta de Agotado */}
                 {product.stock_quantity === 0 && (
-                  <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg sm:top-4 sm:left-4 sm:px-3 sm:text-sm">
+                  <div 
+                    className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg sm:top-4 sm:left-4 sm:px-3 sm:text-sm"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     AGOTADO
                   </div>
                 )}
@@ -436,28 +442,43 @@ export default function ProductGrid({
                 }`}
               >
                 <div className="flex items-center justify-between mb-0 sm:mb-3">
-                  <span className="text-xs text-gray-600 font-medium sm:text-sm">
+                  <span 
+                    className="text-xs text-gray-600 font-medium sm:text-sm"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     BOTELLA 500ML
                   </span>
                   <div className="text-right">
                     {product.sale_price && product.sale_price < product.price ? (
                       <div>
-                        <span className="text-xs text-gray-500 line-through sm:text-sm">
+                        <span 
+                          className="text-xs text-gray-500 line-through sm:text-sm"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           {formatPrice(product.price)}
                         </span>
-                        <span className="text-base font-bold text-gray-900 ml-1 sm:text-lg sm:ml-2">
+                        <span 
+                          className="text-base font-bold text-gray-900 ml-1 sm:text-lg sm:ml-2"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           {formatPrice(product.sale_price)}
                         </span>
                       </div>
                     ) : (
-                      <span className="text-base font-bold text-gray-900 sm:text-lg">
+                      <span 
+                        className="text-base font-bold text-gray-900 sm:text-lg"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {formatPrice(product.price)}
                       </span>
                     )}
                   </div>
                 </div>
 
-                <h3 className="text-xs font-bold text-gray-900 mb-0 line-clamp-1 sm:text-base sm:mb-4 sm:line-clamp-2">
+                <h3 
+                  className="text-xs font-bold text-gray-900 mb-0 line-clamp-1 sm:text-base sm:mb-4 sm:line-clamp-2"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {product.name}
                 </h3>
 
@@ -480,7 +501,10 @@ export default function ProductGrid({
                     />
                     {/* Contador en el ícono del carrito */}
                     {isInCart(product.id) && (
-                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold sm:h-5 sm:w-5">
+                      <span 
+                        className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold sm:h-5 sm:w-5"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {getProductQuantity(product.id)}
                       </span>
                     )}
@@ -504,7 +528,10 @@ export default function ProductGrid({
                       (e.currentTarget.style.backgroundColor = "#B58E31")
                     }
                   >
-                    <span className="truncate">
+                    <span 
+                      className="truncate"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       {addingToCart === product.id
                         ? "Agregando..."
                         : product.stock_quantity === 0

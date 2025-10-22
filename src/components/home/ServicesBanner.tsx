@@ -35,7 +35,7 @@ export default function ServicesBanner() {
               <p 
                 className="text-white text-[16px] lg:text-[24px]"
                 style={{
-                  fontFamily: "var(--font-inter)",
+                  fontFamily: "var(--font-lato)",
                   fontWeight: 400
                 }}
               >
@@ -44,7 +44,7 @@ export default function ServicesBanner() {
               <p 
                 className="text-white text-[12px] lg:text-[16px]"
                 style={{
-                  fontFamily: "var(--font-inter)",
+                  fontFamily: "var(--font-lato)",
                   fontWeight: 400,
                   lineHeight: "1.4"
                 }}
@@ -82,7 +82,7 @@ export default function ServicesBanner() {
               <p 
                 className="text-white text-[16px] lg:text-[24px]"
                 style={{
-                  fontFamily: "var(--font-inter)",
+                  fontFamily: "var(--font-lato)",
                   fontWeight: 400
                 }}
               >
@@ -91,7 +91,7 @@ export default function ServicesBanner() {
               <p 
                 className="text-white text-[12px] lg:text-[16px]"
                 style={{
-                  fontFamily: "var(--font-inter)",
+                  fontFamily: "var(--font-lato)",
                   fontWeight: 400,
                   lineHeight: "1.4"
                 }}
@@ -129,7 +129,7 @@ export default function ServicesBanner() {
               <p 
                 className="text-white text-[16px] lg:text-[24px]"
                 style={{
-                  fontFamily: "var(--font-inter)",
+                  fontFamily: "var(--font-lato)",
                   fontWeight: 400
                 }}
               >
@@ -138,7 +138,7 @@ export default function ServicesBanner() {
               <p 
                 className="text-white text-[12px] lg:text-[16px]"
                 style={{
-                  fontFamily: "var(--font-inter)",
+                  fontFamily: "var(--font-lato)",
                   fontWeight: 400,
                   lineHeight: "1.4"
                 }}

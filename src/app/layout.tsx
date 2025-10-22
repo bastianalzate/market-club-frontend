@@ -3,7 +3,7 @@ import {
   Geist,
   Geist_Mono,
   Oswald,
-  Inter,
+  Lato,
   Plus_Jakarta_Sans,
 } from "next/font/google";
 import "./globals.css";
@@ -30,10 +30,10 @@ const oswald = Oswald({
   weight: ["400", "500", "600", "700"],
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const lato = Lato({
+  variable: "--font-lato",
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["300", "400", "700"],
 });
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -47,7 +47,7 @@ const FONT_CLASSES = [
   geistSans.variable,
   geistMono.variable,
   oswald.variable,
-  inter.variable,
+  lato.variable,
   plusJakartaSans.variable,
   "antialiased",
 ].join(" ");

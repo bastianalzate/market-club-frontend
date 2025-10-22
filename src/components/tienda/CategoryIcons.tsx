@@ -47,10 +47,16 @@ export default function CategoryIcons() {
       <div className="px-3 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Título de la sección */}
         <div className="text-center mb-6 sm:mb-8">
-          <h2 className="text-[30px] sm:text-2xl font-bold text-gray-900 mb-2">
+          <h2 
+            className="text-[30px] sm:text-2xl font-bold text-gray-900 mb-2"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Explora por Categorías
           </h2>
-          <p className="text-sm sm:text-base text-gray-600 px-4">
+          <p 
+            className="text-sm sm:text-base text-gray-600 px-4"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Encuentra lo que buscas de manera rápida y fácil
           </p>
         </div>
@@ -130,9 +136,15 @@ export default function CategoryIcons() {
 
         {/* Categoría activa */}
         <div className="text-center mt-4 sm:mt-6">
-          <span className="text-sm sm:text-base text-gray-500">
+          <span 
+            className="text-sm sm:text-base text-gray-500"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Categoría seleccionada:{" "}
-            <span className="font-medium" style={{ color: "#B58E31" }}>
+            <span 
+              className="font-medium" 
+              style={{ color: "#B58E31", fontFamily: "var(--font-lato)" }}
+            >
               {categories[activeCategory].name}
             </span>
           </span>

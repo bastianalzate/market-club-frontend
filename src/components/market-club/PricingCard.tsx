@@ -140,7 +140,7 @@ export default function PricingCard({
           className={`w-full py-3 px-4 rounded-md font-medium transition-all duration-200 hover:scale-105 cursor-pointer text-white hover:opacity-90`}
           style={{
             backgroundColor: buttonColor,
-            fontFamily: "var(--font-inter)",
+            fontFamily: "var(--font-lato)",
             fontSize: "14px",
             fontWeight: 600,
           }}
@@ -177,7 +177,7 @@ export default function PricingCard({
                   isHighlighted || isMaestroPlan ? "text-gray-300" : "text-gray-700"
                 }`}
                 style={{
-                  fontFamily: "var(--font-inter)",
+                  fontFamily: "var(--font-lato)",
                   fontSize: "13px",
                   fontWeight: 400,
                   lineHeight: "1.4",

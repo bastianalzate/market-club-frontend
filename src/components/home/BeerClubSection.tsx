@@ -24,7 +24,7 @@ export default function BeerClubSection() {
         <p
           className="text-white mb-6 lg:mb-8 text-sm sm:text-base md:text-xl lg:text-2xl"
           style={{
-            fontFamily: "var(--font-inter)",
+            fontFamily: "var(--font-lato)",
             fontWeight: 400,
             lineHeight: "1.4",
             letterSpacing: "0px",
