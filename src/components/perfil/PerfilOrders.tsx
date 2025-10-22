@@ -190,7 +190,12 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <Loader2 className="w-8 h-8 animate-spin text-yellow-600 mx-auto mb-4" />
-            <p className="text-gray-600">Cargando órdenes...</p>
+            <p 
+              className="text-gray-600"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              Cargando órdenes...
+            </p>
           </div>
         </div>
       </div>
@@ -216,10 +221,18 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">
+              <h3 
+                className="text-sm font-medium text-red-800"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 Error al cargar las órdenes
               </h3>
-              <p className="mt-1 text-sm text-red-700">{error}</p>
+              <p 
+                className="mt-1 text-sm text-red-700"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
+                {error}
+              </p>
             </div>
           </div>
         </div>
@@ -232,8 +245,16 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Mis Pedidos</h1>
-          <p className="text-gray-600">
+          <h1 
+            className="text-2xl font-bold text-gray-900"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
+            Mis Pedidos
+          </h1>
+          <p 
+            className="text-gray-600"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Gestiona y revisa el estado de tus pedidos
           </p>
         </div>
@@ -242,10 +263,16 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
       {/* Filtros y Búsqueda */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 
+            className="text-lg font-semibold text-gray-900 mb-2"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Filtrar Pedidos
           </h3>
-          <p className="text-sm text-gray-600">
+          <p 
+            className="text-sm text-gray-600"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Busca y filtra tus pedidos por número o estado
           </p>
         </div>
@@ -255,6 +282,7 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
             <label
               htmlFor="search-orders"
               className="block text-sm font-medium text-gray-700 mb-2"
+              style={{ fontFamily: "var(--font-lato)" }}
             >
               Buscar pedido
             </label>
@@ -268,6 +296,7 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 text-gray-900 placeholder-gray-500 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 focus:outline-none transition-colors"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 />
               </div>
             </form>
@@ -278,6 +307,7 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
             <label
               htmlFor="status-filter"
               className="block text-sm font-medium text-gray-700 mb-2"
+              style={{ fontFamily: "var(--font-lato)" }}
             >
               Filtrar por estado
             </label>
@@ -288,23 +318,48 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
                 value={statusFilter}
                 onChange={(e) => handleStatusFilter(e.target.value)}
                 className="w-full pl-10 pr-8 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 focus:outline-none transition-colors appearance-none"
+                style={{ fontFamily: "var(--font-lato)" }}
               >
-                <option value="all" className="text-gray-900">
+                <option 
+                  value="all" 
+                  className="text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Todos los estados
                 </option>
-                <option value="Pendiente" className="text-gray-900">
+                <option 
+                  value="Pendiente" 
+                  className="text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   ⏳ Pendiente
                 </option>
-                <option value="Procesando" className="text-gray-900">
+                <option 
+                  value="Procesando" 
+                  className="text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   📦 Procesando
                 </option>
-                <option value="En camino" className="text-gray-900">
+                <option 
+                  value="En camino" 
+                  className="text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   🚚 En camino
                 </option>
-                <option value="Entregado" className="text-gray-900">
+                <option 
+                  value="Entregado" 
+                  className="text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   ✅ Entregado
                 </option>
-                <option value="Cancelado" className="text-gray-900">
+                <option 
+                  value="Cancelado" 
+                  className="text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   ❌ Cancelado
                 </option>
               </select>
@@ -340,22 +395,32 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3 
+                          className="text-lg font-semibold text-gray-900"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           Pedido #{order.order_number}
                         </h3>
                         <span
                           className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
                             order.status
                           )}`}
+                          style={{ fontFamily: "var(--font-lato)" }}
                         >
                           {getStatusIcon(order.status)}
                           {order.status}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-500 mb-2">
+                      <p 
+                        className="text-sm text-gray-500 mb-2"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         Realizado el {formatDate(order.created_at)}
                       </p>
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                      <div 
+                        className="flex flex-wrap gap-4 text-sm text-gray-600"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         <span>{order.items.length} productos</span>
                         {order.tracking_number && (
                           <span>Tracking: {order.tracking_number}</span>
@@ -373,10 +438,16 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
                   {/* Precio y Acciones */}
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                     <div className="text-right">
-                      <p className="text-lg font-bold text-gray-900">
+                      <p 
+                        className="text-lg font-bold text-gray-900"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {formatPrice(order.total_amount)}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p 
+                        className="text-sm text-gray-500"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         Subtotal: {formatPrice(order.subtotal)}
                       </p>
                     </div>
@@ -384,12 +455,16 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
                       <button
                         onClick={() => handleViewOrder(order.id)}
                         className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                        style={{ fontFamily: "var(--font-lato)" }}
                       >
                         <Eye className="w-4 h-4" />
                         Ver detalles
                       </button>
                       {order.status === "Entregado" && (
-                        <button className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2">
+                        <button 
+                          className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           <Download className="w-4 h-4" />
                           Factura
                         </button>
@@ -400,7 +475,10 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
 
                 {/* Productos del Pedido */}
                 <div className="mt-4 pt-4 border-t border-gray-100">
-                  <h4 className="text-sm font-medium text-gray-900 mb-3">
+                  <h4 
+                    className="text-sm font-medium text-gray-900 mb-3"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Productos del pedido:
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -422,14 +500,23 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
                           }}
                         />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
+                          <p 
+                            className="text-sm font-medium text-gray-900 truncate"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {item.product_name}
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p 
+                            className="text-sm text-gray-500"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             Cantidad: {item.quantity}
                           </p>
                         </div>
-                        <p className="text-sm font-semibold text-gray-900">
+                        <p 
+                          className="text-sm font-semibold text-gray-900"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           {formatPrice(item.total_price)}
                         </p>
                       </div>
@@ -442,15 +529,22 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
         ) : (
           <div className="text-center py-12">
             <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 
+              className="text-lg font-medium text-gray-900 mb-2"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               No tienes pedidos
             </h3>
-            <p className="text-gray-500 mb-6">
+            <p 
+              className="text-gray-500 mb-6"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Cuando realices tu primera compra, aparecerá aquí.
             </p>
             <button
               onClick={() => router.push("/tienda")}
               className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
+              style={{ fontFamily: "var(--font-lato)" }}
             >
               Ir a la tienda
             </button>
@@ -461,7 +555,10 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
         {pagination && pagination.last_page > 1 && (
           <div className="px-6 py-4 border-t border-gray-200">
             <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-700">
+              <div 
+                className="text-sm text-gray-700"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 Mostrando{" "}
                 {(pagination.current_page - 1) * pagination.per_page + 1} a{" "}
                 {Math.min(
@@ -475,16 +572,21 @@ export default function PerfilOrders({ user }: PerfilOrdersProps) {
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
                   className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Anterior
                 </button>
-                <span className="px-3 py-2 text-sm font-medium text-gray-700">
+                <span 
+                  className="px-3 py-2 text-sm font-medium text-gray-700"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Página {currentPage} de {pagination.last_page}
                 </span>
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === pagination.last_page}
                   className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Siguiente
                 </button>

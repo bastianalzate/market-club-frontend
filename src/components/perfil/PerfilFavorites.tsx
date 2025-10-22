@@ -161,7 +161,12 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <Loader2 className="w-8 h-8 animate-spin text-yellow-600 mx-auto mb-4" />
-            <p className="text-gray-600">Cargando productos favoritos...</p>
+            <p 
+              className="text-gray-600"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              Cargando productos favoritos...
+            </p>
           </div>
         </div>
       </div>
@@ -203,8 +208,16 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Mis Favoritos</h1>
-          <p className="text-gray-600">
+          <h1 
+            className="text-2xl font-bold text-gray-900"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
+            Mis Favoritos
+          </h1>
+          <p 
+            className="text-gray-600"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Productos que has guardado para comprar más tarde
           </p>
         </div>
@@ -213,10 +226,16 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
       {/* Filtros y Búsqueda */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 
+            className="text-lg font-semibold text-gray-900 mb-2"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Buscar Favoritos
           </h3>
-          <p className="text-sm text-gray-600">
+          <p 
+            className="text-sm text-gray-600"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Encuentra rápidamente tus productos favoritos
           </p>
         </div>
@@ -226,6 +245,7 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
             <label
               htmlFor="search-favorites"
               className="block text-sm font-medium text-gray-700 mb-2"
+              style={{ fontFamily: "var(--font-lato)" }}
             >
               Buscar producto
             </label>
@@ -239,6 +259,7 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 text-gray-900 placeholder-gray-500 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 focus:outline-none transition-colors"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 />
               </div>
             </form>
@@ -246,7 +267,10 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
 
           {/* Vista */}
           <div className="lg:w-48">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label 
+              className="block text-sm font-medium text-gray-700 mb-2"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Vista de productos
             </label>
             <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
@@ -257,6 +281,7 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
                     ? "bg-white text-yellow-600 shadow-sm"
                     : "text-gray-600 hover:text-gray-800"
                 }`}
+                style={{ fontFamily: "var(--font-lato)" }}
               >
                 <Grid className="w-4 h-4" />
                 Cuadrícula
@@ -268,6 +293,7 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
                     ? "bg-white text-yellow-600 shadow-sm"
                     : "text-gray-600 hover:text-gray-800"
                 }`}
+                style={{ fontFamily: "var(--font-lato)" }}
               >
                 <List className="w-4 h-4" />
                 Lista
@@ -319,10 +345,16 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
                 <div className={`p-4 ${viewMode === "list" ? "flex-1" : ""}`}>
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 truncate">
+                      <h3 
+                        className="font-semibold text-gray-900 truncate"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {favorite.product.name}
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p 
+                        className="text-sm text-gray-500"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {favorite.product.brand}
                       </p>
                     </div>
@@ -338,7 +370,10 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
 
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <p className="text-lg font-bold text-gray-900">
+                      <p 
+                        className="text-lg font-bold text-gray-900"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {formatPrice(
                           favorite.product.current_price ||
                             favorite.product.price
@@ -346,7 +381,10 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
                       </p>
                       {favorite.product.current_price !==
                         favorite.product.price && (
-                        <p className="text-sm text-gray-500 line-through">
+                        <p 
+                          className="text-sm text-gray-500 line-through"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           {formatPrice(favorite.product.price)}
                         </p>
                       )}
@@ -357,12 +395,16 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
                       }`}
+                      style={{ fontFamily: "var(--font-lato)" }}
                     >
                       {favorite.product.in_stock ? "Disponible" : "Agotado"}
                     </div>
                   </div>
 
-                  <div className="text-xs text-gray-500 mb-3">
+                  <div 
+                    className="text-xs text-gray-500 mb-3"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Agregado el {formatDate(favorite.added_at)}
                   </div>
 
@@ -371,6 +413,7 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
                       onClick={() => handleAddToCart(favorite)}
                       disabled={!favorite.product.in_stock}
                       className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{ fontFamily: "var(--font-lato)" }}
                     >
                       <ShoppingCart className="w-4 h-4" />
                       Agregar al carrito
@@ -421,15 +464,22 @@ export default function PerfilFavorites({ user }: PerfilFavoritesProps) {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200">
           <div className="text-center py-12">
             <Heart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 
+              className="text-lg font-medium text-gray-900 mb-2"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               No tienes productos favoritos
             </h3>
-            <p className="text-gray-500 mb-6">
+            <p 
+              className="text-gray-500 mb-6"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Cuando agregues productos a tus favoritos, aparecerán aquí.
             </p>
             <button 
               onClick={() => router.push('/tienda')}
               className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors duration-200 cursor-pointer"
+              style={{ fontFamily: "var(--font-lato)" }}
             >
               Explorar productos
             </button>

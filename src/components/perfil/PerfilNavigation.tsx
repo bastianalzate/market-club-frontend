@@ -51,7 +51,12 @@ export default function PerfilNavigation({
 }: PerfilNavigationProps) {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-6">Mi Cuenta</h2>
+      <h2 
+        className="text-lg font-semibold text-gray-900 mb-6"
+        style={{ fontFamily: "var(--font-lato)" }}
+      >
+        Mi Cuenta
+      </h2>
 
       <nav className="space-y-2">
         {navigationItems.map((item) => {
@@ -75,8 +80,18 @@ export default function PerfilNavigation({
                 style={isActive ? { color: "rgb(180, 140, 43)" } : {}}
               />
               <div className="flex-1">
-                <div className="font-medium">{item.label}</div>
-                <div className="text-sm text-gray-500">{item.description}</div>
+                <div 
+                  className="font-medium"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  {item.label}
+                </div>
+                <div 
+                  className="text-sm text-gray-500"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  {item.description}
+                </div>
               </div>
             </button>
           );
@@ -88,15 +103,15 @@ export default function PerfilNavigation({
         <div className="space-y-3">
           <div className="flex items-center gap-3 text-sm text-gray-600">
             <Package className="w-4 h-4" />
-            <span>Envíos gratis desde $200.000</span>
+            <span style={{ fontFamily: "var(--font-lato)" }}>Envíos gratis desde $200.000</span>
           </div>
           <div className="flex items-center gap-3 text-sm text-gray-600">
             <CreditCard className="w-4 h-4" />
-            <span>Pagos seguros</span>
+            <span style={{ fontFamily: "var(--font-lato)" }}>Pagos seguros</span>
           </div>
           <div className="flex items-center gap-3 text-sm text-gray-600">
             <MapPin className="w-4 h-4" />
-            <span>Entrega a domicilio</span>
+            <span style={{ fontFamily: "var(--font-lato)" }}>Entrega a domicilio</span>
           </div>
         </div>
       </div>

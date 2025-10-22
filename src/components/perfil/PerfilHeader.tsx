@@ -79,18 +79,21 @@ export default function PerfilHeader({ user }: PerfilHeaderProps) {
           <div className="flex-1">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 
+                  className="text-3xl font-bold text-gray-900 mb-2"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {displayName}
                 </h1>
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4" />
-                    <span>{displayEmail}</span>
+                    <span style={{ fontFamily: "var(--font-lato)" }}>{displayEmail}</span>
                   </div>
                   {displayPhone && (
                     <div className="flex items-center gap-2">
                       <Phone className="w-4 h-4" />
-                      <span>{displayPhone}</span>
+                      <span style={{ fontFamily: "var(--font-lato)" }}>{displayPhone}</span>
                     </div>
                   )}
                 </div>
@@ -99,17 +102,26 @@ export default function PerfilHeader({ user }: PerfilHeaderProps) {
               {/* Badge de tipo de usuario */}
               <div className="flex items-center gap-2">
                 {user.isGuest ? (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  <span 
+                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     <Crown className="w-3 h-3 mr-1" />
                     Usuario Invitado
                   </span>
                 ) : isWholesaler ? (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <span 
+                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     <Crown className="w-3 h-3 mr-1" />
                     Mayorista
                   </span>
                 ) : (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  <span 
+                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     <User className="w-3 h-3 mr-1" />
                     Miembro
                   </span>
