@@ -223,8 +223,8 @@ export default function CheckoutSuccessPage() {
       <div className="bg-white border-b">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Checkout</h1>
-            <p className="text-gray-600">Completa tu pedido de forma segura</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2" style={{ fontFamily: "var(--font-lato)" }}>Checkout</h1>
+            <p className="text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>Completa tu pedido de forma segura</p>
           </div>
 
           {/* Progress Bar */}

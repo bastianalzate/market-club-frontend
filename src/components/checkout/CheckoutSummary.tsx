@@ -107,7 +107,7 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
               />
             </svg>
           </div>
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
             Resumen del Pedido
           </h2>
         </div>
@@ -133,20 +133,20 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">
+                <p className="text-sm font-semibold text-gray-900 truncate" style={{ fontFamily: "var(--font-lato)" }}>
                   {item.product?.name ||
                     item.gift_data?.name ||
                     "Producto personalizado"}
                 </p>
-                <p className="text-xs sm:text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-500" style={{ fontFamily: "var(--font-lato)" }}>
                   Cantidad: {item.quantity}
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-gray-400" style={{ fontFamily: "var(--font-lato)" }}>
                   Precio unitario: {formatPrice(item.unit_price)}
                 </p>
               </div>
               <div className="flex-shrink-0 text-right">
-                <p className="text-xs sm:text-sm font-bold text-gray-900">
+                <p className="text-xs sm:text-sm font-bold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
                   {formatPrice(
                     parseFloat(String(item.unit_price)) * item.quantity
                   )}
@@ -161,29 +161,29 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
       <div className="px-4 sm:px-6 py-4 sm:py-5 bg-gray-50 border-t border-gray-100">
         <div className="space-y-2 sm:space-y-3">
           <div className="flex justify-between text-xs sm:text-sm">
-            <span className="text-gray-600">Subtotal:</span>
-            <span className="font-semibold text-gray-900">
+            <span className="text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>Subtotal:</span>
+            <span className="font-semibold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}  >
               {formatPrice(manualSubtotal)}
             </span>
           </div>
 
-          <div className="flex justify-between text-xs sm:text-sm">
-            <span className="text-gray-600">Impuestos (IVA 19%):</span>
-            <span className="font-semibold text-gray-900">
+          <div className="flex justify-between text-xs sm:text-sm" style={{ fontFamily: "var(--font-lato)" }}>
+            <span className="text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>Impuestos (IVA 19%):</span>
+            <span className="font-semibold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
               {formatPrice(finalTaxAmount)}
             </span>
           </div>
 
           <div className="flex justify-between text-xs sm:text-sm">
-            <span className="text-gray-600">Envío:</span>
-            <span className="font-semibold text-gray-900">
+            <span className="text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>Envío:</span>
+            <span className="font-semibold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
               {formatPrice(cart?.shipping_amount || 0)}
             </span>
           </div>
 
           <div className="flex justify-between text-base sm:text-lg font-bold border-t border-gray-200 pt-2 sm:pt-3">
-            <span className="text-gray-900">Total:</span>
-            <span className="text-gray-900">{formatPrice(manualTotal)}</span>
+            <span className="text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>Total:</span>
+            <span className="text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>{formatPrice(manualTotal)}</span>
           </div>
         </div>
       </div>
@@ -207,10 +207,10 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
             </svg>
           </div>
           <div>
-            <p className="text-xs sm:text-sm font-semibold text-blue-900">
+            <p className="text-xs sm:text-sm font-semibold text-blue-900" style={{ fontFamily: "var(--font-lato)" }}>
               Entrega estimada
             </p>
-            <p className="text-xs text-blue-700">3-5 días hábiles</p>
+            <p className="text-xs text-blue-700" style={{ fontFamily: "var(--font-lato)" }}>3-5 días hábiles</p>
           </div>
         </div>
       </div>
@@ -222,6 +222,7 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
           className="w-full text-white py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl cursor-pointer"
           style={{
             backgroundColor: "rgb(180, 140, 43)",
+            fontFamily: "var(--font-lato)",
           }}
         >
           Continuar al Checkout

@@ -207,7 +207,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             {/* Header */}
             <div className="flex-shrink-0 px-4 py-5">
               <div className="flex items-center justify-between">
-                <p className="text-base font-bold text-gray-900">
+                <p 
+                  className="text-base font-bold text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Carrito de Compras
                 </p>
                 <button
@@ -273,7 +276,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
                             <div className="flex items-stretch justify-between flex-1 ml-5 space-x-5">
                               <div className="flex flex-col justify-between flex-1">
-                                <p className="text-sm font-bold text-gray-900">
+                                <p 
+                                  className="text-sm font-bold text-gray-900"
+                                  style={{ fontFamily: "var(--font-lato)" }}
+                                >
                                   {itemName}
                                 </p>
 
@@ -308,7 +314,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                       <Minus className="w-4 h-4 text-gray-600" />
                                     </button>
 
-                                    <span className="text-sm font-bold text-gray-800 min-w-[20px] text-center">
+                                    <span 
+                                      className="text-sm font-bold text-gray-800 min-w-[20px] text-center"
+                                      style={{ fontFamily: "var(--font-lato)" }}
+                                    >
                                       {item.quantity}
                                     </span>
 
@@ -330,7 +339,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                               </div>
 
                               <div className="flex flex-col items-end justify-between">
-                                <p className="flex-shrink-0 w-20 text-sm font-bold text-right text-gray-600">
+                                <p 
+                                  className="flex-shrink-0 w-20 text-sm font-bold text-right text-gray-600"
+                                  style={{ fontFamily: "var(--font-lato)" }}
+                                >
                                   {formatPrice(item.total_price)}
                                 </p>
 
@@ -366,8 +378,16 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               <div className="px-4 py-5 border-t border-gray-200 sm:p-6">
                 <ul className="space-y-4">
                   <li className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-gray-900">Total</p>
-                    <p className="text-sm font-bold text-gray-900">
+                    <p 
+                      className="text-sm font-medium text-gray-900"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Total
+                    </p>
+                    <p 
+                      className="text-sm font-bold text-gray-900"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       {formatPrice(
                         cart?.items?.reduce(
                           (sum, item) =>
@@ -385,7 +405,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     type="button"
                     onClick={handleCheckout}
                     className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white transition-all duration-200 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 hover:opacity-90 cursor-pointer"
-                    style={{ backgroundColor: "#B58E31" }}
+                    style={{ backgroundColor: "#B58E31", fontFamily: "var(--font-lato)" }}
                   >
                     Ir a Pagar
                   </button>
@@ -394,6 +414,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     type="button"
                     onClick={handleClose}
                     className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-gray-900 transition-all duration-200 bg-transparent border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 hover:bg-gray-200 focus:bg-gray-200 cursor-pointer"
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     Continuar Comprando
                   </button>
