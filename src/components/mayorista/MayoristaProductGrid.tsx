@@ -261,9 +261,21 @@ export default function MayoristaProductGrid({
                   <LazyImage
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-full"
+                    className={`w-full h-full object-contain ${
+                      product.stock_quantity === 0 ? "grayscale opacity-60" : ""
+                    }`}
                   />
                 </div>
+
+                {/* Etiqueta de Agotado */}
+                {product.stock_quantity === 0 && (
+                  <div 
+                    className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg sm:top-4 sm:left-4 sm:px-3 sm:text-sm"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    AGOTADO
+                  </div>
+                )}
               </div>
 
               {/* Información del producto */}
@@ -319,7 +331,8 @@ export default function MayoristaProductGrid({
                     }
                   >
                     <span style={{ fontFamily: "var(--font-lato)" }}>
-                      {addingToCart === product.id ? 'Agregando...' : 'Agregar a cotización'}
+                      {addingToCart === product.id ? 'Agregando...' : 
+                       !product.inStock ? 'Agotado' : 'Agregar a cotización'}
                     </span>
                     {addingToCart !== product.id && <ArrowRight className="w-4 h-4" />}
                   </button>
