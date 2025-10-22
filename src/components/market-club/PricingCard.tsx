@@ -53,18 +53,14 @@ export default function PricingCard({
   return (
     <div
       className={`${
-        isHighlighted ? "bg-black text-white" : "bg-white"
-      } rounded-lg p-8 flex flex-col h-full relative ${className} ${
-        isMaestroPlan
-          ? "border-2 border-yellow-400 shadow-2xl shadow-yellow-400/20"
-          : ""
-      }`}
+        isHighlighted || isMaestroPlan ? "bg-black text-white" : "bg-white"
+      } rounded-lg p-8 flex flex-col h-full relative ${className}`}
     >
       {/* Badge Premium para Maestro Cervecero */}
       {isMaestroPlan && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
           <div className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-black px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
-            ⭐ Premium
+            <span className="text-yellow-800">⭐</span> Premium
           </div>
         </div>
       )}
@@ -77,7 +73,7 @@ export default function PricingCard({
         style={{ gridTemplateRows: "auto 1fr auto", minHeight: 240 }}
       >
         <h3
-          className={`mb-4 ${isHighlighted ? "text-white" : "text-black"}`}
+          className={`mb-4 ${isHighlighted || isMaestroPlan ? "text-white" : "text-black"}`}
           style={{
             fontFamily: "var(--font-oswald)",
             fontSize: "18px",
@@ -89,7 +85,7 @@ export default function PricingCard({
 
         <p
           className={`text-sm ${
-            isHighlighted ? "text-gray-300" : "text-gray-600"
+            isHighlighted || isMaestroPlan ? "text-gray-300" : "text-gray-600"
           }`}
           style={{
             fontFamily: "var(--font-inter)",
@@ -103,7 +99,7 @@ export default function PricingCard({
             <button
               type="button"
               className={`ml-1 text-xs underline align-baseline ${
-                isHighlighted ? "text-gray-300" : "text-gray-700"
+                isHighlighted || isMaestroPlan ? "text-gray-300" : "text-gray-700"
               }`}
               onClick={() => setExpanded((v) => !v)}
             >
@@ -114,7 +110,7 @@ export default function PricingCard({
 
         <div className="mt-6">
           <span
-            className={`${isHighlighted ? "text-white" : "text-black"}`}
+            className={`${isHighlighted || isMaestroPlan ? "text-white" : "text-black"}`}
             style={{
               fontFamily: "var(--font-oswald)",
               fontSize: "36px",
@@ -125,7 +121,7 @@ export default function PricingCard({
           </span>
           <span
             className={`ml-2 ${
-              isHighlighted ? "text-gray-300" : "text-gray-600"
+              isHighlighted || isMaestroPlan ? "text-gray-300" : "text-gray-600"
             }`}
             style={{
               fontFamily: "var(--font-inter)",
@@ -141,11 +137,7 @@ export default function PricingCard({
       {/* Botón en posición consistente */}
       <div className="mb-6">
         <button
-          className={`w-full py-3 px-4 rounded-md font-medium transition-all duration-200 hover:scale-105 cursor-pointer ${
-            isHighlighted && name !== "Maestro Cervecero"
-              ? "text-white hover:opacity-90"
-              : "text-white hover:opacity-90"
-          }`}
+          className={`w-full py-3 px-4 rounded-md font-medium transition-all duration-200 hover:scale-105 cursor-pointer text-white hover:opacity-90`}
           style={{
             backgroundColor: buttonColor,
             fontFamily: "var(--font-inter)",
@@ -168,7 +160,7 @@ export default function PricingCard({
                 <div
                   className="w-8 h-8 rounded-full flex items-center justify-center"
                   style={{
-                    backgroundColor: isHighlighted ? "white" : "#B58E315C",
+                    backgroundColor: isHighlighted || isMaestroPlan ? "white" : "#B58E315C",
                   }}
                 >
                   <svg className="w-4 h-4" fill="#846008" viewBox="0 0 20 20">
@@ -182,7 +174,7 @@ export default function PricingCard({
               </div>
               <span
                 className={`${
-                  isHighlighted ? "text-gray-300" : "text-gray-700"
+                  isHighlighted || isMaestroPlan ? "text-gray-300" : "text-gray-700"
                 }`}
                 style={{
                   fontFamily: "var(--font-inter)",
