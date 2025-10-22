@@ -506,8 +506,8 @@ export default function CheckoutFlow() {
                                 </div>
                               )}
                               <div className="flex justify-between border-t pt-2 font-semibold text-lg">
-                                <span style={{ fontFamily: "var(--font-lato)" }}>Total:</span>
-                                <span style={{ fontFamily: "var(--font-lato)" }}>${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.total_amount || 0)}</span>
+                                <span className="text-black" style={{ fontFamily: "var(--font-lato)" }}>Total:</span>
+                                <span className="text-black" style={{ fontFamily: "var(--font-lato)" }}>${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.total_amount || 0)}</span>
                               </div>
                             </div>
                           </div>
