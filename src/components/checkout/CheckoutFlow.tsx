@@ -58,13 +58,16 @@ export default function CheckoutFlow() {
             console.log("🔍 Order status from API:", order.status);
             console.log("🔍 All order fields:", Object.keys(order));
             
-            if (paymentStatus === 'paid') {
+            // Normalizar el payment_status para comparación robusta
+            const normalizedPaymentStatus = paymentStatus?.toString().toLowerCase().trim();
+            
+            if (normalizedPaymentStatus === 'paid') {
               console.log("✅ Payment is PAID - showing success");
               setOrderStatus('success');
-            } else if (paymentStatus === 'failed') {
+            } else if (normalizedPaymentStatus === 'failed') {
               console.log("❌ Payment is FAILED - showing failed");
               setOrderStatus('failed');
-            } else if (paymentStatus === 'pending') {
+            } else if (normalizedPaymentStatus === 'pending') {
               console.log("⏳ Payment is PENDING - showing pending");
               setOrderStatus('pending');
             } else {
