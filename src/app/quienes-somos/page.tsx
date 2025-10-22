@@ -24,7 +24,10 @@ export default function QuienesSomosPage() {
           <div className="max-w-5xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-[#B58E31]/10 backdrop-blur-sm border border-[#B58E31]/20 rounded-full px-6 py-3 mb-4">
               <Beer className="w-5 h-5 text-[#B58E31]" />
-              <span className="text-[#B58E31] font-medium">
+              <span 
+                className="text-[#B58E31] font-medium"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 Nuestra Historia
               </span>
             </div>
@@ -34,7 +37,10 @@ export default function QuienesSomosPage() {
             >
               ¿Quiénes somos?
             </h1>
-            <p className="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-6">
+            <p 
+              className="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-6"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               En Market Club creemos que la vida se disfruta mejor entre risas,
               buena música y una pola bien fría
             </p>
@@ -57,12 +63,18 @@ export default function QuienesSomosPage() {
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-2 bg-[#B58E31]/10 rounded-full px-4 py-2 mb-4">
                   <Sparkles className="w-4 h-4 text-[#B58E31]" />
-                  <span className="text-[#B58E31] font-medium text-sm">
+                  <span 
+                    className="text-[#B58E31] font-medium text-sm"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Desde el corazón
                   </span>
                 </div>
 
-                <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
+                <div 
+                  className="space-y-6 text-lg text-gray-700 leading-relaxed"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <p>
                     Nacimos con la idea de hacer de cada trago un parche, de
                     esos que no se planean, pero terminan siendo los mejores.
@@ -94,7 +106,10 @@ export default function QuienesSomosPage() {
                     <Heart className="w-8 h-8" />
                   </div>
 
-                  <div className="space-y-4 text-center">
+                  <div 
+                    className="space-y-4 text-center"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     <p className="text-base leading-relaxed">
                       Así, Market Club se volvió{" "}
                       <span className="font-bold">más que una marca</span>: un
@@ -133,7 +148,10 @@ export default function QuienesSomosPage() {
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-white rounded-full px-6 py-3 mb-6 shadow-sm border border-gray-200">
                 <Trophy className="w-5 h-5 text-[#B58E31]" />
-                <span className="text-gray-900 font-medium">
+                <span 
+                  className="text-gray-900 font-medium"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Nuestra Esencia
                 </span>
               </div>
@@ -143,7 +161,10 @@ export default function QuienesSomosPage() {
               >
                 Lo que nos hace únicos
               </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-6">
+              <p 
+                className="text-xl text-gray-600 max-w-2xl mx-auto mb-6"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 En Market Club creemos que cada cerveza cuenta una historia, y
                 nosotros te traemos las mejores del mundo para que las vivás a
                 tu manera.
@@ -164,7 +185,10 @@ export default function QuienesSomosPage() {
                   >
                     Historias que cuentan
                   </h3>
-                  <p className="text-gray-600 leading-relaxed text-lg">
+                  <p 
+                    className="text-gray-600 leading-relaxed text-lg"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Cada cerveza cuenta una historia, y nosotros te traemos las
                     mejores del mundo para que las vivás a tu manera.
                   </p>
@@ -183,7 +207,10 @@ export default function QuienesSomosPage() {
                   >
                     Variedad mundial
                   </h3>
-                  <p className="text-gray-600 leading-relaxed text-lg">
+                  <p 
+                    className="text-gray-600 leading-relaxed text-lg"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Reunimos en un solo lugar cervezas importadas de casi todos
                     los rincones del planeta, pa' que probés, comparés y
                     encontrés tu favorita sin salir del parche.
@@ -203,7 +230,10 @@ export default function QuienesSomosPage() {
                   >
                     Punto de encuentro
                   </h3>
-                  <p className="text-gray-600 leading-relaxed text-lg">
+                  <p 
+                    className="text-gray-600 leading-relaxed text-lg"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Market Club es ese punto de encuentro donde se juntan los
                     amigos, los brindis, los goles y las risas.
                   </p>
@@ -223,7 +253,10 @@ export default function QuienesSomosPage() {
                     <Quote className="w-12 h-12 text-white" />
                   </div>
 
-                  <p className="text-xl lg:text-2xl leading-relaxed mb-8 text-gray-300">
+                  <p 
+                    className="text-xl lg:text-2xl leading-relaxed mb-8 text-gray-300"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Un espacio hecho pa' compartir, relajarse y disfrutar lo
                     mejor de todo el mundo… como solo nosotros sabemos hacerlo.
                     🍻
@@ -254,7 +287,10 @@ export default function QuienesSomosPage() {
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-[#B58E31]/10 rounded-full px-6 py-3 mb-6 border border-[#B58E31]/20">
                 <Smile className="w-5 h-5 text-[#B58E31]" />
-                <span className="text-[#B58E31] font-medium">
+                <span 
+                  className="text-[#B58E31] font-medium"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   El alma de Market
                 </span>
               </div>
@@ -279,7 +315,10 @@ export default function QuienesSomosPage() {
                       Beto
                     </h3>
                     <div className="w-24 h-1 bg-white/50 mx-auto mb-8 rounded-full"></div>
-                    <p className="text-2xl lg:text-3xl font-medium mb-6">
+                    <p 
+                      className="text-2xl lg:text-3xl font-medium mb-6"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       El corazón de Market Club
                     </p>
                     <div className="mt-12 flex items-center justify-center gap-3">
@@ -293,7 +332,10 @@ export default function QuienesSomosPage() {
 
               {/* Contenido sobre Beto */}
               <div className="order-1 lg:order-2 space-y-6">
-                <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
+                <div 
+                  className="space-y-6 text-lg text-gray-700 leading-relaxed"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <p className="text-xl">
                     Si has pasado por Market Club,{" "}
                     <span className="font-bold text-gray-900">
@@ -318,7 +360,10 @@ export default function QuienesSomosPage() {
                 <div className="bg-gradient-to-r from-[#B58E31]/10 to-[#A67D2A]/10 rounded-2xl p-8 mt-10 border-l-4 border-[#B58E31] shadow-lg">
                   <div className="flex items-start gap-4">
                     <Quote className="w-8 h-8 text-[#B58E31] flex-shrink-0 mt-1" />
-                    <p className="text-xl font-semibold text-gray-900 leading-relaxed">
+                    <p 
+                      className="text-xl font-semibold text-gray-900 leading-relaxed"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Porque en Market Club no solo servimos cerveza, servimos
                       momentos, y con Beto ahí —como siempre— pa' que cada uno
                       sea especial.
@@ -341,7 +386,10 @@ export default function QuienesSomosPage() {
           <div className="max-w-5xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-[#B58E31]/10 backdrop-blur-sm border border-[#B58E31]/20 rounded-full px-6 py-3 mb-8">
               <Sparkles className="w-5 h-5 text-[#B58E31]" />
-              <span className="text-[#B58E31] font-medium">
+              <span 
+                className="text-[#B58E31] font-medium"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 Empieza tu experiencia
               </span>
             </div>
@@ -353,7 +401,10 @@ export default function QuienesSomosPage() {
               ¿Listo para vivir la experiencia Market Club?
             </h2>
 
-            <p className="text-xl lg:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p 
+              className="text-xl lg:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Descubre nuestras cervezas importadas, arma tu regalo perfecto y
               únete al club donde cada momento cuenta
             </p>

@@ -52,7 +52,14 @@ export const useFilters = () => {
       const data: FiltersResponse = await response.json();
       
       if (data) {
-        setFilters(data);
+        // Filtrar "growler" de los tipos de empaque
+        const filteredData = {
+          ...data,
+          packaging_types: data.packaging_types.filter(type => 
+            type.toLowerCase() !== 'growler'
+          )
+        };
+        setFilters(filteredData);
       } else {
         throw new Error('No se encontraron filtros en la respuesta');
       }

@@ -420,7 +420,7 @@ export default function ContactoPage() {
               <p
                 className="text-gray-600"
                 style={{
-                  fontFamily: "var(--font-text)",
+                  fontFamily: "var(--font-lato)",
                   fontWeight: 400,
                   fontSize: "20px",
                   color: "#667085",
@@ -438,7 +438,7 @@ export default function ContactoPage() {
                     htmlFor="firstName"
                     className="block text-gray-700 mb-2"
                     style={{
-                      fontFamily: "var(--font-text)",
+                      fontFamily: "var(--font-lato)",
                       fontWeight: 500,
                       fontSize: "20px",
                     }}
@@ -456,13 +456,13 @@ export default function ContactoPage() {
                       errors.firstName ? "border-red-500" : "border-gray-300"
                     }`}
                     style={{
-                      fontFamily: "var(--font-text)",
+                      fontFamily: "var(--font-lato)",
                       fontWeight: 400,
                       fontSize: "16px",
                     }}
                   />
                   {errors.firstName && (
-                    <p className="mt-1 text-sm text-red-600">
+                    <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>
                       {errors.firstName}
                     </p>
                   )}
@@ -472,7 +472,7 @@ export default function ContactoPage() {
                     htmlFor="lastName"
                     className="block text-gray-700 mb-2"
                     style={{
-                      fontFamily: "var(--font-text)",
+                      fontFamily: "var(--font-lato)",
                       fontWeight: 500,
                       fontSize: "20px",
                     }}
@@ -490,13 +490,13 @@ export default function ContactoPage() {
                       errors.lastName ? "border-red-500" : "border-gray-300"
                     }`}
                     style={{
-                      fontFamily: "var(--font-text)",
+                      fontFamily: "var(--font-lato)",
                       fontWeight: 400,
                       fontSize: "16px",
                     }}
                   />
                   {errors.lastName && (
-                    <p className="mt-1 text-sm text-red-600">
+                    <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>
                       {errors.lastName}
                     </p>
                   )}
@@ -509,7 +509,7 @@ export default function ContactoPage() {
                   htmlFor="email"
                   className="block text-gray-700 mb-2"
                   style={{
-                    fontFamily: "var(--font-text)",
+                    fontFamily: "var(--font-lato)",
                     fontWeight: 500,
                     fontSize: "20px",
                   }}
@@ -527,13 +527,13 @@ export default function ContactoPage() {
                     errors.email ? "border-red-500" : "border-gray-300"
                   }`}
                   style={{
-                    fontFamily: "var(--font-text)",
+                    fontFamily: "var(--font-lato)",
                     fontWeight: 400,
                     fontSize: "16px",
                   }}
                 />
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                  <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>{errors.email}</p>
                 )}
               </div>
 
@@ -543,7 +543,7 @@ export default function ContactoPage() {
                   htmlFor="phone"
                   className="block text-gray-700 mb-2"
                   style={{
-                    fontFamily: "var(--font-text)",
+                    fontFamily: "var(--font-lato)",
                     fontWeight: 500,
                     fontSize: "20px",
                   }}
@@ -558,7 +558,7 @@ export default function ContactoPage() {
                       aria-label="Código de país"
                       className="px-4 py-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none appearance-none bg-white pr-8"
                       style={{
-                        fontFamily: "var(--font-text)",
+                        fontFamily: "var(--font-lato)",
                         fontWeight: 400,
                         fontSize: "16px",
                         color: "#667085",
@@ -581,14 +581,14 @@ export default function ContactoPage() {
                       errors.phone ? "border-red-500" : "border-gray-300"
                     }`}
                     style={{
-                      fontFamily: "var(--font-text)",
+                      fontFamily: "var(--font-lato)",
                       fontWeight: 400,
                       fontSize: "16px",
                     }}
                   />
                 </div>
                 {errors.phone && (
-                  <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+                  <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>{errors.phone}</p>
                 )}
               </div>
 
@@ -599,7 +599,7 @@ export default function ContactoPage() {
                     htmlFor="dateOfBirth"
                     className="block text-gray-700 mb-2"
                     style={{
-                      fontFamily: "var(--font-text)",
+                      fontFamily: "var(--font-lato)",
                       fontWeight: 500,
                       fontSize: "20px",
                     }}
@@ -617,13 +617,13 @@ export default function ContactoPage() {
                       dateOfBirthError || errors.dateOfBirth ? "border-red-500" : "border-gray-300"
                     }`}
                     style={{
-                      fontFamily: "var(--font-text)",
+                      fontFamily: "var(--font-lato)",
                       fontWeight: 400,
                       fontSize: "16px",
                     }}
                   />
                   {(dateOfBirthError || errors.dateOfBirth) && (
-                    <p className="mt-1 text-sm text-red-600">
+                    <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>
                       {dateOfBirthError || errors.dateOfBirth}
                     </p>
                   )}
@@ -633,7 +633,7 @@ export default function ContactoPage() {
                     htmlFor="profession"
                     className="block text-gray-700 mb-2"
                     style={{
-                      fontFamily: "var(--font-text)",
+                      fontFamily: "var(--font-lato)",
                       fontWeight: 500,
                       fontSize: "20px",
                     }}
@@ -652,13 +652,13 @@ export default function ContactoPage() {
                       professionError || errors.profession ? "border-red-500" : "border-gray-300"
                     }`}
                     style={{
-                      fontFamily: "var(--font-text)",
+                      fontFamily: "var(--font-lato)",
                       fontWeight: 400,
                       fontSize: "16px",
                     }}
                   />
                   {(professionError || errors.profession) && (
-                    <p className="mt-1 text-sm text-red-600">
+                    <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>
                       {professionError || errors.profession}
                     </p>
                   )}
@@ -671,7 +671,7 @@ export default function ContactoPage() {
                   htmlFor="message"
                   className="block text-gray-700 mb-2"
                   style={{
-                    fontFamily: "var(--font-text)",
+                    fontFamily: "var(--font-lato)",
                     fontWeight: 500,
                     fontSize: "20px",
                   }}
@@ -689,15 +689,15 @@ export default function ContactoPage() {
                   }`}
                   placeholder="Escribe tu mensaje aquí..."
                   style={{
-                    fontFamily: "var(--font-text)",
+                    fontFamily: "var(--font-lato)",
                     fontWeight: 400,
                     fontSize: "16px",
                   }}
                 />
                 {errors.message && (
-                  <p className="mt-1 text-sm text-red-600">{errors.message}</p>
+                  <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>{errors.message}</p>
                 )}
-                <div className="text-right text-sm text-gray-500 mt-1">
+                <div className="text-right text-sm text-gray-500 mt-1" style={{ fontFamily: "var(--font-lato)" }}>
                   {formData.message.length}/1000 caracteres
                 </div>
               </div>
@@ -717,11 +717,13 @@ export default function ContactoPage() {
                 <label
                   htmlFor="acceptPrivacy"
                   className="ml-3 text-sm text-gray-700"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Acepta nuestras{" "}
                   <a
                     href="#"
                     className="text-yellow-600 hover:text-yellow-700 underline"
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     política de privacidad
                   </a>
@@ -729,7 +731,7 @@ export default function ContactoPage() {
                 </label>
               </div>
               {errors.acceptPrivacy && (
-                <p className="mt-1 text-sm text-red-600">
+                <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>
                   {errors.acceptPrivacy}
                 </p>
               )}
@@ -737,13 +739,13 @@ export default function ContactoPage() {
               {/* Mensajes de estado */}
               {submitStatus === "success" && (
                 <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-green-800 text-center">{successMessage}</p>
+                  <p className="text-green-800 text-center" style={{ fontFamily: "var(--font-lato)" }}>{successMessage}</p>
                 </div>
               )}
 
               {submitStatus === "error" && (
                 <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-red-800 text-center">
+                  <p className="text-red-800 text-center" style={{ fontFamily: "var(--font-lato)" }}>
                     {errors.submit ||
                       "Hubo un error al enviar el mensaje. Por favor intenta nuevamente."}
                   </p>
@@ -752,7 +754,7 @@ export default function ContactoPage() {
 
               {errors.submit && submitStatus !== "error" && (
                 <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-red-800 text-center">{errors.submit}</p>
+                  <p className="text-red-800 text-center" style={{ fontFamily: "var(--font-lato)" }}>{errors.submit}</p>
                 </div>
               )}
 
@@ -781,7 +783,9 @@ export default function ContactoPage() {
                   }
                 }}
               >
-                {isSubmitting ? "Enviando..." : "Enviar mensaje"}
+                <span style={{ fontFamily: "var(--font-lato)" }}>
+                  {isSubmitting ? "Enviando..." : "Enviar mensaje"}
+                </span>
               </button>
             </form>
           </div>
@@ -844,7 +848,7 @@ export default function ContactoPage() {
                 <p
                     className="text-white text-base lg:text-2xl leading-normal lg:leading-tight"
                     style={{
-                      fontFamily: "Inter, sans-serif",
+                      fontFamily: "var(--font-lato)",
                       fontWeight: 400,
                       margin: 0,
                     }}
@@ -854,7 +858,7 @@ export default function ContactoPage() {
                   <p
                     className="text-white !mt-4 text-base lg:text-2xl leading-normal lg:leading-tight"
                     style={{
-                      fontFamily: "Inter, sans-serif",
+                      fontFamily: "var(--font-lato)",
                       fontWeight: 400,
                       margin: 0,
                     }}
@@ -864,7 +868,7 @@ export default function ContactoPage() {
                   <p
                     className="text-white text-base lg:text-2xl leading-normal lg:leading-tight"
                     style={{
-                      fontFamily: "Inter, sans-serif",
+                      fontFamily: "var(--font-lato)",
                       fontWeight: 400,
                       margin: 0,
                     }}

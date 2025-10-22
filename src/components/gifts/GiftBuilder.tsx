@@ -429,10 +429,16 @@ export default function GiftBuilder() {
       <div className="max-w-7xl mx-auto">
         {/* Título y Descripción */}
         <div className="text-center mb-12">
-          <h1 className="text-[30px] font-bold text-gray-900 mb-6 sm:text-4xl">
+          <h1 
+            className="text-[30px] font-bold text-gray-900 mb-6 sm:text-4xl"
+            style={{ fontFamily: "var(--font-oswald)" }}
+          >
             Construye tu regalo perfecto
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p 
+            className="text-xl text-gray-600 max-w-3xl mx-auto"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Elige tu caja favorita y personalízala con las cervezas que más te
             gusten. Crea un regalo único y especial.
           </p>
@@ -448,10 +454,16 @@ export default function GiftBuilder() {
                   1
                 </div>
                 <div>
-                  <h2 className="text-[30px] font-bold text-gray-900 sm:text-2xl">
+                  <h2 
+                    className="text-[30px] font-bold text-gray-900 sm:text-2xl"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Elige tu caja
                   </h2>
-                  <p className="text-sm text-gray-600">
+                  <p 
+                    className="text-sm text-gray-600"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Selecciona el tamaño perfecto para tu regalo
                   </p>
                 </div>
@@ -501,23 +513,41 @@ export default function GiftBuilder() {
                         />
                       </div>
 
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      <h3 
+                        className="text-lg font-semibold text-gray-900 mb-2"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {box.name}
                       </h3>
-                      <p className="text-sm text-gray-600 mb-2">
+                      <p 
+                        className="text-sm text-gray-600 mb-2"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {box.description}
                       </p>
-                      <p className="text-sm text-gray-500 mb-3">
+                      <p 
+                        className="text-sm text-gray-500 mb-3"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         Hasta {box.maxBeers} cervezas
                       </p>
-                      <p className="text-sm text-gray-500 mb-3">
+                      <p 
+                        className="text-sm text-gray-500 mb-3"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {box.dimensions}
                       </p>
-                      <div className="flex items-center justify-center text-xs text-gray-500 mb-3">
+                      <div 
+                        className="flex items-center justify-center text-xs text-gray-500 mb-3"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         <Clock className="w-4 h-4 mr-1" />
                         {box.deliveryTime}
                       </div>
-                      <p className="text-2xl font-bold text-[#B58E31]">
+                      <p 
+                        className="text-2xl font-bold text-[#B58E31]"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {formatPrice(box.price)}
                       </p>
                     </div>
@@ -534,10 +564,16 @@ export default function GiftBuilder() {
                     2
                   </div>
                   <div>
-                    <h2 className="text-[30px] font-bold text-gray-900 sm:text-2xl">
+                    <h2 
+                      className="text-[30px] font-bold text-gray-900 sm:text-2xl"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Elige tus cervezas
                     </h2>
-                    <p className="text-sm text-gray-600">
+                    <p 
+                      className="text-sm text-gray-600"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Personaliza tu regalo con las cervezas que más te gusten
                     </p>
                   </div>
@@ -554,11 +590,13 @@ export default function GiftBuilder() {
                         value={searchTerm}
                         onChange={(e) => handleSearchChange(e.target.value)}
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-gray-900 placeholder-gray-500"
+                        style={{ fontFamily: "var(--font-lato)" }}
                       />
                     </div>
                     <button
                       onClick={() => setShowFilters(!showFilters)}
                       className="flex items-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700"
+                      style={{ fontFamily: "var(--font-lato)" }}
                     >
                       <Filter className="w-5 h-5 mr-2" />
                       Filtros
@@ -570,7 +608,10 @@ export default function GiftBuilder() {
                     <div className="bg-gray-50 rounded-lg p-4 space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label 
+                            className="block text-sm font-medium text-gray-700 mb-2"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             Paises
                           </label>
                           <select
@@ -579,6 +620,7 @@ export default function GiftBuilder() {
                               handleCountryChange(e.target.value)
                             }
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900"
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             {countries.map((country) => (
                               <option key={country.value} value={country.value}>
@@ -588,7 +630,10 @@ export default function GiftBuilder() {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label 
+                            className="block text-sm font-medium text-gray-700 mb-2"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             Estilos
                           </label>
                           <select
@@ -598,6 +643,7 @@ export default function GiftBuilder() {
                             }
                             disabled={filtersLoading}
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             {filtersLoading ? (
                               <option value="">Cargando...</option>
@@ -614,7 +660,10 @@ export default function GiftBuilder() {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label 
+                            className="block text-sm font-medium text-gray-700 mb-2"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             Rango de precio
                           </label>
                           <select
@@ -623,6 +672,7 @@ export default function GiftBuilder() {
                               handlePriceRangeChange(e.target.value)
                             }
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900"
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             {priceRanges.map((range) => (
                               <option key={range.value} value={range.value}>
@@ -635,6 +685,7 @@ export default function GiftBuilder() {
                           <button
                             onClick={handleClearFilters}
                             className="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors font-medium"
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             Limpiar filtros
                           </button>
@@ -647,10 +698,16 @@ export default function GiftBuilder() {
                 {/* Contador de Progreso */}
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-gray-700">
+                    <span 
+                      className="text-sm font-medium text-gray-700"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Progreso
                     </span>
-                    <span className="text-sm font-medium text-[#B58E31]">
+                    <span 
+                      className="text-sm font-medium text-[#B58E31]"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       {giftBuilder.selectedBeers.length} de{" "}
                       {giftBuilder.selectedBox.maxBeers} cervezas
                     </span>
@@ -673,7 +730,7 @@ export default function GiftBuilder() {
                 {pagination && (
                   <div className="mb-6">
                     <div className="flex justify-between items-center text-sm text-gray-600">
-                      <span>
+                      <span style={{ fontFamily: "var(--font-lato)" }}>
                         Página {pagination.currentPage} de {pagination.lastPage}{" "}
                         - {pagination.total} productos total
                       </span>
@@ -739,20 +796,35 @@ export default function GiftBuilder() {
                             />
                           </div>
 
-                          <h4 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2">
+                          <h4 
+                            className="font-medium text-gray-900 text-sm mb-1 line-clamp-2"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {beer.name}
                           </h4>
-                          <p className="text-xs text-gray-600 mb-1">
+                          <p 
+                            className="text-xs text-gray-600 mb-1"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {beer.brand}
                           </p>
-                          <p className="text-xs text-gray-500 mb-1">
+                          <p 
+                            className="text-xs text-gray-500 mb-1"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {beer.volume}
                           </p>
-                          <p className="text-xs text-[#B58E31] font-medium mb-2">
+                          <p 
+                            className="text-xs text-[#B58E31] font-medium mb-2"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {beer.nationality}
                           </p>
 
-                          <p className="text-sm font-bold text-[#B58E31]">
+                          <p 
+                            className="text-sm font-bold text-[#B58E31]"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {formatPrice(beer.price)}
                           </p>
 
@@ -767,7 +839,10 @@ export default function GiftBuilder() {
                                 >
                                   <X className="w-4 h-4 text-white" />
                                 </div>
-                                <span className="text-xs font-bold text-white drop-shadow-lg">
+                                <span 
+                                  className="text-xs font-bold text-white drop-shadow-lg"
+                                  style={{ fontFamily: "var(--font-lato)" }}
+                                >
                                   {giftBuilder.selectedBeers.length >=
                                   (giftBuilder.selectedBox?.maxBeers || 0)
                                     ? "Límite alcanzado"
@@ -784,7 +859,10 @@ export default function GiftBuilder() {
 
                 {!productsLoading && filteredBeers.length === 0 && (
                   <div className="text-center py-8">
-                    <p className="text-gray-500">
+                    <p 
+                      className="text-gray-500"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       No se encontraron cervezas con los filtros seleccionados
                     </p>
                   </div>
@@ -803,6 +881,7 @@ export default function GiftBuilder() {
                             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                             : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                         }`}
+                        style={{ fontFamily: "var(--font-lato)" }}
                       >
                         Anterior
                       </button>
@@ -835,6 +914,7 @@ export default function GiftBuilder() {
                                     ? "bg-[#B58E31] text-white"
                                     : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                                 }`}
+                                style={{ fontFamily: "var(--font-lato)" }}
                               >
                                 {pageNumber}
                               </button>
@@ -854,6 +934,7 @@ export default function GiftBuilder() {
                             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                             : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                         }`}
+                        style={{ fontFamily: "var(--font-lato)" }}
                       >
                         Siguiente
                       </button>
@@ -867,7 +948,10 @@ export default function GiftBuilder() {
           {/* Panel Lateral - Resumen */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-lg p-6 sticky top-6 border border-gray-100">
-              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+              <h3 
+                className="text-xl font-bold text-gray-900 mb-6 flex items-center"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 <Gift className="w-6 h-6 mr-2 text-[#B58E31]" />
                 Resumen de tu regalo
               </h3>
@@ -875,25 +959,47 @@ export default function GiftBuilder() {
               {/* Caja Seleccionada */}
               {giftBuilder.selectedBox ? (
                 <div className="mb-6">
-                  <h4 className="font-medium text-gray-700 mb-2">Caja</h4>
+                  <h4 
+                    className="font-medium text-gray-700 mb-2"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    Caja
+                  </h4>
                   <div className="bg-gray-50 rounded-lg p-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-900 font-medium">
+                      <span 
+                        className="text-gray-900 font-medium"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {giftBuilder.selectedBox.name}
                       </span>
-                      <span className="font-bold text-[#B58E31]">
+                      <span 
+                        className="font-bold text-[#B58E31]"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {formatPrice(giftBuilder.selectedBox.price)}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p 
+                      className="text-xs text-gray-500 mt-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       {giftBuilder.selectedBox.description}
                     </p>
                   </div>
                 </div>
               ) : (
                 <div className="mb-6">
-                  <h4 className="font-medium text-gray-700 mb-2">Caja</h4>
-                  <div className="text-sm text-gray-500">
+                  <h4 
+                    className="font-medium text-gray-700 mb-2"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    Caja
+                  </h4>
+                  <div 
+                    className="text-sm text-gray-500"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Selecciona una caja para continuar
                   </div>
                 </div>
@@ -901,7 +1007,10 @@ export default function GiftBuilder() {
 
               {/* Cervezas Seleccionadas */}
               <div className="mb-6">
-                <h4 className="font-medium text-gray-700 mb-2">
+                <h4 
+                  className="font-medium text-gray-700 mb-2"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Cervezas ({giftBuilder.selectedBeers.length}/
                   {giftBuilder.selectedBox?.maxBeers || 0})
                 </h4>
@@ -921,16 +1030,25 @@ export default function GiftBuilder() {
                             />
                           </div>
                           <div>
-                            <p className="text-xs font-medium text-gray-900">
+                            <p 
+                              className="text-xs font-medium text-gray-900"
+                              style={{ fontFamily: "var(--font-lato)" }}
+                            >
                               {beer.name}
                             </p>
-                            <p className="text-xs text-gray-500">
+                            <p 
+                              className="text-xs text-gray-500"
+                              style={{ fontFamily: "var(--font-lato)" }}
+                            >
                               {beer.volume}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <span className="text-xs font-bold text-[#B58E31] mr-2">
+                          <span 
+                            className="text-xs font-bold text-[#B58E31] mr-2"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {formatPrice(beer.price)}
                           </span>
                           <button
@@ -944,7 +1062,10 @@ export default function GiftBuilder() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-sm text-gray-500">
+                  <div 
+                    className="text-sm text-gray-500"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Selecciona cervezas para ver el detalle
                   </div>
                 )}
@@ -953,8 +1074,16 @@ export default function GiftBuilder() {
               {/* Total */}
               <div className="border-t pt-4 mb-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-gray-900">Total</span>
-                  <span className="text-2xl font-bold text-[#B58E31]">
+                  <span 
+                    className="text-lg font-bold text-gray-900"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    Total
+                  </span>
+                  <span 
+                    className="text-2xl font-bold text-[#B58E31]"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     {formatPrice(giftBuilder.totalPrice)}
                   </span>
                 </div>
@@ -969,6 +1098,7 @@ export default function GiftBuilder() {
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
                 disabled={!giftBuilder.isComplete}
+                style={{ fontFamily: "var(--font-lato)" }}
               >
                 {giftBuilder.isComplete ? (
                   <>
@@ -981,7 +1111,10 @@ export default function GiftBuilder() {
               </button>
 
               {!giftBuilder.isComplete && (
-                <p className="text-xs text-gray-500 text-center mt-3">
+                <p 
+                  className="text-xs text-gray-500 text-center mt-3"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {giftBuilder.selectedBox
                     ? `Faltan ${
                         giftBuilder.selectedBox.maxBeers -

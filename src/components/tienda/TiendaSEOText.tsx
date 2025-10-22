@@ -13,39 +13,51 @@ export default function TiendaSEOText() {
   return (
     <section className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 py-12">
       <div className="prose prose-lg max-w-none text-gray-700">
-        <h2 className="text-[30px] sm:text-2xl font-bold text-gray-900 mb-4">
+        <h2 
+          className="text-[30px] sm:text-2xl font-bold text-gray-900 mb-4"
+          style={{ fontFamily: "var(--font-lato)" }}
+        >
           Compra cervezas artesanales e importadas en Market Club
         </h2>
-        <p>
+        <p style={{ fontFamily: "var(--font-lato)" }}>
           Bienvenido a nuestra tienda de cervezas, el lugar ideal para
           descubrir, comparar y comprar cervezas artesanales e importadas de
           marcas destacadas. Explora una selección curada por estilo, país de
           origen, precio y presentación para encontrar tu próxima favorita.
         </p>
         <br />
-        <p>
+        <p style={{ fontFamily: "var(--font-lato)" }}>
           Filtra por países como Alemania, Bélgica, Inglaterra o México, o
           navega por estilos populares como IPA, Lager, Stout, Witbier y más.
           También puedes ajustar por rango de precios y tipo de empaque para una
           experiencia de compra rápida y precisa.
         </p>
         <br />
-        <p>
+        <p style={{ fontFamily: "var(--font-lato)" }}>
           En Market Club te ofrecemos promociones, envíos confiables y un
           catálogo en constante actualización. Si buscas variedad, calidad y un
           buen precio, aquí encontrarás la mejor selección para armar tu pedido
           ideal.
         </p>
-        <h3 className="text-[30px] sm:text-xl font-semibold text-gray-900 mt-8 mb-3">
+        <h3 
+          className="text-[30px] sm:text-xl font-semibold text-gray-900 mt-8 mb-3"
+          style={{ fontFamily: "var(--font-lato)" }}
+        >
           ¿Qué cervezas puedes encontrar?
         </h3>
-        <ul className="list-disc pl-6">
+        <ul 
+          className="list-disc pl-6"
+          style={{ fontFamily: "var(--font-lato)" }}
+        >
           <li>Cervezas artesanales locales y de importación</li>
           <li>Estilos clásicos: Lager, Pilsner, Ale, Porter, Stout</li>
           <li>Estilos modernos: IPA, NEIPA, Sour, Witbier</li>
           <li>Presentaciones en botella y lata</li>
         </ul>
-        <p className="mt-6">
+        <p 
+          className="mt-6"
+          style={{ fontFamily: "var(--font-lato)" }}
+        >
           ¿Tienes dudas para elegir? Utiliza los filtros o el buscador para
           encontrar exactamente lo que necesitas y disfruta de una experiencia
           de compra sencilla y segura.
@@ -54,6 +66,7 @@ export default function TiendaSEOText() {
           <button
             onClick={scrollToFilters}
             className="inline-flex items-center px-6 py-3 bg-[#B58E31] text-white font-semibold rounded-lg hover:bg-[#A07A2A] transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            style={{ fontFamily: "var(--font-lato)" }}
           >
             <svg 
               className="w-5 h-5 mr-2" 

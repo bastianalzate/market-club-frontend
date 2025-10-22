@@ -102,19 +102,26 @@ export default function ProductFilters({
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent"
+          style={{ fontFamily: "var(--font-lato)" }}
         />
       </div>
 
       {/* Filtros */}
       <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+        <h3 
+          className="font-semibold text-gray-900 mb-4 flex items-center"
+          style={{ fontFamily: "var(--font-lato)" }}
+        >
           <Filter className="w-4 h-4 mr-2" />
           Filtros
         </h3>
 
         {/* País de origen */}
         <div className="space-y-3">
-          <h4 className="text-sm font-medium text-gray-700 flex items-center">
+          <h4 
+            className="text-sm font-medium text-gray-700 flex items-center"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             <Globe className="w-4 h-4 mr-2" />
             Países
           </h4>
@@ -122,6 +129,7 @@ export default function ProductFilters({
             value={selectedCountry}
             onChange={(e) => onCountryChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-sm text-gray-900 bg-white"
+            style={{ fontFamily: "var(--font-lato)" }}
           >
             {countries.map((country) => (
               <option
@@ -137,7 +145,10 @@ export default function ProductFilters({
 
         {/* Categorías */}
         <div className="space-y-3 mt-6">
-          <h4 className="text-sm font-medium text-gray-700 flex items-center">
+          <h4 
+            className="text-sm font-medium text-gray-700 flex items-center"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             <Tag className="w-4 h-4 mr-2" />
             Estilos
           </h4>
@@ -145,6 +156,7 @@ export default function ProductFilters({
             value={selectedCategory}
             onChange={(e) => onCategoryChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-sm text-gray-900 bg-white"
+            style={{ fontFamily: "var(--font-lato)" }}
           >
             {categories.map((category) => (
               <option
@@ -161,7 +173,10 @@ export default function ProductFilters({
         {/* Rango de Precios */}
         {!hidePriceFilter && (
           <div className="space-y-3 mt-6">
-            <h4 className="text-sm font-medium text-gray-700 flex items-center">
+            <h4 
+              className="text-sm font-medium text-gray-700 flex items-center"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               <DollarSign className="w-4 h-4 mr-2" />
               Rango de precios
             </h4>
@@ -169,6 +184,7 @@ export default function ProductFilters({
               value={selectedPriceRange}
               onChange={(e) => onPriceRangeChange(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-sm text-gray-900 bg-white"
+              style={{ fontFamily: "var(--font-lato)" }}
             >
               {priceRanges.map((range) => (
                 <option
@@ -185,7 +201,10 @@ export default function ProductFilters({
 
         {/* Tipo de Empaque */}
         <div className="space-y-3 mt-6">
-          <h4 className="text-sm font-medium text-gray-700 flex items-center">
+          <h4 
+            className="text-sm font-medium text-gray-700 flex items-center"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             <Package className="w-4 h-4 mr-2" />
             Presentación
           </h4>
@@ -194,6 +213,7 @@ export default function ProductFilters({
             onChange={(e) => onPackagingChange(e.target.value)}
             disabled={filtersLoading}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-sm text-gray-900 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ fontFamily: "var(--font-lato)" }}
           >
             {filtersLoading ? (
               <option value="">Cargando...</option>
@@ -216,6 +236,7 @@ export default function ProductFilters({
           <button
             onClick={onClearFilters}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 hover:text-gray-900 transition-colors cursor-pointer"
+            style={{ fontFamily: "var(--font-lato)" }}
           >
             <X className="w-4 h-4" />
             Limpiar filtros

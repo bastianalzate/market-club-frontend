@@ -27,7 +27,7 @@ export default function NewFlavorsSection() {
             <p
               className="text-white"
               style={{
-                fontFamily: "var(--font-inter)",
+                fontFamily: "var(--font-lato)",
                 fontWeight: 400,
                 fontSize: "20px",
                 lineHeight: "26px",

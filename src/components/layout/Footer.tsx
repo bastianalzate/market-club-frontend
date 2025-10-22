@@ -23,7 +23,10 @@ export default function Footer() {
         <div className="grid grid-cols-2 mt-10 sm:grid-cols-3 gap-y-10 lg:grid-cols-6 gap-x-16">
           {/* Menu */}
           <div>
-            <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
+            <h6 
+              className="text-sm font-bold tracking-widest text-gray-900 uppercase"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Menú
             </h6>
 
@@ -31,7 +34,8 @@ export default function Footer() {
               <li>
                 <Link
                   href="/tienda"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Tienda
                 </Link>
@@ -40,7 +44,8 @@ export default function Footer() {
               <li>
                 <Link
                   href="/arma-tu-regalo"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Arma tu regalo
                 </Link>
@@ -49,7 +54,8 @@ export default function Footer() {
               <li>
                 <Link
                   href="/club-socios"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Club de socios
                 </Link>
@@ -58,7 +64,8 @@ export default function Footer() {
               <li>
                 <Link
                   href="/contacto"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Contacto
                 </Link>
@@ -68,7 +75,10 @@ export default function Footer() {
 
           {/* Enlaces Directos */}
           <div>
-            <h6 className="text-sm font-bold tracking-wide text-gray-900 uppercase font-pj whitespace-nowrap">
+            <h6 
+              className="text-sm font-bold tracking-wide text-gray-900 uppercase whitespace-nowrap"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Enlaces Directos
             </h6>
 
@@ -76,7 +86,8 @@ export default function Footer() {
               <li>
                 <Link
                   href="/privacy-policy"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Políticas de privacidad
                 </Link>
@@ -85,7 +96,8 @@ export default function Footer() {
               <li>
                 <Link
                   href="/shipping-policy"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Políticas de envío
                 </Link>
@@ -94,7 +106,8 @@ export default function Footer() {
               <li>
                 <Link
                   href="/terms-and-conditions"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Términos y condiciones
                 </Link>
@@ -104,7 +117,10 @@ export default function Footer() {
 
           {/* Medios de Pago */}
           <div className="col-span-2 sm:col-span-1">
-            <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
+            <h6 
+              className="text-sm font-bold tracking-widest text-gray-900 uppercase"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Medios de pago
             </h6>
 
@@ -114,7 +130,8 @@ export default function Footer() {
                   href="https://wompi.co"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Wompi
                 </a>
@@ -124,7 +141,10 @@ export default function Footer() {
 
           {/* Nuestros Canales */}
           <div className="col-span-2 sm:col-span-3 xl:pl-20">
-            <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
+            <h6 
+              className="text-sm font-bold tracking-widest text-gray-900 uppercase"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Nuestros canales
             </h6>
 
@@ -135,7 +155,8 @@ export default function Footer() {
                     href="https://whatsapp.com/channel/0029VbBEIEF9xVJn7sTa943c"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                    className="inline-flex items-center text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     <svg
                       className="w-5 h-5 mr-3 text-gray-900"
@@ -152,7 +173,8 @@ export default function Footer() {
                     href="https://www.instagram.com/somos_marketclub/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                    className="inline-flex items-center text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     <svg
                       className="w-5 h-5 mr-3 text-gray-900"
@@ -169,10 +191,16 @@ export default function Footer() {
 
             <div className="grid grid-cols-1 mt-2 gap-y-6 sm:grid-cols-2 sm:gap-x-16">
               <div>
-                <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
+                <h6 
+                  className="text-sm font-bold tracking-widest text-gray-900 uppercase"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Llámanos
                 </h6>
-                <p className=" text-xl font-pj text-gray-900 font-bold">
+                <p 
+                  className="text-xl text-gray-900 font-bold"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <a href="tel:+573168751700" title="">
                     (+57) 316 8751700
                   </a>
@@ -180,10 +208,16 @@ export default function Footer() {
               </div>
 
               <div>
-                <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
+                <h6 
+                  className="text-sm font-bold tracking-widest text-gray-900 uppercase"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Escríbenos
                 </h6>
-                <p className=" text-xl font-pj text-gray-900 font-bold">
+                <p 
+                  className="text-xl text-gray-900 font-bold"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <a href="mailto:info@marketclub.com.co" title="">
                     info@marketclub.com.co
                   </a>
