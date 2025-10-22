@@ -34,29 +34,58 @@ export default function CheckoutFlow() {
       if (orderId) {
         console.log("🔍 Fetching order status for:", orderId);
         
+        // Verificar si el usuario está autenticado
+        const token = localStorage.getItem('token');
+        const isAuthenticated = !!token;
+        
+        console.log("🔍 User authentication status:", isAuthenticated);
+        
+        // Usar ruta diferente según el estado de autenticación
+        const apiUrl = isAuthenticated 
+          ? `${process.env.NEXT_PUBLIC_API_URL}/user/orders/${orderId}`
+          : `${process.env.NEXT_PUBLIC_API_URL}/payments/check-status`;
+        
+        const requestOptions: RequestInit = isAuthenticated 
+          ? {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              }
+            }
+          : {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ order_id: orderId })
+            };
+        
         // HACER LA CONSULTA A LA API
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/orders/${orderId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        })
+        fetch(apiUrl, requestOptions)
         .then(response => {
           console.log("🔍 API Response status:", response.status);
           return response.json();
         })
         .then(data => {
           console.log("🔍 API Response data:", data);
-          console.log("🔍 Full order object:", data.data);
+          console.log("🔍 Full response object:", data.data);
           
           if (data.success && data.data) {
-            const order = data.data;
-            const paymentStatus = order.payment_status;
+            const responseData = data.data;
+            
+            // Manejar diferentes estructuras de respuesta según la ruta
+            const paymentStatus = isAuthenticated 
+              ? responseData.payment_status  // Ruta autenticada: /user/orders/{id}
+              : responseData.payment_status; // Ruta pública: /payments/check-status
+            
+            const orderStatus = isAuthenticated 
+              ? responseData.status 
+              : responseData.order_status;
             
             console.log("🔍 Payment status from API:", paymentStatus);
-            console.log("🔍 Order status from API:", order.status);
-            console.log("🔍 All order fields:", Object.keys(order));
+            console.log("🔍 Order status from API:", orderStatus);
+            console.log("🔍 All response fields:", Object.keys(responseData));
             
             // Normalizar el payment_status para comparación robusta
             const normalizedPaymentStatus = paymentStatus?.toString().toLowerCase().trim();
