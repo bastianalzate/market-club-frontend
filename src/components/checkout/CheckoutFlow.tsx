@@ -64,24 +64,30 @@ export default function CheckoutFlow() {
             if (normalizedPaymentStatus === 'paid') {
               console.log("✅ Payment is PAID - showing success");
               setOrderStatus('success');
+              showSuccess("Pago exitoso", "Tu pago ha sido procesado exitosamente");
             } else if (normalizedPaymentStatus === 'failed') {
               console.log("❌ Payment is FAILED - showing failed");
               setOrderStatus('failed');
+              showError("Pago fallido", "Tu pago no pudo ser procesado. Por favor intenta nuevamente.");
             } else if (normalizedPaymentStatus === 'pending') {
               console.log("⏳ Payment is PENDING - showing pending");
               setOrderStatus('pending');
+              showError("Pago pendiente", "Tu pago está siendo procesado. Te notificaremos cuando esté confirmado.");
             } else {
               console.log("❓ Unknown payment status:", paymentStatus, "- showing failed");
               setOrderStatus('failed');
+              showError("Error de pago", "No se pudo verificar el estado de tu pago. Por favor contacta con soporte.");
             }
           } else {
             console.log("❌ Invalid API response - showing failed");
             setOrderStatus('failed');
+            showError("Error de pago", "No se pudo verificar el estado de tu pago. Por favor contacta con soporte.");
           }
         })
         .catch(error => {
           console.error("❌ API Error:", error);
           setOrderStatus('failed');
+          showError("Error de pago", "No se pudo verificar el estado de tu pago. Por favor contacta con soporte.");
         });
       }
     }
@@ -217,10 +223,9 @@ export default function CheckoutFlow() {
   };
 
   const handlePaymentSuccess = async () => {
-    showSuccess("Pago exitoso", "Tu pago ha sido procesado exitosamente");
-    // Sincronizar el carrito después del pago exitoso
+    // Sincronizar el carrito después del pago
     await loadCart();
-    handleStepChange(4); // Move to success step
+    handleStepChange(4); // Move to confirmation step where we'll check the actual payment status
   };
 
   const handleCompleteOrder = async () => {
