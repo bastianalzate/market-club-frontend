@@ -66,7 +66,7 @@ export default function SubscriptionCard({
           <p
             className="text-gray-700 mb-2 md:mb-6 text-left text-[9px] md:text-[16px]"
             style={{
-              fontFamily: "var(--font-inter)",
+              fontFamily: "var(--font-lato)",
               fontWeight: 400,
               lineHeight: "1.2",
             }}
@@ -78,7 +78,7 @@ export default function SubscriptionCard({
             <h4
               className="text-black mb-1 md:mb-3 text-[9px] md:text-[16px]"
               style={{
-                fontFamily: "var(--font-inter)",
+                fontFamily: "var(--font-lato)",
                 fontWeight: 600,
               }}
             >
@@ -90,7 +90,7 @@ export default function SubscriptionCard({
                   key={index}
                   className="text-gray-700 text-[8px] md:text-[14px]"
                   style={{
-                    fontFamily: "var(--font-inter)",
+                    fontFamily: "var(--font-lato)",
                     fontWeight: 400,
                     lineHeight: "1.2",
                   }}
@@ -105,7 +105,7 @@ export default function SubscriptionCard({
             className="px-4 py-2 md:w-40 md:px-6 md:py-3 text-white rounded-lg font-medium hover:opacity-90 transition-opacity cursor-pointer text-[10px] md:text-[16px]"
             style={{
               backgroundColor: buttonColor,
-              fontFamily: "var(--font-inter)",
+              fontFamily: "var(--font-lato)",
               fontWeight: 600,
             }}
             onClick={() => onSubscribeClick?.(id as unknown as string)}

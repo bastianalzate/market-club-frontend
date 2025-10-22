@@ -16,7 +16,7 @@ export default function HeroSection({
     fontSize: "42px",
     fontWeight: 700,
   },
-  descriptionClassName = "text-[#F5F5F5] font-inter text-[20px] leading-[26px] text-left",
+  descriptionClassName = "text-[#F5F5F5] text-[20px] leading-[26px] text-left",
   containerClassName = "bg-black text-white py-8 px-4",
 }: HeroSectionProps) {
   return (
@@ -36,7 +36,12 @@ export default function HeroSection({
 
           {/* Texto descriptivo */}
           <div>
-            <p className={descriptionClassName}>{description}</p>
+            <p 
+              className={descriptionClassName}
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              {description}
+            </p>
           </div>
         </div>
       </div>

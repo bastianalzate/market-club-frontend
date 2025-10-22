@@ -59,7 +59,10 @@ export default function PricingCard({
       {/* Badge Premium para Maestro Cervecero */}
       {isMaestroPlan && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
-          <div className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-black px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
+          <div 
+            className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-black px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg"
+            style={{ fontFamily: "var(--font-oswald)" }}
+          >
             <span className="text-yellow-800">⭐</span> Premium
           </div>
         </div>
@@ -88,7 +91,7 @@ export default function PricingCard({
             isHighlighted || isMaestroPlan ? "text-gray-300" : "text-gray-600"
           }`}
           style={{
-            fontFamily: "var(--font-inter)",
+            fontFamily: "var(--font-lato)",
             fontSize: "14px",
             fontWeight: 400,
             lineHeight: "1.4",
@@ -101,6 +104,7 @@ export default function PricingCard({
               className={`ml-1 text-xs underline align-baseline ${
                 isHighlighted || isMaestroPlan ? "text-gray-300" : "text-gray-700"
               }`}
+              style={{ fontFamily: "var(--font-lato)" }}
               onClick={() => setExpanded((v) => !v)}
             >
               {expanded ? "Ver menos" : "Ver más"}
@@ -124,7 +128,7 @@ export default function PricingCard({
               isHighlighted || isMaestroPlan ? "text-gray-300" : "text-gray-600"
             }`}
             style={{
-              fontFamily: "var(--font-inter)",
+              fontFamily: "var(--font-lato)",
               fontSize: "14px",
               fontWeight: 400,
             }}

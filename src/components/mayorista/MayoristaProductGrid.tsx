@@ -233,10 +233,16 @@ export default function MayoristaProductGrid({
         ) : products.length === 0 ? (
           <div className="col-span-full text-center py-12">
             <div className="text-gray-400 text-6xl mb-4">🍺</div>
-            <h3 className="text-xl font-semibold text-white mb-2">
+            <h3 
+              className="text-xl font-semibold text-white mb-2"
+              style={{ fontFamily: "var(--font-oswald)" }}
+            >
               No se encontraron productos
             </h3>
-            <p className="text-gray-400">
+            <p 
+              className="text-gray-400"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Intenta ajustar los filtros para ver más resultados
             </p>
           </div>
@@ -263,7 +269,10 @@ export default function MayoristaProductGrid({
               {/* Información del producto */}
               <div className="p-6 flex flex-col flex-grow">
                 <div className="mb-4">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  <h3 
+                    className="text-lg font-bold text-gray-900 mb-2"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     {product.name}
                   </h3>
                   
@@ -288,7 +297,7 @@ export default function MayoristaProductGrid({
                       (e.currentTarget.style.backgroundColor = "#DC2626")
                     }
                   >
-                    <span>
+                    <span style={{ fontFamily: "var(--font-lato)" }}>
                       {removingFromCart === product.id ? 'Removiendo...' : 'Remover de la cotización'}
                     </span>
                   </button>
@@ -309,7 +318,7 @@ export default function MayoristaProductGrid({
                       (e.currentTarget.style.backgroundColor = "#B58E31")
                     }
                   >
-                    <span>
+                    <span style={{ fontFamily: "var(--font-lato)" }}>
                       {addingToCart === product.id ? 'Agregando...' : 'Agregar a cotización'}
                     </span>
                     {addingToCart !== product.id && <ArrowRight className="w-4 h-4" />}
@@ -370,7 +379,11 @@ export default function MayoristaProductGrid({
                     page === currentPage + 2
                   ) {
                     return (
-                      <span key={page} className="px-2 text-white">
+                      <span 
+                        key={page} 
+                        className="px-2 text-white"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         ...
                       </span>
                     );

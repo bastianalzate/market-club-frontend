@@ -98,7 +98,7 @@ export default function PricingSection({
       <div className={finalClassName} style={{ backgroundColor }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
-            <p className="text-white">Cargando planes...</p>
+            <p className="text-white" style={{ fontFamily: "var(--font-lato)" }}>Cargando planes...</p>
           </div>
         </div>
       </div>
@@ -114,7 +114,7 @@ export default function PricingSection({
     >
       <div className="max-w-7xl mx-auto">
         {error && (
-          <div className="mb-6 text-red-100 text-sm text-center">{error}</div>
+          <div className="mb-6 text-red-100 text-sm text-center" style={{ fontFamily: "var(--font-lato)" }}>{error}</div>
         )}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {mappedPlans.map((plan) => (
@@ -142,7 +142,10 @@ export default function PricingSection({
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 
+                  className="text-xl font-bold text-gray-900"
+                  style={{ fontFamily: "var(--font-oswald)" }}
+                >
                   Suscribirse a {selectedPlan.name}
                 </h2>
                 <button
