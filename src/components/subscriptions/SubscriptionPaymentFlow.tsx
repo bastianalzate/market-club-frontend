@@ -265,8 +265,16 @@ export default function SubscriptionPaymentFlow({
     <>
       <div className="bg-white rounded-lg shadow-sm border">
         <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-          <h2 className="text-xl font-bold text-gray-900">Suscripción a {planName}</h2>
-          <p className="text-sm font-medium text-gray-700 mt-1">
+          <h2 
+            className="text-xl font-bold text-gray-900"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
+            Suscripción a {planName}
+          </h2>
+          <p 
+            className="text-sm font-medium text-gray-700 mt-1"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Pagar de forma segura con Wompi
           </p>
         </div>
@@ -274,7 +282,10 @@ export default function SubscriptionPaymentFlow({
         <div className="px-6 py-6">
           {/* Información de la suscripción */}
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <h3 className="text-sm font-medium text-gray-900 mb-2">
+            <h3 
+              className="text-sm font-medium text-gray-900 mb-2"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Resumen de la Suscripción
             </h3>
             <div className="space-y-2 text-sm">
@@ -314,10 +325,16 @@ export default function SubscriptionPaymentFlow({
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-bold text-blue-900">
+                <h3 
+                  className="text-sm font-bold text-blue-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Pago Seguro con Wompi
                 </h3>
-                <p className="text-sm text-blue-800 mt-1">
+                <p 
+                  className="text-sm text-blue-800 mt-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Wompi es la plataforma de pagos más segura de Colombia. Al
                   hacer clic en "Pagar con Wompi" podrás elegir entre tarjetas
                   de crédito/débito, PSE, Nequi, Daviplata y más métodos de
@@ -343,6 +360,7 @@ export default function SubscriptionPaymentFlow({
               onClick={handleStartPayment}
               disabled={isLoading || showWompiWidget || !wompiScriptLoaded}
               className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center"
+              style={{ fontFamily: "var(--font-lato)" }}
             >
               {!wompiScriptLoaded ? (
                 <>
@@ -378,23 +396,38 @@ export default function SubscriptionPaymentFlow({
 
             {/* Métodos de pago aceptados */}
             <div className="text-center">
-              <p className="text-xs font-medium text-gray-700 mb-2">
+              <p 
+                className="text-xs font-medium text-gray-700 mb-2"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 Métodos de pago aceptados:
               </p>
               <div className="flex justify-center space-x-2 flex-wrap gap-2">
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5">
+                <span 
+                  className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <CreditCard className="w-3 h-3" />
                   Tarjetas
                 </span>
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5">
+                <span 
+                  className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <Building2 className="w-3 h-3" />
                   PSE
                 </span>
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5">
+                <span 
+                  className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <Smartphone className="w-3 h-3" />
                   Nequi
                 </span>
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5">
+                <span 
+                  className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <Banknote className="w-3 h-3" />
                   Daviplata
                 </span>
@@ -409,10 +442,16 @@ export default function SubscriptionPaymentFlow({
                 <Shield className="w-5 h-5 text-yellow-600 mt-0.5" />
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-yellow-800">
+                <h3 
+                  className="text-sm font-medium text-yellow-800"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Suscripción Mensual
                 </h3>
-                <p className="text-sm text-yellow-700 mt-1">
+                <p 
+                  className="text-sm text-yellow-700 mt-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Tu suscripción se renovará automáticamente cada mes. Puedes cancelar en cualquier momento desde tu perfil.
                 </p>
               </div>
