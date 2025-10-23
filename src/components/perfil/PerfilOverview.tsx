@@ -1122,7 +1122,10 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 
+                  className="text-xl font-bold text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Suscribirse a {selectedPlan.name}
                 </h2>
                 <button

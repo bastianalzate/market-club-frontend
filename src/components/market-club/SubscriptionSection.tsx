@@ -179,7 +179,7 @@ export default function SubscriptionSection({
               <div className="flex justify-between items-center mb-4">
                 <h2 
                   className="text-xl font-bold text-gray-900"
-                  style={{ fontFamily: "var(--font-oswald)" }}
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Suscribirse a {selectedPlan.name}
                 </h2>
