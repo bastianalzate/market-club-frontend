@@ -153,6 +153,12 @@ export function useAuth() {
         console.warn('Error al sincronizar carrito después del login:', cartError);
         // No fallar el login por error de sincronización del carrito
       }
+
+      // Retornar información del usuario para redirección
+      return {
+        user,
+        isWholesaler: result.user.is_wholesaler || false
+      };
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Error al iniciar sesión. Verifica tus credenciales.";

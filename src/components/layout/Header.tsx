@@ -243,16 +243,26 @@ export default function Header() {
 
     return (
       <div className="flex items-center space-x-1">
-        <Link
-          href="/perfil"
-          className="flex items-center space-x-1.5 px-2 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors cursor-pointer"
-          aria-label="Ver perfil"
-        >
-          <User className="w-4 h-4 text-gray-600" />
-          <span className="text-xs font-medium text-gray-900 max-w-32 truncate">
-            {user.name}
-          </span>
-        </Link>
+        {/* Para mayoristas, no mostrar enlace a perfil */}
+        {user.is_wholesaler ? (
+          <div className="flex items-center space-x-1.5 px-2 py-1.5 bg-gray-100 rounded-full">
+            <User className="w-4 h-4 text-gray-600" />
+            <span className="text-xs font-medium text-gray-900 max-w-32 truncate">
+              {user.name}
+            </span>
+          </div>
+        ) : (
+          <Link
+            href="/perfil"
+            className="flex items-center space-x-1.5 px-2 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors cursor-pointer"
+            aria-label="Ver perfil"
+          >
+            <User className="w-4 h-4 text-gray-600" />
+            <span className="text-xs font-medium text-gray-900 max-w-32 truncate">
+              {user.name}
+            </span>
+          </Link>
+        )}
         <button
           onClick={logout}
           className="p-1.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
@@ -287,19 +297,20 @@ export default function Header() {
 
             {/* Mobile Actions */}
             <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 lg:hidden">
-
-              {/* Cart */}
-              <button
-                onClick={handleOpenCart}
-                className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative cursor-pointer"
-              >
-                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-                {itemsCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center text-[10px] sm:text-xs">
-                    {itemsCount}
-                  </span>
-                )}
-              </button>
+              {/* Cart - Solo mostrar para usuarios no mayoristas */}
+              {!(isAuthenticated && user?.is_wholesaler) && (
+                <button
+                  onClick={handleOpenCart}
+                  className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative cursor-pointer"
+                >
+                  <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+                  {itemsCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center text-[10px] sm:text-xs">
+                      {itemsCount}
+                    </span>
+                  )}
+                </button>
+              )}
 
               {/* User Profile */}
               <div className="hidden sm:block">
@@ -325,95 +336,121 @@ export default function Header() {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex lg:items-center lg:justify-center lg:ml-6 xl:ml-8 2xl:ml-12">
               <div className="flex items-center space-x-2 xl:space-x-3 2xl:space-x-4">
-                <NavLink
-                  href="/"
-                  title="Inicio"
-                  isActive={isActive("/")}
-                  baseStyle={baseLinkStyle}
-                  activeStyle={activeLinkStyle}
-                >
-                  Inicio
-                </NavLink>
+                {/* Para mayoristas, solo mostrar opciones específicas */}
+                {isAuthenticated && user?.is_wholesaler ? (
+                  <>
+                    <NavLink
+                      href="/quienes-somos"
+                      title="Quiénes somos"
+                      isActive={isActive("/quienes-somos")}
+                      baseStyle={baseLinkStyle}
+                      activeStyle={activeLinkStyle}
+                    >
+                      Quiénes somos
+                    </NavLink>
 
-                <NavLink
-                  href="/tienda"
-                  title="Tienda"
-                  isActive={isActive("/tienda")}
-                  baseStyle={baseLinkStyle}
-                  activeStyle={activeLinkStyle}
-                >
-                  Tienda
-                </NavLink>
+                    <NavLink
+                      href="/mayorista"
+                      title="Mayorista"
+                      isActive={isActive("/mayorista")}
+                      baseStyle={baseLinkStyle}
+                      activeStyle={activeLinkStyle}
+                    >
+                      Mayorista
+                    </NavLink>
 
-                <NavLink
-                  href="/arma-tu-regalo"
-                  title="Armá tu regalo"
-                  isActive={isActive("/arma-tu-regalo")}
-                  baseStyle={baseLinkStyle}
-                  activeStyle={activeLinkStyle}
-                >
-                  Armá tu regalo
-                </NavLink>
+                    <NavLink
+                      href="/contacto"
+                      title="Contacto"
+                      isActive={isActive("/contacto")}
+                      baseStyle={baseLinkStyle}
+                      activeStyle={activeLinkStyle}
+                    >
+                      Contacto
+                    </NavLink>
+                  </>
+                ) : (
+                  <>
+                    <NavLink
+                      href="/"
+                      title="Inicio"
+                      isActive={isActive("/")}
+                      baseStyle={baseLinkStyle}
+                      activeStyle={activeLinkStyle}
+                    >
+                      Inicio
+                    </NavLink>
 
-                <NavLink
-                  href="/quienes-somos"
-                  title="Quiénes somos"
-                  isActive={isActive("/quienes-somos")}
-                  baseStyle={baseLinkStyle}
-                  activeStyle={activeLinkStyle}
-                >
-                  Quiénes somos
-                </NavLink>
+                    <NavLink
+                      href="/tienda"
+                      title="Tienda"
+                      isActive={isActive("/tienda")}
+                      baseStyle={baseLinkStyle}
+                      activeStyle={activeLinkStyle}
+                    >
+                      Tienda
+                    </NavLink>
 
-                {isAuthenticated && user?.is_wholesaler && (
-                  <NavLink
-                    href="/mayorista"
-                    title="Mayorista"
-                    isActive={isActive("/mayorista")}
-                    baseStyle={baseLinkStyle}
-                    activeStyle={activeLinkStyle}
-                  >
-                    Mayorista
-                  </NavLink>
+                    <NavLink
+                      href="/arma-tu-regalo"
+                      title="Armá tu regalo"
+                      isActive={isActive("/arma-tu-regalo")}
+                      baseStyle={baseLinkStyle}
+                      activeStyle={activeLinkStyle}
+                    >
+                      Armá tu regalo
+                    </NavLink>
+
+                    <NavLink
+                      href="/quienes-somos"
+                      title="Quiénes somos"
+                      isActive={isActive("/quienes-somos")}
+                      baseStyle={baseLinkStyle}
+                      activeStyle={activeLinkStyle}
+                    >
+                      Quiénes somos
+                    </NavLink>
+
+                    <NavLink
+                      href="/club-socios"
+                      title="Club de socios"
+                      isActive={isActive("/club-socios")}
+                      baseStyle={baseLinkStyle}
+                      activeStyle={activeLinkStyle}
+                    >
+                      Club de socios
+                    </NavLink>
+
+                    <NavLink
+                      href="/contacto"
+                      title="Contacto"
+                      isActive={isActive("/contacto")}
+                      baseStyle={baseLinkStyle}
+                      activeStyle={activeLinkStyle}
+                    >
+                      Contacto
+                    </NavLink>
+                  </>
                 )}
-
-                <NavLink
-                  href="/club-socios"
-                  title="Club de socios"
-                  isActive={isActive("/club-socios")}
-                  baseStyle={baseLinkStyle}
-                  activeStyle={activeLinkStyle}
-                >
-                  Club de socios
-                </NavLink>
-
-                <NavLink
-                  href="/contacto"
-                  title="Contacto"
-                  isActive={isActive("/contacto")}
-                  baseStyle={baseLinkStyle}
-                  activeStyle={activeLinkStyle}
-                >
-                  Contacto
-                </NavLink>
               </div>
             </nav>
 
             {/* Desktop Actions */}
             <div className="hidden lg:flex lg:items-center lg:space-x-2 xl:space-x-3">
-
-              {/* Cart */}
-              <button
-                onClick={handleOpenCart}
-                className="p-1.5 text-gray-700 hover:text-gray-900 transition-colors relative cursor-pointer"
-              >
-                <ShoppingCart className="w-5 h-5" />
-                {itemsCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {itemsCount}
-                  </span>
-                )}
-              </button>
+              {/* Cart - Solo mostrar para usuarios no mayoristas */}
+              {!(isAuthenticated && user?.is_wholesaler) && (
+                <button
+                  onClick={handleOpenCart}
+                  className="p-1.5 text-gray-700 hover:text-gray-900 transition-colors relative cursor-pointer"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  {itemsCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {itemsCount}
+                    </span>
+                  )}
+                </button>
+              )}
 
               {/* User Profile */}
               <UserProfile />
@@ -500,140 +537,183 @@ export default function Header() {
                 {/* Contenido del menú */}
                 <div className="px-4 py-6 h-full overflow-y-auto">
                   <nav className="flex flex-col space-y-1">
-                    <div
-                      className={`opacity-0 ${
-                        isClosing
-                          ? "animate-[slideOutLeft_0.2s_ease-in_0s_forwards]"
-                          : "animate-[slideInLeft_0.3s_ease-out_0.1s_forwards]"
-                      }`}
-                    >
-                      <MobileNavLink
-                        href="/"
-                        title="Inicio"
-                        isActive={isActive("/")}
-                        baseStyle={mobileLinkStyle}
-                        activeStyle={mobileActiveLinkStyle}
-                        onClick={closeMenu}
-                      >
-                        Inicio
-                      </MobileNavLink>
-                    </div>
-
-                    <div
-                      className={`opacity-0 ${
-                        isClosing
-                          ? "animate-[slideOutLeft_0.2s_ease-in_0.05s_forwards]"
-                          : "animate-[slideInLeft_0.3s_ease-out_0.15s_forwards]"
-                      }`}
-                    >
-                      <MobileNavLink
-                        href="/tienda"
-                        title="Tienda"
-                        isActive={isActive("/tienda")}
-                        baseStyle={mobileLinkStyle}
-                        activeStyle={mobileActiveLinkStyle}
-                        onClick={closeMenu}
-                      >
-                        Tienda
-                      </MobileNavLink>
-                    </div>
-
-                    <div
-                      className={`opacity-0 ${
-                        isClosing
-                          ? "animate-[slideOutLeft_0.2s_ease-in_0.1s_forwards]"
-                          : "animate-[slideInLeft_0.3s_ease-out_0.2s_forwards]"
-                      }`}
-                    >
-                      <MobileNavLink
-                        href="/arma-tu-regalo"
-                        title="Armá tu regalo"
-                        isActive={isActive("/arma-tu-regalo")}
-                        baseStyle={mobileLinkStyle}
-                        activeStyle={mobileActiveLinkStyle}
-                        onClick={closeMenu}
-                      >
-                        Armá tu regalo
-                      </MobileNavLink>
-                    </div>
-
-                    <div
-                      className={`opacity-0 ${
-                        isClosing
-                          ? "animate-[slideOutLeft_0.2s_ease-in_0.15s_forwards]"
-                          : "animate-[slideInLeft_0.3s_ease-out_0.25s_forwards]"
-                      }`}
-                    >
-                      <MobileNavLink
-                        href="/quienes-somos"
-                        title="Quiénes somos"
-                        isActive={isActive("/quienes-somos")}
-                        baseStyle={mobileLinkStyle}
-                        activeStyle={mobileActiveLinkStyle}
-                        onClick={closeMenu}
-                      >
-                        Quiénes somos
-                      </MobileNavLink>
-                    </div>
-
-                    {isAuthenticated && user?.is_wholesaler && (
-                      <div
-                        className={`opacity-0 ${
-                          isClosing
-                            ? "animate-[slideOutLeft_0.2s_ease-in_0.25s_forwards]"
-                            : "animate-[slideInLeft_0.3s_ease-out_0.35s_forwards]"
-                        }`}
-                      >
-                        <MobileNavLink
-                          href="/mayorista"
-                          title="Mayorista"
-                          isActive={isActive("/mayorista")}
-                          baseStyle={mobileLinkStyle}
-                          activeStyle={mobileActiveLinkStyle}
-                          onClick={closeMenu}
+                    {/* Para mayoristas, solo mostrar opciones específicas */}
+                    {isAuthenticated && user?.is_wholesaler ? (
+                      <>
+                        <div
+                          className={`opacity-0 ${
+                            isClosing
+                              ? "animate-[slideOutLeft_0.2s_ease-in_0s_forwards]"
+                              : "animate-[slideInLeft_0.3s_ease-out_0.1s_forwards]"
+                          }`}
                         >
-                          Mayorista
-                        </MobileNavLink>
-                      </div>
+                          <MobileNavLink
+                            href="/quienes-somos"
+                            title="Quiénes somos"
+                            isActive={isActive("/quienes-somos")}
+                            baseStyle={mobileLinkStyle}
+                            activeStyle={mobileActiveLinkStyle}
+                            onClick={closeMenu}
+                          >
+                            Quiénes somos
+                          </MobileNavLink>
+                        </div>
+
+                        <div
+                          className={`opacity-0 ${
+                            isClosing
+                              ? "animate-[slideOutLeft_0.2s_ease-in_0.05s_forwards]"
+                              : "animate-[slideInLeft_0.3s_ease-out_0.15s_forwards]"
+                          }`}
+                        >
+                          <MobileNavLink
+                            href="/mayorista"
+                            title="Mayorista"
+                            isActive={isActive("/mayorista")}
+                            baseStyle={mobileLinkStyle}
+                            activeStyle={mobileActiveLinkStyle}
+                            onClick={closeMenu}
+                          >
+                            Mayorista
+                          </MobileNavLink>
+                        </div>
+
+                        <div
+                          className={`opacity-0 ${
+                            isClosing
+                              ? "animate-[slideOutLeft_0.2s_ease-in_0.1s_forwards]"
+                              : "animate-[slideInLeft_0.3s_ease-out_0.2s_forwards]"
+                          }`}
+                        >
+                          <MobileNavLink
+                            href="/contacto"
+                            title="Contacto"
+                            isActive={isActive("/contacto")}
+                            baseStyle={mobileLinkStyle}
+                            activeStyle={mobileActiveLinkStyle}
+                            onClick={closeMenu}
+                          >
+                            Contacto
+                          </MobileNavLink>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div
+                          className={`opacity-0 ${
+                            isClosing
+                              ? "animate-[slideOutLeft_0.2s_ease-in_0s_forwards]"
+                              : "animate-[slideInLeft_0.3s_ease-out_0.1s_forwards]"
+                          }`}
+                        >
+                          <MobileNavLink
+                            href="/"
+                            title="Inicio"
+                            isActive={isActive("/")}
+                            baseStyle={mobileLinkStyle}
+                            activeStyle={mobileActiveLinkStyle}
+                            onClick={closeMenu}
+                          >
+                            Inicio
+                          </MobileNavLink>
+                        </div>
+
+                        <div
+                          className={`opacity-0 ${
+                            isClosing
+                              ? "animate-[slideOutLeft_0.2s_ease-in_0.05s_forwards]"
+                              : "animate-[slideInLeft_0.3s_ease-out_0.15s_forwards]"
+                          }`}
+                        >
+                          <MobileNavLink
+                            href="/tienda"
+                            title="Tienda"
+                            isActive={isActive("/tienda")}
+                            baseStyle={mobileLinkStyle}
+                            activeStyle={mobileActiveLinkStyle}
+                            onClick={closeMenu}
+                          >
+                            Tienda
+                          </MobileNavLink>
+                        </div>
+
+                        <div
+                          className={`opacity-0 ${
+                            isClosing
+                              ? "animate-[slideOutLeft_0.2s_ease-in_0.1s_forwards]"
+                              : "animate-[slideInLeft_0.3s_ease-out_0.2s_forwards]"
+                          }`}
+                        >
+                          <MobileNavLink
+                            href="/arma-tu-regalo"
+                            title="Armá tu regalo"
+                            isActive={isActive("/arma-tu-regalo")}
+                            baseStyle={mobileLinkStyle}
+                            activeStyle={mobileActiveLinkStyle}
+                            onClick={closeMenu}
+                          >
+                            Armá tu regalo
+                          </MobileNavLink>
+                        </div>
+
+                        <div
+                          className={`opacity-0 ${
+                            isClosing
+                              ? "animate-[slideOutLeft_0.2s_ease-in_0.15s_forwards]"
+                              : "animate-[slideInLeft_0.3s_ease-out_0.25s_forwards]"
+                          }`}
+                        >
+                          <MobileNavLink
+                            href="/quienes-somos"
+                            title="Quiénes somos"
+                            isActive={isActive("/quienes-somos")}
+                            baseStyle={mobileLinkStyle}
+                            activeStyle={mobileActiveLinkStyle}
+                            onClick={closeMenu}
+                          >
+                            Quiénes somos
+                          </MobileNavLink>
+                        </div>
+
+                        <div
+                          className={`opacity-0 ${
+                            isClosing
+                              ? "animate-[slideOutLeft_0.2s_ease-in_0.2s_forwards]"
+                              : "animate-[slideInLeft_0.3s_ease-out_0.3s_forwards]"
+                          }`}
+                        >
+                          <MobileNavLink
+                            href="/club-socios"
+                            title="Club de socios"
+                            isActive={isActive("/club-socios")}
+                            baseStyle={mobileLinkStyle}
+                            activeStyle={mobileActiveLinkStyle}
+                            onClick={closeMenu}
+                          >
+                            Club de socios
+                          </MobileNavLink>
+                        </div>
+
+                        <div
+                          className={`opacity-0 ${
+                            isClosing
+                              ? "animate-[slideOutLeft_0.2s_ease-in_0.25s_forwards]"
+                              : "animate-[slideInLeft_0.3s_ease-out_0.35s_forwards]"
+                          }`}
+                        >
+                          <MobileNavLink
+                            href="/contacto"
+                            title="Contacto"
+                            isActive={isActive("/contacto")}
+                            baseStyle={mobileLinkStyle}
+                            activeStyle={mobileActiveLinkStyle}
+                            onClick={closeMenu}
+                          >
+                            Contacto
+                          </MobileNavLink>
+                        </div>
+                      </>
                     )}
-
-                    <div
-                      className={`opacity-0 ${
-                        isClosing
-                          ? "animate-[slideOutLeft_0.2s_ease-in_0.3s_forwards]"
-                          : "animate-[slideInLeft_0.3s_ease-out_0.4s_forwards]"
-                      }`}
-                    >
-                      <MobileNavLink
-                        href="/club-socios"
-                        title="Club de socios"
-                        isActive={isActive("/club-socios")}
-                        baseStyle={mobileLinkStyle}
-                        activeStyle={mobileActiveLinkStyle}
-                        onClick={closeMenu}
-                      >
-                        Club de socios
-                      </MobileNavLink>
-                    </div>
-
-                    <div
-                      className={`opacity-0 ${
-                        isClosing
-                          ? "animate-[slideOutLeft_0.2s_ease-in_0.35s_forwards]"
-                          : "animate-[slideInLeft_0.3s_ease-out_0.45s_forwards]"
-                      }`}
-                    >
-                      <MobileNavLink
-                        href="/contacto"
-                        title="Contacto"
-                        isActive={isActive("/contacto")}
-                        baseStyle={mobileLinkStyle}
-                        activeStyle={mobileActiveLinkStyle}
-                        onClick={closeMenu}
-                      >
-                        Contacto
-                      </MobileNavLink>
-                    </div>
                   </nav>
                 </div>
               </div>

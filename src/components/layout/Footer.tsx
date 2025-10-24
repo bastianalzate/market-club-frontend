@@ -1,8 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Footer() {
+  const { user, isAuthenticated } = useAuth();
   return (
     <footer className="py-8 bg-white sm:pt-10 lg:pt-12">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -31,45 +33,82 @@ export default function Footer() {
             </h6>
 
             <ul className="mt-2 space-y-1">
-              <li>
-                <Link
-                  href="/tienda"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
-                  style={{ fontFamily: "var(--font-lato)" }}
-                >
-                  Tienda
-                </Link>
-              </li>
+              {/* Para mayoristas, solo mostrar opciones específicas */}
+              {isAuthenticated && user?.is_wholesaler ? (
+                <>
+                  <li>
+                    <Link
+                      href="/quienes-somos"
+                      className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Quiénes somos
+                    </Link>
+                  </li>
 
-              <li>
-                <Link
-                  href="/arma-tu-regalo"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
-                  style={{ fontFamily: "var(--font-lato)" }}
-                >
-                  Arma tu regalo
-                </Link>
-              </li>
+                  <li>
+                    <Link
+                      href="/mayorista"
+                      className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Mayorista
+                    </Link>
+                  </li>
 
-              <li>
-                <Link
-                  href="/club-socios"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
-                  style={{ fontFamily: "var(--font-lato)" }}
-                >
-                  Club de socios
-                </Link>
-              </li>
+                  <li>
+                    <Link
+                      href="/contacto"
+                      className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Contacto
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <Link
+                      href="/tienda"
+                      className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Tienda
+                    </Link>
+                  </li>
 
-              <li>
-                <Link
-                  href="/contacto"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
-                  style={{ fontFamily: "var(--font-lato)" }}
-                >
-                  Contacto
-                </Link>
-              </li>
+                  <li>
+                    <Link
+                      href="/arma-tu-regalo"
+                      className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Arma tu regalo
+                    </Link>
+                  </li>
+
+                  <li>
+                    <Link
+                      href="/club-socios"
+                      className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Club de socios
+                    </Link>
+                  </li>
+
+                  <li>
+                    <Link
+                      href="/contacto"
+                      className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Contacto
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
 
