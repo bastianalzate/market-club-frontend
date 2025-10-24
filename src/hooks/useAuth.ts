@@ -16,6 +16,7 @@ import {
   logout,
   clearError,
   restoreUser as restoreUserAction,
+  updateUser as updateUserAction,
   selectUser,
   selectIsAuthenticated,
   selectAuthLoading,
@@ -337,6 +338,11 @@ export function useAuth() {
     dispatch(clearError());
   }, [dispatch]);
 
+  // Actualizar usuario
+  const updateUser = useCallback((userData: Partial<{ id: string; name: string; email: string; phone: string; isGuest?: boolean; is_wholesaler?: boolean }>) => {
+    dispatch(updateUserAction(userData));
+  }, [dispatch]);
+
   return {
     // Estado
     user,
@@ -356,6 +362,7 @@ export function useAuth() {
     guestCheckout,
     logout: logoutAction,
     restoreUser,
+    updateUser,
     clearError: clearErrorAction,
   };
 }
