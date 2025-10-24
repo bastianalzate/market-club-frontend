@@ -446,7 +446,7 @@ export default function ProductGrid({
                     className="text-xs text-gray-600 font-medium sm:text-sm"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
-                    BOTELLA 500ML
+                    {product.product_specific_data?.packaging_type?.toUpperCase() || 'BOTELLA'} {product.product_specific_data?.volume_ml || '500'}ML
                   </span>
                   <div className="text-right">
                     {product.sale_price && product.sale_price < product.price ? (

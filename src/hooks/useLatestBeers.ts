@@ -13,6 +13,14 @@ export interface LatestBeer {
   image_url: string;
   stock_quantity: number;
   created_at: string;
+  product_specific_data?: {
+    alcohol_content?: string | number;
+    beer_style?: string;
+    brewery?: string;
+    country_of_origin?: string;
+    volume_ml?: string;
+    packaging_type?: string;
+  } | null;
 }
 
 export const useLatestBeers = () => {
