@@ -23,7 +23,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 mt-10 sm:grid-cols-3 gap-y-10 lg:grid-cols-6 gap-x-16">
           {/* Menu */}
           <div>
-            <h6 
+            <h6
               className="text-sm font-bold tracking-widest text-gray-900 uppercase"
               style={{ fontFamily: "var(--font-lato)" }}
             >
@@ -75,7 +75,7 @@ export default function Footer() {
 
           {/* Enlaces Directos */}
           <div>
-            <h6 
+            <h6
               className="text-sm font-bold tracking-wide text-gray-900 uppercase whitespace-nowrap"
               style={{ fontFamily: "var(--font-lato)" }}
             >
@@ -117,7 +117,7 @@ export default function Footer() {
 
           {/* Medios de Pago */}
           <div className="col-span-2 sm:col-span-1">
-            <h6 
+            <h6
               className="text-sm font-bold tracking-widest text-gray-900 uppercase"
               style={{ fontFamily: "var(--font-lato)" }}
             >
@@ -141,7 +141,7 @@ export default function Footer() {
 
           {/* Nuestros Canales */}
           <div className="col-span-2 sm:col-span-3 xl:pl-20">
-            <h6 
+            <h6
               className="text-sm font-bold tracking-widest text-gray-900 uppercase"
               style={{ fontFamily: "var(--font-lato)" }}
             >
@@ -170,7 +170,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <a
-                    href="https://www.instagram.com/somos_marketclub/"
+                    href="https://www.instagram.com/channel/AbaHk3XG4UNKPhZ1/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
@@ -191,13 +191,13 @@ export default function Footer() {
 
             <div className="grid grid-cols-1 mt-2 gap-y-6 sm:grid-cols-2 sm:gap-x-16">
               <div>
-                <h6 
+                <h6
                   className="text-sm font-bold tracking-widest text-gray-900 uppercase"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Llámanos
                 </h6>
-                <p 
+                <p
                   className="text-xl text-gray-900 font-bold"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
@@ -208,13 +208,13 @@ export default function Footer() {
               </div>
 
               <div>
-                <h6 
+                <h6
                   className="text-sm font-bold tracking-widest text-gray-900 uppercase"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Escríbenos
                 </h6>
-                <p 
+                <p
                   className="text-xl text-gray-900 font-bold"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
