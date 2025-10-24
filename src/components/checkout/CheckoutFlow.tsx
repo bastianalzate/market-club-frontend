@@ -527,7 +527,8 @@ export default function CheckoutFlow() {
                                 <span className="text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>Subtotal:</span>
                                 <span className="font-medium text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.subtotal || 0)}</span>
                               </div>
-                              {checkoutState.orderData.tax_amount > 0 && (
+                              {/* Impuestos ocultos temporalmente */}
+                              {false && checkoutState.orderData && checkoutState.orderData.tax_amount > 0 && (
                                 <div className="flex justify-between">
                                   <span className="text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>IVA (19%):</span>
                                   <span className="font-medium text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>${new Intl.NumberFormat('es-CO').format(checkoutState.orderData.tax_amount)}</span>
@@ -783,32 +784,35 @@ export default function CheckoutFlow() {
                           )}
                         </span>
                       </div>
-                      <div className="flex justify-between text-xs sm:text-sm">
-                        <span className="text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>
-                          Impuestos (IVA 19%):
-                        </span>
-                        <span className="font-semibold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
-                          {formatPrice(
-                            currentStep < 3
-                              ? (() => {
-                                  const subtotal =
-                                    cart?.items?.reduce(
-                                      (sum, item) =>
-                                        sum +
-                                        parseFloat(String(item.unit_price)) *
-                                          item.quantity,
-                                      0
-                                    ) || 0;
-                                  const TAX_RATE = 0.19;
-                                  const calculatedTax = Math.round(
-                                    subtotal * TAX_RATE
-                                  );
-                                  return calculatedTax;
-                                })()
-                              : orderData?.tax_amount || 0
-                          )}
-                        </span>
-                      </div>
+                      {/* Impuestos ocultos temporalmente */}
+                      {false && (
+                        <div className="flex justify-between text-xs sm:text-sm">
+                          <span className="text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>
+                            Impuestos (IVA 19%):
+                          </span>
+                          <span className="font-semibold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
+                            {formatPrice(
+                              currentStep < 3
+                                ? (() => {
+                                    const subtotal =
+                                      cart?.items?.reduce(
+                                        (sum, item) =>
+                                          sum +
+                                          parseFloat(String(item.unit_price)) *
+                                            item.quantity,
+                                        0
+                                      ) || 0;
+                                    const TAX_RATE = 0.19;
+                                    const calculatedTax = Math.round(
+                                      subtotal * TAX_RATE
+                                    );
+                                    return calculatedTax;
+                                  })()
+                                : orderData?.tax_amount || 0
+                            )}
+                          </span>
+                        </div>
+                      )}
                       <div className="flex justify-between text-base sm:text-lg font-bold border-t border-gray-200 pt-2 sm:pt-3">
                         <span className="text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>Total:</span>
                         <span className="text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>

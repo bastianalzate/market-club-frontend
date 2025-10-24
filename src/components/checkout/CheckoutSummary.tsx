@@ -167,12 +167,15 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
             </span>
           </div>
 
-          <div className="flex justify-between text-xs sm:text-sm" style={{ fontFamily: "var(--font-lato)" }}>
-            <span className="text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>Impuestos (IVA 19%):</span>
-            <span className="font-semibold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
-              {formatPrice(finalTaxAmount)}
-            </span>
-          </div>
+          {/* Impuestos ocultos temporalmente */}
+          {false && (
+            <div className="flex justify-between text-xs sm:text-sm" style={{ fontFamily: "var(--font-lato)" }}>
+              <span className="text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>Impuestos (IVA 19%):</span>
+              <span className="font-semibold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
+                {formatPrice(finalTaxAmount)}
+              </span>
+            </div>
+          )}
 
           <div className="flex justify-between text-xs sm:text-sm">
             <span className="text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>Envío:</span>
