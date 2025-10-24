@@ -17,7 +17,7 @@ interface MainLayoutProps {
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
-  const { restoreUser } = useAuth();
+  const { restoreUser, user, isAuthenticated } = useAuth();
 
   // Restaurar usuario al cargar la aplicación
   useEffect(() => {
@@ -30,7 +30,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <AnnouncementBanner />
       <Header />
       <main className="flex-1 pb-16 lg:pb-0">{children}</main>
-      <CountriesCarousel />
+      {/* Solo mostrar CountriesCarousel para usuarios no mayoristas */}
+      {!(isAuthenticated && user?.is_wholesaler) && <CountriesCarousel />}
       <ServicesBanner />
       <Footer />
       <LegalWarning />

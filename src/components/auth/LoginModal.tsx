@@ -46,7 +46,7 @@ type ModalMode = "options" | "login" | "register" | "guest" | "wholesaler";
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const router = useRouter();
-  const { login, register, guestCheckout, isLoading, error, clearError } =
+  const { login, register, guestCheckout, isLoading, error, clearError, user } =
     useAuth();
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
@@ -344,11 +344,16 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     try {
       switch (mode) {
         case "login":
-          await login(loginData.email, loginData.password);
+          const loginResult = await login(loginData.email, loginData.password);
           // Si llegamos aquí, el login fue exitoso
-          console.log("Login exitoso, redirigiendo a perfil...");
+          console.log("Login exitoso, redirigiendo...");
           handleClose();
-          router.push("/perfil");
+          // Redirigir según el tipo de usuario
+          if (loginResult.isWholesaler) {
+            router.push("/mayorista");
+          } else {
+            router.push("/perfil");
+          }
           break;
         case "register":
           // Validar formulario antes de enviar
@@ -481,14 +486,20 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
+              <h2
+                className="text-2xl font-bold text-gray-900"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 {mode === "options" && "Bienvenido a Market Club"}
                 {mode === "login" && "Iniciar Sesión"}
                 {mode === "wholesaler" && "Tipo de Cuenta"}
                 {mode === "register" && "Crear Cuenta"}
                 {mode === "guest" && "Continuar como Invitado"}
               </h2>
-              <p className="text-gray-600 mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+              <p
+                className="text-gray-600 mt-1"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 {mode === "options" && "Elige cómo quieres continuar"}
                 {mode === "login" && "Ingresa a tu cuenta"}
                 {mode === "wholesaler" && "¿Eres mayorista?"}
@@ -513,7 +524,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 <button
                   onClick={() => setMode("login")}
                   className="w-full flex items-center justify-center px-6 py-4 text-white rounded-xl font-semibold transition-colors cursor-pointer"
-                  style={{ backgroundColor: "rgb(181, 142, 49)", fontFamily: "var(--font-lato)" }}
+                  style={{
+                    backgroundColor: "rgb(181, 142, 49)",
+                    fontFamily: "var(--font-lato)",
+                  }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = "rgb(160, 120, 23)";
                   }}
@@ -539,7 +553,12 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     <div className="w-full border-t border-gray-300" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500" style={{ fontFamily: "var(--font-lato)" }}>o</span>
+                    <span
+                      className="px-2 bg-white text-gray-500"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      o
+                    </span>
                   </div>
                 </div>
 
@@ -557,7 +576,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             {mode === "wholesaler" && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
-                  <p className="text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>
+                  <p
+                    className="text-gray-600"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Selecciona el tipo de cuenta que mejor se adapte a tus
                     necesidades
                   </p>
@@ -576,8 +598,16 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 >
                   <User className="w-5 h-5 mr-3" />
                   <div className="text-left">
-                    <div className="font-semibold" style={{ fontFamily: "var(--font-lato)" }}>Cliente Regular</div>
-                    <div className="text-sm text-gray-600" style={{ fontFamily: "var(--font-lato)" }}>
+                    <div
+                      className="font-semibold"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Cliente Regular
+                    </div>
+                    <div
+                      className="text-sm text-gray-600"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Compra productos para consumo personal
                     </div>
                   </div>
@@ -596,8 +626,16 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 >
                   <User className="w-5 h-5 mr-3" />
                   <div className="text-left">
-                    <div className="font-semibold" style={{ fontFamily: "var(--font-lato)" }}>Mayorista</div>
-                    <div className="text-sm text-yellow-100" style={{ fontFamily: "var(--font-lato)" }}>
+                    <div
+                      className="font-semibold"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Mayorista
+                    </div>
+                    <div
+                      className="text-sm text-yellow-100"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Compra productos para revender con precios especiales
                     </div>
                   </div>
@@ -627,7 +665,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     }
                   }}
                   className="font-medium text-sm transition-colors cursor-pointer"
-                  style={{ color: "rgb(181, 142, 49)", fontFamily: "var(--font-lato)" }}
+                  style={{
+                    color: "rgb(181, 142, 49)",
+                    fontFamily: "var(--font-lato)",
+                  }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = "rgb(160, 120, 23)";
                   }}
@@ -641,7 +682,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Name field (register and guest) */}
                 {(mode === "register" || mode === "guest") && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Nombre completo
                     </label>
                     <div className="relative">
@@ -682,7 +726,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       />
                     </div>
                     {validationErrors.name && (
-                      <p className="text-red-500 text-sm mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.name}
                       </p>
                     )}
@@ -691,7 +738,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                 {/* Email field */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Email
                   </label>
                   <div className="relative">
@@ -733,7 +783,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     />
                   </div>
                   {validationErrors.email && (
-                    <p className="text-red-500 text-sm mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                    <p
+                      className="text-red-500 text-sm mt-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       {validationErrors.email}
                     </p>
                   )}
@@ -743,7 +796,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {(mode === "login" ||
                   (mode === "register" && !registerData.isWholesaler)) && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Contraseña
                     </label>
                     <div className="relative">
@@ -801,13 +857,19 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       </button>
                     </div>
                     {validationErrors.password && (
-                      <p className="text-red-500 text-sm mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.password}
                       </p>
                     )}
                     {mode === "register" && registerData.password && (
                       <div className="mt-2">
-                        <div className="text-xs text-gray-600 mb-1" style={{ fontFamily: "var(--font-lato)" }}>
+                        <div
+                          className="text-xs text-gray-600 mb-1"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           Requisitos de contraseña:
                         </div>
                         <div className="space-y-1 text-xs">
@@ -891,7 +953,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Confirm Password field (register only, but not for wholesalers) */}
                 {mode === "register" && !registerData.isWholesaler && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Confirmar Contraseña
                     </label>
                     <div className="relative">
@@ -939,7 +1004,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       </button>
                     </div>
                     {validationErrors.confirmPassword && (
-                      <p className="text-red-500 text-sm mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.confirmPassword}
                       </p>
                     )}
@@ -949,7 +1017,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Phone field (register and guest) */}
                 {(mode === "register" || mode === "guest") && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Teléfono
                     </label>
                     <div className="relative">
@@ -993,7 +1064,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       />
                     </div>
                     {validationErrors.phone && (
-                      <p className="text-red-500 text-sm mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.phone}
                       </p>
                     )}
@@ -1003,7 +1077,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Country field (register only) */}
                 {mode === "register" && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       País
                     </label>
                     <div className="relative">
@@ -1038,7 +1115,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       </select>
                     </div>
                     {validationErrors.country && (
-                      <p className="text-red-500 text-sm mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.country}
                       </p>
                     )}
@@ -1048,7 +1128,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Date of Birth field (register only) */}
                 {mode === "register" && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Fecha de nacimiento (opcional)
                     </label>
                     <div className="relative">
@@ -1080,7 +1163,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       />
                     </div>
                     {validationErrors.dateOfBirth && (
-                      <p className="text-red-500 text-sm mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.dateOfBirth}
                       </p>
                     )}
@@ -1090,7 +1176,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Profession field (register only) */}
                 {mode === "register" && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Profesión (opcional)
                     </label>
                     <div className="relative">
@@ -1122,7 +1211,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       />
                     </div>
                     {validationErrors.profession && (
-                      <p className="text-red-500 text-sm mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.profession}
                       </p>
                     )}
@@ -1132,7 +1224,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* NIT field (register only, when isWholesaler is true) */}
                 {mode === "register" && registerData.isWholesaler && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       NIT <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
@@ -1155,7 +1250,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       />
                     </div>
                     {validationErrors.nit && (
-                      <p className="text-red-500 text-sm mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.nit}
                       </p>
                     )}
@@ -1165,7 +1263,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Document upload field (register only, for wholesalers) */}
                 {mode === "register" && registerData.isWholesaler && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Documento de Mayorista *
                     </label>
                     <div className="relative">
@@ -1193,12 +1294,18 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       />
                       <FileText className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                     </div>
-                    <p className="text-xs text-gray-500 mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                    <p
+                      className="text-xs text-gray-500 mt-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Formatos permitidos: JPG, JPEG, PNG, PDF. Tamaño máximo:
                       5MB
                     </p>
                     {validationErrors.wholesaler_document && (
-                      <p className="text-red-500 text-sm mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.wholesaler_document}
                       </p>
                     )}
@@ -1263,7 +1370,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Address field (guest only) */}
                 {mode === "guest" && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Dirección de entrega
                     </label>
                     <div className="relative">
@@ -1297,7 +1407,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   type="submit"
                   disabled={isLoading}
                   className="w-full text-white py-3 px-6 rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                  style={{ backgroundColor: "rgb(181, 142, 49)", fontFamily: "var(--font-lato)" }}
+                  style={{
+                    backgroundColor: "rgb(181, 142, 49)",
+                    fontFamily: "var(--font-lato)",
+                  }}
                   onMouseEnter={(e) => {
                     if (!isLoading) {
                       e.currentTarget.style.backgroundColor =
@@ -1312,7 +1425,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   }}
                 >
                   {isLoading ? (
-                    <div className="flex items-center justify-center" style={{ fontFamily: "var(--font-lato)" }}>
+                    <div
+                      className="flex items-center justify-center"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                       Procesando...
                     </div>
@@ -1336,8 +1452,13 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         onClose={() => {
           setShowSuccessModal(false);
           handleClose(); // Cerrar el modal principal también
-          // Solo redirigir al perfil si NO es mayorista
-          if (!isWholesalerRegistration) {
+          // Redirigir según el tipo de usuario
+          if (isWholesalerRegistration) {
+            // Para mayoristas, no redirigir automáticamente
+            return;
+          } else if (user?.is_wholesaler) {
+            router.push("/mayorista");
+          } else {
             router.push("/perfil");
           }
         }}

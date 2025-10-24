@@ -19,38 +19,38 @@ export default function BottomNavigation() {
   const router = useRouter();
   const pathname = usePathname();
   const cartContext = useCartContext();
-  const { openLoginModal } = useAuth();
+  const { openLoginModal, user, isAuthenticated } = useAuth();
   const navRef = useRef<HTMLDivElement>(null);
 
   // Hook para mantener el menú siempre visible
   useEffect(() => {
     const handleScroll = () => {
       if (navRef.current) {
-        navRef.current.style.transform = 'translateY(0)';
-        navRef.current.style.transition = 'transform 0.2s ease-in-out';
+        navRef.current.style.transform = "translateY(0)";
+        navRef.current.style.transition = "transform 0.2s ease-in-out";
       }
     };
 
     const handleResize = () => {
       if (navRef.current) {
-        navRef.current.style.transform = 'translateY(0)';
+        navRef.current.style.transform = "translateY(0)";
       }
     };
 
     // Forzar visibilidad inicial
     if (navRef.current) {
-      navRef.current.style.transform = 'translateY(0)';
+      navRef.current.style.transform = "translateY(0)";
     }
 
     // Agregar listeners
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('orientationchange', handleResize);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('orientationchange', handleResize);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
     };
   }, []);
 
@@ -64,37 +64,63 @@ export default function BottomNavigation() {
   // Usar el itemsCount ya calculado del contexto
   const totalCartItems = itemsCount || 0;
 
-  const navigationItems = [
-    {
-      id: "home",
-      label: "Inicio",
-      icon: Home,
-      path: "/",
-      isActive: pathname === "/",
-    },
-    {
-      id: "tienda",
-      label: "Tienda",
-      icon: ShoppingBag,
-      path: "/tienda",
-      isActive: pathname === "/tienda",
-      badge: totalCartItems > 0 ? totalCartItems : null,
-    },
-    {
-      id: "contacto",
-      label: "Contacto",
-      icon: MapPin,
-      path: "/contacto",
-      isActive: pathname === "/contacto",
-    },
-    {
-      id: "login",
-      label: "Login",
-      icon: LogIn,
-      path: null, // No navigation, will open modal
-      isActive: false,
-    },
-  ];
+  // Para mayoristas, solo mostrar opciones específicas
+  const navigationItems =
+    isAuthenticated && user?.is_wholesaler
+      ? [
+          {
+            id: "quienes-somos",
+            label: "Quiénes somos",
+            icon: User,
+            path: "/quienes-somos",
+            isActive: pathname === "/quienes-somos",
+          },
+          {
+            id: "mayorista",
+            label: "Mayorista",
+            icon: Store,
+            path: "/mayorista",
+            isActive: pathname === "/mayorista",
+          },
+          {
+            id: "contacto",
+            label: "Contacto",
+            icon: MapPin,
+            path: "/contacto",
+            isActive: pathname === "/contacto",
+          },
+        ]
+      : [
+          {
+            id: "home",
+            label: "Inicio",
+            icon: Home,
+            path: "/",
+            isActive: pathname === "/",
+          },
+          {
+            id: "tienda",
+            label: "Tienda",
+            icon: ShoppingBag,
+            path: "/tienda",
+            isActive: pathname === "/tienda",
+            badge: totalCartItems > 0 ? totalCartItems : null,
+          },
+          {
+            id: "contacto",
+            label: "Contacto",
+            icon: MapPin,
+            path: "/contacto",
+            isActive: pathname === "/contacto",
+          },
+          {
+            id: "login",
+            label: "Login",
+            icon: LogIn,
+            path: null, // No navigation, will open modal
+            isActive: false,
+          },
+        ];
 
   const handleNavigation = (item: any) => {
     if (item.id === "login") {
@@ -105,13 +131,13 @@ export default function BottomNavigation() {
   };
 
   return (
-    <div 
+    <div
       ref={navRef}
       className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-lg lg:hidden"
       style={{
         zIndex: 40,
-        transform: 'translateZ(0)',
-        willChange: 'transform',
+        transform: "translateZ(0)",
+        willChange: "transform",
       }}
     >
       <div className="grid grid-cols-4 h-16">
