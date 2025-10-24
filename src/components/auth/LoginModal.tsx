@@ -143,7 +143,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       const data = await response.json();
 
       if (data.success) {
-        setShowForgotPassword(false);
         setShowForgotPasswordSuccess(true);
         setForgotPasswordEmail("");
       } else {
@@ -483,20 +482,22 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       `}</style>
 
       {/* Backdrop */}
-      <div
-        className="fixed inset-0"
-        style={{
-          backgroundColor: "#00000091",
-          zIndex: 9999,
-          animation: isAnimating
-            ? "fadeIn 0.25s ease-in-out"
-            : "fadeOut 0.25s ease-in-out",
-        }}
-        onClick={handleClose}
-      />
+      {!showForgotPassword && (
+        <div
+          className="fixed inset-0"
+          style={{
+            backgroundColor: "#00000091",
+            zIndex: 9999,
+            animation: isAnimating
+              ? "fadeIn 0.25s ease-in-out"
+              : "fadeOut 0.25s ease-in-out",
+          }}
+          onClick={handleClose}
+        />
+      )}
 
       {/* Modal */}
-      {!showForgotPassword && (
+      {!showForgotPassword && !showForgotPasswordSuccess && (
         <div
           className="fixed inset-0 flex items-center justify-center p-4"
           style={{
@@ -1384,71 +1385,125 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
       {/* Modal de Olvidé mi contraseña */}
       {showForgotPassword && (
-        <div className="fixed inset-0 flex items-center justify-center p-4" style={{ zIndex: 10001 }}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <div>
-                <h3 className="text-xl font-bold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
-                  Restablecer Contraseña
-                </h3>
-                <p className="text-gray-600 mt-1" style={{ fontFamily: "var(--font-lato)" }}>
-                  Ingresa tu email para recibir un enlace de restablecimiento
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  setShowForgotPassword(false);
-                  setForgotPasswordEmail("");
-                  setValidationErrors({});
-                }}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
-                title="Cerrar"
-                aria-label="Cerrar modal"
-              >
-                <X className="w-5 h-5 text-gray-500" />
-              </button>
-            </div>
-            
-            <div className="p-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
-                    Email
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      type="email"
-                      value={forgotPasswordEmail}
-                      onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900"
-                      placeholder="tu@email.com"
-                    />
-                  </div>
-                  {validationErrors.forgotPassword && (
-                    <p className="text-red-500 text-sm mt-1" style={{ fontFamily: "var(--font-lato)" }}>
-                      {validationErrors.forgotPassword}
+        <>
+          {/* Backdrop para modal de olvidé mi contraseña */}
+          <div
+            className="fixed inset-0"
+            style={{
+              backgroundColor: "#00000091",
+              zIndex: 10000,
+            }}
+            onClick={() => {
+              setShowForgotPassword(false);
+              setForgotPasswordEmail("");
+              setValidationErrors({});
+            }}
+          />
+          
+          <div className="fixed inset-0 flex items-center justify-center p-4" style={{ zIndex: 10001 }}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            {!showForgotPasswordSuccess ? (
+              <>
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
+                      Restablecer Contraseña
+                    </h3>
+                    <p className="text-gray-600 mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                      Ingresa tu email para recibir un enlace de restablecimiento
                     </p>
-                  )}
-                </div>
-                
-                <div className="flex space-x-3">
+                  </div>
                   <button
-                    type="button"
                     onClick={() => {
                       setShowForgotPassword(false);
                       setForgotPasswordEmail("");
                       setValidationErrors({});
                     }}
-                    className="flex-1 py-3 px-4 border border-gray-300 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
-                    style={{ fontFamily: "var(--font-lato)" }}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+                    title="Cerrar"
+                    aria-label="Cerrar modal"
                   >
-                    Cancelar
+                    <X className="w-5 h-5 text-gray-500" />
                   </button>
+                </div>
+                
+                <div className="p-6">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                        Email
+                      </label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          type="email"
+                          value={forgotPasswordEmail}
+                          onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900"
+                          placeholder="tu@email.com"
+                        />
+                      </div>
+                      {validationErrors.forgotPassword && (
+                        <p className="text-red-500 text-sm mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                          {validationErrors.forgotPassword}
+                        </p>
+                      )}
+                    </div>
+                    
+                    <div className="flex space-x-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowForgotPassword(false);
+                          setForgotPasswordEmail("");
+                          setValidationErrors({});
+                        }}
+                        className="flex-1 py-3 px-4 border border-gray-300 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleForgotPassword}
+                        className="flex-1 py-3 px-4 text-white rounded-xl font-medium transition-colors cursor-pointer"
+                        style={{ backgroundColor: "rgb(181, 142, 49)", fontFamily: "var(--font-lato)" }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = "rgb(160, 120, 23)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "rgb(181, 142, 49)";
+                        }}
+                      >
+                        Enviar Enlace
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="p-6 text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                
+                <h3 className="text-xl font-bold text-gray-900 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                  ¡Email Enviado!
+                </h3>
+                
+                <p className="text-gray-600 mb-6" style={{ fontFamily: "var(--font-lato)" }}>
+                  Si el email existe en nuestro sistema, recibirás un enlace para restablecer tu contraseña en los próximos minutos.
+                </p>
+                
+                <div className="space-y-3">
                   <button
-                    type="button"
-                    onClick={handleForgotPassword}
-                    className="flex-1 py-3 px-4 text-white rounded-xl font-medium transition-colors cursor-pointer"
+                    onClick={() => {
+                      setShowForgotPasswordSuccess(false);
+                      handleClose();
+                    }}
+                    className="w-full py-3 px-4 text-white rounded-xl font-medium transition-colors cursor-pointer"
                     style={{ backgroundColor: "rgb(181, 142, 49)", fontFamily: "var(--font-lato)" }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.backgroundColor = "rgb(160, 120, 23)";
@@ -1457,67 +1512,28 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       e.currentTarget.style.backgroundColor = "rgb(181, 142, 49)";
                     }}
                   >
-                    Enviar Enlace
+                    Entendido
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      setShowForgotPasswordSuccess(false);
+                      setForgotPasswordEmail("");
+                      setValidationErrors({});
+                    }}
+                    className="w-full py-3 px-4 border border-gray-300 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    Intentar con otro email
                   </button>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
+        </>
       )}
 
-      {/* Modal de éxito para reset de contraseña */}
-      {showForgotPasswordSuccess && (
-        <div className="fixed inset-0 flex items-center justify-center p-4" style={{ zIndex: 10001 }}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-            <div className="p-6 text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              
-              <h3 className="text-xl font-bold text-gray-900 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
-                ¡Email Enviado!
-              </h3>
-              
-              <p className="text-gray-600 mb-6" style={{ fontFamily: "var(--font-lato)" }}>
-                Si el email existe en nuestro sistema, recibirás un enlace para restablecer tu contraseña en los próximos minutos.
-              </p>
-              
-              <div className="space-y-3">
-                <button
-                  onClick={() => {
-                    setShowForgotPasswordSuccess(false);
-                    handleClose();
-                  }}
-                  className="w-full py-3 px-4 text-white rounded-xl font-medium transition-colors cursor-pointer"
-                  style={{ backgroundColor: "rgb(181, 142, 49)", fontFamily: "var(--font-lato)" }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgb(160, 120, 23)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgb(181, 142, 49)";
-                  }}
-                >
-                  Entendido
-                </button>
-                
-                <button
-                  onClick={() => {
-                    setShowForgotPasswordSuccess(false);
-                    setShowForgotPassword(true);
-                  }}
-                  className="w-full py-3 px-4 border border-gray-300 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
-                  style={{ fontFamily: "var(--font-lato)" }}
-                >
-                  Intentar con otro email
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Modal de éxito */}
       <SuccessModal
