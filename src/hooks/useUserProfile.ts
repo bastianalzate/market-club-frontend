@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { UserProfileService } from '../services/userProfileService';
 import { useProfileContext } from '../contexts/ProfileContext';
+import { useAuth } from './useAuth';
 
 // Interfaces para tipado
 interface UserProfile {
@@ -111,6 +112,7 @@ interface PaginationMeta {
 
 export const useUserProfile = () => {
   const { profile, updateProfile: updateProfileContext, setLoading: setContextLoading } = useProfileContext();
+  const { updateUser } = useAuth();
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -159,6 +161,14 @@ export const useUserProfile = () => {
       if (response.success) {
         // Actualizar el contexto global con los nuevos datos del backend
         updateProfileContext(response.data);
+        
+        // También actualizar el usuario en el contexto de autenticación
+        updateUser({
+          name: response.data.name,
+          email: response.data.email,
+          phone: response.data.phone,
+        });
+        
         return { success: true, message: response.message };
       } else {
         throw new Error(response.message || 'Error al actualizar el perfil');
@@ -170,7 +180,7 @@ export const useUserProfile = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [updateProfileContext, updateUser]);
 
   // Cambiar contraseña
   const changePassword = useCallback(async (passwordData: {

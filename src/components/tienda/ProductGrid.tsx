@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   Grid,
   ChevronLeft,
@@ -88,6 +89,7 @@ export default function ProductGrid({
   onNextPage,
   onPrevPage,
 }: ProductGridProps) {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(pagination?.currentPage || 1);
   const [localProducts, setLocalProducts] =
@@ -390,13 +392,14 @@ export default function ProductGrid({
                 }`}
               >
                 <div
-                  className="aspect-w-1 aspect-h-1 overflow-hidden pt-1 sm:pt-4 max-sm:!h-[180px]"
+                  className="aspect-w-1 aspect-h-1 overflow-hidden pt-1 sm:pt-4 max-sm:!h-[180px] cursor-pointer"
                   style={{ height: "400px" }}
+                  onClick={() => router.push(`/producto/${product.id}`)}
                 >
                   <LazyImage
                     src={product.image}
                     alt={product.name}
-                    className={`w-full h-full object-contain ${
+                    className={`w-full h-full object-contain transition-transform hover:scale-105 ${
                       product.stock_quantity === 0 ? "grayscale opacity-60" : ""
                     }`}
                   />
@@ -446,7 +449,7 @@ export default function ProductGrid({
                     className="text-xs text-gray-600 font-medium sm:text-sm"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
-                    BOTELLA 500ML
+                    {product.product_specific_data?.packaging_type?.toUpperCase() || 'BOTELLA'} {product.product_specific_data?.volume_ml || '500'}ML
                   </span>
                   <div className="text-right">
                     {product.sale_price && product.sale_price < product.price ? (

@@ -445,15 +445,18 @@ export default function OrderDetailsModal({
                           {formatPrice(orderDetails.shipping_amount)}
                         </span>
                       </div>
-                      <div 
-                        className="flex justify-between text-sm"
-                        style={{ fontFamily: "var(--font-lato)" }}
-                      >
-                        <span className="text-gray-600">Impuestos:</span>
-                        <span className="font-medium text-gray-900">
-                          {formatPrice(orderDetails.tax_amount)}
-                        </span>
-                      </div>
+                      {/* Impuestos ocultos temporalmente */}
+                      {false && (
+                        <div 
+                          className="flex justify-between text-sm"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
+                          <span className="text-gray-600">Impuestos:</span>
+                          <span className="font-medium text-gray-900">
+                            {formatPrice(orderDetails.tax_amount)}
+                          </span>
+                        </div>
+                      )}
                       <div 
                         className="border-t border-gray-200 pt-3"
                         style={{ fontFamily: "var(--font-lato)" }}

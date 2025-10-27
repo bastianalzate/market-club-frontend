@@ -189,7 +189,7 @@ export default function ProductSlider() {
             className="text-xs text-gray-600 font-medium sm:text-sm"
             style={{ fontFamily: "var(--font-lato)" }}
           >
-            BOTELLA 500ML
+            {beer.product_specific_data?.packaging_type?.toUpperCase() || 'BOTELLA'} {beer.product_specific_data?.volume_ml || '500'}ML
           </span>
           <div className="text-right">
             {beer.sale_price && beer.sale_price < beer.price ? (
