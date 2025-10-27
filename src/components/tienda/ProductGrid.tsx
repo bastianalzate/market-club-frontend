@@ -443,19 +443,27 @@ export default function ProductGrid({
                 }`}
               >
                 <div className="flex items-center justify-between mb-0 sm:mb-3">
-                  {product.product_specific_data?.packaging_type &&
-                    product.product_specific_data?.volume_ml && (
-                      <span
-                        className="text-xs text-gray-600 font-medium sm:text-sm"
-                        style={{ fontFamily: "var(--font-lato)" }}
-                      >
-                        {product.product_specific_data.packaging_type.toUpperCase()}{" "}
-                        {product.product_specific_data.volume_ml}
-                      </span>
-                    )}
+                  {(product.product_specific_data?.packaging_type ||
+                    product.product_specific_data?.volume_ml) && (
+                    <span
+                      className="text-xs text-gray-600 font-medium sm:text-sm"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      {product.product_specific_data?.packaging_type &&
+                      product.product_specific_data?.volume_ml
+                        ? `${product.product_specific_data.packaging_type.toUpperCase()} ${
+                            product.product_specific_data.volume_ml
+                          }`
+                        : product.product_specific_data?.packaging_type
+                        ? product.product_specific_data.packaging_type.toUpperCase()
+                        : product.product_specific_data?.volume_ml
+                        ? `${product.product_specific_data.volume_ml}ML`
+                        : ""}
+                    </span>
+                  )}
                   <div
                     className={`${
-                      product.product_specific_data?.packaging_type &&
+                      product.product_specific_data?.packaging_type ||
                       product.product_specific_data?.volume_ml
                         ? "text-right"
                         : "text-left"
