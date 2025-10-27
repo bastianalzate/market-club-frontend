@@ -90,6 +90,12 @@ const giftBoxes: GiftBox[] = [
 
 // Función para convertir TransformedProduct a Beer
 const transformToBeer = (product: TransformedProduct): Beer => {
+  // Obtener información de presentación y volumen del producto
+  const volumeText =
+    product.packaging_type && product.volume_ml
+      ? `${product.packaging_type.toUpperCase()} ${product.volume_ml}`
+      : "";
+
   return {
     id: product.id,
     name: product.name,
@@ -99,12 +105,12 @@ const transformToBeer = (product: TransformedProduct): Beer => {
         ? parseFloat(product.price)
         : product.price,
     image: product.image,
-    volume: "BOTELLA 500ML", // Valor por defecto
+    volume: volumeText,
     category:
       typeof product.category === "string"
         ? product.category
         : product.category?.name || "Cerveza",
-    nationality: "Importada", // Valor por defecto
+    nationality: "", // No se muestra
     rating: product.rating,
     inStock: product.inStock,
     description: product.description,
@@ -192,7 +198,7 @@ export default function GiftBuilder() {
           const match = range.match(/(\d+)k?-(\d+)k?/);
           return match ? parseInt(match[1]) * 1000 : 0;
         };
-        
+
         return getMinValue(a) - getMinValue(b);
       })
       .map((range) => ({
@@ -429,13 +435,13 @@ export default function GiftBuilder() {
       <div className="max-w-7xl mx-auto">
         {/* Título y Descripción */}
         <div className="text-center mb-12">
-          <h1 
+          <h1
             className="text-[30px] font-bold text-gray-900 mb-6 sm:text-4xl"
             style={{ fontFamily: "var(--font-oswald)" }}
           >
             Construye tu regalo perfecto
           </h1>
-          <p 
+          <p
             className="text-xl text-gray-600 max-w-3xl mx-auto"
             style={{ fontFamily: "var(--font-lato)" }}
           >
@@ -454,13 +460,13 @@ export default function GiftBuilder() {
                   1
                 </div>
                 <div>
-                  <h2 
+                  <h2
                     className="text-[30px] font-bold text-gray-900 sm:text-2xl"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
                     Elige tu caja
                   </h2>
-                  <p 
+                  <p
                     className="text-sm text-gray-600"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
@@ -513,38 +519,38 @@ export default function GiftBuilder() {
                         />
                       </div>
 
-                      <h3 
+                      <h3
                         className="text-lg font-semibold text-gray-900 mb-2"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
                         {box.name}
                       </h3>
-                      <p 
+                      <p
                         className="text-sm text-gray-600 mb-2"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
                         {box.description}
                       </p>
-                      <p 
+                      <p
                         className="text-sm text-gray-500 mb-3"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
                         Hasta {box.maxBeers} cervezas
                       </p>
-                      <p 
+                      <p
                         className="text-sm text-gray-500 mb-3"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
                         {box.dimensions}
                       </p>
-                      <div 
+                      <div
                         className="flex items-center justify-center text-xs text-gray-500 mb-3"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
                         <Clock className="w-4 h-4 mr-1" />
                         {box.deliveryTime}
                       </div>
-                      <p 
+                      <p
                         className="text-2xl font-bold text-[#B58E31]"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
@@ -564,13 +570,13 @@ export default function GiftBuilder() {
                     2
                   </div>
                   <div>
-                    <h2 
+                    <h2
                       className="text-[30px] font-bold text-gray-900 sm:text-2xl"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
                       Elige tus cervezas
                     </h2>
-                    <p 
+                    <p
                       className="text-sm text-gray-600"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
@@ -608,7 +614,7 @@ export default function GiftBuilder() {
                     <div className="bg-gray-50 rounded-lg p-4 space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
-                          <label 
+                          <label
                             className="block text-sm font-medium text-gray-700 mb-2"
                             style={{ fontFamily: "var(--font-lato)" }}
                           >
@@ -630,7 +636,7 @@ export default function GiftBuilder() {
                           </select>
                         </div>
                         <div>
-                          <label 
+                          <label
                             className="block text-sm font-medium text-gray-700 mb-2"
                             style={{ fontFamily: "var(--font-lato)" }}
                           >
@@ -660,7 +666,7 @@ export default function GiftBuilder() {
                           </select>
                         </div>
                         <div>
-                          <label 
+                          <label
                             className="block text-sm font-medium text-gray-700 mb-2"
                             style={{ fontFamily: "var(--font-lato)" }}
                           >
@@ -698,13 +704,13 @@ export default function GiftBuilder() {
                 {/* Contador de Progreso */}
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-2">
-                    <span 
+                    <span
                       className="text-sm font-medium text-gray-700"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
                       Progreso
                     </span>
-                    <span 
+                    <span
                       className="text-sm font-medium text-[#B58E31]"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
@@ -796,32 +802,14 @@ export default function GiftBuilder() {
                             />
                           </div>
 
-                          <h4 
+                          <h4
                             className="font-medium text-gray-900 text-sm mb-1 line-clamp-2"
                             style={{ fontFamily: "var(--font-lato)" }}
                           >
                             {beer.name}
                           </h4>
-                          <p 
-                            className="text-xs text-gray-600 mb-1"
-                            style={{ fontFamily: "var(--font-lato)" }}
-                          >
-                            {beer.brand}
-                          </p>
-                          <p 
-                            className="text-xs text-gray-500 mb-1"
-                            style={{ fontFamily: "var(--font-lato)" }}
-                          >
-                            {beer.volume}
-                          </p>
-                          <p 
-                            className="text-xs text-[#B58E31] font-medium mb-2"
-                            style={{ fontFamily: "var(--font-lato)" }}
-                          >
-                            {beer.nationality}
-                          </p>
 
-                          <p 
+                          <p
                             className="text-sm font-bold text-[#B58E31]"
                             style={{ fontFamily: "var(--font-lato)" }}
                           >
@@ -839,7 +827,7 @@ export default function GiftBuilder() {
                                 >
                                   <X className="w-4 h-4 text-white" />
                                 </div>
-                                <span 
+                                <span
                                   className="text-xs font-bold text-white drop-shadow-lg"
                                   style={{ fontFamily: "var(--font-lato)" }}
                                 >
@@ -859,7 +847,7 @@ export default function GiftBuilder() {
 
                 {!productsLoading && filteredBeers.length === 0 && (
                   <div className="text-center py-8">
-                    <p 
+                    <p
                       className="text-gray-500"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
@@ -948,7 +936,7 @@ export default function GiftBuilder() {
           {/* Panel Lateral - Resumen */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-lg p-6 sticky top-6 border border-gray-100">
-              <h3 
+              <h3
                 className="text-xl font-bold text-gray-900 mb-6 flex items-center"
                 style={{ fontFamily: "var(--font-lato)" }}
               >
@@ -959,7 +947,7 @@ export default function GiftBuilder() {
               {/* Caja Seleccionada */}
               {giftBuilder.selectedBox ? (
                 <div className="mb-6">
-                  <h4 
+                  <h4
                     className="font-medium text-gray-700 mb-2"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
@@ -967,20 +955,20 @@ export default function GiftBuilder() {
                   </h4>
                   <div className="bg-gray-50 rounded-lg p-3">
                     <div className="flex items-center justify-between">
-                      <span 
+                      <span
                         className="text-gray-900 font-medium"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
                         {giftBuilder.selectedBox.name}
                       </span>
-                      <span 
+                      <span
                         className="font-bold text-[#B58E31]"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
                         {formatPrice(giftBuilder.selectedBox.price)}
                       </span>
                     </div>
-                    <p 
+                    <p
                       className="text-xs text-gray-500 mt-1"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
@@ -990,13 +978,13 @@ export default function GiftBuilder() {
                 </div>
               ) : (
                 <div className="mb-6">
-                  <h4 
+                  <h4
                     className="font-medium text-gray-700 mb-2"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
                     Caja
                   </h4>
-                  <div 
+                  <div
                     className="text-sm text-gray-500"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
@@ -1007,7 +995,7 @@ export default function GiftBuilder() {
 
               {/* Cervezas Seleccionadas */}
               <div className="mb-6">
-                <h4 
+                <h4
                   className="font-medium text-gray-700 mb-2"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
@@ -1030,22 +1018,16 @@ export default function GiftBuilder() {
                             />
                           </div>
                           <div>
-                            <p 
+                            <p
                               className="text-xs font-medium text-gray-900"
                               style={{ fontFamily: "var(--font-lato)" }}
                             >
                               {beer.name}
                             </p>
-                            <p 
-                              className="text-xs text-gray-500"
-                              style={{ fontFamily: "var(--font-lato)" }}
-                            >
-                              {beer.volume}
-                            </p>
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <span 
+                          <span
                             className="text-xs font-bold text-[#B58E31] mr-2"
                             style={{ fontFamily: "var(--font-lato)" }}
                           >
@@ -1062,7 +1044,7 @@ export default function GiftBuilder() {
                     ))}
                   </div>
                 ) : (
-                  <div 
+                  <div
                     className="text-sm text-gray-500"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
@@ -1074,13 +1056,13 @@ export default function GiftBuilder() {
               {/* Total */}
               <div className="border-t pt-4 mb-6">
                 <div className="flex items-center justify-between">
-                  <span 
+                  <span
                     className="text-lg font-bold text-gray-900"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
                     Total
                   </span>
-                  <span 
+                  <span
                     className="text-2xl font-bold text-[#B58E31]"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
@@ -1111,7 +1093,7 @@ export default function GiftBuilder() {
               </button>
 
               {!giftBuilder.isComplete && (
-                <p 
+                <p
                   className="text-xs text-gray-500 text-center mt-3"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >

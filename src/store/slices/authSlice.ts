@@ -117,6 +117,15 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.isAuthenticated = !!action.payload && !action.payload.isGuest;
     },
+
+    // Actualizar usuario
+    updateUser: (state, action: PayloadAction<Partial<User>>) => {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+        // Actualizar también en localStorage
+        localStorage.setItem('user', JSON.stringify(state.user));
+      }
+    },
   },
 });
 
@@ -137,6 +146,7 @@ export const {
   logout,
   clearError,
   restoreUser,
+  updateUser,
 } = authSlice.actions;
 
 // Selectores

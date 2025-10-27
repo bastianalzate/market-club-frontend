@@ -325,14 +325,14 @@ export default function OrderDetailsModal({
                   <Package className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h2 
+                  <h2
                     className="text-2xl font-bold text-gray-900"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
                     Detalles del Pedido
                   </h2>
                   {orderDetails && (
-                    <p 
+                    <p
                       className="text-sm text-gray-600 mt-1 font-medium"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
@@ -364,7 +364,7 @@ export default function OrderDetailsModal({
                 {/* Estado y Información General */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100/50 shadow-lg">
-                    <h3 
+                    <h3
                       className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
@@ -386,7 +386,7 @@ export default function OrderDetailsModal({
                         </span>
                       </div>
                       <div className="space-y-2 text-sm">
-                        <div 
+                        <div
                           className="flex items-center gap-2 text-gray-600"
                           style={{ fontFamily: "var(--font-lato)" }}
                         >
@@ -417,7 +417,7 @@ export default function OrderDetailsModal({
                   </div>
 
                   <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100/50 shadow-lg">
-                    <h3 
+                    <h3
                       className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
@@ -427,7 +427,7 @@ export default function OrderDetailsModal({
                       Resumen de Pago
                     </h3>
                     <div className="space-y-4">
-                      <div 
+                      <div
                         className="flex justify-between text-sm"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
@@ -436,7 +436,7 @@ export default function OrderDetailsModal({
                           {formatPrice(orderDetails.subtotal)}
                         </span>
                       </div>
-                      <div 
+                      <div
                         className="flex justify-between text-sm"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
@@ -445,16 +445,19 @@ export default function OrderDetailsModal({
                           {formatPrice(orderDetails.shipping_amount)}
                         </span>
                       </div>
-                      <div 
-                        className="flex justify-between text-sm"
-                        style={{ fontFamily: "var(--font-lato)" }}
-                      >
-                        <span className="text-gray-600">Impuestos:</span>
-                        <span className="font-medium text-gray-900">
-                          {formatPrice(orderDetails.tax_amount)}
-                        </span>
-                      </div>
-                      <div 
+                      {/* Impuestos ocultos temporalmente */}
+                      {false && (
+                        <div
+                          className="flex justify-between text-sm"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
+                          <span className="text-gray-600">Impuestos:</span>
+                          <span className="font-medium text-gray-900">
+                            {formatPrice(orderDetails?.tax_amount || 0)}
+                          </span>
+                        </div>
+                      )}
+                      <div
                         className="border-t border-gray-200 pt-3"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
@@ -473,7 +476,7 @@ export default function OrderDetailsModal({
 
                 {/* Dirección de Envío */}
                 <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100/50 shadow-lg">
-                  <h3 
+                  <h3
                     className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
@@ -484,7 +487,7 @@ export default function OrderDetailsModal({
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <div 
+                      <div
                         className="flex items-center gap-2"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
@@ -494,7 +497,7 @@ export default function OrderDetailsModal({
                           {orderDetails.shipping_address.last_name}
                         </span>
                       </div>
-                      <div 
+                      <div
                         className="flex items-center gap-2"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
@@ -504,7 +507,7 @@ export default function OrderDetailsModal({
                         </span>
                       </div>
                     </div>
-                    <div 
+                    <div
                       className="space-y-1 text-gray-700"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
@@ -526,7 +529,7 @@ export default function OrderDetailsModal({
 
                 {/* Productos */}
                 <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-2xl p-6 border border-orange-100/50 shadow-lg">
-                  <h3 
+                  <h3
                     className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
@@ -553,13 +556,13 @@ export default function OrderDetailsModal({
                             }}
                           />
                           <div className="flex-1 min-w-0">
-                            <h4 
+                            <h4
                               className="text-lg font-semibold text-gray-900 truncate"
                               style={{ fontFamily: "var(--font-lato)" }}
                             >
                               {item.product_name}
                             </h4>
-                            <div 
+                            <div
                               className="flex items-center gap-4 mt-2 text-sm text-gray-600"
                               style={{ fontFamily: "var(--font-lato)" }}
                             >
@@ -584,7 +587,7 @@ export default function OrderDetailsModal({
                             )}
                           </div>
                           <div className="text-right">
-                            <p 
+                            <p
                               className="text-lg font-bold text-gray-900"
                               style={{ fontFamily: "var(--font-lato)" }}
                             >
@@ -664,7 +667,7 @@ export default function OrderDetailsModal({
           {/* Footer mejorado */}
           <div className="sticky bottom-0 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200/50 px-8 py-6">
             <div className="flex justify-between items-center">
-              <div 
+              <div
                 className="text-sm text-gray-600"
                 style={{ fontFamily: "var(--font-lato)" }}
               >
@@ -682,7 +685,7 @@ export default function OrderDetailsModal({
                   Cerrar
                 </button>
                 {orderDetails?.status === "Entregado" && (
-                  <button 
+                  <button
                     className="px-8 py-3 text-sm font-medium text-white bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl hover:from-yellow-600 hover:to-orange-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >

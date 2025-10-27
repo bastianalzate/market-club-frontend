@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   Grid,
   ChevronLeft,
@@ -88,6 +89,7 @@ export default function ProductGrid({
   onNextPage,
   onPrevPage,
 }: ProductGridProps) {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(pagination?.currentPage || 1);
   const [localProducts, setLocalProducts] =
@@ -336,7 +338,7 @@ export default function ProductGrid({
           */}
         </div>
 
-        <div 
+        <div
           className="text-sm text-gray-500"
           style={{ fontFamily: "var(--font-lato)" }}
         >
@@ -390,13 +392,14 @@ export default function ProductGrid({
                 }`}
               >
                 <div
-                  className="aspect-w-1 aspect-h-1 overflow-hidden pt-1 sm:pt-4 max-sm:!h-[180px]"
+                  className="aspect-w-1 aspect-h-1 overflow-hidden pt-1 sm:pt-4 max-sm:!h-[180px] cursor-pointer"
                   style={{ height: "400px" }}
+                  onClick={() => router.push(`/producto/${product.id}`)}
                 >
                   <LazyImage
                     src={product.image}
                     alt={product.name}
-                    className={`w-full h-full object-contain ${
+                    className={`w-full h-full object-contain transition-transform hover:scale-105 ${
                       product.stock_quantity === 0 ? "grayscale opacity-60" : ""
                     }`}
                   />
@@ -404,7 +407,7 @@ export default function ProductGrid({
 
                 {/* Etiqueta de Agotado */}
                 {product.stock_quantity === 0 && (
-                  <div 
+                  <div
                     className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg sm:top-4 sm:left-4 sm:px-3 sm:text-sm"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
@@ -436,28 +439,38 @@ export default function ProductGrid({
               {/* Información del producto */}
               <div
                 className={`p-2 flex-1 flex flex-col sm:p-4 lg:p-6 ${
-                  viewMode === "list"
-                    ? "flex-1"
-                    : ""
+                  viewMode === "list" ? "flex-1" : ""
                 }`}
               >
                 <div className="flex items-center justify-between mb-0 sm:mb-3">
-                  <span 
-                    className="text-xs text-gray-600 font-medium sm:text-sm"
-                    style={{ fontFamily: "var(--font-lato)" }}
+                  {product.product_specific_data?.packaging_type &&
+                    product.product_specific_data?.volume_ml && (
+                      <span
+                        className="text-xs text-gray-600 font-medium sm:text-sm"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
+                        {product.product_specific_data.packaging_type.toUpperCase()}{" "}
+                        {product.product_specific_data.volume_ml}
+                      </span>
+                    )}
+                  <div
+                    className={`${
+                      product.product_specific_data?.packaging_type &&
+                      product.product_specific_data?.volume_ml
+                        ? "text-right"
+                        : "text-left"
+                    }`}
                   >
-                    BOTELLA 500ML
-                  </span>
-                  <div className="text-right">
-                    {product.sale_price && product.sale_price < product.price ? (
+                    {product.sale_price &&
+                    product.sale_price < product.price ? (
                       <div>
-                        <span 
+                        <span
                           className="text-xs text-gray-500 line-through sm:text-sm"
                           style={{ fontFamily: "var(--font-lato)" }}
                         >
                           {formatPrice(product.price)}
                         </span>
-                        <span 
+                        <span
                           className="text-base font-bold text-gray-900 ml-1 sm:text-lg sm:ml-2"
                           style={{ fontFamily: "var(--font-lato)" }}
                         >
@@ -465,7 +478,7 @@ export default function ProductGrid({
                         </span>
                       </div>
                     ) : (
-                      <span 
+                      <span
                         className="text-base font-bold text-gray-900 sm:text-lg"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
@@ -475,7 +488,7 @@ export default function ProductGrid({
                   </div>
                 </div>
 
-                <h3 
+                <h3
                   className="text-xs font-bold text-gray-900 mb-0 line-clamp-1 sm:text-base sm:mb-4 sm:line-clamp-2"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
@@ -485,8 +498,8 @@ export default function ProductGrid({
                 {/* Botones de acción */}
                 <div className="flex items-center mt-auto sm:space-x-3">
                   {/* Ícono de carrito cuadrado con contador - Solo visual */}
-                   <div
-                     className="relative p-0 rounded-lg sm:p-2 lg:p-3 hidden sm:block"
+                  <div
+                    className="relative p-0 rounded-lg sm:p-2 lg:p-3 hidden sm:block"
                     style={{
                       backgroundColor: "transparent",
                       borderColor: "#D0D5DD",
@@ -501,7 +514,7 @@ export default function ProductGrid({
                     />
                     {/* Contador en el ícono del carrito */}
                     {isInCart(product.id) && (
-                      <span 
+                      <span
                         className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold sm:h-5 sm:w-5"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
@@ -513,8 +526,11 @@ export default function ProductGrid({
                   {/* Botón principal "Añadir al carrito" */}
                   <button
                     onClick={() => handleAddToCart(product)}
-                    disabled={addingToCart === product.id || product.stock_quantity === 0}
-                     className="flex-1 flex items-center justify-center space-x-2 text-white py-2 px-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer sm:py-3 sm:px-4"
+                    disabled={
+                      addingToCart === product.id ||
+                      product.stock_quantity === 0
+                    }
+                    className="flex-1 flex items-center justify-center space-x-2 text-white py-2 px-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer sm:py-3 sm:px-4"
                     style={{
                       backgroundColor:
                         product.stock_quantity === 0 ? "#6B7280" : "#B58E31",
@@ -528,7 +544,7 @@ export default function ProductGrid({
                       (e.currentTarget.style.backgroundColor = "#B58E31")
                     }
                   >
-                    <span 
+                    <span
                       className="truncate"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
@@ -540,9 +556,10 @@ export default function ProductGrid({
                         ? "Agregar más"
                         : "Añadir al carrito"}
                     </span>
-                    {addingToCart !== product.id && product.stock_quantity > 0 && (
-                      <ArrowRight className="w-3 h-3 flex-shrink-0 sm:w-4 sm:h-4" />
-                    )}
+                    {addingToCart !== product.id &&
+                      product.stock_quantity > 0 && (
+                        <ArrowRight className="w-3 h-3 flex-shrink-0 sm:w-4 sm:h-4" />
+                      )}
                   </button>
                 </div>
               </div>
