@@ -185,12 +185,18 @@ export default function ProductSlider() {
       {/* Información del producto */}
       <div className="p-2 flex-1 flex flex-col sm:p-4 lg:p-6">
         <div className="flex items-center justify-between mb-0 sm:mb-3">
-          {beer.packaging_type && beer.volume_ml && (
+          {(beer.packaging_type || beer.volume_ml) && (
             <span
               className="text-xs text-gray-600 font-medium sm:text-sm"
               style={{ fontFamily: "var(--font-lato)" }}
             >
-              {beer.packaging_type.toUpperCase()} {beer.volume_ml}
+              {beer.packaging_type && beer.volume_ml
+                ? `${beer.packaging_type.toUpperCase()} ${beer.volume_ml}`
+                : beer.packaging_type
+                ? beer.packaging_type.toUpperCase()
+                : beer.volume_ml
+                ? `${beer.volume_ml}ML`
+                : ""}
             </span>
           )}
           <div className="text-right">

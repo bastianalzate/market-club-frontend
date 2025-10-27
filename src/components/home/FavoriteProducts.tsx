@@ -193,12 +193,18 @@ export default function FavoriteProducts() {
       {/* Información del producto */}
       <div className="p-2 flex-1 flex flex-col sm:p-4 lg:p-6">
         <div className="flex items-center justify-between mb-0 sm:mb-3">
-          {product.packaging_type && product.volume_ml && (
+          {(product.packaging_type || product.volume_ml) && (
             <span
               className="text-xs text-gray-600 font-medium sm:text-sm"
               style={{ fontFamily: "var(--font-lato)" }}
             >
-              {product.packaging_type.toUpperCase()} {product.volume_ml}
+              {product.packaging_type && product.volume_ml
+                ? `${product.packaging_type.toUpperCase()} ${product.volume_ml}`
+                : product.packaging_type
+                ? product.packaging_type.toUpperCase()
+                : product.volume_ml
+                ? `${product.volume_ml}ML`
+                : ""}
             </span>
           )}
           <div className="text-right">
