@@ -20,6 +20,8 @@ export interface Product {
   category_id: number;
   product_type_id: number;
   attributes: any;
+  packaging_type?: string | null;
+  volume_ml?: string | null;
   product_specific_data: {
     alcohol_content?: string | number;
     beer_style?: string;

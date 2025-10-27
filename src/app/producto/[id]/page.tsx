@@ -27,6 +27,8 @@ interface Product {
   category_id: number;
   product_type_id: number;
   attributes: any;
+  packaging_type?: string | null;
+  volume_ml?: string | null;
   product_specific_data: {
     alcohol_content?: string | number;
     beer_style?: string;
@@ -317,7 +319,7 @@ export default function ProductDetailPage() {
                   <li>Estilo: {product.product_specific_data?.beer_style || product.category.name}</li>
                   <li>Contenido de alcohol: {product.product_specific_data?.alcohol_content || 'N/A'}%</li>
                   <li>País de origen: {product.product_specific_data?.country_of_origin || 'Importada'}</li>
-                  <li>Presentación: {product.product_specific_data?.packaging_type || 'Botella'} {product.product_specific_data?.volume_ml || '500'}ml</li>
+                  <li>Presentación: {product.packaging_type || 'Botella'} {product.volume_ml || '500'}ml</li>
                   <li>SKU: {product.sku}</li>
                   <li>Categoría: {product.category.name}</li>
                 </ul>
@@ -328,7 +330,7 @@ export default function ProductDetailPage() {
                       <p className="text-xs font-medium tracking-widest text-gray-500 uppercase" style={{ fontFamily: 'var(--font-lato)' }}>Presentación</p>
                       <div className="relative mt-1">
                         <span className="block w-full py-1 pl-0 pr-8 font-medium text-gray-900" style={{ fontFamily: 'var(--font-lato)' }}>
-                          {product.product_specific_data?.packaging_type || 'Botella'} {product.product_specific_data?.volume_ml || '500'}ml
+                          {product.packaging_type || 'Botella'} {product.volume_ml || '500'}ml
                         </span>
                       </div>
                     </div>

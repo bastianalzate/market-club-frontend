@@ -12,6 +12,8 @@ export interface FeaturedProduct {
   current_price: number;
   image_url: string;
   stock_quantity: number;
+  packaging_type?: string | null;
+  volume_ml?: string | null;
   product_specific_data?: {
     alcohol_content?: string | number;
     beer_style?: string;

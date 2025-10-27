@@ -161,7 +161,7 @@ export default function FavoriteProducts() {
 
         {/* Etiqueta de Agotado */}
         {product.stock_quantity === 0 && (
-          <div 
+          <div
             className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg sm:top-4 sm:left-4 sm:px-3 sm:text-sm"
             style={{ fontFamily: "var(--font-lato)" }}
           >
@@ -193,22 +193,24 @@ export default function FavoriteProducts() {
       {/* Información del producto */}
       <div className="p-2 flex-1 flex flex-col sm:p-4 lg:p-6">
         <div className="flex items-center justify-between mb-0 sm:mb-3">
-          <span 
-            className="text-xs text-gray-600 font-medium sm:text-sm"
-            style={{ fontFamily: "var(--font-lato)" }}
-          >
-            {product.product_specific_data?.packaging_type?.toUpperCase() || 'BOTELLA'} {product.product_specific_data?.volume_ml || '500'}ML
-          </span>
+          {product.packaging_type && product.volume_ml && (
+            <span
+              className="text-xs text-gray-600 font-medium sm:text-sm"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              {product.packaging_type.toUpperCase()} {product.volume_ml}
+            </span>
+          )}
           <div className="text-right">
             {product.sale_price && product.sale_price < product.price ? (
               <div>
-                <span 
+                <span
                   className="text-xs text-gray-500 line-through sm:text-sm"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
                   {formatPrice(product.price)}
                 </span>
-                <span 
+                <span
                   className="text-base font-bold text-gray-900 ml-1 sm:text-lg sm:ml-2"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
@@ -216,7 +218,7 @@ export default function FavoriteProducts() {
                 </span>
               </div>
             ) : (
-              <span 
+              <span
                 className="text-base font-bold text-gray-900 sm:text-lg"
                 style={{ fontFamily: "var(--font-lato)" }}
               >
@@ -226,7 +228,7 @@ export default function FavoriteProducts() {
           </div>
         </div>
 
-        <h3 
+        <h3
           className="text-xs font-bold text-gray-900 mb-0 line-clamp-1 sm:text-base sm:mb-4 sm:line-clamp-2 sm:text-lg"
           style={{ fontFamily: "var(--font-lato)" }}
         >
@@ -278,7 +280,7 @@ export default function FavoriteProducts() {
               (e.currentTarget.style.backgroundColor = "#B58E31")
             }
           >
-            <span 
+            <span
               className="truncate"
               style={{ fontFamily: "var(--font-lato)" }}
             >
@@ -326,7 +328,7 @@ export default function FavoriteProducts() {
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
         {/* Header con título y botón */}
         <div className="flex items-center justify-center lg:justify-between mb-6">
-          <h2 
+          <h2
             className="text-[30px] font-bold text-white sm:text-3xl"
             style={{ fontFamily: "var(--font-lato)" }}
           >
