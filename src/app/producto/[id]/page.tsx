@@ -59,10 +59,14 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [addingToCart, setAddingToCart] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
-  
+
   const { addToCart, isInCart, getProductQuantity } = useCartContext();
   const { toast, showSuccess, showError, hideToast } = useToast();
-  const { toggleWishlist, isInWishlist, loading: wishlistLoading } = useWishlist({
+  const {
+    toggleWishlist,
+    isInWishlist,
+    loading: wishlistLoading,
+  } = useWishlist({
     showSuccess,
     showError,
   });
@@ -72,37 +76,45 @@ export default function ProductDetailPage() {
       try {
         setLoading(true);
         // Usar la configuración de API existente
-        const response = await fetch(`${API_CONFIG.BASE_URL}/products/${params.id}`);
+        const response = await fetch(
+          `${API_CONFIG.BASE_URL}/products/${params.id}`
+        );
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          console.error('❌ API Error:', response.status, errorData);
-          throw new Error(errorData.error || 'Producto no encontrado');
+          console.error("❌ API Error:", response.status, errorData);
+          throw new Error(errorData.error || "Producto no encontrado");
         }
         const data = await response.json();
-        console.log('🔍 Product data from API:', data);
-        console.log('📦 Stock quantity:', data.stock_quantity, 'Type:', typeof data.stock_quantity);
-        
+        console.log("🔍 Product data from API:", data);
+        console.log(
+          "📦 Stock quantity:",
+          data.stock_quantity,
+          "Type:",
+          typeof data.stock_quantity
+        );
+
         // Normalizar el stock quantity para manejar diferentes tipos de datos
-        const stockQuantity = typeof data.stock_quantity === 'string' 
-          ? parseInt(data.stock_quantity) 
-          : data.stock_quantity || 0;
-        
-        console.log('📦 Normalized stock:', stockQuantity);
-        console.log('📦 Is in stock:', stockQuantity > 0);
-        console.log('📦 Is active:', data.is_active);
-        
+        const stockQuantity =
+          typeof data.stock_quantity === "string"
+            ? parseInt(data.stock_quantity)
+            : data.stock_quantity || 0;
+
+        console.log("📦 Normalized stock:", stockQuantity);
+        console.log("📦 Is in stock:", stockQuantity > 0);
+        console.log("📦 Is active:", data.is_active);
+
         // Actualizar el stock quantity en los datos
         data.stock_quantity = stockQuantity;
-        
+
         // Verificar que el producto esté activo
         if (!data.is_active) {
-          throw new Error('Producto no disponible');
+          throw new Error("Producto no disponible");
         }
-        
+
         setProduct(data);
       } catch (error) {
-        console.error('Error fetching product:', error);
-        showError('Error', 'No se pudo cargar el producto');
+        console.error("Error fetching product:", error);
+        showError("Error", "No se pudo cargar el producto");
       } finally {
         setLoading(false);
       }
@@ -117,7 +129,10 @@ export default function ProductDetailPage() {
     if (!product) return;
 
     if (product.stock_quantity <= 0) {
-      showError("Producto agotado", "Este producto no está disponible en este momento.");
+      showError(
+        "Producto agotado",
+        "Este producto no está disponible en este momento."
+      );
       return;
     }
 
@@ -129,13 +144,22 @@ export default function ProductDetailPage() {
       });
 
       if (result.success) {
-        showSuccess("¡Producto agregado! 🍺", `"${product.name}" se agregó al carrito exitosamente.`);
+        showSuccess(
+          "¡Producto agregado! 🍺",
+          `"${product.name}" se agregó al carrito exitosamente.`
+        );
       } else {
-        showError("Error al agregar producto", result.message || "No se pudo agregar el producto al carrito");
+        showError(
+          "Error al agregar producto",
+          result.message || "No se pudo agregar el producto al carrito"
+        );
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
-      showError("Error al agregar producto", "Ocurrió un error inesperado. Intenta nuevamente.");
+      showError(
+        "Error al agregar producto",
+        "Ocurrió un error inesperado. Intenta nuevamente."
+      );
     } finally {
       setAddingToCart(false);
     }
@@ -159,39 +183,46 @@ export default function ProductDetailPage() {
   const getProductImages = () => {
     if (!product) return [];
     const images = [];
-    
+
     // Usar la configuración de API existente
-    const baseUrl = API_CONFIG.BASE_URL.replace('/api', '');
-    
+    const baseUrl = API_CONFIG.BASE_URL.replace("/api", "");
+
     // Usar image_url si está disponible, sino usar image
     const mainImage = product.image_url || product.image;
     if (mainImage) {
       // Si la imagen no tiene http, agregar la URL base
-      const imageUrl = mainImage.startsWith('http') 
-        ? mainImage 
-        : `${baseUrl}${mainImage.startsWith('/') ? '' : '/'}${mainImage}`;
+      const imageUrl = mainImage.startsWith("http")
+        ? mainImage
+        : `${baseUrl}${mainImage.startsWith("/") ? "" : "/"}${mainImage}`;
       images.push(imageUrl);
     }
-    
+
     // Agregar imágenes de la galería
     if (product.gallery && Array.isArray(product.gallery)) {
-      product.gallery.forEach(galleryImage => {
-        const galleryUrl = galleryImage.startsWith('http') 
-          ? galleryImage 
-          : `${baseUrl}${galleryImage.startsWith('/') ? '' : '/'}${galleryImage}`;
+      product.gallery.forEach((galleryImage) => {
+        const galleryUrl = galleryImage.startsWith("http")
+          ? galleryImage
+          : `${baseUrl}${
+              galleryImage.startsWith("/") ? "" : "/"
+            }${galleryImage}`;
         images.push(galleryUrl);
       });
     }
-    
-    console.log('🖼️ Product images:', images);
-    console.log('🖼️ Base URL:', baseUrl);
+
+    console.log("🖼️ Product images:", images);
+    console.log("🖼️ Base URL:", baseUrl);
     return images;
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-gray-900 text-xl" style={{ fontFamily: 'var(--font-lato)' }}>Cargando producto...</div>
+        <div
+          className="text-gray-900 text-xl"
+          style={{ fontFamily: "var(--font-lato)" }}
+        >
+          Cargando producto...
+        </div>
       </div>
     );
   }
@@ -200,11 +231,16 @@ export default function ProductDetailPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="text-gray-900 text-xl mb-4" style={{ fontFamily: 'var(--font-lato)' }}>Producto no encontrado</div>
+          <div
+            className="text-gray-900 text-xl mb-4"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
+            Producto no encontrado
+          </div>
           <button
             onClick={() => router.back()}
             className="text-gray-600 hover:text-gray-900 transition-colors"
-            style={{ fontFamily: 'var(--font-lato)' }}
+            style={{ fontFamily: "var(--font-lato)" }}
           >
             ← Volver
           </button>
@@ -229,19 +265,28 @@ export default function ProductDetailPage() {
                     src={images[selectedImage]}
                     alt={product.name}
                     className="object-cover w-full h-full sm:rounded-md"
-                    onError={(e) => {
-                      console.error('Error loading image:', images[selectedImage]);
-                      e.currentTarget.style.display = 'none';
-                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                    }}
                   />
                 ) : null}
-                
+
                 {/* Imagen de fallback */}
-                <div className={`w-full h-96 bg-gray-200 flex items-center justify-center ${images.length > 0 ? 'hidden' : ''}`}>
+                <div
+                  className={`w-full h-96 bg-gray-200 flex items-center justify-center ${
+                    images.length > 0 ? "hidden" : ""
+                  }`}
+                >
                   <div className="text-center">
-                    <div className="text-gray-500 text-lg mb-2" style={{ fontFamily: 'var(--font-lato)' }}>Sin imagen</div>
-                    <div className="text-gray-400 text-sm" style={{ fontFamily: 'var(--font-lato)' }}>Imagen no disponible</div>
+                    <div
+                      className="text-gray-500 text-lg mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Sin imagen
+                    </div>
+                    <div
+                      className="text-gray-400 text-sm"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Imagen no disponible
+                    </div>
                   </div>
                 </div>
 
@@ -269,9 +314,9 @@ export default function ProductDetailPage() {
                     <li>
                       <div className="-m-1">
                         <button
-                          onClick={() => router.push('/')}
+                          onClick={() => router.push("/")}
                           className="p-1 text-sm font-medium text-gray-600 rounded-md focus:outline-none focus:ring-2 focus:text-gray-900 focus:ring-gray-900 hover:text-gray-700"
-                          style={{ fontFamily: 'var(--font-lato)' }}
+                          style={{ fontFamily: "var(--font-lato)" }}
                         >
                           Inicio
                         </button>
@@ -283,9 +328,9 @@ export default function ProductDetailPage() {
                         <span className="flex-shrink-0 text-gray-300"> - </span>
                         <div className="-m-1">
                           <button
-                            onClick={() => router.push('/tienda')}
+                            onClick={() => router.push("/tienda")}
                             className="p-1 ml-1 text-sm font-medium text-gray-600 rounded-md focus:outline-none focus:ring-2 focus:text-gray-900 focus:ring-gray-900 hover:text-gray-700"
-                            style={{ fontFamily: 'var(--font-lato)' }}
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             Productos
                           </button>
@@ -297,7 +342,11 @@ export default function ProductDetailPage() {
                       <div className="flex items-center">
                         <span className="flex-shrink-0 text-gray-300"> - </span>
                         <div className="-m-1">
-                          <span className="p-1 ml-1 text-sm font-medium text-gray-400 rounded-md" aria-current="page" style={{ fontFamily: 'var(--font-lato)' }}>
+                          <span
+                            className="p-1 ml-1 text-sm font-medium text-gray-400 rounded-md"
+                            aria-current="page"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {product.name}
                           </span>
                         </div>
@@ -306,20 +355,49 @@ export default function ProductDetailPage() {
                   </ol>
                 </nav>
 
-                <h1 className="mt-8 text-3xl font-bold text-gray-900 sm:text-4xl" style={{ fontFamily: 'var(--font-lato)' }}>
+                <h1
+                  className="mt-8 text-3xl font-bold text-gray-900 sm:text-4xl"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {product.name}
                 </h1>
-                
-                <p className="mt-5 text-base font-normal leading-7 text-gray-700" style={{ fontFamily: 'var(--font-lato)' }}>
-                  {product.description || `Disfruta de ${product.name}, una cerveza de alta calidad con un sabor único que te encantará.`}
+
+                <p
+                  className="mt-5 text-base font-normal leading-7 text-gray-700"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  {product.description ||
+                    `Disfruta de ${product.name}, una cerveza de alta calidad con un sabor único que te encantará.`}
                 </p>
 
-                <h2 className="mt-10 text-base font-bold text-gray-900" style={{ fontFamily: 'var(--font-lato)' }}>Características:</h2>
-                <ul className="mt-4 space-y-3 text-base font-medium text-gray-600 list-disc list-inside" style={{ fontFamily: 'var(--font-lato)' }}>
-                  <li>Estilo: {product.product_specific_data?.beer_style || product.category.name}</li>
-                  <li>Contenido de alcohol: {product.product_specific_data?.alcohol_content || 'N/A'}%</li>
-                  <li>País de origen: {product.product_specific_data?.country_of_origin || 'Importada'}</li>
-                  <li>Presentación: {product.packaging_type || 'Botella'} {product.volume_ml || '500'}ml</li>
+                <h2
+                  className="mt-10 text-base font-bold text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Características:
+                </h2>
+                <ul
+                  className="mt-4 space-y-3 text-base font-medium text-gray-600 list-disc list-inside"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  <li>
+                    Estilo:{" "}
+                    {product.product_specific_data?.beer_style ||
+                      product.category.name}
+                  </li>
+                  <li>
+                    Contenido de alcohol:{" "}
+                    {product.product_specific_data?.alcohol_content || "N/A"}%
+                  </li>
+                  <li>
+                    País de origen:{" "}
+                    {product.product_specific_data?.country_of_origin ||
+                      "Importada"}
+                  </li>
+                  <li>
+                    Presentación: {product.packaging_type || "Botella"}{" "}
+                    {product.volume_ml || "500"}ml
+                  </li>
                   <li>SKU: {product.sku}</li>
                   <li>Categoría: {product.category.name}</li>
                 </ul>
@@ -327,10 +405,19 @@ export default function ProductDetailPage() {
                 <div className="inline-grid grid-cols-2 gap-4 mt-10 sm:grid-cols-3 sm:gap-0">
                   <div className="rounded-lg bg-gray-50 sm:rounded-r-none">
                     <div className="px-5 py-4">
-                      <p className="text-xs font-medium tracking-widest text-gray-500 uppercase" style={{ fontFamily: 'var(--font-lato)' }}>Presentación</p>
+                      <p
+                        className="text-xs font-medium tracking-widest text-gray-500 uppercase"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
+                        Presentación
+                      </p>
                       <div className="relative mt-1">
-                        <span className="block w-full py-1 pl-0 pr-8 font-medium text-gray-900" style={{ fontFamily: 'var(--font-lato)' }}>
-                          {product.packaging_type || 'Botella'} {product.volume_ml || '500'}ml
+                        <span
+                          className="block w-full py-1 pl-0 pr-8 font-medium text-gray-900"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
+                          {product.packaging_type || "Botella"}{" "}
+                          {product.volume_ml || "500"}ml
                         </span>
                       </div>
                     </div>
@@ -338,10 +425,20 @@ export default function ProductDetailPage() {
 
                   <div className="rounded-lg bg-gray-50 sm:rounded-none">
                     <div className="px-5 py-4">
-                      <p className="text-xs font-medium tracking-widest text-gray-500 uppercase" style={{ fontFamily: 'var(--font-lato)' }}>Stock</p>
+                      <p
+                        className="text-xs font-medium tracking-widest text-gray-500 uppercase"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
+                        Stock
+                      </p>
                       <div className="relative mt-1">
-                        <span className="block w-full py-1 pl-0 pr-8 font-medium text-gray-900" style={{ fontFamily: 'var(--font-lato)' }}>
-                          {product.stock_quantity > 0 ? `${product.stock_quantity} disponibles` : 'Agotado'}
+                        <span
+                          className="block w-full py-1 pl-0 pr-8 font-medium text-gray-900"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
+                          {product.stock_quantity > 0
+                            ? `${product.stock_quantity} disponibles`
+                            : "Agotado"}
                         </span>
                       </div>
                     </div>
@@ -349,17 +446,28 @@ export default function ProductDetailPage() {
 
                   <div className="col-span-2 sm:col-span-1 sm:rounded-r-lg sm:bg-gray-50 sm:flex sm:items-center sm:justify-center">
                     <div className="py-2 sm:px-5 sm:py-4">
-                      {product.sale_price && parseFloat(product.sale_price) < parseFloat(product.price) ? (
+                      {product.sale_price &&
+                      parseFloat(product.sale_price) <
+                        parseFloat(product.price) ? (
                         <div className="text-center">
-                          <p className="text-lg text-gray-500 line-through" style={{ fontFamily: 'var(--font-lato)' }}>
+                          <p
+                            className="text-lg text-gray-500 line-through"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {formatPrice(product.price)}
                           </p>
-                          <p className="text-3xl font-bold text-gray-900" style={{ fontFamily: 'var(--font-lato)' }}>
+                          <p
+                            className="text-3xl font-bold text-gray-900"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {formatPrice(product.sale_price)}
                           </p>
                         </div>
                       ) : (
-                        <p className="text-3xl font-bold text-gray-900" style={{ fontFamily: 'var(--font-lato)' }}>
+                        <p
+                          className="text-3xl font-bold text-gray-900"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           {formatPrice(product.price)}
                         </p>
                       )}
@@ -393,11 +501,15 @@ export default function ProductDetailPage() {
                       hover:bg-gray-700
                       disabled:opacity-50 disabled:cursor-not-allowed
                     "
-                    style={{ fontFamily: 'var(--font-lato)' }}
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
-                    {addingToCart ? 'Agregando...' : 
-                     product.stock_quantity <= 0 ? 'Agotado' :
-                     isInCartProduct ? `En carrito (${quantityInCart})` : 'Añadir al carrito'}
+                    {addingToCart
+                      ? "Agregando..."
+                      : product.stock_quantity <= 0
+                      ? "Agotado"
+                      : isInCartProduct
+                      ? `En carrito (${quantityInCart})`
+                      : "Añadir al carrito"}
                   </button>
 
                   <button
@@ -428,22 +540,26 @@ export default function ProductDetailPage() {
                       hover:text-white
                       disabled:opacity-50 disabled:cursor-not-allowed
                     "
-                    style={{ fontFamily: 'var(--font-lato)' }}
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     <Heart
                       className={`w-5 h-5 mr-2.5 ${
-                        isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""
+                        isInWishlist(product.id)
+                          ? "fill-red-500 text-red-500"
+                          : ""
                       }`}
                     />
-                    {isInWishlist(product.id) ? 'En favoritos' : 'Añadir a favoritos'}
+                    {isInWishlist(product.id)
+                      ? "En favoritos"
+                      : "Añadir a favoritos"}
                   </button>
                 </div>
               </div>
             </div>
 
             <div className="absolute top-3 right-3 lg:top-4 lg:right-4">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => router.back()}
                 className="p-1 -m-1 text-white transition-all duration-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 lg:text-gray-400 hover:text-gray-900 hover:bg-gray-100"
                 aria-label="Volver atrás"
