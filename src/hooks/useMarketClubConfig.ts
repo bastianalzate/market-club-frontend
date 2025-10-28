@@ -10,9 +10,9 @@ export const useMarketClubConfig = (): MarketClubPageConfig => {
       priority: true
     },
     heroSection: {
-      title: "¿Qué hace único a",
-      subtitle: "Market Club ?",
-      description: "Somos tu espacio perfecto para compartir y descubrir los sabores del mundo. Te ofrecemos el mayor catálogo de cervezas globales para vivir experiencias únicas, lejos de lo convencional. Elige uno de nuestros planes e inicia tu viaje. "
+      title: "¿Qué hace a Market Club diferente?",
+      subtitle: "",
+      description: "Que aquí no venís solo a tomarte una cerveza, venís a parchar. Somos ese punto de encuentro pa' probar sabores del mundo, pero sin enredos.\n\n\nTe la ponemos fácil con una selección de cervezas importadas que sí valen la pena, pa' que disfrutés de verdad, con sabor internacional pero con el corazón de Medellín.\n\n\nPillá uno de nuestros planes y empezá a probar."
     },
     subscriptionSection: {
       plans: [

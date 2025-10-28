@@ -56,21 +56,33 @@ export default function SubscriptionSection({
 
     // Mapear planes con imágenes correctas
     const mappedPlans = backendPlans.map((p) => {
+      // Corregir nombres según precios:
+      // - El más caro ($149.000) debe ser "Maestro Cervecero"
+      // - El de $99.000 debe ser "Coleccionista Cervecero"
+      let displayName = p.name;
+      const price = parseInt(p.price, 10);
+
+      if (price === 149000) {
+        displayName = "Maestro Cervecero";
+      } else if (price === 99000) {
+        displayName = "Coleccionista Cervecero";
+      }
+
       // Asignar imagen específica según el slug del plan
       let image = "/images/market-club/corona-beer.png"; // Default para Curioso Cervecero
 
       if (p.slug === "curious_brewer") {
         image = "/images/market-club/corona-beer.png";
-      } else if (p.slug === "master_brewer") {
+      } else if (p.slug === "master_brewer" || price === 149000) {
         image = "/images/market-club/liefmans-maestro.png";
-      } else if (p.slug === "collector_brewer") {
+      } else if (p.slug === "collector_brewer" || price === 99000) {
         image = "/images/market-club/liefmans-coleccionista.png";
       }
 
       const mappedPlan = {
         id: p.id,
         slug: p.slug,
-        name: p.name,
+        name: displayName,
         price:
           new Intl.NumberFormat("es-CO")
             .format(parseInt(p.price, 10))
@@ -89,19 +101,16 @@ export default function SubscriptionSection({
       return mappedPlan;
     });
 
-    // Ordenar: Curioso (1), Coleccionista (2), Maestro (3)
-    const orderMap: { [key: string]: number } = {
-      curious_brewer: 1,
-      collector_brewer: 2,
-      master_brewer: 3,
-    };
-
+    // Ordenar por precio: Curioso, Coleccionista ($99k), Maestro ($149k)
     const sortedPlans = mappedPlans.sort((a, b) => {
       const planA = backendPlans.find((p) => p.id === a.id);
       const planB = backendPlans.find((p) => p.id === b.id);
-      const orderA = orderMap[planA?.slug || ""] || 999;
-      const orderB = orderMap[planB?.slug || ""] || 999;
-      return orderA - orderB;
+
+      // Ordenar por precio (ascendente): más barato primero
+      const priceA = planA ? parseInt(planA.price, 10) : 999999;
+      const priceB = planB ? parseInt(planB.price, 10) : 999999;
+
+      return priceA - priceB;
     });
 
     // Asignar posiciones intercaladas después del ordenamiento
