@@ -24,7 +24,7 @@ export default function QuienesSomosPage() {
           <div className="max-w-5xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-[#B58E31]/10 backdrop-blur-sm border border-[#B58E31]/20 rounded-full px-6 py-3 mb-4">
               <Beer className="w-5 h-5 text-[#B58E31]" />
-              <span 
+              <span
                 className="text-[#B58E31] font-medium"
                 style={{ fontFamily: "var(--font-lato)" }}
               >
@@ -37,7 +37,7 @@ export default function QuienesSomosPage() {
             >
               ¿Quiénes somos?
             </h1>
-            <p 
+            <p
               className="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-6"
               style={{ fontFamily: "var(--font-lato)" }}
             >
@@ -63,7 +63,7 @@ export default function QuienesSomosPage() {
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-2 bg-[#B58E31]/10 rounded-full px-4 py-2 mb-4">
                   <Sparkles className="w-4 h-4 text-[#B58E31]" />
-                  <span 
+                  <span
                     className="text-[#B58E31] font-medium text-sm"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
@@ -71,29 +71,31 @@ export default function QuienesSomosPage() {
                   </span>
                 </div>
 
-                <div 
+                <div
                   className="space-y-6 text-lg text-gray-700 leading-relaxed"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
                   <p>
-                    Nacimos con la idea de hacer de cada trago un parche, de
-                    esos que no se planean, pero terminan siendo los mejores.
+                    Nacimos con la idea de hacer de cada trago un parche de esos
+                    que no se planean, pero terminan siendo los mejores.
                   </p>
                   <p>
-                    El nombre{" "}
-                    <span className="font-bold text-gray-900">Market Club</span>{" "}
-                    nació inspirado en{" "}
+                    El nombre viene inspirado por{" "}
                     <span className="font-bold text-[#B58E31]">
                       Club Colombia
                     </span>
-                    , una de las cervezas que más han acompañado los buenos
-                    momentos de los colombianos.
+                    , una pola que ha acompañado los buenos momentos de este
+                    país por años. Pero sabíamos que queríamos ser más que solo
+                    una bebida: queríamos ser todo lo que pasa alrededor de
+                    ella.
                   </p>
                   <p>
-                    Pero no queríamos ser sólo una bebida, sino todo lo que pasa
-                    alrededor de ella: las charlas con los parceros, los
-                    brindis, la energía del partido, los días de sol y los
-                    planes que simplemente fluyen.
+                    Somos ese punto de encuentro en Laureles pa' las charlas con
+                    los parceros, pa' la energía del partido y pa' los planes
+                    que fluyen sin enredos. No somos una cervecería cualquiera:
+                    somos sabor internacional con alma local, un parche
+                    auténtico donde el plan es claro: cervezas que sí valen la
+                    pena y un ambiente que siempre invita a volver.
                   </p>
                 </div>
               </div>
@@ -106,24 +108,22 @@ export default function QuienesSomosPage() {
                     <Heart className="w-8 h-8" />
                   </div>
 
-                  <div 
+                  <div
                     className="space-y-4 text-center"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
                     <p className="text-base leading-relaxed">
                       Así, Market Club se volvió{" "}
                       <span className="font-bold">más que una marca</span>: un
-                      punto de encuentro, un espacio para compartir, reírse y
-                      desconectarse del día a día.
-                    </p>
-                    <p className="text-base leading-relaxed">
-                      Somos esa cerveza que acompaña los momentos simples, pero
-                      que se sienten grandes cuando estás rodeado de buena
-                      gente.
+                      punto de encuentro real pa' compartir, reírse y
+                      desconectarse del día a día. Somos ese parche que acompaña
+                      los momentos simples, pero que se sienten grandes cuando
+                      estás rodeado de buena gente.
                     </p>
                     <p className="text-base leading-relaxed font-medium">
-                      Hecha con berraquera, sabor y el toque justo pa' compartir
-                      con los que más querés.
+                      Aquí te traemos el sabor del mundo, con la cercanía de un
+                      parcero y sin enredos, pa' compartir con los que más
+                      querés.
                     </p>
 
                     <div className="border-t border-white/30 pt-6 mt-6">
@@ -148,7 +148,7 @@ export default function QuienesSomosPage() {
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-white rounded-full px-6 py-3 mb-6 shadow-sm border border-gray-200">
                 <Trophy className="w-5 h-5 text-[#B58E31]" />
-                <span 
+                <span
                   className="text-gray-900 font-medium"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
@@ -161,7 +161,7 @@ export default function QuienesSomosPage() {
               >
                 Lo que nos hace únicos
               </h2>
-              <p 
+              <p
                 className="text-xl text-gray-600 max-w-2xl mx-auto mb-6"
                 style={{ fontFamily: "var(--font-lato)" }}
               >
@@ -183,14 +183,17 @@ export default function QuienesSomosPage() {
                     className="text-2xl font-bold text-gray-900 mb-4"
                     style={{ fontFamily: "var(--font-oswald)" }}
                   >
-                    Historias que cuentan
+                    El dato detrás de la pola
                   </h3>
-                  <p 
+                  <p
                     className="text-gray-600 leading-relaxed text-lg"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
-                    Cada cerveza cuenta una historia, y nosotros te traemos las
-                    mejores del mundo para que las vivás a tu manera.
+                    No solo te pasamos la cerveza. Somos curiosos y te contamos
+                    el dato que importa: de qué país viene esa pola, por qué esa
+                    alemana sabe así o con qué comida va bien esa belga. Te
+                    "educamos sin ser pesados", pa' que disfrutés con criterio y
+                    sepás qué te estás tomando.
                   </p>
                 </div>
               </div>
@@ -205,15 +208,17 @@ export default function QuienesSomosPage() {
                     className="text-2xl font-bold text-gray-900 mb-4"
                     style={{ fontFamily: "var(--font-oswald)" }}
                   >
-                    Variedad mundial
+                    Sabor de mundo, en un solo
                   </h3>
-                  <p 
+                  <p
                     className="text-gray-600 leading-relaxed text-lg"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
-                    Reunimos en un solo lugar cervezas importadas de casi todos
-                    los rincones del planeta, pa' que probés, comparés y
-                    encontrés tu favorita sin salir del parche.
+                    Somos el "sabor de mundo, corazón de Medellín". Traemos una
+                    carta curada de cervezas importadas que no conseguís en
+                    cualquier parte. Podés probar polas de un montón de rincones
+                    del planeta, pa' que comparés y encontrés tu favorita sin
+                    salir de Laureles.
                   </p>
                 </div>
               </div>
@@ -228,14 +233,17 @@ export default function QuienesSomosPage() {
                     className="text-2xl font-bold text-gray-900 mb-4"
                     style={{ fontFamily: "var(--font-oswald)" }}
                   >
-                    Punto de encuentro
+                    El punto de encuentro de los parceros
                   </h3>
-                  <p 
+                  <p
                     className="text-gray-600 leading-relaxed text-lg"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
-                    Market Club es ese punto de encuentro donde se juntan los
-                    amigos, los brindis, los goles y las risas.
+                    Esto no es solo un local pa' tomar, es el "parche cervecero
+                    de Laureles". Somos ese punto de encuentro pa' caer después
+                    del trabajo, ver el partido o simplemente "pasarla bueno
+                    entre amigos". Aquí no hay poses, solo "sabor sin poses", un
+                    ambiente auténtico y cerveza que sí vale la pena.
                   </p>
                 </div>
               </div>
@@ -253,13 +261,12 @@ export default function QuienesSomosPage() {
                     <Quote className="w-12 h-12 text-white" />
                   </div>
 
-                  <p 
+                  <p
                     className="text-xl lg:text-2xl leading-relaxed mb-8 text-gray-300"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
-                    Un espacio hecho pa' compartir, relajarse y disfrutar lo
-                    mejor de todo el mundo… como solo nosotros sabemos hacerlo.
-                    🍻
+                    "Somos el parche hecho pa' compartir, relajarse y disfrutar
+                    sabores del mundo, pero con el corazón de Medellín."
                   </p>
 
                   <div className="w-20 h-1 bg-[#B58E31] mx-auto mb-8 rounded-full"></div>
@@ -268,8 +275,10 @@ export default function QuienesSomosPage() {
                     className="text-[30px] sm:text-3xl lg:text-4xl font-bold leading-tight"
                     style={{ fontFamily: "var(--font-oswald)" }}
                   >
-                    No somos un bar cualquiera: Somos el club donde cada cerveza
-                    tiene su momento, y cada momento tiene su cerveza.
+                    "No somos un bar cualquiera: somos ese punto de encuentro en
+                    Laureles donde siempre encontrás una pola que sí vale la
+                    pena pa' juntarte con los parceros y pasarla bueno, sin
+                    enredos"
                   </p>
                 </div>
               </div>
@@ -287,7 +296,7 @@ export default function QuienesSomosPage() {
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-[#B58E31]/10 rounded-full px-6 py-3 mb-6 border border-[#B58E31]/20">
                 <Smile className="w-5 h-5 text-[#B58E31]" />
-                <span 
+                <span
                   className="text-[#B58E31] font-medium"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
@@ -315,7 +324,7 @@ export default function QuienesSomosPage() {
                       Beto
                     </h3>
                     <div className="w-24 h-1 bg-white/50 mx-auto mb-8 rounded-full"></div>
-                    <p 
+                    <p
                       className="text-2xl lg:text-3xl font-medium mb-6"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
@@ -332,41 +341,41 @@ export default function QuienesSomosPage() {
 
               {/* Contenido sobre Beto */}
               <div className="order-1 lg:order-2 space-y-6">
-                <div 
+                <div
                   className="space-y-6 text-lg text-gray-700 leading-relaxed"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
                   <p className="text-xl">
-                    Si has pasado por Market Club,{" "}
+                    Si has caído por Market Club,{" "}
                     <span className="font-bold text-gray-900">
-                      seguro ya lo conocés.
+                      seguro ya conocés a Beto.
                     </span>
                   </p>
                   <p>
-                    Beto es quien siempre te recibe con una sonrisa; es él quien
-                    se asegura de que nunca falte la buena atención, la charla
-                    amable y ese ambiente de casa que tanto nos gusta.
+                    Es el parcero que siempre te recibe con la buena; el que se
+                    asegura de que nunca falte la charla, el buen trato y ese
+                    ambiente auténtico que nos gusta.
                   </p>
                   <p className="font-semibold text-gray-900">
-                    Más que un anfitrión, es la cara y el corazón de Market.
+                    Más que un anfitrión, Beto es la cara de este parche.
                   </p>
                   <p>
-                    El que le pone el toque humano a cada encuentro, el que se
-                    sabe todos los nombres y que siempre pregunta si ya probaste
-                    una nueva cerveza.
+                    Es el que le pone el toque humano, se sabe los nombres y
+                    siempre está listo pa' recomendarte esa pola nueva que no
+                    has probado.
                   </p>
                 </div>
 
                 <div className="bg-gradient-to-r from-[#B58E31]/10 to-[#A67D2A]/10 rounded-2xl p-8 mt-10 border-l-4 border-[#B58E31] shadow-lg">
                   <div className="flex items-start gap-4">
                     <Quote className="w-8 h-8 text-[#B58E31] flex-shrink-0 mt-1" />
-                    <p 
+                    <p
                       className="text-xl font-semibold text-gray-900 leading-relaxed"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
-                      Porque en Market Club no solo servimos cerveza, servimos
-                      momentos, y con Beto ahí —como siempre— pa' que cada uno
-                      sea especial.
+                      Porque en Market Club no es solo la pola, es el parche. Y
+                      ahí está Beto —firme, como siempre— pa' asegurarse de que
+                      la pases bueno de verdad.
                     </p>
                   </div>
                 </div>
@@ -386,7 +395,7 @@ export default function QuienesSomosPage() {
           <div className="max-w-5xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-[#B58E31]/10 backdrop-blur-sm border border-[#B58E31]/20 rounded-full px-6 py-3 mb-8">
               <Sparkles className="w-5 h-5 text-[#B58E31]" />
-              <span 
+              <span
                 className="text-[#B58E31] font-medium"
                 style={{ fontFamily: "var(--font-lato)" }}
               >
@@ -401,7 +410,7 @@ export default function QuienesSomosPage() {
               ¿Listo para vivir la experiencia Market Club?
             </h2>
 
-            <p 
+            <p
               className="text-xl lg:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
               style={{ fontFamily: "var(--font-lato)" }}
             >

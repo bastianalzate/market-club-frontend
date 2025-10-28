@@ -51,9 +51,9 @@ export default function SubscriptionSection({
 
   const mapped = useMemo(() => {
     if (backendPlans.length === 0) return plans; // fallback a los quemados si falla
-    
+
     console.log("🔍 Backend plans data:", backendPlans);
-    
+
     // Mapear planes con imágenes correctas
     const mappedPlans = backendPlans.map((p) => {
       // Asignar imagen específica según el slug del plan
@@ -82,25 +82,25 @@ export default function SubscriptionSection({
         buttonColor: "#B58E31",
         imagePosition: "left" as "left" | "right", // Se asignará después del ordenamiento
       };
-      
+
       console.log("🔍 Mapped plan:", mappedPlan);
       console.log("🔍 Plan slug in mapped:", mappedPlan.slug);
-      
+
       return mappedPlan;
     });
 
     // Ordenar: Curioso (1), Coleccionista (2), Maestro (3)
     const orderMap: { [key: string]: number } = {
-      "curious_brewer": 1,
-      "collector_brewer": 2,
-      "master_brewer": 3,
+      curious_brewer: 1,
+      collector_brewer: 2,
+      master_brewer: 3,
     };
 
     const sortedPlans = mappedPlans.sort((a, b) => {
-      const planA = backendPlans.find(p => p.id === a.id);
-      const planB = backendPlans.find(p => p.id === b.id);
-      const orderA = orderMap[planA?.slug || ''] || 999;
-      const orderB = orderMap[planB?.slug || ''] || 999;
+      const planA = backendPlans.find((p) => p.id === a.id);
+      const planB = backendPlans.find((p) => p.id === b.id);
+      const orderA = orderMap[planA?.slug || ""] || 999;
+      const orderB = orderMap[planB?.slug || ""] || 999;
       return orderA - orderB;
     });
 
@@ -146,7 +146,14 @@ export default function SubscriptionSection({
   return (
     <div className={containerClassName}>
       <div className="max-w-7xl mx-auto">
-        {error && <div className="mb-6 text-red-600 text-sm" style={{ fontFamily: "var(--font-lato)" }}>{error}</div>}
+        {error && (
+          <div
+            className="mb-6 text-red-600 text-sm"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
+            {error}
+          </div>
+        )}
         <div className="space-y-12">
           {mapped.map((plan) => (
             <SubscriptionCard
@@ -161,7 +168,10 @@ export default function SubscriptionSection({
                 console.log("🔍 Selected plan for checkout:", plan);
                 console.log("🔍 Plan slug:", plan.slug);
                 console.log("🔍 Plan slug type:", typeof plan.slug);
-                console.log("🔍 Plan slug is empty:", !plan.slug || plan.slug === '');
+                console.log(
+                  "🔍 Plan slug is empty:",
+                  !plan.slug || plan.slug === ""
+                );
                 setSelectedPlan(plan);
                 setShowCheckout(true);
               }}
@@ -177,7 +187,7 @@ export default function SubscriptionSection({
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 
+                <h2
                   className="text-xl font-bold text-gray-900"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
@@ -189,16 +199,28 @@ export default function SubscriptionSection({
                   title="Cerrar"
                   aria-label="Cerrar modal"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
-              
+
               <SubscriptionCheckout
                 planId={selectedPlan.slug}
                 planName={selectedPlan.name}
-                totalAmount={parseInt(selectedPlan.price.replace(/[^0-9]/g, ''))}
+                totalAmount={parseInt(
+                  selectedPlan.price.replace(/[^0-9]/g, "")
+                )}
                 onSuccess={() => {
                   setShowCheckout(false);
                   router.push("/perfil?subscription=success");
