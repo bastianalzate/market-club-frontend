@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useCartContext } from "@/contexts/CartContext";
-import { useWishlist } from "@/hooks/useWishlist";
 import { useToast } from "@/hooks/useToast";
-import { Heart, ShoppingCart, ArrowLeft } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import LazyImage from "@/components/shared/LazyImage";
 import Toast from "@/components/shared/Toast";
 import { API_CONFIG } from "@/config/api";
@@ -62,14 +61,6 @@ export default function ProductDetailPage() {
 
   const { addToCart, isInCart, getProductQuantity } = useCartContext();
   const { toast, showSuccess, showError, hideToast } = useToast();
-  const {
-    toggleWishlist,
-    isInWishlist,
-    loading: wishlistLoading,
-  } = useWishlist({
-    showSuccess,
-    showError,
-  });
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -165,12 +156,6 @@ export default function ProductDetailPage() {
     }
   };
 
-  const handleToggleFavorite = async () => {
-    if (product) {
-      await toggleWishlist(product.id);
-    }
-  };
-
   const formatPrice = (price: string | number) => {
     const numericPrice = typeof price === "string" ? parseFloat(price) : price;
     return new Intl.NumberFormat("es-CO", {
@@ -259,6 +244,7 @@ export default function ProductDetailPage() {
         <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
           <div className="relative bg-white">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-8 lg:gap-x-10 xl:gap-x-20">
+              {/* Imagen del producto - Lado izquierdo */}
               <div className="relative lg:col-span-5">
                 {images.length > 0 ? (
                   <LazyImage
@@ -266,29 +252,24 @@ export default function ProductDetailPage() {
                     alt={product.name}
                     className="object-cover w-full h-full sm:rounded-md"
                   />
-                ) : null}
-
-                {/* Imagen de fallback */}
-                <div
-                  className={`w-full h-96 bg-gray-200 flex items-center justify-center ${
-                    images.length > 0 ? "hidden" : ""
-                  }`}
-                >
-                  <div className="text-center">
-                    <div
-                      className="text-gray-500 text-lg mb-2"
-                      style={{ fontFamily: "var(--font-lato)" }}
-                    >
-                      Sin imagen
-                    </div>
-                    <div
-                      className="text-gray-400 text-sm"
-                      style={{ fontFamily: "var(--font-lato)" }}
-                    >
-                      Imagen no disponible
+                ) : (
+                  <div className="w-full h-96 bg-gray-200 flex items-center justify-center rounded-md">
+                    <div className="text-center">
+                      <div
+                        className="text-gray-500 text-lg mb-2"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
+                        Sin imagen
+                      </div>
+                      <div
+                        className="text-gray-400 text-sm"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
+                        Imagen no disponible
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {images.length > 1 && (
                   <div className="absolute -translate-x-1/2 left-1/2 bottom-6">
@@ -308,6 +289,7 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
+              {/* Contenido del producto - Lado derecho */}
               <div className="px-4 pb-8 lg:col-span-7 xl:pr-16">
                 <nav className="flex">
                   <ol role="list" className="flex items-center space-x-1">
@@ -361,14 +343,6 @@ export default function ProductDetailPage() {
                 >
                   {product.name}
                 </h1>
-
-                <p
-                  className="mt-5 text-base font-normal leading-7 text-gray-700"
-                  style={{ fontFamily: "var(--font-lato)" }}
-                >
-                  {product.description ||
-                    `Disfruta de ${product.name}, una cerveza de alta calidad con un sabor único que te encantará.`}
-                </p>
 
                 <h2
                   className="mt-10 text-base font-bold text-gray-900"
@@ -511,63 +485,21 @@ export default function ProductDetailPage() {
                       ? `En carrito (${quantityInCart})`
                       : "Añadir al carrito"}
                   </button>
-
-                  <button
-                    type="button"
-                    onClick={handleToggleFavorite}
-                    disabled={wishlistLoading}
-                    className="
-                      inline-flex
-                      items-center
-                      justify-center
-                      w-full
-                      px-4
-                      py-3
-                      mt-4
-                      text-base
-                      font-bold
-                      leading-7
-                      text-center text-gray-900
-                      transition-all
-                      duration-200
-                      bg-transparent
-                      border border-gray-300
-                      rounded-md
-                      sm:mt-0 sm:w-auto
-                      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900
-                      hover:border-gray-900 hover:bg-gray-900
-                      focus:border-gray-900 focus:bg-gray-900 focus:text-white
-                      hover:text-white
-                      disabled:opacity-50 disabled:cursor-not-allowed
-                    "
-                    style={{ fontFamily: "var(--font-lato)" }}
-                  >
-                    <Heart
-                      className={`w-5 h-5 mr-2.5 ${
-                        isInWishlist(product.id)
-                          ? "fill-red-500 text-red-500"
-                          : ""
-                      }`}
-                    />
-                    {isInWishlist(product.id)
-                      ? "En favoritos"
-                      : "Añadir a favoritos"}
-                  </button>
                 </div>
               </div>
             </div>
-
-            <div className="absolute top-3 right-3 lg:top-4 lg:right-4">
-              <button
-                type="button"
-                onClick={() => router.back()}
-                className="p-1 -m-1 text-white transition-all duration-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 lg:text-gray-400 hover:text-gray-900 hover:bg-gray-100"
-                aria-label="Volver atrás"
-              >
-                <ArrowLeft className="w-6 h-6" />
-              </button>
-            </div>
           </div>
+
+          {/* Descripción del producto - Abajo, después del grid */}
+          {product.description && (
+            <div className="mt-12 pt-8 border-t border-gray-200 max-w-4xl mx-auto">
+              <div
+                className="text-base font-normal leading-7 text-gray-700 [&_p]:my-3 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-4 [&_li]:my-1 [&_strong]:font-semibold [&_strong]:text-gray-900 [&_h1]:font-bold [&_h2]:font-bold [&_h3]:font-bold [&_h4]:font-bold [&_h1]:my-4 [&_h2]:my-4 [&_h3]:my-4 [&_h4]:my-4 [&_h1]:text-gray-900 [&_h2]:text-gray-900 [&_h3]:text-gray-900 [&_h4]:text-gray-900"
+                style={{ fontFamily: "var(--font-lato)" }}
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
+            </div>
+          )}
         </div>
       </section>
 
