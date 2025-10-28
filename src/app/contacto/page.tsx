@@ -24,11 +24,11 @@ export default function ContactoPage() {
     "idle" | "success" | "error"
   >("idle");
   const [successMessage, setSuccessMessage] = useState("");
-  
+
   // Estados específicos para validaciones de los nuevos campos
   const [dateOfBirthTouched, setDateOfBirthTouched] = useState(false);
   const [professionTouched, setProfessionTouched] = useState(false);
-  
+
   // Estados para controlar las validaciones
   const [dateOfBirthError, setDateOfBirthError] = useState("");
   const [professionError, setProfessionError] = useState("");
@@ -51,27 +51,27 @@ export default function ContactoPage() {
   // Funciones simples para validar solo las variables
   const validateDateOfBirth = () => {
     if (!dateOfBirthTouched) return;
-    
+
     if (!formData.dateOfBirth) {
       const errorMsg = "La fecha de nacimiento es requerida";
       setDateOfBirthError(errorMsg);
-      setErrors(prev => ({ ...prev, dateOfBirth: errorMsg }));
+      setErrors((prev) => ({ ...prev, dateOfBirth: errorMsg }));
       return;
     }
-    
+
     const birthDate = new Date(formData.dateOfBirth);
     const today = new Date();
     if (isNaN(birthDate.getTime())) {
       const errorMsg = "La fecha de nacimiento debe ser una fecha válida";
       setDateOfBirthError(errorMsg);
-      setErrors(prev => ({ ...prev, dateOfBirth: errorMsg }));
+      setErrors((prev) => ({ ...prev, dateOfBirth: errorMsg }));
     } else if (birthDate >= today) {
       const errorMsg = "La fecha de nacimiento debe ser anterior a hoy";
       setDateOfBirthError(errorMsg);
-      setErrors(prev => ({ ...prev, dateOfBirth: errorMsg }));
+      setErrors((prev) => ({ ...prev, dateOfBirth: errorMsg }));
     } else {
       setDateOfBirthError("");
-      setErrors(prev => {
+      setErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors.dateOfBirth;
         return newErrors;
@@ -81,21 +81,21 @@ export default function ContactoPage() {
 
   const validateProfession = () => {
     if (!professionTouched) return;
-    
+
     if (!formData.profession.trim()) {
       const errorMsg = "La profesión es requerida";
       setProfessionError(errorMsg);
-      setErrors(prev => ({ ...prev, profession: errorMsg }));
+      setErrors((prev) => ({ ...prev, profession: errorMsg }));
       return;
     }
-    
+
     if (formData.profession.trim().length > 255) {
       const errorMsg = "La profesión no puede exceder 255 caracteres";
       setProfessionError(errorMsg);
-      setErrors(prev => ({ ...prev, profession: errorMsg }));
+      setErrors((prev) => ({ ...prev, profession: errorMsg }));
     } else {
       setProfessionError("");
-      setErrors(prev => {
+      setErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors.profession;
         return newErrors;
@@ -148,9 +148,11 @@ export default function ContactoPage() {
       const birthDate = new Date(formData.dateOfBirth);
       const today = new Date();
       if (isNaN(birthDate.getTime())) {
-        newErrors.dateOfBirth = "La fecha de nacimiento debe ser una fecha válida";
+        newErrors.dateOfBirth =
+          "La fecha de nacimiento debe ser una fecha válida";
       } else if (birthDate >= today) {
-        newErrors.dateOfBirth = "La fecha de nacimiento debe ser anterior a hoy";
+        newErrors.dateOfBirth =
+          "La fecha de nacimiento debe ser anterior a hoy";
       }
     }
 
@@ -182,8 +184,9 @@ export default function ContactoPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target;
-    const newValue = type === "checkbox" ? (e.target as HTMLInputElement).checked : value;
-    
+    const newValue =
+      type === "checkbox" ? (e.target as HTMLInputElement).checked : value;
+
     // Actualizar el estado
     setFormData((prev) => ({
       ...prev,
@@ -197,7 +200,7 @@ export default function ContactoPage() {
     if (name === "profession") {
       setProfessionTouched(true);
     }
-    
+
     // Para otros campos, usar la validación normal
     if (name !== "dateOfBirth" && name !== "profession") {
       validateField(name, newValue);
@@ -321,7 +324,6 @@ export default function ContactoPage() {
   };
 
   const submitForm = async () => {
-
     setIsSubmitting(true);
     setSubmitStatus("idle");
 
@@ -406,16 +408,15 @@ export default function ContactoPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Formulario de Contacto */}
           <div className="space-y-8 lg:pr-8">
-
             <div>
               <h1
-                className="text-black mb-4 text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl"
+                className="text-black mb-4 text-6xl"
                 style={{
                   fontFamily: "var(--font-oswald)",
                   fontWeight: 700,
                 }}
               >
-                ¿Tienes dudas? contáctanos
+                ¿Tenés alguna duda? Echános el cuento.
               </h1>
               <p
                 className="text-gray-600"
@@ -426,7 +427,9 @@ export default function ContactoPage() {
                   color: "#667085",
                 }}
               >
-                ¡Nos encantaría escucharte! Escríbenos y te daremos la respuesta que necesitas de inmediato.
+                ¡Nos encantaría escucharte! Escribinos sin miedo, como a un
+                parcero. Te daremos la respuesta que necesitás de una, pa' que
+                sigás parchando.
               </p>
             </div>
 
@@ -462,7 +465,10 @@ export default function ContactoPage() {
                     }}
                   />
                   {errors.firstName && (
-                    <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>
+                    <p
+                      className="mt-1 text-sm text-red-600"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       {errors.firstName}
                     </p>
                   )}
@@ -496,7 +502,10 @@ export default function ContactoPage() {
                     }}
                   />
                   {errors.lastName && (
-                    <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>
+                    <p
+                      className="mt-1 text-sm text-red-600"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       {errors.lastName}
                     </p>
                   )}
@@ -533,7 +542,12 @@ export default function ContactoPage() {
                   }}
                 />
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>{errors.email}</p>
+                  <p
+                    className="mt-1 text-sm text-red-600"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    {errors.email}
+                  </p>
                 )}
               </div>
 
@@ -588,7 +602,12 @@ export default function ContactoPage() {
                   />
                 </div>
                 {errors.phone && (
-                  <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>{errors.phone}</p>
+                  <p
+                    className="mt-1 text-sm text-red-600"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    {errors.phone}
+                  </p>
                 )}
               </div>
 
@@ -614,7 +633,9 @@ export default function ContactoPage() {
                     onChange={handleInputChange}
                     onBlur={() => handleBlur("dateOfBirth")}
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none transition-all duration-200 ${
-                      dateOfBirthError || errors.dateOfBirth ? "border-red-500" : "border-gray-300"
+                      dateOfBirthError || errors.dateOfBirth
+                        ? "border-red-500"
+                        : "border-gray-300"
                     }`}
                     style={{
                       fontFamily: "var(--font-lato)",
@@ -623,7 +644,10 @@ export default function ContactoPage() {
                     }}
                   />
                   {(dateOfBirthError || errors.dateOfBirth) && (
-                    <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>
+                    <p
+                      className="mt-1 text-sm text-red-600"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       {dateOfBirthError || errors.dateOfBirth}
                     </p>
                   )}
@@ -649,7 +673,9 @@ export default function ContactoPage() {
                     onBlur={() => handleBlur("profession")}
                     placeholder="Ej: Ingeniero, Médico, Estudiante..."
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none transition-all duration-200 ${
-                      professionError || errors.profession ? "border-red-500" : "border-gray-300"
+                      professionError || errors.profession
+                        ? "border-red-500"
+                        : "border-gray-300"
                     }`}
                     style={{
                       fontFamily: "var(--font-lato)",
@@ -658,7 +684,10 @@ export default function ContactoPage() {
                     }}
                   />
                   {(professionError || errors.profession) && (
-                    <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>
+                    <p
+                      className="mt-1 text-sm text-red-600"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       {professionError || errors.profession}
                     </p>
                   )}
@@ -695,9 +724,17 @@ export default function ContactoPage() {
                   }}
                 />
                 {errors.message && (
-                  <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>{errors.message}</p>
+                  <p
+                    className="mt-1 text-sm text-red-600"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    {errors.message}
+                  </p>
                 )}
-                <div className="text-right text-sm text-gray-500 mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                <div
+                  className="text-right text-sm text-gray-500 mt-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {formData.message.length}/1000 caracteres
                 </div>
               </div>
@@ -731,7 +768,10 @@ export default function ContactoPage() {
                 </label>
               </div>
               {errors.acceptPrivacy && (
-                <p className="mt-1 text-sm text-red-600" style={{ fontFamily: "var(--font-lato)" }}>
+                <p
+                  className="mt-1 text-sm text-red-600"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {errors.acceptPrivacy}
                 </p>
               )}
@@ -739,13 +779,21 @@ export default function ContactoPage() {
               {/* Mensajes de estado */}
               {submitStatus === "success" && (
                 <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-green-800 text-center" style={{ fontFamily: "var(--font-lato)" }}>{successMessage}</p>
+                  <p
+                    className="text-green-800 text-center"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    {successMessage}
+                  </p>
                 </div>
               )}
 
               {submitStatus === "error" && (
                 <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-red-800 text-center" style={{ fontFamily: "var(--font-lato)" }}>
+                  <p
+                    className="text-red-800 text-center"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     {errors.submit ||
                       "Hubo un error al enviar el mensaje. Por favor intenta nuevamente."}
                   </p>
@@ -754,7 +802,12 @@ export default function ContactoPage() {
 
               {errors.submit && submitStatus !== "error" && (
                 <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-red-800 text-center" style={{ fontFamily: "var(--font-lato)" }}>{errors.submit}</p>
+                  <p
+                    className="text-red-800 text-center"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    {errors.submit}
+                  </p>
                 </div>
               )}
 
@@ -794,18 +847,18 @@ export default function ContactoPage() {
           <div className="relative lg:sticky lg:top-8">
             {/* Imagen para desktop */}
             <div className="hidden lg:block">
-            <div className="relative overflow-hidden rounded-2xl shadow-2xl bg-gradient-to-br from-gray-50 to-gray-100">
-              <Image
-                src="/images/contact/contacto-banner.png"
-                alt="Personas brindando con cervezas"
-                width={500}
-                height={600}
-                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                priority
-              />
-              {/* Overlay sutil para mejorar el contraste */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
-            </div>
+              <div className="relative overflow-hidden rounded-2xl shadow-2xl bg-gradient-to-br from-gray-50 to-gray-100">
+                <Image
+                  src="/images/contact/contacto-banner.png"
+                  alt="Personas brindando con cervezas"
+                  width={500}
+                  height={600}
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  priority
+                />
+                {/* Overlay sutil para mejorar el contraste */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -842,10 +895,10 @@ export default function ContactoPage() {
                     fontWeight: "bold",
                   }}
                 >
-                  Encuéntranos en: 
+                  Encuéntranos en:
                 </h2>
                 <div>
-                <p
+                  <p
                     className="text-white text-base lg:text-2xl leading-normal lg:leading-tight"
                     style={{
                       fontFamily: "var(--font-lato)",
@@ -853,7 +906,8 @@ export default function ContactoPage() {
                       margin: 0,
                     }}
                   >
-                    Dirección: Cl. 43 #74-61 Local 3<br /> Laureles - Estadio, Medellín, Antioquia. 
+                    Dirección: Cl. 43 #74-61 Local 3<br /> Laureles - Estadio,
+                    Medellín, Antioquia.
                   </p>
                   <p
                     className="text-white !mt-4 text-base lg:text-2xl leading-normal lg:leading-tight"

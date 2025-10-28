@@ -18,7 +18,7 @@ export default function BeerClubSection() {
             letterSpacing: "0px",
           }}
         >
-          Únete hoy y recibe tu primer beneficio. 
+          De una! Uníte hoy y que empiece el parche.
         </h3>
 
         <p
@@ -31,8 +31,10 @@ export default function BeerClubSection() {
             fontSize: "clamp(14px, 1.8vw, 28px)",
           }}
         >
-          Como miembro, tendrás privilegios únicos:  descuentos especiales, acceso exclusivo y 
-          preferencial a lanzamientos y una caja sorpresa mensual seleccionada solo para ti.
+          Como parcero de Market Club, no te faltarán los privilegios:
+          Descuentos solo pa' vos, acceso a eventos y lanzamientos antes que
+          nadie, y lo mejor: esa caja sorpresa mensual con polas seleccionadas
+          que sí valen la pena.
         </p>
 
         <button

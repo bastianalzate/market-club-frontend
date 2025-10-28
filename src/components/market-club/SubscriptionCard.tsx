@@ -25,7 +25,7 @@ export default function SubscriptionCard({
 
   return (
     <div
-      className={`bg-white rounded-lg overflow-hidden max-w-5xl mx-auto ${className}`}
+      className={`bg-white rounded-lg overflow-hidden max-w-5xl mx-auto relative ${className}`}
     >
       <div
         className={`flex flex-row ${!isImageLeft ? "flex-row-reverse" : ""}`}
@@ -64,7 +64,7 @@ export default function SubscriptionCard({
           </div>
 
           <p
-            className="text-gray-700 mb-2 md:mb-6 text-left text-[9px] md:text-[16px]"
+            className="text-gray-700 mb-2 md:mb-6 text-left text-[9px] md:text-[16px] whitespace-pre-line"
             style={{
               fontFamily: "var(--font-lato)",
               fontWeight: 400,
