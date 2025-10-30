@@ -4,6 +4,7 @@ import { X, Trash2, Plus, Minus, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCartContext } from "@/contexts/CartContext";
+import LazyImage from "@/components/shared/LazyImage";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -43,17 +44,18 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const getImageUrl = (
     product: { image?: string; image_url?: string } | null,
     isGift: boolean = false
-  ) => {
+  ): string | null => {
     // Si es un regalo, usar icono de regalo
     if (isGift) {
       return "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSI4IiBmaWxsPSIjQjU4RTMxIi8+PHJlY3QgeD0iMyIgeT0iOCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMiA4djEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxMnY3YTIgMiAwIDAgMS0yIDJIN2EyIDIgMCAwIDEtMi0ydi03IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik03LjUgOGEyLjUgMi41IDAgMCAxIDAtNUE0LjggOCAwIDAgMSAxMiA4YTQuOCA4IDAgMCAxIDQuNS01IDIuNSAyLjUgMCAwIDEgMCA1IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=";
     }
 
-    if (!product) return "/images/cervezas/bottella-01.png";
+    // Retornar null para que LazyImage use su fallback con las imágenes por defecto
+    if (!product) return null;
 
     // Priorizar image_url si existe, sino usar image
     const imagePath = product.image_url || product.image;
-    if (!imagePath) return "/images/cervezas/bottella-01.png";
+    if (!imagePath) return null;
 
     // Si ya es una URL completa, devolverla tal como está
     if (imagePath.startsWith("http")) {
@@ -61,7 +63,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     }
 
     // Construir URL completa con la base del backend
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:8000";
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
+      "http://localhost:8000";
     return `${baseUrl}/${imagePath}`;
   };
 
@@ -208,7 +212,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             {/* Header */}
             <div className="flex-shrink-0 px-4 py-5">
               <div className="flex items-center justify-between">
-                <p 
+                <p
                   className="text-base font-bold text-gray-900"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
@@ -246,38 +250,23 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         return (
                           <li key={item.id} className="flex py-5">
                             <div
-                              className="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center bg-gray-100"
+                              className="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center bg-white overflow-hidden"
                               style={{
                                 backgroundColor: isGift ? "#B58E31" : undefined,
                               }}
                             >
-                              <img
-                                className={`object-cover ${
-                                  isGift ? "w-8 h-8" : "w-16 h-16 rounded-lg"
-                                }`}
+                              <LazyImage
                                 src={getImageUrl(item.product, isGift)}
                                 alt={itemName}
-                                onError={(e) => {
-                                  console.log(
-                                    "🛒 Image failed to load:",
-                                    getImageUrl(item.product, isGift)
-                                  );
-                                  const target = e.target as HTMLImageElement;
-                                  target.src =
-                                    "/images/cervezas/bottella-01.png";
-                                }}
-                                onLoad={() => {
-                                  console.log(
-                                    "🛒 Image loaded successfully:",
-                                    getImageUrl(item.product, isGift)
-                                  );
-                                }}
+                                className={`object-contain ${
+                                  isGift ? "w-8 h-8" : "w-full h-full p-2"
+                                }`}
                               />
                             </div>
 
                             <div className="flex items-stretch justify-between flex-1 ml-5 space-x-5">
                               <div className="flex flex-col justify-between flex-1">
-                                <p 
+                                <p
                                   className="text-sm font-bold text-gray-900"
                                   style={{ fontFamily: "var(--font-lato)" }}
                                 >
@@ -315,7 +304,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                       <Minus className="w-4 h-4 text-gray-600" />
                                     </button>
 
-                                    <span 
+                                    <span
                                       className="text-sm font-bold text-gray-800 min-w-[20px] text-center"
                                       style={{ fontFamily: "var(--font-lato)" }}
                                     >
@@ -340,7 +329,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                               </div>
 
                               <div className="flex flex-col items-end justify-between">
-                                <p 
+                                <p
                                   className="flex-shrink-0 w-20 text-sm font-bold text-right text-gray-600"
                                   style={{ fontFamily: "var(--font-lato)" }}
                                 >
@@ -379,13 +368,13 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               <div className="px-4 py-5 border-t border-gray-200 sm:p-6">
                 <ul className="space-y-4">
                   <li className="flex items-center justify-between">
-                    <p 
+                    <p
                       className="text-sm font-medium text-gray-900"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
                       Total
                     </p>
-                    <p 
+                    <p
                       className="text-sm font-bold text-gray-900"
                       style={{ fontFamily: "var(--font-lato)" }}
                     >
@@ -406,7 +395,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     type="button"
                     onClick={handleCheckout}
                     className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white transition-all duration-200 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 hover:opacity-90 cursor-pointer"
-                    style={{ backgroundColor: "#B58E31", fontFamily: "var(--font-lato)" }}
+                    style={{
+                      backgroundColor: "#B58E31",
+                      fontFamily: "var(--font-lato)",
+                    }}
                   >
                     Ir a Pagar
                   </button>

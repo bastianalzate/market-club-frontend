@@ -88,12 +88,20 @@ const giftBoxes: GiftBox[] = [
   },
 ];
 
+// Helper function to capitalize first letter
+const capitalizeFirstLetter = (str: string): string => {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
 // Función para convertir TransformedProduct a Beer
 const transformToBeer = (product: TransformedProduct): Beer => {
   // Obtener información de presentación y volumen del producto
   const volumeText =
     product.packaging_type && product.volume_ml
-      ? `${product.packaging_type.toUpperCase()} ${product.volume_ml}`
+      ? `${capitalizeFirstLetter(product.packaging_type)} ${
+          product.volume_ml
+        }ml`
       : "";
 
   return {
@@ -213,7 +221,7 @@ export default function GiftBuilder() {
     const matchesSearch =
       beer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       beer.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch && beer.inStock;
+    return matchesSearch; // Mostrar todos los productos independientemente del stock
   });
 
   // Funciones para manejar cambios en los filtros

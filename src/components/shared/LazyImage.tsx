@@ -55,47 +55,23 @@ export default function LazyImage({
     
     return (
       <div
-        className={`w-full h-full flex items-center justify-center bg-gray-100 ${className}`}
+        className={`w-full h-full flex items-center justify-center relative ${className}`}
+        style={{
+          backgroundImage: `url('/images/cervezas/MARKET-FD.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
       >
-        {fallbackIcon || (
-          <div className="flex flex-col items-center justify-center text-gray-400">
-            {isSmallSpace ? (
-              // Placeholder más grande para espacios pequeños - solo ícono
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-            ) : (
-              // Placeholder normal para espacios grandes
-              <>
-                <div className="w-20 h-20 rounded-full flex items-center justify-center">
-                  <svg
-                    className="w-10 h-10 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-              </>
-            )}
+        {/* Imagen de cerveza superpuesta */}
+        <img
+          src="/images/cervezas/MARKET-CLUB-BEER.png"
+          alt={alt}
+          className="w-full h-full object-contain"
+        />
+        {fallbackIcon && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            {fallbackIcon}
           </div>
         )}
       </div>
@@ -126,27 +102,24 @@ export default function LazyImage({
 
       {/* Error fallback */}
       {hasError && (
-        <div className="w-full h-full flex items-center justify-center bg-gray-100">
-          {fallbackIcon || (
-            <div className="flex flex-col items-center justify-center text-gray-400">
-              <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mb-3">
-                <svg
-                  className="w-10 h-10 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-              <p className="text-sm font-medium text-gray-500">
-                Error al cargar
-              </p>
+        <div
+          className="w-full h-full flex items-center justify-center relative"
+          style={{
+            backgroundImage: `url('/images/cervezas/MARKET-FD.png')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        >
+          {/* Imagen de cerveza superpuesta */}
+          <img
+            src="/images/cervezas/MARKET-CLUB-BEER.png"
+            alt={alt}
+            className="w-full h-full object-contain"
+          />
+          {fallbackIcon && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              {fallbackIcon}
             </div>
           )}
         </div>

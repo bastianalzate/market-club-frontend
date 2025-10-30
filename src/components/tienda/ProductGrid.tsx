@@ -95,6 +95,12 @@ export default function ProductGrid({
   const [localProducts, setLocalProducts] =
     useState<TransformedProduct[]>(products);
 
+  // Helper function to capitalize first letter
+  const capitalizeFirstLetter = (str: string): string => {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
+
   // Sincronizar productos locales con props cuando cambien
   useEffect(() => {
     setLocalProducts(products);
@@ -451,13 +457,15 @@ export default function ProductGrid({
                     >
                       {product.product_specific_data?.packaging_type &&
                       product.product_specific_data?.volume_ml
-                        ? `${product.product_specific_data.packaging_type.toUpperCase()} ${
-                            product.product_specific_data.volume_ml
-                          }`
+                        ? `${capitalizeFirstLetter(
+                            product.product_specific_data.packaging_type
+                          )} ${product.product_specific_data.volume_ml}ml`
                         : product.product_specific_data?.packaging_type
-                        ? product.product_specific_data.packaging_type.toUpperCase()
+                        ? capitalizeFirstLetter(
+                            product.product_specific_data.packaging_type
+                          )
                         : product.product_specific_data?.volume_ml
-                        ? `${product.product_specific_data.volume_ml}ML`
+                        ? `${product.product_specific_data.volume_ml}ml`
                         : ""}
                     </span>
                   )}

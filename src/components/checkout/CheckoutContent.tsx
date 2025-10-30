@@ -3,6 +3,7 @@
 import { useCartContext } from "@/contexts/CartContext";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import LazyImage from "@/components/shared/LazyImage";
 
 export default function CheckoutContent() {
   const { cart, itemsCount, removeFromCart, subtotal, totalAmount } =
@@ -171,10 +172,10 @@ export default function CheckoutContent() {
                             <div className="flex-shrink-0">
                               <div className="relative">
                                 <div
-                                  className={`flex items-center justify-center ${
+                                  className={`flex items-center justify-center overflow-hidden bg-white ${
                                     item.product.name.includes("Regalo")
                                       ? "w-8 h-8 rounded-lg"
-                                      : "w-20 h-20"
+                                      : "w-20 h-20 rounded-lg"
                                   }`}
                                   style={
                                     item.product.name.includes("Regalo")
@@ -182,13 +183,13 @@ export default function CheckoutContent() {
                                       : {}
                                   }
                                 >
-                                  <img
-                                    className={`border border-gray-200 rounded-xl object-cover shadow-sm ${
+                                  <LazyImage
+                                    className={`border border-gray-200 rounded-xl object-contain shadow-sm ${
                                       item.product.name.includes("Regalo")
                                         ? "w-8 h-8"
-                                        : "w-20 h-20"
+                                        : "w-full h-full p-2"
                                     }`}
-                                    src={item.product.image_url}
+                                    src={item.product.image_url || null}
                                     alt={item.product.name}
                                   />
                                 </div>
@@ -271,7 +272,10 @@ export default function CheckoutContent() {
 
                 {/* Resumen de Totales */}
                 <div className="mt-6 p-4 bg-white rounded-lg border border-gray-200">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3 " style={{ fontFamily: "var(--font-lato)" }}>
+                  <h3
+                    className="text-sm font-semibold text-gray-900 mb-3 "
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Resumen del pedido
                   </h3>
                   <div className="space-y-2">
