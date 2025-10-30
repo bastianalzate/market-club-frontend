@@ -68,6 +68,8 @@ export class PaymentService {
     // Crear widget de Wompi
     static async createWompiWidget(orderId, totalAmount, redirectUrl, customerData = {}) {
         console.log('🎯 Creating Wompi widget for order:', orderId);
+        console.log('🎯 Amount received by PaymentService:', totalAmount);
+        console.log('🎯 Amount type:', typeof totalAmount);
         
         const requestBody = {
             order_id: orderId,
@@ -91,6 +93,8 @@ export class PaymentService {
         }
         
         console.log('🎯 Widget request body:', requestBody);
+        console.log('🎯 Amount being sent to backend:', requestBody.amount);
+        console.log('🎯 Calling endpoint:', `${API_CONFIG.BASE_URL}/payments/wompi/create-widget`);
         
         const response = await fetch(`${API_CONFIG.BASE_URL}/payments/wompi/create-widget`, {
             method: 'POST',
@@ -98,9 +102,10 @@ export class PaymentService {
             body: JSON.stringify(requestBody)
         });
         
-        console.log('🎯 Widget response:', response.status);
+        console.log('🎯 Widget response status:', response.status);
         const data = await response.json();
-        console.log('🎯 Widget data:', data);
+        console.log('🎯 Widget response data:', data);
+        console.log('🎯 Amount returned by backend (in cents):', data.data?.amount);
         
         return data;
     }

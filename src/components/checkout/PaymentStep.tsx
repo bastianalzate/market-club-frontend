@@ -36,10 +36,12 @@ export default function PaymentStep({
   onSuccess,
 }: PaymentStepProps) {
   console.log("💰 PaymentStep received totalAmount:", totalAmount);
+  console.log("💰 PaymentStep totalAmount type:", typeof totalAmount);
   console.log(
     "💰 PaymentStep amountInCents will be:",
     Math.round(totalAmount * 100)
   );
+  console.log("🔍 VERIFY: Este es el monto que SE DEBE COBRAR:", totalAmount);
   const { createPaymentSession, confirmOrder, checkoutState } = useCheckout();
   const { toast, showSuccess, showError, hideToast } = useToast();
 
@@ -176,6 +178,11 @@ export default function PaymentStep({
       };
 
       console.log("🎯 Creating Wompi widget with data:", widgetData);
+      console.log("🔍 SENDING TO BACKEND - Amount:", totalAmount);
+      console.log(
+        "🔍 SENDING TO BACKEND - Amount in cents:",
+        Math.round(totalAmount * 100)
+      );
 
       const widgetResponse = await PaymentService.createWompiWidget(
         orderId,
@@ -189,12 +196,43 @@ export default function PaymentStep({
       );
 
       console.log("🔍 Full widget response:", widgetResponse);
-      console.log("🔍 Backend returned amount:", widgetResponse.data?.amount);
-      console.log("🔍 Frontend totalAmount:", totalAmount);
       console.log(
-        "🔍 Amount match:",
-        widgetResponse.data?.amount === totalAmount
+        "🔍 Backend returned amount (in cents):",
+        widgetResponse.data?.amount
       );
+      console.log("🔍 Frontend totalAmount (in COP):", totalAmount);
+      console.log(
+        "🔍 Frontend totalAmount in cents:",
+        Math.round(totalAmount * 100)
+      );
+      console.log(
+        "🔍 Amount match (cents):",
+        widgetResponse.data?.amount === Math.round(totalAmount * 100)
+      );
+
+      // VERIFICACIÓN CRÍTICA: Asegurar que el backend devolvió el monto correcto
+      if (widgetResponse.data?.amount !== Math.round(totalAmount * 100)) {
+        console.error("❌ MISMATCH DETECTED!");
+        console.error("   Expected (cents):", Math.round(totalAmount * 100));
+        console.error("   Received (cents):", widgetResponse.data?.amount);
+        console.error("   Expected (COP):", totalAmount);
+        console.error("   Received (COP):", widgetResponse.data?.amount / 100);
+
+        // Mostrar alerta visual al usuario
+        const expectedCOP = totalAmount;
+        const receivedCOP = widgetResponse.data?.amount / 100;
+
+        showError(
+          "⚠️ Error de Monto",
+          `El backend está devolviendo un monto incorrecto.\n\n` +
+            `Monto esperado: $${expectedCOP.toLocaleString("es-CO")} COP\n` +
+            `Monto recibido: $${receivedCOP.toLocaleString("es-CO")} COP\n\n` +
+            `Por favor contacta al equipo de backend para corregir el endpoint.`
+        );
+
+        // NO continuar con el pago si hay un mismatch
+        return;
+      }
 
       if (!widgetResponse.success || !widgetResponse.data?.reference) {
         console.error("❌ Widget response validation failed:", {
