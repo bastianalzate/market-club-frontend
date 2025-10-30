@@ -46,6 +46,7 @@ export default function PaymentStep({
   const [showWompiWidget, setShowWompiWidget] = useState(false);
   const [paymentSession, setPaymentSession] = useState<any>(null);
   const [wompiScriptLoaded, setWompiScriptLoaded] = useState(false);
+  const [paymentReference, setPaymentReference] = useState<string>("");
 
   // Configuración de Wompi
   const { PUBLIC_KEY: WOMPI_PUBLIC_KEY } = WOMPI_CONFIG;
@@ -121,22 +122,13 @@ export default function PaymentStep({
     }
   };
 
+  // Esta función ya no es necesaria, el callback del widget maneja todo directamente
+  // Dejamos esta función por compatibilidad pero ya no se usa
   const handlePaymentSuccess = async (transaction: any) => {
-    try {
-      console.log("Payment success transaction:", transaction);
-
-      // Confirmar la orden en el backend
-      const confirmResponse = await confirmOrder(orderId, transaction.id);
-
-      if (confirmResponse.success) {
-        showSuccess("Pago exitoso", "Tu pago ha sido procesado correctamente");
-        setShowWompiWidget(false);
-        onSuccess();
-      }
-    } catch (error) {
-      console.error("Error confirming order:", error);
-      showError("Error", "Error al confirmar el pago");
-    }
+    console.log("handlePaymentSuccess called (deprecated):", transaction);
+    // El webhook de Wompi actualizará el estado del pago en el backend
+    // Solo necesitamos avanzar al paso 4
+    onSuccess();
   };
 
   const handlePaymentError = (error: any) => {
@@ -218,6 +210,9 @@ export default function PaymentStep({
       const { reference, amount, currency, integrity_signature, publicKey } =
         widgetResponse.data;
 
+      // Guardar la referencia para usarla después
+      setPaymentReference(reference);
+
       console.log("✅ Using backend data:", {
         reference,
         amount,
@@ -227,13 +222,13 @@ export default function PaymentStep({
       });
 
       // PASO 3: Configurar el widget con los datos EXACTOS del backend
+      // NO usar redirectUrl para que el widget use el callback en lugar de redirigir
       const widgetConfig = {
         currency: currency, // ← Usar currency del backend
         amountInCents: amount, // ← Usar amount del backend (ya en centavos)
         reference: reference, // ← Usar reference del backend
         publicKey: publicKey, // ← Usar publicKey del backend
-        redirectUrl:
-          window.location.origin + "/checkout/success?order_id=" + orderId,
+        // NO establecer redirectUrl - dejamos que el callback maneje el resultado
         signature: {
           integrity: integrity_signature, // ← Usar integrity_signature del backend
         },
@@ -289,15 +284,70 @@ export default function PaymentStep({
       }
 
       console.log("🚀 Opening widget...");
-      checkout.open((result: any) => {
-        console.log("🎉 Transaction completed:", result);
-        if (result && result.transaction && result.transaction.id) {
-          // El pago fue exitoso, llamar al callback de éxito
-          console.log("✅ Payment successful, calling success callback...");
-          handlePaymentSuccess(result);
+      checkout.open(async (result: any) => {
+        console.log("🎉 Widget closed with result:", result);
+        console.log("🔍 Result structure:", {
+          hasResult: !!result,
+          hasTransaction: !!(result && result.transaction),
+          hasStatus: !!(
+            result &&
+            result.transaction &&
+            result.transaction.status
+          ),
+          status: result?.transaction?.status,
+          fullResult: result,
+        });
+
+        // Verificar el estado de la transacción
+        if (result && result.transaction) {
+          const status = result.transaction.status;
+          const transactionId = result.transaction.id;
+          console.log("📊 Transaction status:", status);
+          console.log("🆔 Transaction ID:", transactionId);
+
+          // Estados posibles de Wompi:
+          // - APPROVED: Pago aprobado
+          // - DECLINED: Pago rechazado
+          // - ERROR: Error en el pago
+          // - PENDING: Pago pendiente (para PSE u otros métodos que requieren confirmación)
+
+          if (status === "APPROVED") {
+            console.log("✅ Payment approved by Wompi!");
+            console.log("🔔 Wompi will send webhook to backend automatically");
+            console.log("📧 Backend will send confirmation email via webhook");
+            console.log("🆔 Transaction ID:", transactionId);
+            console.log("📦 Order ID:", orderId);
+
+            // NO llamar a /payments/process - ese endpoint es para INICIAR pagos
+            // El webhook de Wompi enviará el email automáticamente al backend
+            // El frontend solo debe avanzar al paso 4 y esperar
+
+            showSuccess(
+              "Pago exitoso",
+              "Tu pago ha sido aprobado. Recibirás un email de confirmación en breve."
+            );
+
+            // Avanzar al paso 4 donde el sistema verificará el estado con reintentos
+            // Esto da tiempo al webhook de Wompi para actualizar la orden
+            onSuccess();
+          } else if (status === "PENDING") {
+            console.log("⏳ Payment pending, advancing to step 4...");
+            // Para pagos pendientes (como PSE), el webhook confirmará cuando se complete
+            onSuccess();
+          } else if (status === "DECLINED" || status === "ERROR") {
+            console.log("❌ Payment declined/error:", status);
+            showError(
+              "Pago rechazado",
+              "Tu pago fue rechazado. Por favor intenta con otro método de pago."
+            );
+          } else {
+            console.log("❓ Unknown status:", status);
+            showError("Error", "Estado de pago desconocido");
+          }
         } else {
-          console.error("❌ Invalid transaction result:", result);
-          showError("Error", "No se pudo procesar el pago");
+          // Si no hay resultado, el usuario cerró el widget sin completar el pago
+          console.log("⚠️ Widget closed without completing payment");
+          // No mostrar error, el usuario solo cerró el widget
         }
       });
       console.log("✅ Widget.open() called successfully");
@@ -313,8 +363,16 @@ export default function PaymentStep({
     <>
       <div className="bg-white rounded-lg shadow-sm border">
         <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-          <h2 className="text-xl font-bold text-gray-900" style={{ fontFamily: 'var(--font-lato)' }}>Método de Pago</h2>
-          <p className="text-sm font-medium text-gray-700 mt-1" style={{ fontFamily: 'var(--font-lato)' }}>
+          <h2
+            className="text-xl font-bold text-gray-900"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
+            Método de Pago
+          </h2>
+          <p
+            className="text-sm font-medium text-gray-700 mt-1"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Pagar de forma segura con Wompi
           </p>
         </div>
@@ -322,17 +380,38 @@ export default function PaymentStep({
         <div className="px-6 py-6">
           {/* Información del pedido */}
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <h3 className="text-sm font-medium text-gray-900 mb-2" style={{ fontFamily: 'var(--font-lato)' }}>
+            <h3
+              className="text-sm font-medium text-gray-900 mb-2"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Resumen del Pago
             </h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-700" style={{ fontFamily: 'var(--font-lato)' }}>Número de orden:</span>
-                <span className="font-medium text-gray-900" style={{ fontFamily: 'var(--font-lato)' }}>{orderId}</span>
+                <span
+                  className="text-gray-700"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Número de orden:
+                </span>
+                <span
+                  className="font-medium text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  {orderId}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-700" style={{ fontFamily: 'var(--font-lato)' }}>Total a pagar:</span>
-                <span className="font-bold text-lg text-gray-900" style={{ fontFamily: 'var(--font-lato)' }}>
+                <span
+                  className="text-gray-700"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Total a pagar:
+                </span>
+                <span
+                  className="font-bold text-lg text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   ${totalAmount.toLocaleString()} COP
                 </span>
               </div>
@@ -358,10 +437,16 @@ export default function PaymentStep({
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-bold text-blue-900" style={{ fontFamily: 'var(--font-lato)' }}>
+                <h3
+                  className="text-sm font-bold text-blue-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Pago Seguro con Wompi
                 </h3>
-                <p className="text-sm text-blue-800 mt-1" style={{ fontFamily: 'var(--font-lato)' }}>
+                <p
+                  className="text-sm text-blue-800 mt-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Wompi es la plataforma de pagos más segura de Colombia. Al
                   hacer clic en "Pagar con Wompi" podrás elegir entre tarjetas
                   de crédito/débito, PSE, Nequi, Daviplata y más métodos de
@@ -373,7 +458,10 @@ export default function PaymentStep({
                       wompiScriptLoaded ? "bg-green-500" : "bg-yellow-500"
                     }`}
                   ></div>
-                  <span className="text-xs font-medium text-blue-700" style={{ fontFamily: 'var(--font-lato)' }}>
+                  <span
+                    className="text-xs font-medium text-blue-700"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     {wompiScriptLoaded ? "Wompi listo" : "Cargando Wompi..."}
                   </span>
                 </div>
@@ -389,7 +477,7 @@ export default function PaymentStep({
                 checkoutState.loading || showWompiWidget || !wompiScriptLoaded
               }
               className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center"
-              style={{ fontFamily: 'var(--font-lato)' }}
+              style={{ fontFamily: "var(--font-lato)" }}
             >
               {!wompiScriptLoaded ? (
                 <>
@@ -425,23 +513,38 @@ export default function PaymentStep({
 
             {/* Métodos de pago aceptados */}
             <div className="text-center">
-              <p className="text-xs font-medium text-gray-700 mb-2" style={{ fontFamily: 'var(--font-lato)' }}>
+              <p
+                className="text-xs font-medium text-gray-700 mb-2"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 Métodos de pago aceptados:
               </p>
               <div className="flex justify-center space-x-2 flex-wrap gap-2">
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5" style={{ fontFamily: 'var(--font-lato)' }}>
+                <span
+                  className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <CreditCard className="w-3 h-3" />
                   Tarjetas
                 </span>
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5" style={{ fontFamily: 'var(--font-lato)' }}>
+                <span
+                  className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <Building2 className="w-3 h-3" />
                   PSE
                 </span>
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5" style={{ fontFamily: 'var(--font-lato)' }}>
+                <span
+                  className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <Smartphone className="w-3 h-3" />
                   Nequi
                 </span>
-                <span className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5" style={{ fontFamily: 'var(--font-lato)' }}>
+                <span
+                  className="text-xs bg-gray-100 text-gray-800 font-medium px-3 py-1.5 rounded-md border border-gray-200 flex items-center gap-1.5"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <Banknote className="w-3 h-3" />
                   Daviplata
                 </span>
@@ -456,10 +559,16 @@ export default function PaymentStep({
                 <Shield className="w-5 h-5 text-yellow-600 mt-0.5" />
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-yellow-800" style={{ fontFamily: 'var(--font-lato)' }}>
+                <h3
+                  className="text-sm font-medium text-yellow-800"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Orden en Proceso
                 </h3>
-                <p className="text-sm text-yellow-700 mt-1" style={{ fontFamily: 'var(--font-lato)' }}>
+                <p
+                  className="text-sm text-yellow-700 mt-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Tu orden ya fue creada exitosamente. Complete el pago para
                   finalizar tu compra.
                 </p>

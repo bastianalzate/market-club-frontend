@@ -137,14 +137,17 @@ async function handleVoidedPayment(transactionId: string, reference: string) {
 async function confirmOrder(transactionId: string, reference: string) {
   console.log(`🔍 Confirming order with transaction_id: ${transactionId}, reference: ${reference}`);
   
+  // Usar la URL correcta del backend
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+  console.log(`🔗 Using API URL: ${API_URL}`);
+  
   try {
     // Primero intentar buscar por reference
     console.log(`🔍 Step 1: Searching order by reference: ${reference}`);
-    let response = await fetch(`${process.env.API_URL}/orders/confirm-by-reference`, {
+    let response = await fetch(`${API_URL}/orders/confirm-by-reference`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.API_SECRET_KEY}`,
       },
       body: JSON.stringify({
         reference: reference,
@@ -153,17 +156,20 @@ async function confirmOrder(transactionId: string, reference: string) {
     });
     
     if (response.ok) {
-      console.log(`✅ Order confirmed by reference: ${reference}`);
+      const data = await response.json();
+      console.log(`✅ Order confirmed by reference: ${reference}`, data);
       return;
     }
+    
+    const error1 = await response.text();
+    console.log(`⚠️ Confirm by reference failed (${response.status}): ${error1}`);
     
     // Si no funciona por reference, intentar por transaction_id
     console.log(`🔍 Step 2: Searching order by transaction_id: ${transactionId}`);
-    response = await fetch(`${process.env.API_URL}/orders/confirm-by-transaction`, {
+    response = await fetch(`${API_URL}/orders/confirm-by-transaction`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.API_SECRET_KEY}`,
       },
       body: JSON.stringify({
         transaction_id: transactionId,
@@ -172,17 +178,20 @@ async function confirmOrder(transactionId: string, reference: string) {
     });
     
     if (response.ok) {
-      console.log(`✅ Order confirmed by transaction_id: ${transactionId}`);
+      const data = await response.json();
+      console.log(`✅ Order confirmed by transaction_id: ${transactionId}`, data);
       return;
     }
     
+    const error2 = await response.text();
+    console.log(`⚠️ Confirm by transaction failed (${response.status}): ${error2}`);
+    
     // Si ninguno funciona, intentar el endpoint original
     console.log(`🔍 Step 3: Trying original confirm endpoint`);
-    response = await fetch(`${process.env.API_URL}/orders/confirm`, {
+    response = await fetch(`${API_URL}/orders/confirm`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.API_SECRET_KEY}`,
       },
       body: JSON.stringify({
         transaction_id: transactionId,
@@ -196,7 +205,8 @@ async function confirmOrder(transactionId: string, reference: string) {
       throw new Error(`Failed to confirm order. Status: ${response.status}`);
     }
     
-    console.log(`✅ Order confirmed using original endpoint`);
+    const data = await response.json();
+    console.log(`✅ Order confirmed using original endpoint`, data);
     
   } catch (error) {
     console.error(`❌ Error confirming order:`, error);
@@ -207,14 +217,17 @@ async function confirmOrder(transactionId: string, reference: string) {
 async function confirmSubscription(transactionId: string, reference: string) {
   console.log(`🔍 Confirming subscription with transaction_id: ${transactionId}, reference: ${reference}`);
   
+  // Usar la URL correcta del backend
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+  console.log(`🔗 Using API URL: ${API_URL}`);
+  
   try {
     // Primero intentar buscar por reference
     console.log(`🔍 Step 1: Searching subscription by reference: ${reference}`);
-    let response = await fetch(`${process.env.API_URL}/subscriptions/confirm-by-reference`, {
+    let response = await fetch(`${API_URL}/subscriptions/confirm-by-reference`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.API_SECRET_KEY}`,
       },
       body: JSON.stringify({
         reference: reference,
@@ -223,17 +236,20 @@ async function confirmSubscription(transactionId: string, reference: string) {
     });
     
     if (response.ok) {
-      console.log(`✅ Subscription confirmed by reference: ${reference}`);
+      const data = await response.json();
+      console.log(`✅ Subscription confirmed by reference: ${reference}`, data);
       return;
     }
+    
+    const error1 = await response.text();
+    console.log(`⚠️ Confirm subscription by reference failed (${response.status}): ${error1}`);
     
     // Si no funciona por reference, intentar por transaction_id
     console.log(`🔍 Step 2: Searching subscription by transaction_id: ${transactionId}`);
-    response = await fetch(`${process.env.API_URL}/subscriptions/confirm-by-transaction`, {
+    response = await fetch(`${API_URL}/subscriptions/confirm-by-transaction`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.API_SECRET_KEY}`,
       },
       body: JSON.stringify({
         transaction_id: transactionId,
@@ -242,17 +258,20 @@ async function confirmSubscription(transactionId: string, reference: string) {
     });
     
     if (response.ok) {
-      console.log(`✅ Subscription confirmed by transaction_id: ${transactionId}`);
+      const data = await response.json();
+      console.log(`✅ Subscription confirmed by transaction_id: ${transactionId}`, data);
       return;
     }
     
+    const error2 = await response.text();
+    console.log(`⚠️ Confirm subscription by transaction failed (${response.status}): ${error2}`);
+    
     // Si ninguno funciona, intentar el endpoint original
     console.log(`🔍 Step 3: Trying original subscription confirm endpoint`);
-    response = await fetch(`${process.env.API_URL}/subscriptions/confirm`, {
+    response = await fetch(`${API_URL}/subscriptions/confirm`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.API_SECRET_KEY}`,
       },
       body: JSON.stringify({
         transaction_id: transactionId,
@@ -266,7 +285,8 @@ async function confirmSubscription(transactionId: string, reference: string) {
       throw new Error(`Failed to confirm subscription. Status: ${response.status}`);
     }
     
-    console.log(`✅ Subscription confirmed using original endpoint`);
+    const data = await response.json();
+    console.log(`✅ Subscription confirmed using original endpoint`, data);
     
   } catch (error) {
     console.error(`❌ Error confirming subscription:`, error);
@@ -275,22 +295,35 @@ async function confirmSubscription(transactionId: string, reference: string) {
 }
 
 async function markPaymentAsFailed(reference: string, transactionId: string, reason: string) {
-  // TODO: Llamar a tu API para marcar el pago como fallido
-  const response = await fetch(`${process.env.API_URL}/payments/mark-failed`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.API_SECRET_KEY}`,
-    },
-    body: JSON.stringify({
-      reference: reference,
-      transaction_id: transactionId,
-      reason: reason,
-    }),
-  });
+  // Usar la URL correcta del backend
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+  console.log(`🔗 Using API URL: ${API_URL}`);
+  console.log(`⚠️ Marking payment as failed: ${transactionId}, reference: ${reference}, reason: ${reason}`);
   
-  if (!response.ok) {
-    throw new Error('Failed to mark payment as failed');
+  try {
+    const response = await fetch(`${API_URL}/payments/mark-failed`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        reference: reference,
+        transaction_id: transactionId,
+        reason: reason,
+      }),
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`❌ Failed to mark payment as failed (${response.status}): ${errorText}`);
+      throw new Error('Failed to mark payment as failed');
+    }
+    
+    const data = await response.json();
+    console.log(`✅ Payment marked as failed successfully`, data);
+  } catch (error) {
+    console.error(`❌ Error marking payment as failed:`, error);
+    throw error;
   }
 }
 
