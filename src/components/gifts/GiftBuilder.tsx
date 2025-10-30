@@ -155,6 +155,7 @@ export default function GiftBuilder() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [showConstructionModal, setShowConstructionModal] = useState(false);
 
   // Referencia para el scroll al título de cervezas
   const cervezasTitleRef = useRef<HTMLDivElement>(null);
@@ -325,6 +326,10 @@ export default function GiftBuilder() {
 
   // Función para agregar el regalo al carrito
   const handleAddGiftToCart = async () => {
+    // Mostrar modal de construcción
+    setShowConstructionModal(true);
+    return;
+
     if (!giftBuilder.selectedBox || giftBuilder.selectedBeers.length === 0) {
       showError(
         "Regalo incompleto",
@@ -475,90 +480,36 @@ export default function GiftBuilder() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-                {giftBoxes.map((box) => (
-                  <div
-                    key={box.id}
-                    onClick={() => selectBox(box)}
-                    className={`border-2 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg group relative ${
-                      giftBuilder.selectedBox?.id === box.id
-                        ? "border-[#B58E31] bg-[#B58E31]/5 shadow-lg"
-                        : "border-gray-200 hover:border-[#B58E31]"
-                    }`}
+              {/* Mensaje de Página en Construcción */}
+              <div className="text-center py-12">
+                <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-[#B58E31] to-[#D4A853] rounded-full mb-6 shadow-lg">
+                  <svg
+                    className="w-12 h-12 text-white"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    {box.recommended && (
-                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                        <span className="bg-gradient-to-r from-[#B58E31] to-[#D4A853] text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg border-2 border-white whitespace-nowrap">
-                          ⭐ Recomendada
-                        </span>
-                      </div>
-                    )}
-
-                    {giftBuilder.selectedBox?.id === box.id && (
-                      <div className="absolute top-4 right-4">
-                        <div className="w-6 h-6 bg-[#B58E31] rounded-full flex items-center justify-center">
-                          <Check className="w-4 h-4 text-white" />
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="text-center">
-                      <div
-                        className={`w-20 h-20 rounded-xl mx-auto mb-4 flex items-center justify-center transition-all duration-300 ${
-                          giftBuilder.selectedBox?.id === box.id
-                            ? "bg-gradient-to-r from-[#B58E31] to-[#D4A853] shadow-lg"
-                            : "bg-gray-100 group-hover:bg-[#B58E31]"
-                        }`}
-                      >
-                        <Gift
-                          className={`w-10 h-10 transition-colors ${
-                            giftBuilder.selectedBox?.id === box.id
-                              ? "text-white"
-                              : "text-gray-600 group-hover:text-white"
-                          }`}
-                        />
-                      </div>
-
-                      <h3
-                        className="text-lg font-semibold text-gray-900 mb-2"
-                        style={{ fontFamily: "var(--font-lato)" }}
-                      >
-                        {box.name}
-                      </h3>
-                      <p
-                        className="text-sm text-gray-600 mb-2"
-                        style={{ fontFamily: "var(--font-lato)" }}
-                      >
-                        {box.description}
-                      </p>
-                      <p
-                        className="text-sm text-gray-500 mb-3"
-                        style={{ fontFamily: "var(--font-lato)" }}
-                      >
-                        Hasta {box.maxBeers} cervezas
-                      </p>
-                      <p
-                        className="text-sm text-gray-500 mb-3"
-                        style={{ fontFamily: "var(--font-lato)" }}
-                      >
-                        {box.dimensions}
-                      </p>
-                      <div
-                        className="flex items-center justify-center text-xs text-gray-500 mb-3"
-                        style={{ fontFamily: "var(--font-lato)" }}
-                      >
-                        <Clock className="w-4 h-4 mr-1" />
-                        {box.deliveryTime}
-                      </div>
-                      <p
-                        className="text-2xl font-bold text-[#B58E31]"
-                        style={{ fontFamily: "var(--font-lato)" }}
-                      >
-                        {formatPrice(box.price)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                    <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                </div>
+                <h3
+                  className="text-2xl font-bold text-gray-900 mb-3"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Página en Construcción
+                </h3>
+                <p
+                  className="text-gray-600 max-w-md mx-auto"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Estamos trabajando en mejorar esta funcionalidad para
+                  ofrecerte la mejor experiencia. Muy pronto podrás elegir tu
+                  caja perfecta.
+                </p>
               </div>
             </div>
 
@@ -1119,6 +1070,96 @@ export default function GiftBuilder() {
         type={notification.type}
         duration={4000}
       />
+
+      {/* Modal de Construcción */}
+      {showConstructionModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-all duration-300"
+            onClick={() => setShowConstructionModal(false)}
+          />
+
+          {/* Modal */}
+          <div className="flex min-h-full items-center justify-center p-4">
+            <div
+              className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-[#B58E31] to-[#D4A853] rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5 text-white"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                  </div>
+                  <h2
+                    className="text-xl font-bold text-gray-900"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    Sección en Construcción
+                  </h2>
+                </div>
+                <button
+                  onClick={() => setShowConstructionModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+                  aria-label="Cerrar modal"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="p-8 text-center">
+                <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-[#B58E31] to-[#D4A853] rounded-full mb-6 shadow-lg">
+                  <svg
+                    className="w-12 h-12 text-white"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                  </svg>
+                </div>
+                <h3
+                  className="text-2xl font-bold text-gray-900 mb-3"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Estamos Trabajando
+                </h3>
+                <p
+                  className="text-gray-600 mb-6"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Actualmente estamos construyendo esta sección para ofrecerte
+                  la mejor experiencia. Muy pronto podrás armar tu regalo
+                  personalizado.
+                </p>
+                <button
+                  onClick={() => setShowConstructionModal(false)}
+                  className="w-full bg-gradient-to-r from-[#B58E31] to-[#D4A853] text-white py-3 px-4 rounded-lg font-medium transition-all duration-300 hover:shadow-lg"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Entendido
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
