@@ -32,67 +32,70 @@ export default function CheckoutFlow() {
   // Ejecutar consulta cuando llegue al paso 4
   useEffect(() => {
     if (checkoutState.currentStep === 4) {
-      console.log("🚀 STEP 4 REACHED - Making API call to get order status");
+      console.log("🚀 STEP 4 REACHED - Will check order status");
 
       // Obtener orderId de la URL o del estado
       const urlParams = new URLSearchParams(window.location.search);
       const orderId = urlParams.get("order_id") || checkoutState.orderId;
 
       if (orderId) {
-        console.log("🔍 Fetching order status for:", orderId);
+        console.log("🔍 Will check order status for:", orderId);
 
-        // Verificar si el usuario está autenticado
-        const token = localStorage.getItem("token");
-        const isAuthenticated = !!token;
+        // Función para verificar el estado del pago
+        const checkPaymentStatus = async (retryCount = 0) => {
+          const MAX_RETRIES = 5; // Máximo 5 intentos
+          const RETRY_DELAY = 2000; // 2 segundos entre intentos
 
-        console.log("🔍 User authentication status:", isAuthenticated);
+          try {
+            console.log(
+              `🔍 Checking payment status (attempt ${
+                retryCount + 1
+              }/${MAX_RETRIES})...`
+            );
 
-        // Usar ruta diferente según el estado de autenticación
-        const apiUrl = isAuthenticated
-          ? `${process.env.NEXT_PUBLIC_API_URL}/user/orders/${orderId}`
-          : `${process.env.NEXT_PUBLIC_API_URL}/payments/check-status`;
+            // Verificar si el usuario está autenticado
+            const token = localStorage.getItem("token");
+            const isAuthenticated = !!token;
 
-        const requestOptions: RequestInit = isAuthenticated
-          ? {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          : {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ order_id: orderId }),
-            };
+            console.log("🔍 User authentication status:", isAuthenticated);
 
-        // HACER LA CONSULTA A LA API
-        fetch(apiUrl, requestOptions)
-          .then((response) => {
+            // Usar ruta diferente según el estado de autenticación
+            const apiUrl = isAuthenticated
+              ? `${process.env.NEXT_PUBLIC_API_URL}/user/orders/${orderId}`
+              : `${process.env.NEXT_PUBLIC_API_URL}/payments/check-status`;
+
+            const requestOptions: RequestInit = isAuthenticated
+              ? {
+                  method: "GET",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              : {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ order_id: orderId }),
+                };
+
+            const response = await fetch(apiUrl, requestOptions);
             console.log("🔍 API Response status:", response.status);
-            return response.json();
-          })
-          .then((data) => {
+            const data = await response.json();
             console.log("🔍 API Response data:", data);
-            console.log("🔍 Full response object:", data.data);
 
             if (data.success && data.data) {
               const responseData = data.data;
 
               // Manejar diferentes estructuras de respuesta según la ruta
-              const paymentStatus = isAuthenticated
-                ? responseData.payment_status // Ruta autenticada: /user/orders/{id}
-                : responseData.payment_status; // Ruta pública: /payments/check-status
-
+              const paymentStatus = responseData.payment_status;
               const orderStatus = isAuthenticated
                 ? responseData.status
                 : responseData.order_status;
 
               console.log("🔍 Payment status from API:", paymentStatus);
               console.log("🔍 Order status from API:", orderStatus);
-              console.log("🔍 All response fields:", Object.keys(responseData));
 
               // Normalizar el payment_status para comparación robusta
               const normalizedPaymentStatus = paymentStatus
@@ -107,6 +110,7 @@ export default function CheckoutFlow() {
                   "Pago exitoso",
                   "Tu pago ha sido procesado exitosamente"
                 );
+                return; // Salir del loop de reintentos
               } else if (normalizedPaymentStatus === "failed") {
                 console.log("❌ Payment is FAILED - showing failed");
                 setOrderStatus("failed");
@@ -114,42 +118,86 @@ export default function CheckoutFlow() {
                   "Pago fallido",
                   "Tu pago no pudo ser procesado. Por favor intenta nuevamente."
                 );
+                return; // Salir del loop de reintentos
               } else if (normalizedPaymentStatus === "pending") {
-                console.log("⏳ Payment is PENDING - showing pending");
-                setOrderStatus("pending");
-                showError(
-                  "Pago pendiente",
-                  "Tu pago está siendo procesado. Te notificaremos cuando esté confirmado."
+                // Si está pendiente y aún tenemos reintentos, esperar y reintentar
+                if (retryCount < MAX_RETRIES - 1) {
+                  console.log(
+                    `⏳ Payment is PENDING - retrying in ${RETRY_DELAY}ms...`
+                  );
+                  setTimeout(
+                    () => checkPaymentStatus(retryCount + 1),
+                    RETRY_DELAY
+                  );
+                } else {
+                  // Si alcanzamos el máximo de reintentos, mostrar pendiente
+                  console.log("⏳ Payment is still PENDING after max retries");
+                  setOrderStatus("pending");
+                  // No mostrar mensaje de error ni éxito, solo actualizar el estado visual
+                }
+                return;
+              } else {
+                // Estado desconocido - reintentar si es posible
+                if (retryCount < MAX_RETRIES - 1) {
+                  console.log(
+                    `❓ Unknown status: ${paymentStatus} - retrying in ${RETRY_DELAY}ms...`
+                  );
+                  setTimeout(
+                    () => checkPaymentStatus(retryCount + 1),
+                    RETRY_DELAY
+                  );
+                } else {
+                  console.log(
+                    "❓ Unknown payment status after max retries:",
+                    paymentStatus
+                  );
+                  setOrderStatus("failed");
+                  showError(
+                    "Error de pago",
+                    "No se pudo verificar el estado de tu pago. Por favor contacta con soporte."
+                  );
+                }
+              }
+            } else {
+              // Error en la respuesta - reintentar si es posible
+              if (retryCount < MAX_RETRIES - 1) {
+                console.log(
+                  `❌ Invalid API response - retrying in ${RETRY_DELAY}ms...`
+                );
+                setTimeout(
+                  () => checkPaymentStatus(retryCount + 1),
+                  RETRY_DELAY
                 );
               } else {
-                console.log(
-                  "❓ Unknown payment status:",
-                  paymentStatus,
-                  "- showing failed"
-                );
+                console.log("❌ Invalid API response after max retries");
                 setOrderStatus("failed");
                 showError(
                   "Error de pago",
                   "No se pudo verificar el estado de tu pago. Por favor contacta con soporte."
                 );
               }
+            }
+          } catch (error) {
+            console.error("❌ API Error:", error);
+            // Reintentar si es posible
+            if (retryCount < MAX_RETRIES - 1) {
+              console.log(
+                `❌ Error in API call - retrying in ${RETRY_DELAY}ms...`
+              );
+              setTimeout(() => checkPaymentStatus(retryCount + 1), RETRY_DELAY);
             } else {
-              console.log("❌ Invalid API response - showing failed");
+              console.error("❌ API Error after max retries:", error);
               setOrderStatus("failed");
               showError(
                 "Error de pago",
                 "No se pudo verificar el estado de tu pago. Por favor contacta con soporte."
               );
             }
-          })
-          .catch((error) => {
-            console.error("❌ API Error:", error);
-            setOrderStatus("failed");
-            showError(
-              "Error de pago",
-              "No se pudo verificar el estado de tu pago. Por favor contacta con soporte."
-            );
-          });
+          }
+        };
+
+        // Iniciar la verificación después de un breve delay para dar tiempo al webhook
+        setTimeout(() => checkPaymentStatus(0), 1000);
       }
     }
   }, [checkoutState.currentStep]);
