@@ -124,31 +124,31 @@ export default function Footer() {
             <ul className="mt-2 space-y-1">
               <li>
                 <Link
-                  href="/privacy-policy"
+                  href="/politica-de-privacidad"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
-                  Políticas de privacidad
+                  Política de privacidad
                 </Link>
               </li>
 
               <li>
                 <Link
-                  href="/shipping-policy"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
-                  style={{ fontFamily: "var(--font-lato)" }}
-                >
-                  Políticas de envío
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/terms-and-conditions"
+                  href="/terminos-y-condiciones"
                   className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Términos y condiciones
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/politica-de-devoluciones"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Política de devoluciones
                 </Link>
               </li>
             </ul>
