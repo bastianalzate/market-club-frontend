@@ -272,13 +272,14 @@ export default function CheckoutFlow() {
             return sum + parseFloat(String(item.unit_price)) * item.quantity;
           }, 0) || 0;
 
-        // NO agregar impuestos ni envío - cobrar solo el precio de las cervezas
+        // Agregar tarifa de envío fija de $12,000 (sin impuestos)
+        const SHIPPING_FEE = 12000;
         const orderData = {
           items: cart.items,
           subtotal: manualSubtotal,
-          shipping_amount: 0,
+          shipping_amount: SHIPPING_FEE,
           tax_amount: 0,
-          total_amount: manualSubtotal, // Total = Subtotal (sin impuestos ni envío)
+          total_amount: manualSubtotal + SHIPPING_FEE, // Total = Subtotal + Envío (sin impuestos)
         };
         console.log("💾 Saving order data:", orderData);
 
@@ -720,7 +721,34 @@ export default function CheckoutFlow() {
                                     )}
                                   </span>
                                 </div>
-                                {/* Impuestos y envío no se cobran */}
+                                {/* Envío */}
+                                {checkoutState.orderData?.shipping_amount &&
+                                  checkoutState.orderData.shipping_amount >
+                                    0 && (
+                                    <div className="flex justify-between">
+                                      <span
+                                        className="text-gray-900"
+                                        style={{
+                                          fontFamily: "var(--font-lato)",
+                                        }}
+                                      >
+                                        Envío:
+                                      </span>
+                                      <span
+                                        className="font-medium text-gray-900"
+                                        style={{
+                                          fontFamily: "var(--font-lato)",
+                                        }}
+                                      >
+                                        $
+                                        {new Intl.NumberFormat("es-CO").format(
+                                          checkoutState.orderData
+                                            ?.shipping_amount || 0
+                                        )}
+                                      </span>
+                                    </div>
+                                  )}
+                                {/* Impuestos no se cobran */}
                                 <div className="flex justify-between border-t pt-2 font-semibold text-lg">
                                   <span
                                     className="text-black"
@@ -822,17 +850,7 @@ export default function CheckoutFlow() {
                     <>
                       <PaymentStep
                         orderId={checkoutState.orderId}
-                        totalAmount={
-                          // Usar el subtotal directamente (sin impuestos ni envío)
-                          // para asegurar que se cobre el monto correcto
-                          cart?.items?.reduce(
-                            (sum, item) =>
-                              sum +
-                              parseFloat(String(item.unit_price)) *
-                                item.quantity,
-                            0
-                          ) || parseFloat(String(orderData.total_amount))
-                        }
+                        totalAmount={parseFloat(String(orderData.total_amount))}
                         customerEmail={
                           shippingAddress?.email || "usuario@ejemplo.com"
                         } // Email requerido por Wompi
@@ -1014,7 +1032,21 @@ export default function CheckoutFlow() {
                             )}
                           </span>
                         </div>
-                        {/* Envío e impuestos no se cobran */}
+                        <div className="flex justify-between text-xs sm:text-sm">
+                          <span
+                            className="text-gray-600"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
+                            Envío:
+                          </span>
+                          <span
+                            className="font-semibold text-gray-900"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
+                            {formatPrice(12000)}
+                          </span>
+                        </div>
+                        {/* Impuestos no se cobran */}
                         <div className="flex justify-between text-base sm:text-lg font-bold border-t border-gray-200 pt-2 sm:pt-3">
                           <span
                             className="text-gray-900"
@@ -1028,13 +1060,13 @@ export default function CheckoutFlow() {
                           >
                             {formatPrice(
                               currentStep < 3
-                                ? cart?.items?.reduce(
+                                ? (cart?.items?.reduce(
                                     (sum, item) =>
                                       sum +
                                       parseFloat(String(item.unit_price)) *
                                         item.quantity,
                                     0
-                                  ) || 0
+                                  ) || 0) + 12000
                                 : orderData?.total_amount || 0
                             )}
                           </span>

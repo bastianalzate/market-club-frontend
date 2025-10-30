@@ -44,8 +44,9 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
       return sum + parseFloat(String(item.unit_price)) * item.quantity;
     }, 0) || 0;
 
-  // NO agregar impuestos ni envío - cobrar solo el precio de las cervezas
-  const manualTotal = manualSubtotal;
+  // Agregar tarifa de envío fija de $12,000 (sin impuestos)
+  const SHIPPING_FEE = 12000;
+  const manualTotal = manualSubtotal + SHIPPING_FEE;
 
   if (itemsCount === 0) {
     return (
@@ -180,7 +181,22 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
             </span>
           </div>
 
-          {/* Impuestos y envío no se cobran */}
+          <div className="flex justify-between text-xs sm:text-sm">
+            <span
+              className="text-gray-600"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              Envío:
+            </span>
+            <span
+              className="font-semibold text-gray-900"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              {formatPrice(12000)}
+            </span>
+          </div>
+
+          {/* Impuestos no se cobran */}
 
           <div className="flex justify-between text-base sm:text-lg font-bold border-t border-gray-200 pt-2 sm:pt-3">
             <span

@@ -82,7 +82,7 @@ export default function ProductFilters({
           const match = range.match(/(\d+)k?-(\d+)k?/);
           return match ? parseInt(match[1]) * 1000 : 0;
         };
-        
+
         return getMinValue(a) - getMinValue(b);
       })
       .map((range) => ({
@@ -95,20 +95,20 @@ export default function ProductFilters({
     <div id="product-filters" className="lg:w-64 space-y-6">
       {/* Barra de búsqueda */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white" />
         <input
           type="text"
           placeholder="Buscar cervezas..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent"
+          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-white placeholder:text-white"
           style={{ fontFamily: "var(--font-lato)" }}
         />
       </div>
 
       {/* Filtros */}
       <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h3 
+        <h3
           className="font-semibold text-gray-900 mb-4 flex items-center"
           style={{ fontFamily: "var(--font-lato)" }}
         >
@@ -118,7 +118,7 @@ export default function ProductFilters({
 
         {/* País de origen */}
         <div className="space-y-3">
-          <h4 
+          <h4
             className="text-sm font-medium text-gray-700 flex items-center"
             style={{ fontFamily: "var(--font-lato)" }}
           >
@@ -145,7 +145,7 @@ export default function ProductFilters({
 
         {/* Categorías */}
         <div className="space-y-3 mt-6">
-          <h4 
+          <h4
             className="text-sm font-medium text-gray-700 flex items-center"
             style={{ fontFamily: "var(--font-lato)" }}
           >
@@ -173,7 +173,7 @@ export default function ProductFilters({
         {/* Rango de Precios */}
         {!hidePriceFilter && (
           <div className="space-y-3 mt-6">
-            <h4 
+            <h4
               className="text-sm font-medium text-gray-700 flex items-center"
               style={{ fontFamily: "var(--font-lato)" }}
             >
@@ -201,7 +201,7 @@ export default function ProductFilters({
 
         {/* Tipo de Empaque */}
         <div className="space-y-3 mt-6">
-          <h4 
+          <h4
             className="text-sm font-medium text-gray-700 flex items-center"
             style={{ fontFamily: "var(--font-lato)" }}
           >

@@ -436,7 +436,19 @@ export default function OrderDetailsModal({
                           {formatPrice(orderDetails.subtotal)}
                         </span>
                       </div>
-                      {/* Envío e impuestos no se cobran */}
+                      {/* Envío */}
+                      {orderDetails.shipping_amount > 0 && (
+                        <div
+                          className="flex justify-between text-sm"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
+                          <span className="text-gray-600">Envío:</span>
+                          <span className="font-medium text-gray-900">
+                            {formatPrice(orderDetails.shipping_amount)}
+                          </span>
+                        </div>
+                      )}
+                      {/* Impuestos no se cobran */}
                       <div
                         className="border-t border-gray-200 pt-3"
                         style={{ fontFamily: "var(--font-lato)" }}
