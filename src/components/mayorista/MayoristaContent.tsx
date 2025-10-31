@@ -5,12 +5,14 @@ import CategoryIcons from "@/components/tienda/CategoryIcons";
 import ProductFilters from "@/components/tienda/ProductFilters";
 import MayoristaProductGrid from "./MayoristaProductGrid";
 import WholesalerCartDrawer from "./WholesalerCartDrawer";
-import FloatingWhatsAppButton from "./FloatingWhatsAppButton";
 import MarketClubBanner from "@/components/home/MarketClubBanner";
 import ServicesBanner from "@/components/home/ServicesBanner";
 import { useMayoristaProducts } from "@/hooks/useMayoristaProducts";
-import { WholesalerCartProvider, useWholesalerCartContext } from "@/contexts/WholesalerCartContext";
-import { MessageCircle } from "lucide-react";
+import {
+  WholesalerCartProvider,
+  useWholesalerCartContext,
+} from "@/contexts/WholesalerCartContext";
+import { ShoppingCart } from "lucide-react";
 
 function MayoristaContentInner() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -83,14 +85,14 @@ function MayoristaContentInner() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-          <p 
+          <p
             className="text-gray-600"
             style={{ fontFamily: "var(--font-lato)" }}
           >
             Cargando productos mayoristas...
           </p>
           {pagination.total > 0 && (
-            <p 
+            <p
               className="text-sm text-gray-500 mt-2"
               style={{ fontFamily: "var(--font-lato)" }}
             >
@@ -108,13 +110,13 @@ function MayoristaContentInner() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 
+          <h2
             className="text-2xl font-bold text-gray-800 mb-2"
             style={{ fontFamily: "var(--font-oswald)" }}
           >
             Error al cargar productos
           </h2>
-          <p 
+          <p
             className="text-gray-600 mb-4"
             style={{ fontFamily: "var(--font-lato)" }}
           >
@@ -143,13 +145,13 @@ function MayoristaContentInner() {
           {/* Header con título y botón del carrito */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div>
-              <h2 
+              <h2
                 className="text-[30px] sm:text-2xl font-bold text-white mb-2"
                 style={{ fontFamily: "var(--font-oswald)" }}
               >
                 Productos mayoristas
               </h2>
-              <p 
+              <p
                 className="text-gray-300 text-sm sm:text-base"
                 style={{ fontFamily: "var(--font-lato)" }}
               >
@@ -158,7 +160,7 @@ function MayoristaContentInner() {
                   : `${pagination.total} productos disponibles`}
               </p>
             </div>
-            
+
             {/* Botón del carrito */}
             <button
               onClick={() => setIsCartOpen(true)}
@@ -173,15 +175,15 @@ function MayoristaContentInner() {
                 (e.currentTarget.style.backgroundColor = "#B58E31")
               }
             >
-              <MessageCircle className="w-3 h-3 sm:w-5 sm:h-5" />
-              <span 
+              <ShoppingCart className="w-3 h-3 sm:w-5 sm:h-5" />
+              <span
                 className="whitespace-nowrap"
                 style={{ fontFamily: "var(--font-lato)" }}
               >
                 Cotizar WhatsApp
               </span>
               {itemsCount > 0 && (
-                <span 
+                <span
                   className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
@@ -233,9 +235,6 @@ function MayoristaContentInner() {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
       />
-
-      {/* Floating WhatsApp Button */}
-      <FloatingWhatsAppButton onOpenCart={() => setIsCartOpen(true)} />
     </div>
   );
 }
@@ -248,7 +247,7 @@ export default function MayoristaContent() {
           <div className="min-h-screen flex items-center justify-center">
             <div className="text-center">
               <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-              <p 
+              <p
                 className="text-gray-600"
                 style={{ fontFamily: "var(--font-lato)" }}
               >

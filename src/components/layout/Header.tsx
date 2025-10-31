@@ -335,6 +335,7 @@ export default function Header() {
                 <button
                   onClick={handleOpenWholesalerCart}
                   className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative cursor-pointer"
+                  title="Ver carrito de cotización"
                 >
                   <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                   {wholesalerCartContext.itemsCount > 0 && (
@@ -490,6 +491,7 @@ export default function Header() {
                 <button
                   onClick={handleOpenWholesalerCart}
                   className="p-1.5 text-gray-700 hover:text-gray-900 transition-colors relative cursor-pointer"
+                  title="Ver carrito de cotización"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   {wholesalerCartContext.itemsCount > 0 && (
