@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useCartContext } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/useToast";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, ChevronDown } from "lucide-react";
 import LazyImage from "@/components/shared/LazyImage";
 import Toast from "@/components/shared/Toast";
 import { API_CONFIG } from "@/config/api";
@@ -245,31 +245,14 @@ export default function ProductDetailPage() {
           <div className="relative bg-white">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-8 lg:gap-x-10 xl:gap-x-20">
               {/* Imagen del producto - Lado izquierdo */}
-              <div className="relative lg:col-span-5">
-                {images.length > 0 ? (
+              <div className="relative lg:col-span-5 min-h-[500px] sm:min-h-[600px] lg:min-h-[700px]">
+                <div className="w-full h-full flex items-center justify-center">
                   <LazyImage
-                    src={images[selectedImage]}
+                    src={images.length > 0 ? images[selectedImage] : null}
                     alt={product.name}
-                    className="object-cover w-full h-full sm:rounded-md"
+                    className="object-contain w-full h-full max-w-md sm:max-w-lg lg:max-w-xl sm:rounded-md"
                   />
-                ) : (
-                  <div className="w-full h-96 bg-gray-200 flex items-center justify-center rounded-md">
-                    <div className="text-center">
-                      <div
-                        className="text-gray-500 text-lg mb-2"
-                        style={{ fontFamily: "var(--font-lato)" }}
-                      >
-                        Sin imagen
-                      </div>
-                      <div
-                        className="text-gray-400 text-sm"
-                        style={{ fontFamily: "var(--font-lato)" }}
-                      >
-                        Imagen no disponible
-                      </div>
-                    </div>
-                  </div>
-                )}
+                </div>
 
                 {images.length > 1 && (
                   <div className="absolute -translate-x-1/2 left-1/2 bottom-6">
@@ -368,15 +351,10 @@ export default function ProductDetailPage() {
                     {product.product_specific_data?.country_of_origin ||
                       "Importada"}
                   </li>
-                  <li>
-                    Presentación: {product.packaging_type || "Botella"}{" "}
-                    {product.volume_ml || "500"}ml
-                  </li>
-                  <li>SKU: {product.sku}</li>
                   <li>Categoría: {product.category.name}</li>
                 </ul>
 
-                <div className="inline-grid grid-cols-2 gap-4 mt-10 sm:grid-cols-3 sm:gap-0">
+                <div className="inline-grid grid-cols-2 gap-4 mt-10 sm:gap-0">
                   <div className="rounded-lg bg-gray-50 sm:rounded-r-none">
                     <div className="px-5 py-4">
                       <p
@@ -390,35 +368,26 @@ export default function ProductDetailPage() {
                           className="block w-full py-1 pl-0 pr-8 font-medium text-gray-900"
                           style={{ fontFamily: "var(--font-lato)" }}
                         >
-                          {product.packaging_type || "Botella"}{" "}
-                          {product.volume_ml || "500"}ml
+                          {(() => {
+                            const packagingType =
+                              product.product_specific_data?.packaging_type ||
+                              product.packaging_type ||
+                              "Botella";
+                            const volume =
+                              product.product_specific_data?.volume_ml ||
+                              product.volume_ml ||
+                              "500";
+                            const capitalizedType =
+                              packagingType.charAt(0).toUpperCase() +
+                              packagingType.slice(1).toLowerCase();
+                            return `${capitalizedType} ${volume}ml`;
+                          })()}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="rounded-lg bg-gray-50 sm:rounded-none">
-                    <div className="px-5 py-4">
-                      <p
-                        className="text-xs font-medium tracking-widest text-gray-500 uppercase"
-                        style={{ fontFamily: "var(--font-lato)" }}
-                      >
-                        Stock
-                      </p>
-                      <div className="relative mt-1">
-                        <span
-                          className="block w-full py-1 pl-0 pr-8 font-medium text-gray-900"
-                          style={{ fontFamily: "var(--font-lato)" }}
-                        >
-                          {product.stock_quantity > 0
-                            ? `${product.stock_quantity} disponibles`
-                            : "Agotado"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-span-2 sm:col-span-1 sm:rounded-r-lg sm:bg-gray-50 sm:flex sm:items-center sm:justify-center">
+                  <div className="rounded-lg bg-gray-50 sm:rounded-l-none sm:rounded-r-lg sm:flex sm:items-center sm:justify-center">
                     <div className="py-2 sm:px-5 sm:py-4">
                       {product.sale_price &&
                       parseFloat(product.sale_price) <
@@ -489,6 +458,21 @@ export default function ProductDetailPage() {
               </div>
             </div>
           </div>
+
+          {/* Flecha animada para indicar scroll hacia la descripción - Centrada en la pantalla */}
+          {product.description && (
+            <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+              <div className="flex flex-col items-center">
+                <p
+                  className="text-sm text-gray-500 mb-2"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Desplázate para ver más
+                </p>
+                <ChevronDown className="w-6 h-6 text-gray-400 animate-bounce" />
+              </div>
+            </div>
+          )}
 
           {/* Descripción del producto - Abajo, después del grid */}
           {product.description && (

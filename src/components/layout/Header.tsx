@@ -6,7 +6,9 @@ import { Search, Menu, X, ShoppingCart, User, LogOut } from "lucide-react";
 import { useState, useMemo, useCallback, memo, useRef, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import CartDrawer from "../../features/cart/components/CartDrawer";
+import WholesalerCartDrawer from "../mayorista/WholesalerCartDrawer";
 import { useCartContext } from "@/contexts/CartContext";
+import { useWholesalerCartContext } from "@/contexts/WholesalerCartContext";
 import LoginModal from "../auth/LoginModal";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -94,11 +96,17 @@ export default function Header() {
   // Solo obtener lo que necesitamos del carrito para evitar re-renders innecesarios
   const { itemsCount } = useCartContext();
 
+  // Carrito mayorista
+  const wholesalerCartContext = useWholesalerCartContext();
+
   // Log para debugging
   console.log("🛒 Header render:", { itemsCount });
 
   // Estado local para el carrito drawer
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Estado local para el drawer del carrito mayorista
+  const [isWholesalerCartOpen, setIsWholesalerCartOpen] = useState(false);
 
   // Función optimizada para abrir el carrito
   const handleOpenCart = useCallback(() => {
@@ -108,6 +116,16 @@ export default function Header() {
   // Función optimizada para cerrar el carrito
   const handleCloseCart = useCallback(() => {
     setIsCartOpen(false);
+  }, []);
+
+  // Función para abrir el drawer del carrito mayorista
+  const handleOpenWholesalerCart = useCallback(() => {
+    setIsWholesalerCartOpen(true);
+  }, []);
+
+  // Función para cerrar el drawer del carrito mayorista
+  const handleCloseWholesalerCart = useCallback(() => {
+    setIsWholesalerCartOpen(false);
   }, []);
 
   // Funciones para manejar el buscador
@@ -312,6 +330,21 @@ export default function Header() {
                 </button>
               )}
 
+              {/* Cart Mayorista - Solo mostrar para usuarios mayoristas */}
+              {isAuthenticated && user?.is_wholesaler && (
+                <button
+                  onClick={handleOpenWholesalerCart}
+                  className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative cursor-pointer"
+                >
+                  <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+                  {wholesalerCartContext.itemsCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center text-[10px] sm:text-xs">
+                      {wholesalerCartContext.itemsCount}
+                    </span>
+                  )}
+                </button>
+              )}
+
               {/* User Profile */}
               <div className="hidden sm:block">
                 <UserProfile />
@@ -447,6 +480,21 @@ export default function Header() {
                   {itemsCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                       {itemsCount}
+                    </span>
+                  )}
+                </button>
+              )}
+
+              {/* Cart Mayorista - Solo mostrar para usuarios mayoristas */}
+              {isAuthenticated && user?.is_wholesaler && (
+                <button
+                  onClick={handleOpenWholesalerCart}
+                  className="p-1.5 text-gray-700 hover:text-gray-900 transition-colors relative cursor-pointer"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  {wholesalerCartContext.itemsCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {wholesalerCartContext.itemsCount}
                     </span>
                   )}
                 </button>
@@ -723,6 +771,12 @@ export default function Header() {
 
         {/* Cart Drawer */}
         <CartDrawer isOpen={isCartOpen} onClose={handleCloseCart} />
+
+        {/* Wholesaler Cart Drawer */}
+        <WholesalerCartDrawer
+          isOpen={isWholesalerCartOpen}
+          onClose={handleCloseWholesalerCart}
+        />
 
         {/* Login Modal */}
         <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />

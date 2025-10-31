@@ -67,7 +67,30 @@ export function WholesalerCartProvider({ children }: WholesalerCartProviderProps
 export function useWholesalerCartContext() {
   const context = useContext(WholesalerCartContext);
   if (context === undefined) {
-    throw new Error("useWholesalerCartContext must be used within a WholesalerCartProvider");
+    // Devolver valores por defecto en lugar de lanzar error
+    return {
+      cart: null,
+      itemsCount: 0,
+      subtotal: 0,
+      taxAmount: 0,
+      shippingAmount: 0,
+      discountAmount: 0,
+      totalAmount: 0,
+      loading: false,
+      error: null,
+      lastUpdated: null,
+      wholesalerDiscount: 0,
+      loadCart: async () => {},
+      addToCart: async () => ({ success: false, message: "Not available" }),
+      updateQuantity: async () => ({ success: false, message: "Not available" }),
+      removeFromCart: async () => ({ success: false, message: "Not available" }),
+      clearCart: async () => ({ success: false, message: "Not available" }),
+      applyDiscount: async () => ({ success: false, message: "Not available" }),
+      addNotes: async () => ({ success: false, message: "Not available" }),
+      syncCart: async () => ({ success: false, message: "Not available" }),
+      getProductQuantity: () => 0,
+      isInCart: () => false,
+    };
   }
   return context;
 }

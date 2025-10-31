@@ -50,24 +50,44 @@ export default function LazyImage({
 
   // Si no hay imagen o es placeholder, mostrar el fallback
   if (!src || src === "/images/products/placeholder.jpg") {
-    // Detectar si es un espacio pequeño (como en el carrito)
-    const isSmallSpace = className.includes('w-16') || className.includes('w-12') || className.includes('w-20');
-    
+    // Extraer clases de objeto (object-contain, object-cover) de className
+    const objectClass = className.includes("object-contain")
+      ? "object-contain"
+      : className.includes("object-cover")
+      ? "object-cover"
+      : "object-contain";
+
+    // Extraer clases de max-width del className
+    const maxWidthMatch = className.match(/\bmax-w-[a-z0-9-]+\b/);
+    const maxWidthClass = maxWidthMatch ? maxWidthMatch[0] : "";
+
+    // Remover object-* y max-w-* del className para el contenedor
+    const containerClassName = className
+      .replace(/\bobject-(contain|cover)\b/g, "")
+      .replace(/\bmax-w-[a-z0-9-]+\b/g, "")
+      .trim();
+
     return (
       <div
-        className={`w-full h-full flex items-center justify-center relative ${className}`}
+        className={`w-full h-full flex items-center justify-center relative ${containerClassName}`}
         style={{
           backgroundImage: `url('/images/cervezas/MARKET-FD.png')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       >
-        {/* Imagen de cerveza superpuesta */}
+        {/* Imagen de cerveza superpuesta - respeta max-width */}
         <img
           src="/images/cervezas/MARKET-CLUB-BEER.png"
           alt={alt}
-          className="w-full h-full object-contain"
+          className={`${objectClass} ${maxWidthClass ? maxWidthClass : ""}`}
+          style={{
+            maxWidth: maxWidthClass ? undefined : "100%",
+            maxHeight: "100%",
+            width: "auto",
+            height: "auto",
+          }}
         />
         {fallbackIcon && (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -103,20 +123,42 @@ export default function LazyImage({
       {/* Error fallback */}
       {hasError && (
         <div
-          className="w-full h-full flex items-center justify-center relative"
+          className={`w-full h-full flex items-center justify-center relative ${className
+            .replace(/\bobject-(contain|cover)\b/g, "")
+            .replace(/\bmax-w-[a-z0-9-]+\b/g, "")
+            .trim()}`}
           style={{
             backgroundImage: `url('/images/cervezas/MARKET-FD.png')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
           }}
         >
-          {/* Imagen de cerveza superpuesta */}
-          <img
-            src="/images/cervezas/MARKET-CLUB-BEER.png"
-            alt={alt}
-            className="w-full h-full object-contain"
-          />
+          {/* Imagen de cerveza superpuesta - respeta max-width */}
+          {(() => {
+            const objectClass = className.includes("object-contain")
+              ? "object-contain"
+              : className.includes("object-cover")
+              ? "object-cover"
+              : "object-contain";
+            const maxWidthMatch = className.match(/\bmax-w-[a-z0-9-]+\b/);
+            const maxWidthClass = maxWidthMatch ? maxWidthMatch[0] : "";
+            return (
+              <img
+                src="/images/cervezas/MARKET-CLUB-BEER.png"
+                alt={alt}
+                className={`${objectClass} ${
+                  maxWidthClass ? maxWidthClass : ""
+                }`}
+                style={{
+                  maxWidth: maxWidthClass ? undefined : "100%",
+                  maxHeight: "100%",
+                  width: "auto",
+                  height: "auto",
+                }}
+              />
+            );
+          })()}
           {fallbackIcon && (
             <div className="absolute inset-0 flex items-center justify-center">
               {fallbackIcon}

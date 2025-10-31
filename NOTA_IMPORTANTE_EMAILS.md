@@ -213,3 +213,4 @@ Agregar columna `send_order_email` = false en la tabla orders
 
 **Fecha:** 30 de Octubre, 2025  
 **Aclaración:** Solo enviar email de PAGO, no de ORDEN
+
