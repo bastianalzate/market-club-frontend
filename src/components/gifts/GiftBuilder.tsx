@@ -346,29 +346,32 @@ export default function GiftBuilder() {
       return;
     }
 
+    // TypeScript type guard: selectedBox ya no puede ser null después de la verificación
+    const selectedBox = giftBuilder.selectedBox!; // Usar aserción no-null ya que verificamos arriba
+
     try {
       console.log("🎁 Creando regalo personalizado...");
-      console.log("🎁 Caja seleccionada:", giftBuilder.selectedBox);
+      console.log("🎁 Caja seleccionada:", selectedBox);
       console.log("🎁 Cervezas seleccionadas:", giftBuilder.selectedBeers);
 
       // Crear los datos del regalo para enviar al backend
       const beerNames = giftBuilder.selectedBeers
         .map((beer) => beer.name)
         .join(", ");
-      const giftName = `Regalo Personalizado - ${giftBuilder.selectedBox.name}`;
-      const giftDescription = `Caja ${giftBuilder.selectedBox.name} con ${giftBuilder.selectedBeers.length} cervezas: ${beerNames}`;
+      const giftName = `Regalo Personalizado - ${selectedBox.name}`;
+      const giftDescription = `Caja ${selectedBox.name} con ${giftBuilder.selectedBeers.length} cervezas: ${beerNames}`;
 
       const giftData = {
         name: giftName,
         description: giftDescription,
         box: {
-          id: giftBuilder.selectedBox.id,
-          name: giftBuilder.selectedBox.name,
-          price: giftBuilder.selectedBox.price,
-          description: giftBuilder.selectedBox.description,
-          maxBeers: giftBuilder.selectedBox.maxBeers,
-          dimensions: giftBuilder.selectedBox.dimensions,
-          deliveryTime: giftBuilder.selectedBox.deliveryTime,
+          id: selectedBox.id,
+          name: selectedBox.name,
+          price: selectedBox.price,
+          description: selectedBox.description,
+          maxBeers: selectedBox.maxBeers,
+          dimensions: selectedBox.dimensions,
+          deliveryTime: selectedBox.deliveryTime,
         },
         beers: giftBuilder.selectedBeers.map((beer) => ({
           id: beer.id,
@@ -410,7 +413,7 @@ export default function GiftBuilder() {
         // Mostrar notificación de éxito
         showSuccess(
           "¡Regalo agregado! 🎉",
-          `Tu regalo personalizado "${giftBuilder.selectedBox.name}" con ${
+          `Tu regalo personalizado "${selectedBox.name}" con ${
             giftBuilder.selectedBeers.length
           } cerveza${
             giftBuilder.selectedBeers.length > 1 ? "s" : ""
@@ -432,13 +435,22 @@ export default function GiftBuilder() {
           result.message || "No se pudo agregar el regalo al carrito."
         );
       }
-    } catch (error) {
-      console.error("🎁 Error al agregar regalo al carrito:", error);
+    } catch (err: unknown) {
+      console.error("🎁 Error al agregar regalo al carrito:", err);
+      
+      const getErrorMessage = (error: unknown): string => {
+        if (error instanceof Error) {
+          return error.message;
+        }
+        if (typeof error === 'string') {
+          return error;
+        }
+        return "No se pudo agregar el regalo al carrito. Intenta nuevamente.";
+      };
+      
       showError(
         "Error al agregar regalo",
-        error instanceof Error
-          ? error.message
-          : "No se pudo agregar el regalo al carrito. Intenta nuevamente."
+        getErrorMessage(err)
       );
     }
   };
