@@ -17,6 +17,7 @@ import { useCartContext } from "@/contexts/CartContext";
 import { useNotification } from "@/hooks/useNotification";
 import { useProducts, TransformedProduct } from "@/hooks/useProducts";
 import { useFilters } from "@/hooks/useFilters";
+import { getBeerStyleLabel } from "@/constants/beerStyles";
 import NotificationToast from "@/components/shared/NotificationToast";
 import LazyImage from "@/components/shared/LazyImage";
 import { formatPrice } from "@/utils/formatters";
@@ -179,7 +180,7 @@ export default function GiftBuilder() {
     { value: "", label: "Todas" },
     ...filters.beer_styles.map((style) => ({
       value: style,
-      label: style.charAt(0) + style.slice(1).replace("_", " "),
+      label: getBeerStyleLabel(style),
     })),
   ];
 

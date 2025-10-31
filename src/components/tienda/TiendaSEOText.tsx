@@ -29,9 +29,12 @@ export default function TiendaSEOText() {
         <br />
         <p style={{ fontFamily: "var(--font-lato)" }}>
           Ponle el ojo a países como Alemania, Bélgica, Inglaterra o México, o
-          navegá por estilos que no fallan como IPA, Lager, Stout, Witbier y
-          más. También podés cuadrar el filtro por rango de precios y tipo de
-          empaque (lata o botella) pa' que la compra sea rápida y precisa.
+          navegá por estilos organizados según nuestro nuevo catálogo: Lager
+          Clásica / Pilsner, Lager Oscura / Fuerte, Lager Ligera, India Pale Ale
+          (IPA), Cerveza de Trigo (Wheat), Ale Belga Clásica, Stout / Porter y
+          Cervezas de Fruta o Saborizadas. También podés cuadrar el filtro por
+          rango de precios y tipo de empaque (lata o botella) pa' que la compra
+          sea rápida y precisa.
         </p>
         <br />
         <p style={{ fontFamily: "var(--font-lato)" }}>
@@ -52,10 +55,12 @@ export default function TiendaSEOText() {
         >
           <li>Artesanales (locales e importadas).</li>
           <li>
-            Estilos Clásicos que refrescan: Lager, Pilsner, Ale, Porter, Stout.
+            Estilos Clásicos que refrescan: Lager Clásica / Pilsner, Lager
+            Oscura / Fuerte y Lager Ligera.
           </li>
           <li>
-            Estilos Modernos que están de moda: IPA, NEIPA, Sour, Witbier.
+            Estilos Modernos que están de moda: India Pale Ale (IPA), Cervezas
+            de Trigo y Ales Belgas Clásicas.
           </li>
           <li>En el formato que te guste: botella o lata.</li>
         </ul>

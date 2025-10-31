@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { constants } from '@/config/constants';
 import { getAuthHeaders } from '@/utils/authHeaders';
+import { BEER_STYLE_VALUES } from '@/constants/beerStyles';
 
 // Tipo para la respuesta del endpoint de filtros
 export interface FiltersResponse {
@@ -39,8 +40,8 @@ export const useFilters = () => {
           console.warn('⚠️ Filters endpoint not found, using default values');
           // Usar valores por defecto si el endpoint no existe
           setFilters({
-            countries: ["Inglaterra", "Colombia", "Alemania", "Italia", "Escocia", "Bélgica", "España", "Países Bajos", "Japón", "México", "Perú", "República Checa", "Estados Unidos", "Tailandia"],
-            beer_styles: ["lager", "blonde", "porter", "pilsner", "dark", "ipa", "ale", "pale_ale", "wheat"],
+            countries: ["Inglaterra", "Colombia", "Alemania", "Italia", "Escocia", "Bélgica", "España", "Países Bajos", "Japón", "México", "Perú", "República Checa", "Estados Unidos", "Tailandia", "Francia", "Irlanda", "India"],
+            beer_styles: BEER_STYLE_VALUES,
             packaging_types: ["lata", "botella", "barril"],
             price_ranges: ["0-10k", "10k-25k", "25k-50k", "50k+"]
           });
@@ -69,8 +70,8 @@ export const useFilters = () => {
       setError(err instanceof Error ? err.message : 'Error desconocido al cargar filtros');
       // Mantener valores por defecto en caso de error
       setFilters({
-        countries: ["Inglaterra", "Colombia", "Alemania", "Italia", "Escocia", "Bélgica", "España", "Países Bajos", "Japón", "México", "Perú", "República Checa", "Estados Unidos", "Tailandia"],
-        beer_styles: ["lager", "blonde", "porter", "pilsner", "dark", "ipa", "ale", "pale_ale", "wheat"],
+        countries: ["Inglaterra", "Colombia", "Alemania", "Italia", "Escocia", "Bélgica", "España", "Países Bajos", "Japón", "México", "Perú", "República Checa", "Estados Unidos", "Tailandia", "Francia", "Irlanda", "India"],
+        beer_styles: BEER_STYLE_VALUES,
         packaging_types: ["lata", "botella", "barril"],
         price_ranges: ["0-10k", "10k-25k", "25k-50k", "50k+"]
       });

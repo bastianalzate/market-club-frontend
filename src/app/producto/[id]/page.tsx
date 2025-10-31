@@ -8,6 +8,7 @@ import { ShoppingCart, ChevronDown } from "lucide-react";
 import LazyImage from "@/components/shared/LazyImage";
 import Toast from "@/components/shared/Toast";
 import { API_CONFIG } from "@/config/api";
+import { getBeerStyleLabel } from "@/constants/beerStyles";
 
 interface Product {
   id: number;
@@ -355,8 +356,14 @@ export default function ProductDetailPage() {
                 >
                   <li>
                     Estilo:{" "}
-                    {product.product_specific_data?.beer_style ||
-                      product.category.name}
+                    {(() => {
+                      const beerStyleValue =
+                        product.product_specific_data?.beer_style;
+                      if (beerStyleValue) {
+                        return getBeerStyleLabel(beerStyleValue);
+                      }
+                      return product.category.name;
+                    })()}
                   </li>
                   <li>
                     Contenido de alcohol:{" "}
