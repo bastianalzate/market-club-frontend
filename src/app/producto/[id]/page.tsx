@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useCartContext } from "@/contexts/CartContext";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { ShoppingCart, ChevronDown } from "lucide-react";
 import LazyImage from "@/components/shared/LazyImage";
@@ -63,6 +64,7 @@ export default function ProductDetailPage() {
 
   const { addToCart, isInCart, getProductQuantity } = useCartContext();
   const { toast, showSuccess, showError, hideToast } = useToast();
+  const { user, isAuthenticated } = useAuth();
 
   // Ocultar la flecha cuando el usuario hace scroll
   useEffect(() => {
@@ -442,41 +444,43 @@ export default function ProductDetailPage() {
                 </div>
 
                 <div className="mt-5 sm:mt-8 sm:flex sm:items-center sm:space-x-5">
-                  <button
-                    type="button"
-                    onClick={handleAddToCart}
-                    disabled={addingToCart || product.stock_quantity <= 0}
-                    className="
-                      items-center
-                      justify-center
-                      w-full
-                      px-12
-                      py-3
-                      text-base
-                      font-bold
-                      leading-7
-                      text-center text-white
-                      transition-all
-                      duration-200
-                      bg-gray-900
-                      border border-transparent
-                      rounded-md
-                      inline-flex
-                      sm:w-auto
-                      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900
-                      hover:bg-gray-700
-                      disabled:opacity-50 disabled:cursor-not-allowed
-                    "
-                    style={{ fontFamily: "var(--font-lato)" }}
-                  >
-                    {addingToCart
-                      ? "Agregando..."
-                      : product.stock_quantity <= 0
-                      ? "Agotado"
-                      : isInCartProduct
-                      ? `En carrito (${quantityInCart})`
-                      : "Añadir al carrito"}
-                  </button>
+                  {!(isAuthenticated && user?.is_wholesaler) && (
+                    <button
+                      type="button"
+                      onClick={handleAddToCart}
+                      disabled={addingToCart || product.stock_quantity <= 0}
+                      className="
+                        items-center
+                        justify-center
+                        w-full
+                        px-12
+                        py-3
+                        text-base
+                        font-bold
+                        leading-7
+                        text-center text-white
+                        transition-all
+                        duration-200
+                        bg-gray-900
+                        border border-transparent
+                        rounded-md
+                        inline-flex
+                        sm:w-auto
+                        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900
+                        hover:bg-gray-700
+                        disabled:opacity-50 disabled:cursor-not-allowed
+                      "
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      {addingToCart
+                        ? "Agregando..."
+                        : product.stock_quantity <= 0
+                        ? "Agotado"
+                        : isInCartProduct
+                        ? `En carrito (${quantityInCart})`
+                        : "Añadir al carrito"}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

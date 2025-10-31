@@ -42,9 +42,24 @@ const countries: Country[] = [
     flag: "/images/countries/ESCOCIA.png",
   },
   {
+    id: "francia",
+    name: "Francia",
+    flag: "",
+  },
+  {
+    id: "india",
+    name: "India",
+    flag: "",
+  },
+  {
     id: "inglaterra",
     name: "Inglaterra",
     flag: "/images/countries/INGLATERRA.png",
+  },
+  {
+    id: "irlanda",
+    name: "Irlanda",
+    flag: "",
   },
   {
     id: "italia",
@@ -238,11 +253,19 @@ export default function CountriesCarousel() {
                   >
                     {/* Solo la imagen de la bandera */}
                     <div className="aspect-square w-32 h-32 sm:w-40 sm:h-40 mx-auto p-1 sm:p-2">
-                      <img
-                        src={country.flag}
-                        alt={`Bandera de ${country.name}`}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
+                      {country.flag ? (
+                        <img
+                          src={country.flag}
+                          alt={`Bandera de ${country.name}`}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
+                          <p className="text-xs text-gray-600 text-center font-medium px-2">
+                            {country.name}
+                          </p>
+                        </div>
+                      )}
                     </div>
                     {/* Nombre del país */}
                     <p className="text-center mt-2 text-sm font-medium text-gray-700 hover:text-yellow-600 transition-colors duration-200">

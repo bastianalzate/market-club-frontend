@@ -6,7 +6,6 @@ import { Search, Menu, X, ShoppingCart, User, LogOut } from "lucide-react";
 import { useState, useMemo, useCallback, memo, useRef, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import CartDrawer from "../../features/cart/components/CartDrawer";
-import WholesalerCartDrawer from "../mayorista/WholesalerCartDrawer";
 import { useCartContext } from "@/contexts/CartContext";
 import { useWholesalerCartContext } from "@/contexts/WholesalerCartContext";
 import LoginModal from "../auth/LoginModal";
@@ -100,13 +99,14 @@ export default function Header() {
   const wholesalerCartContext = useWholesalerCartContext();
 
   // Log para debugging
-  console.log("🛒 Header render:", { itemsCount });
+  console.log("🛒 Header render:", {
+    itemsCount,
+    wholesalerItemsCount: wholesalerCartContext.itemsCount,
+    cartItems: wholesalerCartContext.cart?.items?.length,
+  });
 
   // Estado local para el carrito drawer
   const [isCartOpen, setIsCartOpen] = useState(false);
-
-  // Estado local para el drawer del carrito mayorista
-  const [isWholesalerCartOpen, setIsWholesalerCartOpen] = useState(false);
 
   // Función optimizada para abrir el carrito
   const handleOpenCart = useCallback(() => {
@@ -118,15 +118,27 @@ export default function Header() {
     setIsCartOpen(false);
   }, []);
 
-  // Función para abrir el drawer del carrito mayorista
-  const handleOpenWholesalerCart = useCallback(() => {
-    setIsWholesalerCartOpen(true);
-  }, []);
+  // Función para contactar por WhatsApp (mayoristas)
+  const handleWhatsAppContact = useCallback(() => {
+    const { cart, itemsCount, totalAmount } = wholesalerCartContext;
 
-  // Función para cerrar el drawer del carrito mayorista
-  const handleCloseWholesalerCart = useCallback(() => {
-    setIsWholesalerCartOpen(false);
-  }, []);
+    if (!cart || !cart.items || cart.items.length === 0) {
+      // Si no hay productos, solo abrir WhatsApp sin mensaje
+      const whatsappUrl = `https://wa.me/573160530019`;
+      window.open(whatsappUrl, "_blank");
+      return;
+    }
+
+    const itemsText = cart.items
+      .map((item, index) => `${index + 1}. ${item.product?.name || "Producto"}`)
+      .join("\n");
+
+    const message = `Hola! Me interesa cotizar los siguientes productos mayoristas:\n\n${itemsText}`;
+    const whatsappUrl = `https://wa.me/573160530019?text=${encodeURIComponent(
+      message
+    )}`;
+    window.open(whatsappUrl, "_blank");
+  }, [wholesalerCartContext]);
 
   // Funciones para manejar el buscador
   const handleOpenSearch = useCallback(() => {
@@ -330,11 +342,12 @@ export default function Header() {
                 </button>
               )}
 
-              {/* Cart Mayorista - Solo mostrar para usuarios mayoristas */}
+              {/* Botón WhatsApp Mayorista - Solo mostrar para usuarios mayoristas */}
               {isAuthenticated && user?.is_wholesaler && (
                 <button
-                  onClick={handleOpenWholesalerCart}
-                  className="p-2 text-gray-700 hover:text-gray-900 transition-colors relative cursor-pointer"
+                  onClick={handleWhatsAppContact}
+                  className="p-2 text-green-600 hover:text-green-700 transition-colors relative cursor-pointer"
+                  title="Cotizar por WhatsApp"
                 >
                   <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                   {wholesalerCartContext.itemsCount > 0 && (
@@ -485,11 +498,12 @@ export default function Header() {
                 </button>
               )}
 
-              {/* Cart Mayorista - Solo mostrar para usuarios mayoristas */}
+              {/* Botón WhatsApp Mayorista - Solo mostrar para usuarios mayoristas */}
               {isAuthenticated && user?.is_wholesaler && (
                 <button
-                  onClick={handleOpenWholesalerCart}
-                  className="p-1.5 text-gray-700 hover:text-gray-900 transition-colors relative cursor-pointer"
+                  onClick={handleWhatsAppContact}
+                  className="p-1.5 text-green-600 hover:text-green-700 transition-colors relative cursor-pointer"
+                  title="Cotizar por WhatsApp"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   {wholesalerCartContext.itemsCount > 0 && (
@@ -771,12 +785,6 @@ export default function Header() {
 
         {/* Cart Drawer */}
         <CartDrawer isOpen={isCartOpen} onClose={handleCloseCart} />
-
-        {/* Wholesaler Cart Drawer */}
-        <WholesalerCartDrawer
-          isOpen={isWholesalerCartOpen}
-          onClose={handleCloseWholesalerCart}
-        />
 
         {/* Login Modal */}
         <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
