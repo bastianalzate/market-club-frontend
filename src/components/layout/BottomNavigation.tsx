@@ -13,12 +13,14 @@ import {
   LogIn,
 } from "lucide-react";
 import { useCartContext } from "@/contexts/CartContext";
+import { useWholesalerCartContext } from "@/contexts/WholesalerCartContext";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function BottomNavigation() {
   const router = useRouter();
   const pathname = usePathname();
   const cartContext = useCartContext();
+  const wholesalerCartContext = useWholesalerCartContext();
   const { openLoginModal, user, isAuthenticated } = useAuth();
   const navRef = useRef<HTMLDivElement>(null);
 
@@ -54,15 +56,11 @@ export default function BottomNavigation() {
     };
   }, []);
 
-  // Validar que el contexto esté disponible
-  if (!cartContext) {
-    return null;
-  }
-
-  const { itemsCount } = cartContext;
-
-  // Usar el itemsCount ya calculado del contexto
-  const totalCartItems = itemsCount || 0;
+  // Usar el contexto de carrito apropiado según el tipo de usuario
+  const isWholesaler = isAuthenticated && user?.is_wholesaler;
+  const totalCartItems = isWholesaler
+    ? wholesalerCartContext?.itemsCount || 0
+    : cartContext?.itemsCount || 0;
 
   // Para mayoristas, solo mostrar opciones específicas
   const navigationItems =
@@ -81,6 +79,7 @@ export default function BottomNavigation() {
             icon: Store,
             path: "/mayorista",
             isActive: pathname === "/mayorista",
+            badge: totalCartItems > 0 ? totalCartItems : null,
           },
           {
             id: "contacto",
