@@ -3,6 +3,7 @@
 import { useCartContext } from "@/contexts/CartContext";
 import { formatPrice } from "@/utils/formatters";
 import { constants } from "@/config/constants";
+import LazyImage from "@/components/shared/LazyImage";
 
 interface CheckoutSummaryProps {
   onContinue: () => void;
@@ -12,7 +13,7 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
   const { cart, itemsCount } = useCartContext();
 
   // Helper function para obtener la URL de imagen del producto
-  const getProductImageUrl = (product: any, item?: any): string => {
+  const getProductImageUrl = (product: any, item?: any): string | null => {
     // Si es un regalo, usar imagen de regalo
     if (item?.is_gift || item?.gift_data) {
       return "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSI4IiBmaWxsPSIjQjU4RTMxIi8+PHJlY3QgeD0iMyIgeT0iOCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMiA4djEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxMnY3YTIgMiAwIDAgMS0yIDJIN2EyIDIgMCAwIDEtMi0ydi03IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik03LjUgOGEyLjUgMi41IDAgMCAxIDAtNUE0LjggOCAwIDAgMSAxMiA4YTQuOCA4IDAgMCAxIDQuNS01IDIuNSAyLjUgMCAwIDEgMCA1IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=";
@@ -20,7 +21,7 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
 
     // Verificar que el producto no sea null o undefined
     if (!product) {
-      return "/images/cervezas/bottella-01.png";
+      return null; // LazyImage usará su fallback automático
     }
 
     if (product.image_url) {
@@ -33,9 +34,9 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
       }
       // Si es una ruta relativa, construir la URL completa
       const baseUrl = constants.api_url.replace("/api", "");
-      return `${baseUrl}/storage/${product.image}`;
+      return `${baseUrl}/${product.image}`;
     }
-    return "/images/cervezas/bottella-01.png";
+    return null; // LazyImage usará su fallback automático
   };
 
   // Calcular subtotal manualmente para asegurar precisión
@@ -44,19 +45,9 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
       return sum + parseFloat(String(item.unit_price)) * item.quantity;
     }, 0) || 0;
 
-  // Calcular impuestos (IVA 19% en Colombia)
-  const TAX_RATE = 0.19; // 19%
-  const calculatedTaxAmount = Math.round(manualSubtotal * TAX_RATE);
-
-  // Usar impuestos calculados si el backend no los proporciona
-  const finalTaxAmount =
-    parseFloat(String(cart?.tax_amount || 0)) || calculatedTaxAmount;
-
-  // Calcular total manualmente
-  const manualTotal =
-    manualSubtotal +
-    parseFloat(String(cart?.shipping_amount || 0)) +
-    finalTaxAmount;
+  // Agregar tarifa de envío fija de $12,000 (sin impuestos)
+  const SHIPPING_FEE = 12000;
+  const manualTotal = manualSubtotal + SHIPPING_FEE;
 
   if (itemsCount === 0) {
     return (
@@ -108,7 +99,10 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
               />
             </svg>
           </div>
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+          <h2
+            className="text-lg sm:text-xl font-bold text-gray-900"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Resumen del Pedido
           </h2>
         </div>
@@ -120,34 +114,42 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
           {cart?.items?.map((item: any) => (
             <div
               key={item.id}
-              className="flex items-center space-x-3 sm:space-x-4 p-3 bg-gray-50 rounded-lg"
+              className="flex items-start space-x-3 sm:space-x-4 p-3 bg-gray-50 rounded-lg"
             >
-              <div className="flex-shrink-0">
-                <img
+              <div className="flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-white flex items-center justify-center">
+                <LazyImage
                   src={getProductImageUrl(item.product, item)}
                   alt={item.product?.name || item.gift_data?.name || "Producto"}
-                  className="w-14 h-14 rounded-lg object-cover shadow-sm"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "/images/cervezas/bottella-01.png";
-                  }}
+                  className="w-full h-full rounded-lg object-contain p-1"
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">
+                <p
+                  className="text-sm font-semibold text-gray-900 line-clamp-2"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {item.product?.name ||
                     item.gift_data?.name ||
                     "Producto personalizado"}
                 </p>
-                <p className="text-xs sm:text-sm text-gray-500">
+                <p
+                  className="text-xs text-gray-500 mt-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Cantidad: {item.quantity}
                 </p>
-                <p className="text-xs text-gray-400">
+                <p
+                  className="text-xs text-gray-400 mt-0.5"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Precio unitario: {formatPrice(item.unit_price)}
                 </p>
               </div>
               <div className="flex-shrink-0 text-right">
-                <p className="text-xs sm:text-sm font-bold text-gray-900">
+                <p
+                  className="text-sm font-bold text-gray-900 whitespace-nowrap"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {formatPrice(
                     parseFloat(String(item.unit_price)) * item.quantity
                   )}
@@ -162,29 +164,50 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
       <div className="px-4 sm:px-6 py-4 sm:py-5 bg-gray-50 border-t border-gray-100">
         <div className="space-y-2 sm:space-y-3">
           <div className="flex justify-between text-xs sm:text-sm">
-            <span className="text-gray-600">Subtotal:</span>
-            <span className="font-semibold text-gray-900">
+            <span
+              className="text-gray-600"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              Subtotal:
+            </span>
+            <span
+              className="font-semibold text-gray-900"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               {formatPrice(manualSubtotal)}
             </span>
           </div>
 
           <div className="flex justify-between text-xs sm:text-sm">
-            <span className="text-gray-600">Impuestos (IVA 19%):</span>
-            <span className="font-semibold text-gray-900">
-              {formatPrice(finalTaxAmount)}
+            <span
+              className="text-gray-600"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              Envío:
+            </span>
+            <span
+              className="font-semibold text-gray-900"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              {formatPrice(12000)}
             </span>
           </div>
 
-          <div className="flex justify-between text-xs sm:text-sm">
-            <span className="text-gray-600">Envío:</span>
-            <span className="font-semibold text-gray-900">
-              {formatPrice(cart?.shipping_amount || 0)}
-            </span>
-          </div>
+          {/* Impuestos no se cobran */}
 
           <div className="flex justify-between text-base sm:text-lg font-bold border-t border-gray-200 pt-2 sm:pt-3">
-            <span className="text-gray-900">Total:</span>
-            <span className="text-gray-900">{formatPrice(manualTotal)}</span>
+            <span
+              className="text-gray-900"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              Total:
+            </span>
+            <span
+              className="text-gray-900"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              {formatPrice(manualTotal)}
+            </span>
           </div>
         </div>
       </div>
@@ -208,10 +231,18 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
             </svg>
           </div>
           <div>
-            <p className="text-xs sm:text-sm font-semibold text-blue-900">
+            <p
+              className="text-xs sm:text-sm font-semibold text-blue-900"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Entrega estimada
             </p>
-            <p className="text-xs text-blue-700">3-5 días hábiles</p>
+            <p
+              className="text-xs text-blue-700"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              3-5 días hábiles
+            </p>
           </div>
         </div>
       </div>
@@ -223,6 +254,7 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
           className="w-full text-white py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl cursor-pointer"
           style={{
             backgroundColor: "rgb(180, 140, 43)",
+            fontFamily: "var(--font-lato)",
           }}
         >
           Continuar al Checkout

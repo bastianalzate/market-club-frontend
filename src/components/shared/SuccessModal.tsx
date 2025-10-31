@@ -123,9 +123,10 @@ export default function SuccessModal({
 
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[60]"
+        className="fixed inset-0"
         style={{
           backgroundColor: "#00000091",
+          zIndex: 10001,
           animation: isAnimating
             ? "fadeIn 0.3s ease-in-out"
             : "fadeOut 0.3s ease-in-out",
@@ -135,8 +136,9 @@ export default function SuccessModal({
 
       {/* Modal */}
       <div
-        className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+        className="fixed inset-0 flex items-center justify-center p-4"
         style={{
+          zIndex: 10002,
           animation: isAnimating
             ? "fadeIn 0.3s ease-in-out"
             : "fadeOut 0.3s ease-in-out",

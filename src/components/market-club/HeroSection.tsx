@@ -16,27 +16,35 @@ export default function HeroSection({
     fontSize: "42px",
     fontWeight: 700,
   },
-  descriptionClassName = "text-[#F5F5F5] font-inter text-[20px] leading-[26px] text-left",
+  descriptionClassName = "text-[#F5F5F5] text-[20px] leading-[26px] text-center",
   containerClassName = "bg-black text-white py-8 px-4",
 }: HeroSectionProps) {
   return (
     <div className={containerClassName}>
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center">
+        <div className="flex flex-col items-center justify-center gap-8 lg:gap-12">
           {/* Título */}
-          <div>
-            <h2 className="text-white mb-4 lg:mb-8 leading-tight text-[30px] sm:text-[42px]" style={{
-              fontFamily: "var(--font-oswald)",
-              fontWeight: 700,
-            }}>
+          <div className="text-center">
+            <h2
+              className="text-white leading-tight text-[30px] sm:text-[42px]"
+              style={{
+                fontFamily: "var(--font-oswald)",
+                fontWeight: 700,
+              }}
+            >
               {title}
               {subtitle && <span className="block">{subtitle}</span>}
             </h2>
           </div>
 
           {/* Texto descriptivo */}
-          <div>
-            <p className={descriptionClassName}>{description}</p>
+          <div className="max-w-2xl lg:max-w-3xl w-full">
+            <p
+              className={`${descriptionClassName} text-center`}
+              style={{ fontFamily: "var(--font-lato)", whiteSpace: "pre-line" }}
+            >
+              {description}
+            </p>
           </div>
         </div>
       </div>

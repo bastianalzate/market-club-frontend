@@ -68,6 +68,8 @@ export class PaymentService {
     // Crear widget de Wompi
     static async createWompiWidget(orderId, totalAmount, redirectUrl, customerData = {}) {
         console.log('🎯 Creating Wompi widget for order:', orderId);
+        console.log('🎯 Amount received by PaymentService:', totalAmount);
+        console.log('🎯 Amount type:', typeof totalAmount);
         
         const requestBody = {
             order_id: orderId,
@@ -91,6 +93,8 @@ export class PaymentService {
         }
         
         console.log('🎯 Widget request body:', requestBody);
+        console.log('🎯 Amount being sent to backend:', requestBody.amount);
+        console.log('🎯 Calling endpoint:', `${API_CONFIG.BASE_URL}/payments/wompi/create-widget`);
         
         const response = await fetch(`${API_CONFIG.BASE_URL}/payments/wompi/create-widget`, {
             method: 'POST',
@@ -98,9 +102,47 @@ export class PaymentService {
             body: JSON.stringify(requestBody)
         });
         
-        console.log('🎯 Widget response:', response.status);
+        console.log('🎯 Widget response status:', response.status);
         const data = await response.json();
-        console.log('🎯 Widget data:', data);
+        console.log('🎯 Widget response data:', data);
+        console.log('🎯 Amount returned by backend (in cents):', data.data?.amount);
+        
+        return data;
+    }
+
+    // Crear widget de Wompi para suscripciones
+    static async createWompiSubscriptionWidget(planId, totalAmount, redirectUrl, customerData = {}) {
+        console.log('🎯 Creating Wompi widget for subscription:', planId);
+        
+        const requestBody = {
+            plan_id: planId,
+            amount: totalAmount,
+            currency: 'COP',
+            redirect_url: redirectUrl
+        };
+        
+        // Solo agregar datos del cliente si están disponibles (opcional)
+        if (customerData.email) {
+            requestBody.customer_email = customerData.email;
+        }
+        if (customerData.name) {
+            requestBody.customer_name = customerData.name;
+        }
+        if (customerData.phone) {
+            requestBody.customer_phone = customerData.phone;
+        }
+        
+        console.log('🎯 Subscription widget request body:', requestBody);
+        
+        const response = await fetch(`${API_CONFIG.BASE_URL}/payments/wompi/create-subscription-widget`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(requestBody)
+        });
+        
+        console.log('🎯 Subscription widget response:', response.status);
+        const data = await response.json();
+        console.log('🎯 Subscription widget data:', data);
         
         return data;
     }
@@ -138,6 +180,62 @@ export class PaymentService {
             })
         });
         return response.json();
+    }
+
+    // Generar firma de integridad para Wompi (órdenes)
+    static async generateSignature(data) {
+        console.log('🔐 Generating signature for order:', data);
+        
+        const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PAYMENTS.GENERATE_SIGNATURE}`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(data)
+        });
+        
+        console.log('🔐 Signature response:', response.status);
+        const result = await response.json();
+        console.log('🔐 Signature result:', result);
+        
+        return result;
+    }
+
+    // Generar firma de integridad para suscripciones
+    static async generateSubscriptionSignature(data) {
+        console.log('🔐 Generating signature for subscription:', data);
+        
+        const response = await fetch(`${API_CONFIG.BASE_URL}/payments/wompi/generate-subscription-signature`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(data)
+        });
+        
+        console.log('🔐 Subscription signature response:', response.status);
+        const result = await response.json();
+        console.log('🔐 Subscription signature result:', result);
+        
+        return result;
+    }
+
+    // Procesar pago de suscripción
+    static async processSubscriptionPayment(planId, transactionId, reference, amount) {
+        console.log('💳 Processing subscription payment:', { planId, transactionId, reference, amount });
+        
+        const response = await fetch(`${API_CONFIG.BASE_URL}/payments/process-subscription`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({
+                plan_id: planId,
+                transaction_id: transactionId,
+                reference: reference,
+                amount: amount
+            })
+        });
+        
+        console.log('💳 Subscription payment response:', response.status);
+        const result = await response.json();
+        console.log('💳 Subscription payment result:', result);
+        
+        return result;
     }
 
     // Obtener métodos de pago disponibles

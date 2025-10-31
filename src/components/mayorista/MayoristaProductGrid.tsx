@@ -233,10 +233,16 @@ export default function MayoristaProductGrid({
         ) : products.length === 0 ? (
           <div className="col-span-full text-center py-12">
             <div className="text-gray-400 text-6xl mb-4">🍺</div>
-            <h3 className="text-xl font-semibold text-white mb-2">
+            <h3 
+              className="text-xl font-semibold text-white mb-2"
+              style={{ fontFamily: "var(--font-oswald)" }}
+            >
               No se encontraron productos
             </h3>
-            <p className="text-gray-400">
+            <p 
+              className="text-gray-400"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Intenta ajustar los filtros para ver más resultados
             </p>
           </div>
@@ -255,15 +261,30 @@ export default function MayoristaProductGrid({
                   <LazyImage
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-full"
+                    className={`w-full h-full object-contain ${
+                      product.stock_quantity === 0 ? "grayscale opacity-60" : ""
+                    }`}
                   />
                 </div>
+
+                {/* Etiqueta de Agotado */}
+                {product.stock_quantity === 0 && (
+                  <div 
+                    className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg sm:top-4 sm:left-4 sm:px-3 sm:text-sm"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    AGOTADO
+                  </div>
+                )}
               </div>
 
               {/* Información del producto */}
               <div className="p-6 flex flex-col flex-grow">
                 <div className="mb-4">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  <h3 
+                    className="text-lg font-bold text-gray-900 mb-2"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     {product.name}
                   </h3>
                   
@@ -288,7 +309,7 @@ export default function MayoristaProductGrid({
                       (e.currentTarget.style.backgroundColor = "#DC2626")
                     }
                   >
-                    <span>
+                    <span style={{ fontFamily: "var(--font-lato)" }}>
                       {removingFromCart === product.id ? 'Removiendo...' : 'Remover de la cotización'}
                     </span>
                   </button>
@@ -309,8 +330,9 @@ export default function MayoristaProductGrid({
                       (e.currentTarget.style.backgroundColor = "#B58E31")
                     }
                   >
-                    <span>
-                      {addingToCart === product.id ? 'Agregando...' : 'Agregar a cotización'}
+                    <span style={{ fontFamily: "var(--font-lato)" }}>
+                      {addingToCart === product.id ? 'Agregando...' : 
+                       !product.inStock ? 'Agotado' : 'Agregar a cotización'}
                     </span>
                     {addingToCart !== product.id && <ArrowRight className="w-4 h-4" />}
                   </button>
@@ -370,7 +392,11 @@ export default function MayoristaProductGrid({
                     page === currentPage + 2
                   ) {
                     return (
-                      <span key={page} className="px-2 text-white">
+                      <span 
+                        key={page} 
+                        className="px-2 text-white"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         ...
                       </span>
                     );

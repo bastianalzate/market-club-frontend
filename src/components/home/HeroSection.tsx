@@ -44,7 +44,7 @@ export default function HeroSection() {
 
               {/* Texto responsivo - con salto de línea en desktop */}
               <h1
-                className="hidden sm:block font-bold text-white text-[80px] sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl"
+                className="hidden sm:block font-bold text-white text-[80px] sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-[94px]"
                 style={{
                   fontFamily: "var(--font-oswald)",
                   lineHeight: "100%",
@@ -55,7 +55,7 @@ export default function HeroSection() {
               </h1>
               <p
                 className="mt-8 text-lg font-normal text-white sm:mt-12"
-                style={{ fontFamily: "var(--font-inter)" }}
+                style={{ fontFamily: "var(--font-lato)" }}
               >
                 Directo desde Múnich, esta cerveza de trigo alemana es un ícono
                 de sabor y tradición. Directa de Múnich. Una cerveza de trigo
@@ -78,6 +78,7 @@ export default function HeroSection() {
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="Busca tu cerveza favorita (ej: Corona, Erdinger, Paulaner)"
                       className="block w-full py-4 pr-6 text-white placeholder-gray-500 bg-black border border-transparent rounded-full pl-14 sm:py-5 focus:border-transparent focus:ring-0 focus:outline-none"
+                      style={{ fontFamily: "var(--font-lato)" }}
                     />
                   </div>
                 </div>
@@ -85,6 +86,7 @@ export default function HeroSection() {
                   <button
                     type="submit"
                     className="inline-flex items-center justify-center w-full px-5 py-5 text-sm font-bold tracking-widest text-black uppercase transition-all duration-200 bg-white rounded-full sm:w-auto sm:py-3 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     ¡DESCÚBRELA AHORA!
                   </button>
@@ -94,7 +96,7 @@ export default function HeroSection() {
               {/* <div className="mt-8 sm:mt-12">
                 <p
                   className="text-lg font-normal text-white text-center lg:text-left"
-                  style={{ fontFamily: "var(--font-inter)" }}
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Calidad Premium
                 </p>
@@ -131,13 +133,13 @@ export default function HeroSection() {
                   </div>
                   <span
                     className="ml-2 text-base font-normal text-white"
-                    style={{ fontFamily: "var(--font-inter)" }}
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     4.1/5
                   </span>
                   <span
                     className="ml-1 text-base font-normal text-gray-500"
-                    style={{ fontFamily: "var(--font-inter)" }}
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     (14k Vistas)
                   </span>

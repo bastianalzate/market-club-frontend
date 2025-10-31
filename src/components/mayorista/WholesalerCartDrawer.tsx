@@ -56,7 +56,8 @@ export default function WholesalerCartDrawer({
     }
 
     // Construir URL completa con la base del backend
-    return `http://localhost:8000/${imagePath}`;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:8000";
+    return `${baseUrl}/${imagePath}`;
   };
 
   // Función para manejar la eliminación con loading

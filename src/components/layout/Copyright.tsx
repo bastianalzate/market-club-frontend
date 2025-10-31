@@ -8,7 +8,7 @@ export default function Copyright() {
           {/* Copyright */}
           <p
             className="text-sm font-normal text-gray-600 sm:order-1 sm:mt-0"
-            style={{ fontFamily: "var(--font-inter)" }}
+            style={{ fontFamily: "var(--font-lato)" }}
           >
             © Copyright 2025 Market Club, Todos los derechos reservados
           </p>

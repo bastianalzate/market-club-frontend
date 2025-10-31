@@ -24,6 +24,8 @@ import { useToast } from "@/hooks/useToast";
 import { useEffect, useState } from "react";
 import Toast from "@/components/shared/Toast";
 import CancelSubscriptionModal from "@/components/shared/CancelSubscriptionModal";
+import SubscriptionCheckout from "@/components/subscriptions/SubscriptionCheckout";
+import { useRouter } from "next/navigation";
 
 interface User {
   id: string;
@@ -65,6 +67,9 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
   } = useSubscription();
   const { toast, showSuccess, showError, hideToast } = useToast();
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
+  const router = useRouter();
 
   // Cargar datos al montar el componente
   useEffect(() => {
@@ -163,17 +168,57 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
   };
 
   const handleSubscribe = async (planId: string | number) => {
-    const result = await subscribe(String(planId));
-    if (result.success) {
-      showSuccess(
-        "¡Suscripción exitosa!",
-        "Te has suscrito exitosamente a Market Club Premium."
-      );
-      // Recargar historial después de suscribirse
-      loadHistory();
-    } else {
-      showError("Error", result.message);
+    // Encontrar el plan seleccionado
+    const plan = plans.find((p) => p.id === planId);
+    if (plan) {
+      console.log("🔍 Selected plan for checkout:", plan);
+      console.log("🔍 Plan slug:", plan.slug);
+      setSelectedPlan(plan);
+      setShowCheckout(true);
     }
+  };
+
+  // Helper para corregir el nombre del plan según el precio
+  const getCorrectPlanName = (plan: any): string => {
+    let price: number = 0;
+
+    // Intentar obtener el precio de diferentes formas
+    if (typeof plan.price === "string") {
+      // Remover todo excepto dígitos (puede venir como "149000", "149.000", "$149.000", etc.)
+      const cleanPrice = plan.price.replace(/[^\d]/g, "");
+      price = parseInt(cleanPrice, 10);
+    } else if (typeof plan.price === "number") {
+      price = plan.price;
+    } else if (plan.price_paid) {
+      price =
+        typeof plan.price_paid === "number"
+          ? plan.price_paid
+          : parseInt(String(plan.price_paid), 10);
+    }
+
+    // Debug: mostrar el precio parseado (puedes quitar esto después)
+    console.log("🔍 Plan name correction:", {
+      originalName: plan.name,
+      price: plan.price,
+      parsedPrice: price,
+      pricePaid: plan.price_paid,
+    });
+
+    // Corregir nombres según precios:
+    // - El más caro ($149.000) debe ser "Maestro Cervecero"
+    // - El de $99.000 debe ser "Coleccionista Cervecero"
+    // Manejar diferentes formatos: 149000, 14900 (sin últimos ceros), etc.
+    if (price === 149000 || price === 14900 || price >= 140000) {
+      return "Maestro Cervecero";
+    } else if (
+      price === 99000 ||
+      price === 9900 ||
+      (price >= 90000 && price < 140000)
+    ) {
+      return "Coleccionista Cervecero";
+    }
+
+    return plan.name || "";
   };
 
   // Helper para obtener el plan actual desde los datos del backend
@@ -181,9 +226,19 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
     if (!currentSubscription?.plan?.id || plans.length === 0) {
       return null;
     }
-    return (
-      plans.find((plan) => plan.id === currentSubscription.plan.id) || null
-    );
+    const plan =
+      plans.find((plan) => plan.id === currentSubscription.plan.id) || null;
+    if (plan) {
+      // Crear una copia con el nombre corregido
+      return {
+        ...plan,
+        name: getCorrectPlanName({
+          ...plan,
+          price_paid: currentSubscription.price_paid,
+        }),
+      };
+    }
+    return null;
   };
 
   // Helper para obtener colores por plan
@@ -273,10 +328,18 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">
+              <h3
+                className="text-sm font-medium text-red-800"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 Error al cargar el perfil
               </h3>
-              <p className="mt-1 text-sm text-red-700">{profileError}</p>
+              <p
+                className="mt-1 text-sm text-red-700"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
+                {profileError}
+              </p>
             </div>
           </div>
         </div>
@@ -292,10 +355,16 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
+                <p
+                  className="text-sm font-medium text-gray-600"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Total Pedidos
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p
+                  className="text-2xl font-bold text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {stats?.total_orders || 0}
                 </p>
               </div>
@@ -308,10 +377,16 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
+                <p
+                  className="text-sm font-medium text-gray-600"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Total Gastado
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p
+                  className="text-2xl font-bold text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {formatPrice(stats?.total_spent || 0)}
                 </p>
               </div>
@@ -324,8 +399,16 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Favoritos</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p
+                  className="text-sm font-medium text-gray-600"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Favoritos
+                </p>
+                <p
+                  className="text-2xl font-bold text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {stats?.favorite_products_count || 0}
                 </p>
               </div>
@@ -338,10 +421,16 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
+                <p
+                  className="text-sm font-medium text-gray-600"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {profile?.is_wholesaler ? "Mayorista desde" : "Miembro desde"}
                 </p>
-                <p className="text-lg font-bold text-gray-900">
+                <p
+                  className="text-lg font-bold text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {profile?.created_at
                     ? new Date(profile.created_at).toLocaleDateString("es-CO", {
                         month: "short",
@@ -405,11 +494,17 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                         <Crown className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                        <h2
+                          className="text-xl font-bold text-gray-900 flex items-center gap-2"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           {getCurrentPlan()?.name}
                           <Star className="w-5 h-5 text-amber-500 fill-current" />
                         </h2>
-                        <p className="text-sm text-gray-600">
+                        <p
+                          className="text-sm text-gray-600"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           {formatPrice(currentSubscription.price_paid)} /{" "}
                           {getCurrentPlan()?.period}
                         </p>
@@ -433,12 +528,17 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                               : "text-red-700"
                           }`}
                         >
-                          {currentSubscription.status === "active"
-                            ? "Activa"
-                            : "Inactiva"}
+                          <span style={{ fontFamily: "var(--font-lato)" }}>
+                            {currentSubscription.status === "active"
+                              ? "Activa"
+                              : "Inactiva"}
+                          </span>
                         </span>
                       </div>
-                      <p className="text-xs text-gray-500">
+                      <p
+                        className="text-xs text-gray-500"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         Renovación:{" "}
                         {new Date(
                           currentSubscription.ends_at
@@ -448,7 +548,10 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                           year: "numeric",
                         })}
                       </p>
-                      <p className="text-xs text-amber-600 font-medium">
+                      <p
+                        className="text-xs text-amber-600 font-medium"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {currentSubscription.days_remaining} días restantes
                       </p>
                     </div>
@@ -461,11 +564,17 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                         <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                           <Package className="w-4 h-4 text-blue-600" />
                         </div>
-                        <h3 className="font-semibold text-gray-900">
+                        <h3
+                          className="font-semibold text-gray-900"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           Descripción del Plan
                         </h3>
                       </div>
-                      <p className="text-sm text-gray-600">
+                      <p
+                        className="text-sm text-gray-600"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {getCurrentPlan()?.description}
                       </p>
                     </div>
@@ -475,7 +584,10 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                         <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
                           <CheckCircle className="w-4 h-4 text-green-600" />
                         </div>
-                        <h3 className="font-semibold text-gray-900">
+                        <h3
+                          className="font-semibold text-gray-900"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           Beneficios Incluidos
                         </h3>
                       </div>
@@ -483,7 +595,12 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                         {getCurrentPlan()?.features.map((feature, index) => (
                           <div key={index} className="flex items-start gap-2">
                             <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                            <p className="text-sm text-gray-600">{feature}</p>
+                            <p
+                              className="text-sm text-gray-600"
+                              style={{ fontFamily: "var(--font-lato)" }}
+                            >
+                              {feature}
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -493,11 +610,17 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                   {/* Progreso del mes */}
                   <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 border border-amber-100">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                      <h3
+                        className="font-semibold text-gray-900 flex items-center gap-2"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         <Clock className="w-4 h-4 text-amber-600" />
                         Estado de Suscripción
                       </h3>
-                      <span className="text-sm font-medium text-amber-700">
+                      <span
+                        className="text-sm font-medium text-amber-700"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         Beneficios activos
                       </span>
                     </div>
@@ -521,8 +644,16 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
 
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="text-gray-600">Inició</p>
-                        <p className="font-semibold text-gray-900">
+                        <p
+                          className="text-gray-600"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
+                          Inició
+                        </p>
+                        <p
+                          className="font-semibold text-gray-900"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           {new Date(
                             currentSubscription.starts_at
                           ).toLocaleDateString("es-CO", {
@@ -533,8 +664,16 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                         </p>
                       </div>
                       <div>
-                        <p className="text-gray-600">Finaliza</p>
-                        <p className="font-semibold text-gray-900">
+                        <p
+                          className="text-gray-600"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
+                          Finaliza
+                        </p>
+                        <p
+                          className="font-semibold text-gray-900"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           {new Date(
                             currentSubscription.ends_at
                           ).toLocaleDateString("es-CO", {
@@ -560,18 +699,22 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                           : "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 focus:ring-amber-500"
                       }`}
                     >
-                      {profileLoading || subscriptionLoading
-                        ? "Procesando..."
-                        : "Renovar Suscripción"}
+                      <span style={{ fontFamily: "var(--font-lato)" }}>
+                        {profileLoading || subscriptionLoading
+                          ? "Procesando..."
+                          : "Renovar Suscripción"}
+                      </span>
                     </button>
                     <button
                       onClick={handleCancelSubscription}
                       disabled={profileLoading || subscriptionLoading}
                       className="flex-1 bg-white text-red-600 px-4 py-3 rounded-lg font-semibold border-2 border-red-200 hover:bg-red-50 hover:border-red-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {profileLoading || subscriptionLoading
-                        ? "Procesando..."
-                        : "Cancelar Suscripción"}
+                      <span style={{ fontFamily: "var(--font-lato)" }}>
+                        {profileLoading || subscriptionLoading
+                          ? "Procesando..."
+                          : "Cancelar Suscripción"}
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -605,8 +748,8 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                     ¡Únete a Market Club Premium!
                   </h2>
                   <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                    Descubre cervezas artesanales excepcionales cada mes con
-                    nuestra suscripción premium
+                    Descubre cervezas artesanales e importadas excepcionales
+                    cada mes con nuestra suscripción premium
                   </p>
 
                   {/* Planes disponibles - Solo mostrar si hay datos reales */}
@@ -628,67 +771,72 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                     </div>
                   ) : plans.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                      {plans.map((plan) => (
-                        <div
-                          key={plan.id}
-                          className={`bg-white/80 backdrop-blur-sm rounded-lg p-4 border transition-all duration-200 hover:shadow-md hover:scale-105 flex flex-col h-full ${
-                            plan.is_popular
-                              ? "border-blue-300 ring-2 ring-blue-100"
-                              : "border-gray-200"
-                          }`}
-                        >
-                          {/* Contenido principal que se expande */}
-                          <div className="flex-1 flex flex-col">
-                            {plan.is_popular && (
-                              <div className="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">
-                                Más Popular
-                              </div>
-                            )}
-                            <h3 className="font-semibold text-gray-900 mb-1">
-                              {plan.name}
-                            </h3>
-                            <p className="text-2xl font-bold text-blue-600 mb-2">
-                              {formatPrice(parseFloat(plan.price))} /{" "}
-                              {plan.period}
-                            </p>
-                            <p className="text-sm text-gray-600 mb-3">
-                              {plan.description}
-                            </p>
+                      {plans.map((plan) => {
+                        // Usar la función helper para obtener el nombre correcto
+                        const displayName = getCorrectPlanName(plan);
 
-                            {/* Mostrar algunas características principales */}
-                            <div className="flex-1 mb-3">
-                              <div className="space-y-1">
-                                {plan.features
-                                  .slice(0, 2)
-                                  .map((feature, index) => (
-                                    <div
-                                      key={index}
-                                      className="flex items-start gap-2"
-                                    >
-                                      <div className="w-1 h-1 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                                      <p className="text-xs text-gray-500">
-                                        {feature}
-                                      </p>
-                                    </div>
-                                  ))}
+                        return (
+                          <div
+                            key={plan.id}
+                            className={`bg-white/80 backdrop-blur-sm rounded-lg p-4 border transition-all duration-200 hover:shadow-md hover:scale-105 flex flex-col h-full ${
+                              plan.is_popular
+                                ? "border-blue-300 ring-2 ring-blue-100"
+                                : "border-gray-200"
+                            }`}
+                          >
+                            {/* Contenido principal que se expande */}
+                            <div className="flex-1 flex flex-col">
+                              {plan.is_popular && (
+                                <div className="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2 inline-block">
+                                  Más Popular
+                                </div>
+                              )}
+                              <h3 className="font-semibold text-gray-900 mb-1">
+                                {displayName}
+                              </h3>
+                              <p className="text-2xl font-bold text-blue-600 mb-2">
+                                {formatPrice(parseFloat(plan.price))} /{" "}
+                                {plan.period}
+                              </p>
+                              <p className="text-sm text-gray-600 mb-3">
+                                {plan.description}
+                              </p>
+
+                              {/* Mostrar algunas características principales */}
+                              <div className="flex-1 mb-3">
+                                <div className="space-y-1">
+                                  {plan.features
+                                    .slice(0, 2)
+                                    .map((feature, index) => (
+                                      <div
+                                        key={index}
+                                        className="flex items-start gap-2"
+                                      >
+                                        <div className="w-1 h-1 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                        <p className="text-xs text-gray-500">
+                                          {feature}
+                                        </p>
+                                      </div>
+                                    ))}
+                                </div>
                               </div>
                             </div>
-                          </div>
 
-                          {/* Botón siempre en la parte inferior */}
-                          <div className="mt-auto">
-                            <button
-                              onClick={() => handleSubscribe(plan.id)}
-                              disabled={subscriptionLoading}
-                              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                            >
-                              {subscriptionLoading
-                                ? "Procesando..."
-                                : "Suscribirme"}
-                            </button>
+                            {/* Botón siempre en la parte inferior */}
+                            <div className="mt-auto">
+                              <button
+                                onClick={() => handleSubscribe(plan.id)}
+                                disabled={subscriptionLoading}
+                                className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                              >
+                                {subscriptionLoading
+                                  ? "Procesando..."
+                                  : "Suscribirme"}
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   ) : null}
 
@@ -717,7 +865,10 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
           {history.length > 0 && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <h2
+                  className="text-lg font-semibold text-gray-900 flex items-center gap-2"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <Clock className="w-5 h-5 text-gray-600" />
                   Historial de Suscripciones
                 </h2>
@@ -755,10 +906,16 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                           />
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">
+                          <p
+                            className="font-medium text-gray-900"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {subscription.plan_name}
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p
+                            className="text-sm text-gray-500"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {new Date(
                               subscription.starts_at
                             ).toLocaleDateString("es-CO", {
@@ -779,7 +936,10 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-gray-900">
+                        <p
+                          className="font-semibold text-gray-900"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           {formatPrice(subscription.price_paid)}
                         </p>
                         <span
@@ -793,13 +953,15 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                               : "bg-blue-100 text-blue-800"
                           }`}
                         >
-                          {subscription.status === "active"
-                            ? "Activa"
-                            : subscription.status === "cancelled"
-                            ? "Cancelada"
-                            : subscription.status === "expired"
-                            ? "Expirada"
-                            : subscription.status}
+                          <span style={{ fontFamily: "var(--font-lato)" }}>
+                            {subscription.status === "active"
+                              ? "Activa"
+                              : subscription.status === "cancelled"
+                              ? "Cancelada"
+                              : subscription.status === "expired"
+                              ? "Expirada"
+                              : subscription.status}
+                          </span>
                         </span>
                       </div>
                     </div>
@@ -813,7 +975,10 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
         {/* Pedidos Recientes */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2
+              className="text-lg font-semibold text-gray-900"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Pedidos Recientes
             </h2>
           </div>
@@ -831,23 +996,33 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                         <Package className="w-5 h-5 text-gray-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">
+                        <p
+                          className="font-medium text-gray-900"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           Pedido #{order.order_number}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p
+                          className="text-sm text-gray-500"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           {formatDate(order.created_at)} • {order.items.length}{" "}
                           productos
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-gray-900">
+                      <p
+                        className="font-semibold text-gray-900"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {formatPrice(order.total_amount)}
                       </p>
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
                           order.status
                         )}`}
+                        style={{ fontFamily: "var(--font-lato)" }}
                       >
                         {order.status}
                       </span>
@@ -868,20 +1043,31 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Información de Contacto */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <h3
+              className="text-lg font-semibold text-gray-900 mb-4"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Información de Contacto
             </h3>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-700">
+                <span
+                  className="text-gray-700"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {profile?.email || user.email}
                 </span>
               </div>
               {profile?.phone && (
                 <div className="flex items-center space-x-3">
                   <Phone className="w-5 h-5 text-gray-400" />
-                  <span className="text-gray-700">{profile.phone}</span>
+                  <span
+                    className="text-gray-700"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    {profile.phone}
+                  </span>
                 </div>
               )}
               {profile?.address && (
@@ -897,30 +1083,30 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
 
           {/* Beneficios de Miembro/Mayorista */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <h3
+              className="text-lg font-semibold text-gray-900 mb-4"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               {profile?.is_wholesaler
                 ? "Beneficios de Mayorista"
                 : "Beneficios de Miembro"}
             </h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                  <Package className="w-4 h-4 text-green-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">Envío Gratis</p>
-                  <p className="text-sm text-gray-500">
-                    En pedidos desde $200.000
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                   <CreditCard className="w-4 h-4 text-blue-600" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">Pagos Seguros</p>
-                  <p className="text-sm text-gray-500">
+                  <p
+                    className="font-medium text-gray-900"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    Pagos Seguros
+                  </p>
+                  <p
+                    className="text-sm text-gray-500"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Protegido con encriptación
                   </p>
                 </div>
@@ -930,10 +1116,18 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
                   <MapPin className="w-4 h-4 text-yellow-600" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">
+                  <p
+                    className="font-medium text-gray-900"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Entrega a Domicilio
                   </p>
-                  <p className="text-sm text-gray-500">En toda Colombia</p>
+                  <p
+                    className="text-sm text-gray-500"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    En toda Colombia
+                  </p>
                 </div>
               </div>
             </div>
@@ -960,6 +1154,62 @@ export default function PerfilOverview({ user }: PerfilOverviewProps) {
         type={toast.type}
         onClose={hideToast}
       />
+
+      {/* Modal de Checkout de Suscripción */}
+      {showCheckout && selectedPlan && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2
+                  className="text-xl font-bold text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Suscribirse a {selectedPlan.name}
+                </h2>
+                <button
+                  onClick={() => setShowCheckout(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                  title="Cerrar"
+                  aria-label="Cerrar modal"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <SubscriptionCheckout
+                planId={selectedPlan.slug}
+                planName={selectedPlan.name}
+                totalAmount={parseInt(selectedPlan.price)}
+                onSuccess={() => {
+                  setShowCheckout(false);
+                  showSuccess(
+                    "¡Suscripción exitosa!",
+                    "Te has suscrito exitosamente a Market Club Premium."
+                  );
+                  // Recargar datos después del pago exitoso
+                  loadCurrentSubscription();
+                  loadHistory();
+                  loadPlans();
+                }}
+                onClose={() => setShowCheckout(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

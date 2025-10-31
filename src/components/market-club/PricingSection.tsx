@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import PricingCard from "./PricingCard";
+import SubscriptionCheckout from "@/components/subscriptions/SubscriptionCheckout";
 import { PricingSectionConfig, PricingPlan } from "@/types/market-club";
 import {
   fetchSubscriptionPlans,
@@ -30,6 +31,8 @@ export default function PricingSection({
   const [subscribingPlanId, setSubscribingPlanId] = useState<string | null>(
     null
   );
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -56,33 +59,48 @@ export default function PricingSection({
   const mappedPlans = useMemo(() => {
     if (backendPlans.length === 0) return plans; // fallback a los quemados si falla
 
-    // Mapear los planes y reordenarlos: Curioso, Coleccionista, Maestro
-    const mapped = backendPlans.map(
-      (p): PricingPlan => ({
+    // Mapear los planes y reordenarlos: Curioso, Maestro, Coleccionista
+    const mapped = backendPlans.map((p): PricingPlan => {
+      // Corregir títulos según precios:
+      // - El más caro ($149.000) debe ser "Maestro Cervecero"
+      // - El de $99.000 debe ser "Coleccionista Cervecero"
+      let displayName = p.name;
+      const price = parseInt(p.price, 10);
+
+      if (price === 149000) {
+        displayName = "Maestro Cervecero";
+      } else if (price === 99000) {
+        displayName = "Coleccionista Cervecero";
+      }
+
+      return {
         id: p.id,
-        name: p.name,
+        slug: p.slug,
+        name: displayName,
         price: `$${new Intl.NumberFormat("es-CO")
           .format(parseInt(p.price, 10))
           .replace(/,/g, ".")}`,
-        period: ` / ${p.period}`,
+        period: " / mes",
         description: p.description,
-        features: p.features,
+        features: p.features || [],
         buttonText: "Empieza ahora",
         buttonColor: "#B58E31",
         isHighlighted: p.is_popular || false,
-      })
-    );
+      };
+    });
 
-    // Reordenar: Curioso (1), Maestro (2), Coleccionista (3)
+    // Reordenar: Curioso ($70k), Coleccionista ($99k), Maestro ($149k)
     const orderMap: { [key: string]: number } = {
-      "curioso-cervecero": 1,
-      "maestro-cervecero": 2,
-      "coleccionista-cervecero": 3,
+      curious_brewer: 1, // $70.000
+      collector_brewer: 2, // $99.000 - será "Coleccionista Cervecero"
+      master_brewer: 3, // $149.000 - será "Maestro Cervecero"
     };
 
     return mapped.sort((a, b) => {
-      const orderA = orderMap[a.id] || 999;
-      const orderB = orderMap[b.id] || 999;
+      const planA = backendPlans.find((p) => p.id === a.id);
+      const planB = backendPlans.find((p) => p.id === b.id);
+      const orderA = orderMap[planA?.slug || ""] || 999;
+      const orderB = orderMap[planB?.slug || ""] || 999;
       return orderA - orderB;
     });
   }, [backendPlans, plans]);
@@ -92,7 +110,12 @@ export default function PricingSection({
       <div className={finalClassName} style={{ backgroundColor }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
-            <p className="text-white">Cargando planes...</p>
+            <p
+              className="text-white"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              Cargando planes...
+            </p>
           </div>
         </div>
       </div>
@@ -108,7 +131,12 @@ export default function PricingSection({
     >
       <div className="max-w-7xl mx-auto">
         {error && (
-          <div className="mb-6 text-red-100 text-sm text-center">{error}</div>
+          <div
+            className="mb-6 text-red-100 text-sm text-center"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
+            {error}
+          </div>
         )}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {mappedPlans.map((plan) => (
@@ -120,31 +148,66 @@ export default function PricingSection({
                   openLoginModal();
                   return;
                 }
-                // Si ya tiene suscripción activa, no cambiarla y redirigir al perfil inmediatamente
-                (async () => {
-                  try {
-                    setSubscribingPlanId(plan.id);
-                    const current = await getCurrentSubscription();
-                    if (current && current.success && current.data) {
-                      router.push("/perfil");
-                      return;
-                    }
-                    // Si no tiene suscripción, crearla y luego redirigir
-                    await subscribeToPlan(plan.id, 1);
-                    router.push("/perfil");
-                  } catch (e) {
-                    // Ante cualquier error, no intentar cambiar el plan actual
-                    router.push("/perfil");
-                  } finally {
-                    setSubscribingPlanId(null);
-                  }
-                })();
+                // Mostrar checkout de suscripción con Wompi
+                setSelectedPlan(plan);
+                setShowCheckout(true);
               }}
               isBusy={subscribingPlanId === plan.id}
             />
           ))}
         </div>
       </div>
+
+      {/* Modal de Checkout de Suscripción */}
+      {showCheckout && selectedPlan && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2
+                  className="text-xl font-bold text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Suscribirse a {selectedPlan.name}
+                </h2>
+                <button
+                  onClick={() => setShowCheckout(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                  title="Cerrar"
+                  aria-label="Cerrar modal"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <SubscriptionCheckout
+                planId={selectedPlan.slug}
+                planName={selectedPlan.name}
+                totalAmount={parseInt(
+                  selectedPlan.price.replace(/[^0-9]/g, "")
+                )}
+                onSuccess={() => {
+                  setShowCheckout(false);
+                  router.push("/perfil?subscription=success");
+                }}
+                onClose={() => setShowCheckout(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

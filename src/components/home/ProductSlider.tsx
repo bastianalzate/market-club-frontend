@@ -26,6 +26,12 @@ export default function ProductSlider() {
   } = useCartContext();
   const { toast, showSuccess, showError, hideToast } = useToast();
 
+  // Helper function to capitalize first letter
+  const capitalizeFirstLetter = (str: string): string => {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
+
   // Función para actualizar el estado is_favorite de un producto en la lista
   const updateBeerFavoriteInList = useCallback(
     (productId: number, isFavorite: boolean) => {
@@ -153,7 +159,10 @@ export default function ProductSlider() {
 
         {/* Etiqueta de Agotado */}
         {beer.stock_quantity === 0 && (
-          <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg sm:top-4 sm:left-4 sm:px-3 sm:text-sm">
+          <div
+            className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg sm:top-4 sm:left-4 sm:px-3 sm:text-sm"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             AGOTADO
           </div>
         )}
@@ -182,36 +191,61 @@ export default function ProductSlider() {
       {/* Información del producto */}
       <div className="p-2 flex-1 flex flex-col sm:p-4 lg:p-6">
         <div className="flex items-center justify-between mb-0 sm:mb-3">
-          <span className="text-xs text-gray-600 font-medium sm:text-sm">
-            BOTELLA 500ML
-          </span>
+          {(beer.packaging_type || beer.volume_ml) && (
+            <span
+              className="text-xs text-gray-600 font-medium sm:text-sm"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              {beer.packaging_type && beer.volume_ml
+                ? `${capitalizeFirstLetter(beer.packaging_type)} ${
+                    beer.volume_ml
+                  }ml`
+                : beer.packaging_type
+                ? capitalizeFirstLetter(beer.packaging_type)
+                : beer.volume_ml
+                ? `${beer.volume_ml}ml`
+                : ""}
+            </span>
+          )}
           <div className="text-right">
             {beer.sale_price && beer.sale_price < beer.price ? (
               <div>
-                <span className="text-xs text-gray-500 line-through sm:text-sm">
+                <span
+                  className="text-xs text-gray-500 line-through sm:text-sm"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {formatPrice(beer.price)}
                 </span>
-                <span className="text-base font-bold text-gray-900 ml-1 sm:text-lg sm:ml-2">
+                <span
+                  className="text-base font-bold text-gray-900 ml-1 sm:text-lg sm:ml-2"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {formatPrice(beer.sale_price)}
                 </span>
               </div>
             ) : (
-              <span className="text-base font-bold text-gray-900 sm:text-lg">
+              <span
+                className="text-base font-bold text-gray-900 sm:text-lg"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 {formatPrice(beer.current_price)}
               </span>
             )}
           </div>
         </div>
 
-        <h3 className="text-xs font-bold text-gray-900 mb-0 line-clamp-1 sm:text-base sm:mb-4 sm:line-clamp-2 sm:text-lg">
+        <h3
+          className="text-xs font-bold text-gray-900 mb-0 line-clamp-1 sm:text-base sm:mb-4 sm:line-clamp-2 sm:text-lg"
+          style={{ fontFamily: "var(--font-lato)" }}
+        >
           {beer.name}
         </h3>
 
         {/* Botones de acción */}
         <div className="flex items-center mt-auto sm:space-x-3">
           {/* Ícono de carrito cuadrado con contador - Solo visual */}
-           <div
-             className="relative p-0 rounded-lg sm:p-2 lg:p-3 hidden sm:block"
+          <div
+            className="relative p-0 rounded-lg sm:p-2 lg:p-3 hidden sm:block"
             style={{
               backgroundColor: "transparent",
               borderColor: "#D0D5DD",
@@ -236,7 +270,7 @@ export default function ProductSlider() {
           <button
             onClick={() => handleAddToCart(beer)}
             disabled={addingToCart === beer.id || beer.stock_quantity === 0}
-             className="flex-1 flex items-center justify-center space-x-2 text-white py-2 px-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer sm:py-3 sm:px-4"
+            className="flex-1 flex items-center justify-center space-x-2 text-white py-2 px-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer sm:py-3 sm:px-4"
             style={{
               backgroundColor:
                 beer.stock_quantity === 0 ? "#6B7280" : "#B58E31",
@@ -250,7 +284,10 @@ export default function ProductSlider() {
               (e.currentTarget.style.backgroundColor = "#B58E31")
             }
           >
-            <span className="truncate">
+            <span
+              className="truncate"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               {addingToCart === beer.id
                 ? "Agregando..."
                 : beer.stock_quantity === 0
@@ -273,7 +310,10 @@ export default function ProductSlider() {
       <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
         {/* Header con título y botón */}
         <div className="flex flex-col items-center text-center mb-4 sm:mb-6 lg:flex-row lg:justify-between lg:text-left">
-          <h2 className="text-[30px] font-bold text-white mb-4 lg:mb-0">
+          <h2
+            className="text-[30px] font-bold text-white mb-4 lg:mb-0"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Últimas Cervezas
           </h2>
 
@@ -281,6 +321,7 @@ export default function ProductSlider() {
             <Link
               href="/tienda"
               className="inline-flex items-center justify-center p-1 -m-1 text-sm font-bold text-gray-300 transition-all duration-200 rounded-md focus:outline-none hover:text-white"
+              style={{ fontFamily: "var(--font-lato)" }}
             >
               Ver todas las cervezas
               <svg

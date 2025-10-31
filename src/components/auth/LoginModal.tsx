@@ -46,7 +46,7 @@ type ModalMode = "options" | "login" | "register" | "guest" | "wholesaler";
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const router = useRouter();
-  const { login, register, guestCheckout, isLoading, error, clearError } =
+  const { login, register, guestCheckout, isLoading, error, clearError, user } =
     useAuth();
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
@@ -63,6 +63,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   >(null);
   const [isWholesalerRegistration, setIsWholesalerRegistration] =
     useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [showForgotPasswordSuccess, setShowForgotPasswordSuccess] = useState(false);
 
   // Estados para formularios
   const [loginData, setLoginData] = useState({ email: "", password: "" });
@@ -115,8 +118,40 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     setShowPassword(false);
     setShowConfirmPassword(false);
     setIsWholesalerSelected(null);
+    setShowForgotPassword(false);
+    setForgotPasswordEmail("");
+    setShowForgotPasswordSuccess(false);
     clearError();
   }, [clearError]);
+
+  // Función para solicitar reset de contraseña
+  const handleForgotPassword = useCallback(async () => {
+    if (!forgotPasswordEmail) {
+      setValidationErrors({ forgotPassword: "Email requerido" });
+      return;
+    }
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/password/request-reset`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: forgotPasswordEmail }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setShowForgotPasswordSuccess(true);
+        setForgotPasswordEmail("");
+      } else {
+        setValidationErrors({ forgotPassword: data.message || "Error al enviar el email" });
+      }
+    } catch (error) {
+      setValidationErrors({ forgotPassword: "Error de conexión. Intenta nuevamente." });
+    }
+  }, [forgotPasswordEmail]);
 
   // Manejar la animación de salida
   const handleClose = useCallback(() => {
@@ -344,11 +379,16 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     try {
       switch (mode) {
         case "login":
-          await login(loginData.email, loginData.password);
+          const loginResult = await login(loginData.email, loginData.password);
           // Si llegamos aquí, el login fue exitoso
-          console.log("Login exitoso, redirigiendo a perfil...");
+          console.log("Login exitoso, redirigiendo...");
           handleClose();
-          router.push("/perfil");
+          // Redirigir según el tipo de usuario
+          if (loginResult.isWholesaler) {
+            router.push("/mayorista");
+          } else {
+            router.push("/perfil");
+          }
           break;
         case "register":
           // Validar formulario antes de enviar
@@ -447,28 +487,31 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       `}</style>
 
       {/* Backdrop */}
-      <div
-        className="fixed inset-0"
-        style={{
-          backgroundColor: "#00000091",
-          zIndex: 9999,
-          animation: isAnimating
-            ? "fadeIn 0.25s ease-in-out"
-            : "fadeOut 0.25s ease-in-out",
-        }}
-        onClick={handleClose}
-      />
+      {!showForgotPassword && (
+        <div
+          className="fixed inset-0"
+          style={{
+            backgroundColor: "#00000091",
+            zIndex: 9999,
+            animation: isAnimating
+              ? "fadeIn 0.25s ease-in-out"
+              : "fadeOut 0.25s ease-in-out",
+          }}
+          onClick={handleClose}
+        />
+      )}
 
       {/* Modal */}
-      <div
-        className="fixed inset-0 flex items-center justify-center p-4"
-        style={{
-          zIndex: 10000,
-          animation: isAnimating
-            ? "fadeIn 0.25s ease-in-out"
-            : "fadeOut 0.25s ease-in-out",
-        }}
-      >
+      {!showForgotPassword && !showForgotPasswordSuccess && (
+        <div
+          className="fixed inset-0 flex items-center justify-center p-4"
+          style={{
+            zIndex: 10000,
+            animation: isAnimating
+              ? "fadeIn 0.25s ease-in-out"
+              : "fadeOut 0.25s ease-in-out",
+          }}
+        >
         <div
           className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden"
           style={{
@@ -481,14 +524,20 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2
+                className="text-2xl font-bold text-gray-900"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 {mode === "options" && "Bienvenido a Market Club"}
                 {mode === "login" && "Iniciar Sesión"}
                 {mode === "wholesaler" && "Tipo de Cuenta"}
                 {mode === "register" && "Crear Cuenta"}
                 {mode === "guest" && "Continuar como Invitado"}
               </h2>
-              <p className="text-gray-600 mt-1">
+              <p
+                className="text-gray-600 mt-1"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 {mode === "options" && "Elige cómo quieres continuar"}
                 {mode === "login" && "Ingresa a tu cuenta"}
                 {mode === "wholesaler" && "¿Eres mayorista?"}
@@ -513,7 +562,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 <button
                   onClick={() => setMode("login")}
                   className="w-full flex items-center justify-center px-6 py-4 text-white rounded-xl font-semibold transition-colors cursor-pointer"
-                  style={{ backgroundColor: "rgb(181, 142, 49)" }}
+                  style={{
+                    backgroundColor: "rgb(181, 142, 49)",
+                    fontFamily: "var(--font-lato)",
+                  }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = "rgb(160, 120, 23)";
                   }}
@@ -528,6 +580,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 <button
                   onClick={() => setMode("wholesaler")}
                   className="w-full flex items-center justify-center px-6 py-4 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-colors cursor-pointer"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   <User className="w-5 h-5 mr-2" />
                   Crear cuenta nueva
@@ -538,13 +591,19 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     <div className="w-full border-t border-gray-300" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">o</span>
+                    <span
+                      className="px-2 bg-white text-gray-500"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      o
+                    </span>
                   </div>
                 </div>
 
                 <button
                   onClick={() => setMode("guest")}
                   className="w-full flex items-center justify-center px-6 py-4 border-2 border-gray-300 text-gray-900 rounded-xl font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   <MapPin className="w-5 h-5 mr-2" />
                   Continuar como invitado
@@ -555,7 +614,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             {mode === "wholesaler" && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
-                  <p className="text-gray-600">
+                  <p
+                    className="text-gray-600"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Selecciona el tipo de cuenta que mejor se adapte a tus
                     necesidades
                   </p>
@@ -574,8 +636,16 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 >
                   <User className="w-5 h-5 mr-3" />
                   <div className="text-left">
-                    <div className="font-semibold">Cliente Regular</div>
-                    <div className="text-sm text-gray-600">
+                    <div
+                      className="font-semibold"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Cliente Regular
+                    </div>
+                    <div
+                      className="text-sm text-gray-600"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Compra productos para consumo personal
                     </div>
                   </div>
@@ -594,8 +664,16 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 >
                   <User className="w-5 h-5 mr-3" />
                   <div className="text-left">
-                    <div className="font-semibold">Mayorista</div>
-                    <div className="text-sm text-yellow-100">
+                    <div
+                      className="font-semibold"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Mayorista
+                    </div>
+                    <div
+                      className="text-sm text-yellow-100"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Compra productos para revender con precios especiales
                     </div>
                   </div>
@@ -605,6 +683,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   type="button"
                   onClick={() => setMode("options")}
                   className="w-full mt-4 font-medium text-sm transition-colors cursor-pointer text-gray-500 hover:text-gray-700"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   ← Volver
                 </button>
@@ -624,7 +703,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     }
                   }}
                   className="font-medium text-sm transition-colors cursor-pointer"
-                  style={{ color: "rgb(181, 142, 49)" }}
+                  style={{
+                    color: "rgb(181, 142, 49)",
+                    fontFamily: "var(--font-lato)",
+                  }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = "rgb(160, 120, 23)";
                   }}
@@ -638,7 +720,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Name field (register and guest) */}
                 {(mode === "register" || mode === "guest") && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Nombre completo
                     </label>
                     <div className="relative">
@@ -679,7 +764,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       />
                     </div>
                     {validationErrors.name && (
-                      <p className="text-red-500 text-sm mt-1">
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.name}
                       </p>
                     )}
@@ -688,7 +776,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                 {/* Email field */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Email
                   </label>
                   <div className="relative">
@@ -730,7 +821,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     />
                   </div>
                   {validationErrors.email && (
-                    <p className="text-red-500 text-sm mt-1">
+                    <p
+                      className="text-red-500 text-sm mt-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       {validationErrors.email}
                     </p>
                   )}
@@ -740,7 +834,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {(mode === "login" ||
                   (mode === "register" && !registerData.isWholesaler)) && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Contraseña
                     </label>
                     <div className="relative">
@@ -798,13 +895,19 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       </button>
                     </div>
                     {validationErrors.password && (
-                      <p className="text-red-500 text-sm mt-1">
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.password}
                       </p>
                     )}
                     {mode === "register" && registerData.password && (
                       <div className="mt-2">
-                        <div className="text-xs text-gray-600 mb-1">
+                        <div
+                          className="text-xs text-gray-600 mb-1"
+                          style={{ fontFamily: "var(--font-lato)" }}
+                        >
                           Requisitos de contraseña:
                         </div>
                         <div className="space-y-1 text-xs">
@@ -814,6 +917,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 ? "text-green-600"
                                 : "text-gray-400"
                             }`}
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             <span className="mr-1">
                               {registerData.password.length >= 8 ? "✓" : "○"}
@@ -826,6 +930,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 ? "text-green-600"
                                 : "text-gray-400"
                             }`}
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             <span className="mr-1">
                               {/[A-Z]/.test(registerData.password) ? "✓" : "○"}
@@ -838,6 +943,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 ? "text-green-600"
                                 : "text-gray-400"
                             }`}
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             <span className="mr-1">
                               {/[a-z]/.test(registerData.password) ? "✓" : "○"}
@@ -850,6 +956,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 ? "text-green-600"
                                 : "text-gray-400"
                             }`}
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             <span className="mr-1">
                               {/\d/.test(registerData.password) ? "✓" : "○"}
@@ -864,6 +971,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 ? "text-green-600"
                                 : "text-gray-400"
                             }`}
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             <span className="mr-1">
                               {/[!@#$%^&*(),.?":{}|<>]/.test(
@@ -883,7 +991,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Confirm Password field (register only, but not for wholesalers) */}
                 {mode === "register" && !registerData.isWholesaler && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Confirmar Contraseña
                     </label>
                     <div className="relative">
@@ -931,7 +1042,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       </button>
                     </div>
                     {validationErrors.confirmPassword && (
-                      <p className="text-red-500 text-sm mt-1">
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.confirmPassword}
                       </p>
                     )}
@@ -941,7 +1055,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Phone field (register and guest) */}
                 {(mode === "register" || mode === "guest") && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Teléfono
                     </label>
                     <div className="relative">
@@ -985,7 +1102,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       />
                     </div>
                     {validationErrors.phone && (
-                      <p className="text-red-500 text-sm mt-1">
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.phone}
                       </p>
                     )}
@@ -995,7 +1115,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Country field (register only) */}
                 {mode === "register" && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       País
                     </label>
                     <div className="relative">
@@ -1030,7 +1153,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       </select>
                     </div>
                     {validationErrors.country && (
-                      <p className="text-red-500 text-sm mt-1">
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.country}
                       </p>
                     )}
@@ -1040,7 +1166,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Date of Birth field (register only) */}
                 {mode === "register" && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Fecha de nacimiento (opcional)
                     </label>
                     <div className="relative">
@@ -1072,7 +1201,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       />
                     </div>
                     {validationErrors.dateOfBirth && (
-                      <p className="text-red-500 text-sm mt-1">
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.dateOfBirth}
                       </p>
                     )}
@@ -1082,7 +1214,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Profession field (register only) */}
                 {mode === "register" && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Profesión (opcional)
                     </label>
                     <div className="relative">
@@ -1114,7 +1249,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       />
                     </div>
                     {validationErrors.profession && (
-                      <p className="text-red-500 text-sm mt-1">
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.profession}
                       </p>
                     )}
@@ -1124,7 +1262,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* NIT field (register only, when isWholesaler is true) */}
                 {mode === "register" && registerData.isWholesaler && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       NIT <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
@@ -1147,7 +1288,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       />
                     </div>
                     {validationErrors.nit && (
-                      <p className="text-red-500 text-sm mt-1">
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.nit}
                       </p>
                     )}
@@ -1157,7 +1301,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Document upload field (register only, for wholesalers) */}
                 {mode === "register" && registerData.isWholesaler && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Documento de Mayorista *
                     </label>
                     <div className="relative">
@@ -1185,12 +1332,18 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       />
                       <FileText className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p
+                      className="text-xs text-gray-500 mt-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Formatos permitidos: JPG, JPEG, PNG, PDF. Tamaño máximo:
                       5MB
                     </p>
                     {validationErrors.wholesaler_document && (
-                      <p className="text-red-500 text-sm mt-1">
+                      <p
+                        className="text-red-500 text-sm mt-1"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {validationErrors.wholesaler_document}
                       </p>
                     )}
@@ -1229,6 +1382,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               ? "text-yellow-800"
                               : "text-gray-700"
                           }`}
+                          style={{ fontFamily: "var(--font-lato)" }}
                         >
                           {registerData.isWholesaler
                             ? "Cuenta Mayorista"
@@ -1240,6 +1394,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               ? "text-yellow-600"
                               : "text-gray-500"
                           }`}
+                          style={{ fontFamily: "var(--font-lato)" }}
                         >
                           {registerData.isWholesaler
                             ? "Acceso a precios especiales para revendedores"
@@ -1253,7 +1408,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 {/* Address field (guest only) */}
                 {mode === "guest" && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Dirección de entrega
                     </label>
                     <div className="relative">
@@ -1282,12 +1440,29 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   </div>
                 )}
 
+                {/* Forgot Password Button - Solo en modo login */}
+                {mode === "login" && (
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => setShowForgotPassword(true)}
+                      className="text-sm text-gray-600 hover:text-amber-600 transition-colors cursor-pointer"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </button>
+                  </div>
+                )}
+
                 {/* Submit button */}
                 <button
                   type="submit"
                   disabled={isLoading}
                   className="w-full text-white py-3 px-6 rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                  style={{ backgroundColor: "rgb(181, 142, 49)" }}
+                  style={{
+                    backgroundColor: "rgb(181, 142, 49)",
+                    fontFamily: "var(--font-lato)",
+                  }}
                   onMouseEnter={(e) => {
                     if (!isLoading) {
                       e.currentTarget.style.backgroundColor =
@@ -1302,7 +1477,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   }}
                 >
                   {isLoading ? (
-                    <div className="flex items-center justify-center">
+                    <div
+                      className="flex items-center justify-center"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                       Procesando...
                     </div>
@@ -1319,6 +1497,159 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           </div>
         </div>
       </div>
+      )}
+
+      {/* Modal de Olvidé mi contraseña */}
+      {showForgotPassword && (
+        <>
+          {/* Backdrop para modal de olvidé mi contraseña */}
+          <div
+            className="fixed inset-0"
+            style={{
+              backgroundColor: "#00000091",
+              zIndex: 10000,
+            }}
+            onClick={() => {
+              setShowForgotPassword(false);
+              setForgotPasswordEmail("");
+              setValidationErrors({});
+            }}
+          />
+          
+          <div className="fixed inset-0 flex items-center justify-center p-4" style={{ zIndex: 10001 }}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            {!showForgotPasswordSuccess ? (
+              <>
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900" style={{ fontFamily: "var(--font-lato)" }}>
+                      Restablecer Contraseña
+                    </h3>
+                    <p className="text-gray-600 mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                      Ingresa tu email para recibir un enlace de restablecimiento
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setShowForgotPassword(false);
+                      setForgotPasswordEmail("");
+                      setValidationErrors({});
+                    }}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+                    title="Cerrar"
+                    aria-label="Cerrar modal"
+                  >
+                    <X className="w-5 h-5 text-gray-500" />
+                  </button>
+                </div>
+                
+                <div className="p-6">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                        Email
+                      </label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          type="email"
+                          value={forgotPasswordEmail}
+                          onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-500 text-gray-900"
+                          placeholder="tu@email.com"
+                        />
+                      </div>
+                      {validationErrors.forgotPassword && (
+                        <p className="text-red-500 text-sm mt-1" style={{ fontFamily: "var(--font-lato)" }}>
+                          {validationErrors.forgotPassword}
+                        </p>
+                      )}
+                    </div>
+                    
+                    <div className="flex space-x-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowForgotPassword(false);
+                          setForgotPasswordEmail("");
+                          setValidationErrors({});
+                        }}
+                        className="flex-1 py-3 px-4 border border-gray-300 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleForgotPassword}
+                        className="flex-1 py-3 px-4 text-white rounded-xl font-medium transition-colors cursor-pointer"
+                        style={{ backgroundColor: "rgb(181, 142, 49)", fontFamily: "var(--font-lato)" }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = "rgb(160, 120, 23)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "rgb(181, 142, 49)";
+                        }}
+                      >
+                        Enviar Enlace
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="p-6 text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                
+                <h3 className="text-xl font-bold text-gray-900 mb-2" style={{ fontFamily: "var(--font-lato)" }}>
+                  ¡Email Enviado!
+                </h3>
+                
+                <p className="text-gray-600 mb-6" style={{ fontFamily: "var(--font-lato)" }}>
+                  Si el email existe en nuestro sistema, recibirás un enlace para restablecer tu contraseña en los próximos minutos.
+                </p>
+                
+                <div className="space-y-3">
+                  <button
+                    onClick={() => {
+                      setShowForgotPasswordSuccess(false);
+                      handleClose();
+                    }}
+                    className="w-full py-3 px-4 text-white rounded-xl font-medium transition-colors cursor-pointer"
+                    style={{ backgroundColor: "rgb(181, 142, 49)", fontFamily: "var(--font-lato)" }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "rgb(160, 120, 23)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "rgb(181, 142, 49)";
+                    }}
+                  >
+                    Entendido
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      setShowForgotPasswordSuccess(false);
+                      setForgotPasswordEmail("");
+                      setValidationErrors({});
+                    }}
+                    className="w-full py-3 px-4 border border-gray-300 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    Intentar con otro email
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        </>
+      )}
+
 
       {/* Modal de éxito */}
       <SuccessModal
@@ -1326,8 +1657,13 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         onClose={() => {
           setShowSuccessModal(false);
           handleClose(); // Cerrar el modal principal también
-          // Solo redirigir al perfil si NO es mayorista
-          if (!isWholesalerRegistration) {
+          // Redirigir según el tipo de usuario
+          if (isWholesalerRegistration) {
+            // Para mayoristas, no redirigir automáticamente
+            return;
+          } else if (user?.is_wholesaler) {
+            router.push("/mayorista");
+          } else {
             router.push("/perfil");
           }
         }}

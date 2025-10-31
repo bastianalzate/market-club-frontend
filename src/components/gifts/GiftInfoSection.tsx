@@ -10,7 +10,7 @@ export default function GiftInfoSection() {
             <p
               className="text-white"
               style={{
-                fontFamily: "var(--font-inter)",
+                fontFamily: "var(--font-lato)",
                 fontSize: "20px",
                 lineHeight: "26px",
                 letterSpacing: "0px",

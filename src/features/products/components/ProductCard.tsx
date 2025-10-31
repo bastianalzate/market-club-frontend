@@ -50,12 +50,18 @@ export default function ProductCard({
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
         />
         {product.featured && (
-          <div className="absolute top-2 left-2 bg-amber-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
+          <div 
+            className="absolute top-2 left-2 bg-amber-500 text-white text-xs px-2 py-1 rounded-full font-semibold"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Destacado
           </div>
         )}
         {!product.inStock && (
-          <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
+          <div 
+            className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-semibold"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Agotado
           </div>
         )}
@@ -77,10 +83,18 @@ export default function ProductCard({
       {/* Product Info */}
       <div className="p-4">
         {/* Brand */}
-        <p className="text-sm text-gray-500 mb-1">{product.brand}</p>
+        <p 
+          className="text-sm text-gray-500 mb-1"
+          style={{ fontFamily: "var(--font-lato)" }}
+        >
+          {product.brand}
+        </p>
 
         {/* Name */}
-        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+        <h3 
+          className="font-semibold text-gray-900 mb-2 line-clamp-2"
+          style={{ fontFamily: "var(--font-lato)" }}
+        >
           {product.name}
         </h3>
 
@@ -98,13 +112,19 @@ export default function ProductCard({
               />
             ))}
           </div>
-          <span className="text-sm text-gray-500 ml-1">
+          <span 
+            className="text-sm text-gray-500 ml-1"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             ({product.reviewCount})
           </span>
         </div>
 
         {/* Product Details */}
-        <div className="flex items-center justify-between mb-3 text-sm text-gray-600">
+        <div 
+          className="flex items-center justify-between mb-3 text-sm text-gray-600"
+          style={{ fontFamily: "var(--font-lato)" }}
+        >
           <span>{product.alcoholContent}% ABV</span>
           <span>{product.volume}ml</span>
           <span>{product.style}</span>
@@ -113,11 +133,17 @@ export default function ProductCard({
         {/* Price */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
-            <span className="text-lg font-bold text-gray-900">
+            <span 
+              className="text-lg font-bold text-gray-900"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               {formatPrice(product.price)}
             </span>
             {product.originalPrice && product.originalPrice > product.price && (
-              <span className="text-sm text-gray-500 line-through">
+              <span 
+                className="text-sm text-gray-500 line-through"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 {formatPrice(product.originalPrice)}
               </span>
             )}
@@ -147,7 +173,9 @@ export default function ProductCard({
             }
           >
             <ShoppingCart className="w-4 h-4" />
-            <span>{product.inStock ? "Agregar" : "Agotado"}</span>
+            <span style={{ fontFamily: "var(--font-lato)" }}>
+              {product.inStock ? "Agregar" : "Agotado"}
+            </span>
           </button>
         </div>
       </div>

@@ -17,6 +17,7 @@ const config: Config = {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
         oswald: ["var(--font-oswald)", "sans-serif"],
+        lato: ["var(--font-lato)", "sans-serif"],
         inter: ["var(--font-inter)", "sans-serif"],
       },
       animation: {

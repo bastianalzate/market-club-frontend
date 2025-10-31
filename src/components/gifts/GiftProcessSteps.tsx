@@ -7,10 +7,16 @@ export default function GiftProcessSteps() {
     <section className="py-10 bg-white sm:py-16 lg:py-24">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-[30px] font-bold leading-tight text-black sm:text-4xl lg:text-5xl">
+          <h2 
+            className="text-[30px] font-bold leading-tight text-black sm:text-4xl lg:text-5xl"
+            style={{ fontFamily: "var(--font-oswald)" }}
+          >
             ¿Cómo funciona?
           </h2>
-          <p className="max-w-lg mx-auto mt-4 text-base leading-relaxed text-gray-600">
+          <p 
+            className="max-w-lg mx-auto mt-4 text-base leading-relaxed text-gray-600"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Personaliza tu caja y sorprende a quien más quieras, creando el regalo perfecto de 
             cervezas en sólo 3 simples pasos. 
           </p>
@@ -43,10 +49,16 @@ export default function GiftProcessSteps() {
                   />
                 </svg>
               </div>
-              <h3 className="mt-6 text-xl font-semibold leading-tight text-black md:mt-10">
+              <h3 
+                className="mt-6 text-xl font-semibold leading-tight text-black md:mt-10"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 Seleccioná la caja que más te guste.
               </h3>
-              <p className="mt-4 text-base text-gray-600">
+              <p 
+                className="mt-4 text-base text-gray-600"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 Elige entre nuestras cajas especiales diseñadas para diferentes
                 ocasiones y gustos.
               </p>
@@ -70,10 +82,16 @@ export default function GiftProcessSteps() {
                   />
                 </svg>
               </div>
-              <h3 className="mt-6 text-xl font-semibold leading-tight text-black md:mt-10">
+              <h3 
+                className="mt-6 text-xl font-semibold leading-tight text-black md:mt-10"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 Elegí las cervezas que quieras.
               </h3>
-              <p className="mt-4 text-base text-gray-600">
+              <p 
+                className="mt-4 text-base text-gray-600"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 Personaliza tu regalo seleccionando las cervezas que más te
                 gusten de nuestro catálogo.
               </p>
@@ -112,10 +130,16 @@ export default function GiftProcessSteps() {
                   />
                 </svg>
               </div>
-              <h3 className="mt-6 text-xl font-semibold leading-tight text-black md:mt-10">
+              <h3 
+                className="mt-6 text-xl font-semibold leading-tight text-black md:mt-10"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 Agregá la caja al carrito.
               </h3>
-              <p className="mt-4 text-base text-gray-600">
+              <p 
+                className="mt-4 text-base text-gray-600"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 Finaliza tu pedido agregando la caja personalizada a tu carrito
                 de compras.
               </p>

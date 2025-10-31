@@ -88,8 +88,22 @@ const giftBoxes: GiftBox[] = [
   },
 ];
 
+// Helper function to capitalize first letter
+const capitalizeFirstLetter = (str: string): string => {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
 // Función para convertir TransformedProduct a Beer
 const transformToBeer = (product: TransformedProduct): Beer => {
+  // Obtener información de presentación y volumen del producto
+  const volumeText =
+    product.packaging_type && product.volume_ml
+      ? `${capitalizeFirstLetter(product.packaging_type)} ${
+          product.volume_ml
+        }ml`
+      : "";
+
   return {
     id: product.id,
     name: product.name,
@@ -99,12 +113,12 @@ const transformToBeer = (product: TransformedProduct): Beer => {
         ? parseFloat(product.price)
         : product.price,
     image: product.image,
-    volume: "BOTELLA 500ML", // Valor por defecto
+    volume: volumeText,
     category:
       typeof product.category === "string"
         ? product.category
         : product.category?.name || "Cerveza",
-    nationality: "Importada", // Valor por defecto
+    nationality: "", // No se muestra
     rating: product.rating,
     inStock: product.inStock,
     description: product.description,
@@ -149,6 +163,7 @@ export default function GiftBuilder() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [showConstructionModal, setShowConstructionModal] = useState(false);
 
   // Referencia para el scroll al título de cervezas
   const cervezasTitleRef = useRef<HTMLDivElement>(null);
@@ -192,7 +207,7 @@ export default function GiftBuilder() {
           const match = range.match(/(\d+)k?-(\d+)k?/);
           return match ? parseInt(match[1]) * 1000 : 0;
         };
-        
+
         return getMinValue(a) - getMinValue(b);
       })
       .map((range) => ({
@@ -206,7 +221,7 @@ export default function GiftBuilder() {
     const matchesSearch =
       beer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       beer.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch && beer.inStock;
+    return matchesSearch; // Mostrar todos los productos independientemente del stock
   });
 
   // Funciones para manejar cambios en los filtros
@@ -319,6 +334,10 @@ export default function GiftBuilder() {
 
   // Función para agregar el regalo al carrito
   const handleAddGiftToCart = async () => {
+    // Mostrar modal de construcción
+    setShowConstructionModal(true);
+    return;
+
     if (!giftBuilder.selectedBox || giftBuilder.selectedBeers.length === 0) {
       showError(
         "Regalo incompleto",
@@ -327,29 +346,32 @@ export default function GiftBuilder() {
       return;
     }
 
+    // TypeScript type guard: selectedBox ya no puede ser null después de la verificación
+    const selectedBox = giftBuilder.selectedBox!; // Usar aserción no-null ya que verificamos arriba
+
     try {
       console.log("🎁 Creando regalo personalizado...");
-      console.log("🎁 Caja seleccionada:", giftBuilder.selectedBox);
+      console.log("🎁 Caja seleccionada:", selectedBox);
       console.log("🎁 Cervezas seleccionadas:", giftBuilder.selectedBeers);
 
       // Crear los datos del regalo para enviar al backend
       const beerNames = giftBuilder.selectedBeers
         .map((beer) => beer.name)
         .join(", ");
-      const giftName = `Regalo Personalizado - ${giftBuilder.selectedBox.name}`;
-      const giftDescription = `Caja ${giftBuilder.selectedBox.name} con ${giftBuilder.selectedBeers.length} cervezas: ${beerNames}`;
+      const giftName = `Regalo Personalizado - ${selectedBox.name}`;
+      const giftDescription = `Caja ${selectedBox.name} con ${giftBuilder.selectedBeers.length} cervezas: ${beerNames}`;
 
       const giftData = {
         name: giftName,
         description: giftDescription,
         box: {
-          id: giftBuilder.selectedBox.id,
-          name: giftBuilder.selectedBox.name,
-          price: giftBuilder.selectedBox.price,
-          description: giftBuilder.selectedBox.description,
-          maxBeers: giftBuilder.selectedBox.maxBeers,
-          dimensions: giftBuilder.selectedBox.dimensions,
-          deliveryTime: giftBuilder.selectedBox.deliveryTime,
+          id: selectedBox.id,
+          name: selectedBox.name,
+          price: selectedBox.price,
+          description: selectedBox.description,
+          maxBeers: selectedBox.maxBeers,
+          dimensions: selectedBox.dimensions,
+          deliveryTime: selectedBox.deliveryTime,
         },
         beers: giftBuilder.selectedBeers.map((beer) => ({
           id: beer.id,
@@ -391,7 +413,7 @@ export default function GiftBuilder() {
         // Mostrar notificación de éxito
         showSuccess(
           "¡Regalo agregado! 🎉",
-          `Tu regalo personalizado "${giftBuilder.selectedBox.name}" con ${
+          `Tu regalo personalizado "${selectedBox.name}" con ${
             giftBuilder.selectedBeers.length
           } cerveza${
             giftBuilder.selectedBeers.length > 1 ? "s" : ""
@@ -413,13 +435,22 @@ export default function GiftBuilder() {
           result.message || "No se pudo agregar el regalo al carrito."
         );
       }
-    } catch (error) {
-      console.error("🎁 Error al agregar regalo al carrito:", error);
+    } catch (err: unknown) {
+      console.error("🎁 Error al agregar regalo al carrito:", err);
+      
+      const getErrorMessage = (error: unknown): string => {
+        if (error instanceof Error) {
+          return error.message;
+        }
+        if (typeof error === 'string') {
+          return error;
+        }
+        return "No se pudo agregar el regalo al carrito. Intenta nuevamente.";
+      };
+      
       showError(
         "Error al agregar regalo",
-        error instanceof Error
-          ? error.message
-          : "No se pudo agregar el regalo al carrito. Intenta nuevamente."
+        getErrorMessage(err)
       );
     }
   };
@@ -429,10 +460,16 @@ export default function GiftBuilder() {
       <div className="max-w-7xl mx-auto">
         {/* Título y Descripción */}
         <div className="text-center mb-12">
-          <h1 className="text-[30px] font-bold text-gray-900 mb-6 sm:text-4xl">
+          <h1
+            className="text-[30px] font-bold text-gray-900 mb-6 sm:text-4xl"
+            style={{ fontFamily: "var(--font-oswald)" }}
+          >
             Construye tu regalo perfecto
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p
+            className="text-xl text-gray-600 max-w-3xl mx-auto"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
             Elige tu caja favorita y personalízala con las cervezas que más te
             gusten. Crea un regalo único y especial.
           </p>
@@ -448,81 +485,51 @@ export default function GiftBuilder() {
                   1
                 </div>
                 <div>
-                  <h2 className="text-[30px] font-bold text-gray-900 sm:text-2xl">
+                  <h2
+                    className="text-[30px] font-bold text-gray-900 sm:text-2xl"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Elige tu caja
                   </h2>
-                  <p className="text-sm text-gray-600">
+                  <p
+                    className="text-sm text-gray-600"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Selecciona el tamaño perfecto para tu regalo
                   </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-                {giftBoxes.map((box) => (
-                  <div
-                    key={box.id}
-                    onClick={() => selectBox(box)}
-                    className={`border-2 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg group relative ${
-                      giftBuilder.selectedBox?.id === box.id
-                        ? "border-[#B58E31] bg-[#B58E31]/5 shadow-lg"
-                        : "border-gray-200 hover:border-[#B58E31]"
-                    }`}
+              {/* Mensaje de Página en Construcción */}
+              <div className="text-center py-12">
+                <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-[#B58E31] to-[#D4A853] rounded-full mb-6 shadow-lg">
+                  <svg
+                    className="w-12 h-12 text-white"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    {box.recommended && (
-                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                        <span className="bg-gradient-to-r from-[#B58E31] to-[#D4A853] text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg border-2 border-white whitespace-nowrap">
-                          ⭐ Recomendada
-                        </span>
-                      </div>
-                    )}
-
-                    {giftBuilder.selectedBox?.id === box.id && (
-                      <div className="absolute top-4 right-4">
-                        <div className="w-6 h-6 bg-[#B58E31] rounded-full flex items-center justify-center">
-                          <Check className="w-4 h-4 text-white" />
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="text-center">
-                      <div
-                        className={`w-20 h-20 rounded-xl mx-auto mb-4 flex items-center justify-center transition-all duration-300 ${
-                          giftBuilder.selectedBox?.id === box.id
-                            ? "bg-gradient-to-r from-[#B58E31] to-[#D4A853] shadow-lg"
-                            : "bg-gray-100 group-hover:bg-[#B58E31]"
-                        }`}
-                      >
-                        <Gift
-                          className={`w-10 h-10 transition-colors ${
-                            giftBuilder.selectedBox?.id === box.id
-                              ? "text-white"
-                              : "text-gray-600 group-hover:text-white"
-                          }`}
-                        />
-                      </div>
-
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        {box.name}
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-2">
-                        {box.description}
-                      </p>
-                      <p className="text-sm text-gray-500 mb-3">
-                        Hasta {box.maxBeers} cervezas
-                      </p>
-                      <p className="text-sm text-gray-500 mb-3">
-                        {box.dimensions}
-                      </p>
-                      <div className="flex items-center justify-center text-xs text-gray-500 mb-3">
-                        <Clock className="w-4 h-4 mr-1" />
-                        {box.deliveryTime}
-                      </div>
-                      <p className="text-2xl font-bold text-[#B58E31]">
-                        {formatPrice(box.price)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                    <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                </div>
+                <h3
+                  className="text-2xl font-bold text-gray-900 mb-3"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Página en Construcción
+                </h3>
+                <p
+                  className="text-gray-600 max-w-md mx-auto"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Estamos trabajando en mejorar esta funcionalidad para
+                  ofrecerte la mejor experiencia. Muy pronto podrás elegir tu
+                  caja perfecta.
+                </p>
               </div>
             </div>
 
@@ -534,10 +541,16 @@ export default function GiftBuilder() {
                     2
                   </div>
                   <div>
-                    <h2 className="text-[30px] font-bold text-gray-900 sm:text-2xl">
+                    <h2
+                      className="text-[30px] font-bold text-gray-900 sm:text-2xl"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Elige tus cervezas
                     </h2>
-                    <p className="text-sm text-gray-600">
+                    <p
+                      className="text-sm text-gray-600"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Personaliza tu regalo con las cervezas que más te gusten
                     </p>
                   </div>
@@ -554,11 +567,13 @@ export default function GiftBuilder() {
                         value={searchTerm}
                         onChange={(e) => handleSearchChange(e.target.value)}
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] focus:border-transparent text-gray-900 placeholder-gray-500"
+                        style={{ fontFamily: "var(--font-lato)" }}
                       />
                     </div>
                     <button
                       onClick={() => setShowFilters(!showFilters)}
                       className="flex items-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700"
+                      style={{ fontFamily: "var(--font-lato)" }}
                     >
                       <Filter className="w-5 h-5 mr-2" />
                       Filtros
@@ -570,7 +585,10 @@ export default function GiftBuilder() {
                     <div className="bg-gray-50 rounded-lg p-4 space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label
+                            className="block text-sm font-medium text-gray-700 mb-2"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             Paises
                           </label>
                           <select
@@ -579,6 +597,7 @@ export default function GiftBuilder() {
                               handleCountryChange(e.target.value)
                             }
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900"
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             {countries.map((country) => (
                               <option key={country.value} value={country.value}>
@@ -588,7 +607,10 @@ export default function GiftBuilder() {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label
+                            className="block text-sm font-medium text-gray-700 mb-2"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             Estilos
                           </label>
                           <select
@@ -598,6 +620,7 @@ export default function GiftBuilder() {
                             }
                             disabled={filtersLoading}
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             {filtersLoading ? (
                               <option value="">Cargando...</option>
@@ -614,7 +637,10 @@ export default function GiftBuilder() {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label
+                            className="block text-sm font-medium text-gray-700 mb-2"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             Rango de precio
                           </label>
                           <select
@@ -623,6 +649,7 @@ export default function GiftBuilder() {
                               handlePriceRangeChange(e.target.value)
                             }
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#B58E31] text-gray-900"
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             {priceRanges.map((range) => (
                               <option key={range.value} value={range.value}>
@@ -635,6 +662,7 @@ export default function GiftBuilder() {
                           <button
                             onClick={handleClearFilters}
                             className="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors font-medium"
+                            style={{ fontFamily: "var(--font-lato)" }}
                           >
                             Limpiar filtros
                           </button>
@@ -647,10 +675,16 @@ export default function GiftBuilder() {
                 {/* Contador de Progreso */}
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-gray-700">
+                    <span
+                      className="text-sm font-medium text-gray-700"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       Progreso
                     </span>
-                    <span className="text-sm font-medium text-[#B58E31]">
+                    <span
+                      className="text-sm font-medium text-[#B58E31]"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       {giftBuilder.selectedBeers.length} de{" "}
                       {giftBuilder.selectedBox.maxBeers} cervezas
                     </span>
@@ -673,7 +707,7 @@ export default function GiftBuilder() {
                 {pagination && (
                   <div className="mb-6">
                     <div className="flex justify-between items-center text-sm text-gray-600">
-                      <span>
+                      <span style={{ fontFamily: "var(--font-lato)" }}>
                         Página {pagination.currentPage} de {pagination.lastPage}{" "}
                         - {pagination.total} productos total
                       </span>
@@ -739,20 +773,17 @@ export default function GiftBuilder() {
                             />
                           </div>
 
-                          <h4 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2">
+                          <h4
+                            className="font-medium text-gray-900 text-sm mb-1 line-clamp-2"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {beer.name}
                           </h4>
-                          <p className="text-xs text-gray-600 mb-1">
-                            {beer.brand}
-                          </p>
-                          <p className="text-xs text-gray-500 mb-1">
-                            {beer.volume}
-                          </p>
-                          <p className="text-xs text-[#B58E31] font-medium mb-2">
-                            {beer.nationality}
-                          </p>
 
-                          <p className="text-sm font-bold text-[#B58E31]">
+                          <p
+                            className="text-sm font-bold text-[#B58E31]"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {formatPrice(beer.price)}
                           </p>
 
@@ -767,7 +798,10 @@ export default function GiftBuilder() {
                                 >
                                   <X className="w-4 h-4 text-white" />
                                 </div>
-                                <span className="text-xs font-bold text-white drop-shadow-lg">
+                                <span
+                                  className="text-xs font-bold text-white drop-shadow-lg"
+                                  style={{ fontFamily: "var(--font-lato)" }}
+                                >
                                   {giftBuilder.selectedBeers.length >=
                                   (giftBuilder.selectedBox?.maxBeers || 0)
                                     ? "Límite alcanzado"
@@ -784,7 +818,10 @@ export default function GiftBuilder() {
 
                 {!productsLoading && filteredBeers.length === 0 && (
                   <div className="text-center py-8">
-                    <p className="text-gray-500">
+                    <p
+                      className="text-gray-500"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       No se encontraron cervezas con los filtros seleccionados
                     </p>
                   </div>
@@ -803,6 +840,7 @@ export default function GiftBuilder() {
                             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                             : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                         }`}
+                        style={{ fontFamily: "var(--font-lato)" }}
                       >
                         Anterior
                       </button>
@@ -835,6 +873,7 @@ export default function GiftBuilder() {
                                     ? "bg-[#B58E31] text-white"
                                     : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                                 }`}
+                                style={{ fontFamily: "var(--font-lato)" }}
                               >
                                 {pageNumber}
                               </button>
@@ -854,6 +893,7 @@ export default function GiftBuilder() {
                             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                             : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                         }`}
+                        style={{ fontFamily: "var(--font-lato)" }}
                       >
                         Siguiente
                       </button>
@@ -867,7 +907,10 @@ export default function GiftBuilder() {
           {/* Panel Lateral - Resumen */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-lg p-6 sticky top-6 border border-gray-100">
-              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+              <h3
+                className="text-xl font-bold text-gray-900 mb-6 flex items-center"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 <Gift className="w-6 h-6 mr-2 text-[#B58E31]" />
                 Resumen de tu regalo
               </h3>
@@ -875,25 +918,47 @@ export default function GiftBuilder() {
               {/* Caja Seleccionada */}
               {giftBuilder.selectedBox ? (
                 <div className="mb-6">
-                  <h4 className="font-medium text-gray-700 mb-2">Caja</h4>
+                  <h4
+                    className="font-medium text-gray-700 mb-2"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    Caja
+                  </h4>
                   <div className="bg-gray-50 rounded-lg p-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-900 font-medium">
+                      <span
+                        className="text-gray-900 font-medium"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {giftBuilder.selectedBox.name}
                       </span>
-                      <span className="font-bold text-[#B58E31]">
+                      <span
+                        className="font-bold text-[#B58E31]"
+                        style={{ fontFamily: "var(--font-lato)" }}
+                      >
                         {formatPrice(giftBuilder.selectedBox.price)}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p
+                      className="text-xs text-gray-500 mt-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       {giftBuilder.selectedBox.description}
                     </p>
                   </div>
                 </div>
               ) : (
                 <div className="mb-6">
-                  <h4 className="font-medium text-gray-700 mb-2">Caja</h4>
-                  <div className="text-sm text-gray-500">
+                  <h4
+                    className="font-medium text-gray-700 mb-2"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    Caja
+                  </h4>
+                  <div
+                    className="text-sm text-gray-500"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Selecciona una caja para continuar
                   </div>
                 </div>
@@ -901,7 +966,10 @@ export default function GiftBuilder() {
 
               {/* Cervezas Seleccionadas */}
               <div className="mb-6">
-                <h4 className="font-medium text-gray-700 mb-2">
+                <h4
+                  className="font-medium text-gray-700 mb-2"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Cervezas ({giftBuilder.selectedBeers.length}/
                   {giftBuilder.selectedBox?.maxBeers || 0})
                 </h4>
@@ -921,16 +989,19 @@ export default function GiftBuilder() {
                             />
                           </div>
                           <div>
-                            <p className="text-xs font-medium text-gray-900">
+                            <p
+                              className="text-xs font-medium text-gray-900"
+                              style={{ fontFamily: "var(--font-lato)" }}
+                            >
                               {beer.name}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {beer.volume}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <span className="text-xs font-bold text-[#B58E31] mr-2">
+                          <span
+                            className="text-xs font-bold text-[#B58E31] mr-2"
+                            style={{ fontFamily: "var(--font-lato)" }}
+                          >
                             {formatPrice(beer.price)}
                           </span>
                           <button
@@ -944,7 +1015,10 @@ export default function GiftBuilder() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-sm text-gray-500">
+                  <div
+                    className="text-sm text-gray-500"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     Selecciona cervezas para ver el detalle
                   </div>
                 )}
@@ -953,8 +1027,16 @@ export default function GiftBuilder() {
               {/* Total */}
               <div className="border-t pt-4 mb-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-gray-900">Total</span>
-                  <span className="text-2xl font-bold text-[#B58E31]">
+                  <span
+                    className="text-lg font-bold text-gray-900"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    Total
+                  </span>
+                  <span
+                    className="text-2xl font-bold text-[#B58E31]"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
                     {formatPrice(giftBuilder.totalPrice)}
                   </span>
                 </div>
@@ -969,6 +1051,7 @@ export default function GiftBuilder() {
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
                 disabled={!giftBuilder.isComplete}
+                style={{ fontFamily: "var(--font-lato)" }}
               >
                 {giftBuilder.isComplete ? (
                   <>
@@ -981,7 +1064,10 @@ export default function GiftBuilder() {
               </button>
 
               {!giftBuilder.isComplete && (
-                <p className="text-xs text-gray-500 text-center mt-3">
+                <p
+                  className="text-xs text-gray-500 text-center mt-3"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {giftBuilder.selectedBox
                     ? `Faltan ${
                         giftBuilder.selectedBox.maxBeers -
@@ -1004,6 +1090,96 @@ export default function GiftBuilder() {
         type={notification.type}
         duration={4000}
       />
+
+      {/* Modal de Construcción */}
+      {showConstructionModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-all duration-300"
+            onClick={() => setShowConstructionModal(false)}
+          />
+
+          {/* Modal */}
+          <div className="flex min-h-full items-center justify-center p-4">
+            <div
+              className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-[#B58E31] to-[#D4A853] rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5 text-white"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                  </div>
+                  <h2
+                    className="text-xl font-bold text-gray-900"
+                    style={{ fontFamily: "var(--font-lato)" }}
+                  >
+                    Sección en Construcción
+                  </h2>
+                </div>
+                <button
+                  onClick={() => setShowConstructionModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+                  aria-label="Cerrar modal"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="p-8 text-center">
+                <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-[#B58E31] to-[#D4A853] rounded-full mb-6 shadow-lg">
+                  <svg
+                    className="w-12 h-12 text-white"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                  </svg>
+                </div>
+                <h3
+                  className="text-2xl font-bold text-gray-900 mb-3"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Estamos Trabajando
+                </h3>
+                <p
+                  className="text-gray-600 mb-6"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Actualmente estamos construyendo esta sección para ofrecerte
+                  la mejor experiencia. Muy pronto podrás armar tu regalo
+                  personalizado.
+                </p>
+                <button
+                  onClick={() => setShowConstructionModal(false)}
+                  className="w-full bg-gradient-to-r from-[#B58E31] to-[#D4A853] text-white py-3 px-4 rounded-lg font-medium transition-all duration-300 hover:shadow-lg"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Entendido
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

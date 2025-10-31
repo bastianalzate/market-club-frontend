@@ -83,9 +83,17 @@ function MayoristaContentInner() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando productos mayoristas...</p>
+          <p 
+            className="text-gray-600"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
+            Cargando productos mayoristas...
+          </p>
           {pagination.total > 0 && (
-            <p className="text-sm text-gray-500 mt-2">
+            <p 
+              className="text-sm text-gray-500 mt-2"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Página {pagination.currentPage} de {pagination.lastPage} -{" "}
               {pagination.total} productos total
             </p>
@@ -100,13 +108,22 @@ function MayoristaContentInner() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          <h2 
+            className="text-2xl font-bold text-gray-800 mb-2"
+            style={{ fontFamily: "var(--font-oswald)" }}
+          >
             Error al cargar productos
           </h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <p 
+            className="text-gray-600 mb-4"
+            style={{ fontFamily: "var(--font-lato)" }}
+          >
+            {error}
+          </p>
           <button
             onClick={() => window.location.reload()}
             className="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
+            style={{ fontFamily: "var(--font-lato)" }}
           >
             Reintentar
           </button>
@@ -126,10 +143,16 @@ function MayoristaContentInner() {
           {/* Header con título y botón del carrito */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div>
-              <h2 className="text-[30px] sm:text-2xl font-bold text-white mb-2">
+              <h2 
+                className="text-[30px] sm:text-2xl font-bold text-white mb-2"
+                style={{ fontFamily: "var(--font-oswald)" }}
+              >
                 Productos mayoristas
               </h2>
-              <p className="text-gray-300 text-sm sm:text-base">
+              <p 
+                className="text-gray-300 text-sm sm:text-base"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
                 {loading
                   ? "Cargando productos..."
                   : `${pagination.total} productos disponibles`}
@@ -151,9 +174,17 @@ function MayoristaContentInner() {
               }
             >
               <MessageCircle className="w-3 h-3 sm:w-5 sm:h-5" />
-              <span className="whitespace-nowrap">Cotizar WhatsApp</span>
+              <span 
+                className="whitespace-nowrap"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
+                Cotizar WhatsApp
+              </span>
               {itemsCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">
+                <span 
+                  className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   {itemsCount}
                 </span>
               )}
@@ -217,7 +248,12 @@ export default function MayoristaContent() {
           <div className="min-h-screen flex items-center justify-center">
             <div className="text-center">
               <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-              <p className="text-gray-600">Cargando tienda mayorista...</p>
+              <p 
+                className="text-gray-600"
+                style={{ fontFamily: "var(--font-lato)" }}
+              >
+                Cargando tienda mayorista...
+              </p>
             </div>
           </div>
         }

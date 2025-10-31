@@ -4,6 +4,7 @@ import { X, Trash2, Plus, Minus, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCartContext } from "@/contexts/CartContext";
+import LazyImage from "@/components/shared/LazyImage";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -43,17 +44,18 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const getImageUrl = (
     product: { image?: string; image_url?: string } | null,
     isGift: boolean = false
-  ) => {
+  ): string | null => {
     // Si es un regalo, usar icono de regalo
     if (isGift) {
       return "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSI4IiBmaWxsPSIjQjU4RTMxIi8+PHJlY3QgeD0iMyIgeT0iOCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMiA4djEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxMnY3YTIgMiAwIDAgMS0yIDJIN2EyIDIgMCAwIDEtMi0ydi03IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik03LjUgOGEyLjUgMi41IDAgMCAxIDAtNUE0LjggOCAwIDAgMSAxMiA4YTQuOCA4IDAgMCAxIDQuNS01IDIuNSAyLjUgMCAwIDEgMCA1IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=";
     }
 
-    if (!product) return "/images/cervezas/bottella-01.png";
+    // Retornar null para que LazyImage use su fallback con las imágenes por defecto
+    if (!product) return null;
 
     // Priorizar image_url si existe, sino usar image
     const imagePath = product.image_url || product.image;
-    if (!imagePath) return "/images/cervezas/bottella-01.png";
+    if (!imagePath) return null;
 
     // Si ya es una URL completa, devolverla tal como está
     if (imagePath.startsWith("http")) {
@@ -61,7 +63,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     }
 
     // Construir URL completa con la base del backend
-    return `http://localhost:8000/storage/${imagePath}`;
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
+      "http://localhost:8000";
+    return `${baseUrl}/${imagePath}`;
   };
 
   // Función para obtener el nombre del item (producto o regalo)
@@ -183,7 +188,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
       {/* Backdrop/Overlay */}
       <div
-        className="fixed inset-0 z-40"
+        className="fixed inset-0 z-[60]"
         style={{
           backgroundColor: "#00000091",
           animation: isAnimating
@@ -195,7 +200,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
       {/* Cart Drawer */}
       <div
-        className="fixed inset-y-0 right-0 w-full h-full max-w-xs sm:max-w-sm z-50"
+        className="fixed inset-y-0 right-0 w-full h-full max-w-xs sm:max-w-sm z-[70]"
         style={{
           animation: isAnimating
             ? "slideInFromRight 0.3s ease-in-out"
@@ -207,13 +212,17 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             {/* Header */}
             <div className="flex-shrink-0 px-4 py-5">
               <div className="flex items-center justify-between">
-                <p className="text-base font-bold text-gray-900">
+                <p
+                  className="text-base font-bold text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Carrito de Compras
                 </p>
                 <button
                   type="button"
                   onClick={handleClose}
                   className="p-2 -m-2 text-gray-500 transition-all duration-200 bg-transparent rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 cursor-pointer"
+                  aria-label="Cerrar carrito"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -241,38 +250,26 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         return (
                           <li key={item.id} className="flex py-5">
                             <div
-                              className="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center bg-gray-100"
+                              className="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center bg-white overflow-hidden"
                               style={{
                                 backgroundColor: isGift ? "#B58E31" : undefined,
                               }}
                             >
-                              <img
-                                className={`object-cover ${
-                                  isGift ? "w-8 h-8" : "w-16 h-16 rounded-lg"
-                                }`}
+                              <LazyImage
                                 src={getImageUrl(item.product, isGift)}
                                 alt={itemName}
-                                onError={(e) => {
-                                  console.log(
-                                    "🛒 Image failed to load:",
-                                    getImageUrl(item.product, isGift)
-                                  );
-                                  const target = e.target as HTMLImageElement;
-                                  target.src =
-                                    "/images/cervezas/bottella-01.png";
-                                }}
-                                onLoad={() => {
-                                  console.log(
-                                    "🛒 Image loaded successfully:",
-                                    getImageUrl(item.product, isGift)
-                                  );
-                                }}
+                                className={`object-contain ${
+                                  isGift ? "w-8 h-8" : "w-full h-full p-2"
+                                }`}
                               />
                             </div>
 
                             <div className="flex items-stretch justify-between flex-1 ml-5 space-x-5">
                               <div className="flex flex-col justify-between flex-1">
-                                <p className="text-sm font-bold text-gray-900">
+                                <p
+                                  className="text-sm font-bold text-gray-900"
+                                  style={{ fontFamily: "var(--font-lato)" }}
+                                >
                                   {itemName}
                                 </p>
 
@@ -307,7 +304,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                       <Minus className="w-4 h-4 text-gray-600" />
                                     </button>
 
-                                    <span className="text-sm font-bold text-gray-800 min-w-[20px] text-center">
+                                    <span
+                                      className="text-sm font-bold text-gray-800 min-w-[20px] text-center"
+                                      style={{ fontFamily: "var(--font-lato)" }}
+                                    >
                                       {item.quantity}
                                     </span>
 
@@ -329,7 +329,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                               </div>
 
                               <div className="flex flex-col items-end justify-between">
-                                <p className="flex-shrink-0 w-20 text-sm font-bold text-right text-gray-600">
+                                <p
+                                  className="flex-shrink-0 w-20 text-sm font-bold text-right text-gray-600"
+                                  style={{ fontFamily: "var(--font-lato)" }}
+                                >
                                   {formatPrice(item.total_price)}
                                 </p>
 
@@ -365,8 +368,16 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               <div className="px-4 py-5 border-t border-gray-200 sm:p-6">
                 <ul className="space-y-4">
                   <li className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-gray-900">Total</p>
-                    <p className="text-sm font-bold text-gray-900">
+                    <p
+                      className="text-sm font-medium text-gray-900"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Total
+                    </p>
+                    <p
+                      className="text-sm font-bold text-gray-900"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
                       {formatPrice(
                         cart?.items?.reduce(
                           (sum, item) =>
@@ -384,7 +395,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     type="button"
                     onClick={handleCheckout}
                     className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white transition-all duration-200 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 hover:opacity-90 cursor-pointer"
-                    style={{ backgroundColor: "#B58E31" }}
+                    style={{
+                      backgroundColor: "#B58E31",
+                      fontFamily: "var(--font-lato)",
+                    }}
                   >
                     Ir a Pagar
                   </button>
@@ -393,6 +407,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     type="button"
                     onClick={handleClose}
                     className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-gray-900 transition-all duration-200 bg-transparent border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 hover:bg-gray-200 focus:bg-gray-200 cursor-pointer"
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     Continuar Comprando
                   </button>

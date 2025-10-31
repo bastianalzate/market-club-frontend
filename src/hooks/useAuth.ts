@@ -16,6 +16,7 @@ import {
   logout,
   clearError,
   restoreUser as restoreUserAction,
+  updateUser as updateUserAction,
   selectUser,
   selectIsAuthenticated,
   selectAuthLoading,
@@ -153,6 +154,12 @@ export function useAuth() {
         console.warn('Error al sincronizar carrito después del login:', cartError);
         // No fallar el login por error de sincronización del carrito
       }
+
+      // Retornar información del usuario para redirección
+      return {
+        user,
+        isWholesaler: result.user.is_wholesaler || false
+      };
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Error al iniciar sesión. Verifica tus credenciales.";
@@ -337,6 +344,11 @@ export function useAuth() {
     dispatch(clearError());
   }, [dispatch]);
 
+  // Actualizar usuario
+  const updateUser = useCallback((userData: Partial<{ id: string; name: string; email: string; phone: string; isGuest?: boolean; is_wholesaler?: boolean }>) => {
+    dispatch(updateUserAction(userData));
+  }, [dispatch]);
+
   return {
     // Estado
     user,
@@ -356,6 +368,7 @@ export function useAuth() {
     guestCheckout,
     logout: logoutAction,
     restoreUser,
+    updateUser,
     clearError: clearErrorAction,
   };
 }

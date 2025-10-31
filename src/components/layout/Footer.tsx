@@ -1,8 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Footer() {
+  const { user, isAuthenticated } = useAuth();
   return (
     <footer className="py-8 bg-white sm:pt-10 lg:pt-12">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -23,80 +25,150 @@ export default function Footer() {
         <div className="grid grid-cols-2 mt-10 sm:grid-cols-3 gap-y-10 lg:grid-cols-6 gap-x-16">
           {/* Menu */}
           <div>
-            <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
+            <h6
+              className="text-sm font-bold tracking-widest text-gray-900 uppercase"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Menú
             </h6>
 
             <ul className="mt-2 space-y-1">
-              <li>
-                <Link
-                  href="/tienda"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
-                >
-                  Tienda
-                </Link>
-              </li>
+              {/* Para mayoristas, solo mostrar opciones específicas */}
+              {isAuthenticated && user?.is_wholesaler ? (
+                <>
+                  <li>
+                    <Link
+                      href="/quienes-somos"
+                      className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Quiénes somos
+                    </Link>
+                  </li>
 
-              <li>
-                <Link
-                  href="/arma-tu-regalo"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
-                >
-                  Arma tu regalo
-                </Link>
-              </li>
+                  <li>
+                    <Link
+                      href="/mayorista"
+                      className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Mayorista
+                    </Link>
+                  </li>
 
-              <li>
-                <Link
-                  href="/club-socios"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
-                >
-                  Club de socios
-                </Link>
-              </li>
+                  <li>
+                    <Link
+                      href="/contacto"
+                      className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Contacto
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <Link
+                      href="/tienda"
+                      className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Tienda
+                    </Link>
+                  </li>
 
-              <li>
-                <Link
-                  href="/contacto"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
-                >
-                  Contacto
-                </Link>
-              </li>
+                  <li>
+                    <Link
+                      href="/arma-tu-regalo"
+                      className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Arma tu regalo
+                    </Link>
+                  </li>
+
+                  <li>
+                    <Link
+                      href="/club-socios"
+                      className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Club de socios
+                    </Link>
+                  </li>
+
+                  <li>
+                    <Link
+                      href="/contacto"
+                      className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Contacto
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
 
           {/* Enlaces Directos */}
           <div>
-            <h6 className="text-sm font-bold tracking-wide text-gray-900 uppercase font-pj whitespace-nowrap">
+            <h6
+              className="text-sm font-bold tracking-wide text-gray-900 uppercase whitespace-nowrap"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Enlaces Directos
             </h6>
 
             <ul className="mt-2 space-y-1">
               <li>
                 <Link
-                  href="/privacy-policy"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                  href="/politica-de-privacidad"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
-                  Políticas de privacidad
+                  Política de privacidad
                 </Link>
               </li>
 
               <li>
                 <Link
-                  href="/shipping-policy"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
-                >
-                  Políticas de envío
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/terms-and-conditions"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                  href="/terminos-y-condiciones"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Términos y condiciones
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/politica-de-devoluciones"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Política de devoluciones
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/politica-de-compra-online"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Política de compra online
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/politica-de-envios"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Política de envíos
                 </Link>
               </li>
             </ul>
@@ -104,7 +176,10 @@ export default function Footer() {
 
           {/* Medios de Pago */}
           <div className="col-span-2 sm:col-span-1">
-            <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
+            <h6
+              className="text-sm font-bold tracking-widest text-gray-900 uppercase"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Medios de pago
             </h6>
 
@@ -114,7 +189,8 @@ export default function Footer() {
                   href="https://wompi.co"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Wompi
                 </a>
@@ -124,7 +200,10 @@ export default function Footer() {
 
           {/* Nuestros Canales */}
           <div className="col-span-2 sm:col-span-3 xl:pl-20">
-            <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
+            <h6
+              className="text-sm font-bold tracking-widest text-gray-900 uppercase"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
               Nuestros canales
             </h6>
 
@@ -135,7 +214,8 @@ export default function Footer() {
                     href="https://whatsapp.com/channel/0029VbBEIEF9xVJn7sTa943c"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                    className="inline-flex items-center text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     <svg
                       className="w-5 h-5 mr-3 text-gray-900"
@@ -149,10 +229,11 @@ export default function Footer() {
                 </li>
                 <li>
                   <a
-                    href="https://www.instagram.com/somos_marketclub/"
+                    href="https://www.instagram.com/channel/AbaHk3XG4UNKPhZ1/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center text-sm font-normal text-gray-900 transition-all duration-300 transform font-pj hover:text-gray-600 hover:translate-x-1"
+                    className="inline-flex items-center text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
                     <svg
                       className="w-5 h-5 mr-3 text-gray-900"
@@ -169,10 +250,16 @@ export default function Footer() {
 
             <div className="grid grid-cols-1 mt-2 gap-y-6 sm:grid-cols-2 sm:gap-x-16">
               <div>
-                <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
+                <h6
+                  className="text-sm font-bold tracking-widest text-gray-900 uppercase"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Llámanos
                 </h6>
-                <p className=" text-xl font-pj text-gray-900 font-bold">
+                <p
+                  className="text-xl text-gray-900 font-bold"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <a href="tel:+573168751700" title="">
                     (+57) 316 8751700
                   </a>
@@ -180,10 +267,16 @@ export default function Footer() {
               </div>
 
               <div>
-                <h6 className="text-sm font-bold tracking-widest text-gray-900 uppercase font-pj">
+                <h6
+                  className="text-sm font-bold tracking-widest text-gray-900 uppercase"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   Escríbenos
                 </h6>
-                <p className=" text-xl font-pj text-gray-900 font-bold">
+                <p
+                  className="text-xl text-gray-900 font-bold"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
                   <a href="mailto:info@marketclub.com.co" title="">
                     info@marketclub.com.co
                   </a>
