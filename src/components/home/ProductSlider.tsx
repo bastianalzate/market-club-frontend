@@ -26,6 +26,12 @@ export default function ProductSlider() {
   } = useCartContext();
   const { toast, showSuccess, showError, hideToast } = useToast();
 
+  // Helper function to capitalize first letter
+  const capitalizeFirstLetter = (str: string): string => {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
+
   // Función para actualizar el estado is_favorite de un producto en la lista
   const updateBeerFavoriteInList = useCallback(
     (productId: number, isFavorite: boolean) => {
@@ -191,11 +197,13 @@ export default function ProductSlider() {
               style={{ fontFamily: "var(--font-lato)" }}
             >
               {beer.packaging_type && beer.volume_ml
-                ? `${beer.packaging_type.toUpperCase()} ${beer.volume_ml}`
+                ? `${capitalizeFirstLetter(beer.packaging_type)} ${
+                    beer.volume_ml
+                  }ml`
                 : beer.packaging_type
-                ? beer.packaging_type.toUpperCase()
+                ? capitalizeFirstLetter(beer.packaging_type)
                 : beer.volume_ml
-                ? `${beer.volume_ml}ML`
+                ? `${beer.volume_ml}ml`
                 : ""}
             </span>
           )}

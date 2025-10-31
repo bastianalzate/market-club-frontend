@@ -16,6 +16,7 @@ import {
 import { useState, useEffect } from "react";
 import { constants } from "@/config/constants";
 import { getAuthHeaders } from "@/utils/authHeaders";
+import LazyImage from "@/components/shared/LazyImage";
 
 interface OrderItem {
   id: number;
@@ -92,7 +93,10 @@ export default function OrderDetailsModal({
 }: OrderDetailsModalProps) {
   const [beerImages, setBeerImages] = useState<Record<number, string>>({});
   // Helper function para obtener la URL de imagen del producto
-  const getProductImageUrl = (imageUrl?: string, productName?: string) => {
+  const getProductImageUrl = (
+    imageUrl?: string,
+    productName?: string
+  ): string | null => {
     // Si es un regalo personalizado, usar imagen de regalo
     if (
       productName &&
@@ -102,7 +106,7 @@ export default function OrderDetailsModal({
     }
 
     if (!imageUrl) {
-      return "/images/cervezas/bottella-01.png"; // Imagen por defecto
+      return null; // LazyImage usará su fallback automático
     }
 
     // Si la imagen ya incluye la URL completa, usarla tal como está
@@ -535,17 +539,13 @@ export default function OrderDetailsModal({
                       <div key={item.id}>
                         {/* Producto principal (regalo o producto normal) */}
                         <div className="bg-white/80 backdrop-blur-sm border border-orange-100 rounded-xl p-5 flex items-center space-x-4 hover:shadow-md transition-all duration-200">
-                          <img
+                          <LazyImage
                             src={getProductImageUrl(
                               item.product_image,
                               item.product_name
                             )}
                             alt={item.product_name}
                             className="w-16 h-16 rounded-lg object-cover shadow-sm flex-shrink-0"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = "/images/cervezas/bottella-01.png";
-                            }}
                           />
                           <div className="flex-1 min-w-0">
                             <h4

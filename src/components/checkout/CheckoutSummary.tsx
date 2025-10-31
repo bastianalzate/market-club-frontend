@@ -3,6 +3,7 @@
 import { useCartContext } from "@/contexts/CartContext";
 import { formatPrice } from "@/utils/formatters";
 import { constants } from "@/config/constants";
+import LazyImage from "@/components/shared/LazyImage";
 
 interface CheckoutSummaryProps {
   onContinue: () => void;
@@ -12,7 +13,7 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
   const { cart, itemsCount } = useCartContext();
 
   // Helper function para obtener la URL de imagen del producto
-  const getProductImageUrl = (product: any, item?: any): string => {
+  const getProductImageUrl = (product: any, item?: any): string | null => {
     // Si es un regalo, usar imagen de regalo
     if (item?.is_gift || item?.gift_data) {
       return "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSI4IiBmaWxsPSIjQjU4RTMxIi8+PHJlY3QgeD0iMyIgeT0iOCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMiA4djEzIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxMnY3YTIgMiAwIDAgMS0yIDJIN2EyIDIgMCAwIDEtMi0ydi03IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik03LjUgOGEyLjUgMi41IDAgMCAxIDAtNUE0LjggOCAwIDAgMSAxMiA4YTQuOCA4IDAgMCAxIDQuNS01IDIuNSAyLjUgMCAwIDEgMCA1IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPgo=";
@@ -20,7 +21,7 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
 
     // Verificar que el producto no sea null o undefined
     if (!product) {
-      return "/images/cervezas/bottella-01.png";
+      return null; // LazyImage usará su fallback automático
     }
 
     if (product.image_url) {
@@ -35,7 +36,7 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
       const baseUrl = constants.api_url.replace("/api", "");
       return `${baseUrl}/${product.image}`;
     }
-    return "/images/cervezas/bottella-01.png";
+    return null; // LazyImage usará su fallback automático
   };
 
   // Calcular subtotal manualmente para asegurar precisión
@@ -113,22 +114,18 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
           {cart?.items?.map((item: any) => (
             <div
               key={item.id}
-              className="flex items-center space-x-3 sm:space-x-4 p-3 bg-gray-50 rounded-lg"
+              className="flex items-start space-x-3 sm:space-x-4 p-3 bg-gray-50 rounded-lg"
             >
-              <div className="flex-shrink-0">
-                <img
+              <div className="flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-white flex items-center justify-center">
+                <LazyImage
                   src={getProductImageUrl(item.product, item)}
                   alt={item.product?.name || item.gift_data?.name || "Producto"}
-                  className="w-14 h-14 rounded-lg object-cover shadow-sm"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "/images/cervezas/bottella-01.png";
-                  }}
+                  className="w-full h-full rounded-lg object-contain p-1"
                 />
               </div>
               <div className="flex-1 min-w-0">
                 <p
-                  className="text-sm font-semibold text-gray-900 truncate"
+                  className="text-sm font-semibold text-gray-900 line-clamp-2"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
                   {item.product?.name ||
@@ -136,13 +133,13 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
                     "Producto personalizado"}
                 </p>
                 <p
-                  className="text-xs sm:text-sm text-gray-500"
+                  className="text-xs text-gray-500 mt-1"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Cantidad: {item.quantity}
                 </p>
                 <p
-                  className="text-xs text-gray-400"
+                  className="text-xs text-gray-400 mt-0.5"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
                   Precio unitario: {formatPrice(item.unit_price)}
@@ -150,7 +147,7 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
               </div>
               <div className="flex-shrink-0 text-right">
                 <p
-                  className="text-xs sm:text-sm font-bold text-gray-900"
+                  className="text-sm font-bold text-gray-900 whitespace-nowrap"
                   style={{ fontFamily: "var(--font-lato)" }}
                 >
                   {formatPrice(

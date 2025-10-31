@@ -74,7 +74,7 @@ export default function SubscriptionSection({
       if (p.slug === "curious_brewer") {
         image = "/images/market-club/corona-beer.png";
       } else if (p.slug === "master_brewer" || price === 149000) {
-        image = "/images/market-club/liefmans-maestro.png";
+        image = "/images/market-club/delirium-maestro.png";
       } else if (p.slug === "collector_brewer" || price === 99000) {
         image = "/images/market-club/liefmans-coleccionista.png";
       }

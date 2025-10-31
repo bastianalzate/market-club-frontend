@@ -29,6 +29,12 @@ export default function FavoriteProducts() {
   } = useCartContext();
   const { toast, showSuccess, showError, hideToast } = useToast();
 
+  // Helper function to capitalize first letter
+  const capitalizeFirstLetter = (str: string): string => {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
+
   // Función para actualizar el estado is_favorite de un producto en la lista
   const updateProductFavoriteInList = useCallback(
     (productId: number, isFavorite: boolean) => {
@@ -199,11 +205,13 @@ export default function FavoriteProducts() {
               style={{ fontFamily: "var(--font-lato)" }}
             >
               {product.packaging_type && product.volume_ml
-                ? `${product.packaging_type.toUpperCase()} ${product.volume_ml}`
+                ? `${capitalizeFirstLetter(product.packaging_type)} ${
+                    product.volume_ml
+                  }ml`
                 : product.packaging_type
-                ? product.packaging_type.toUpperCase()
+                ? capitalizeFirstLetter(product.packaging_type)
                 : product.volume_ml
-                ? `${product.volume_ml}ML`
+                ? `${product.volume_ml}ml`
                 : ""}
             </span>
           )}

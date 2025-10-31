@@ -161,6 +161,16 @@ export default function Footer() {
                   Política de compra online
                 </Link>
               </li>
+
+              <li>
+                <Link
+                  href="/politica-de-envios"
+                  className="inline-flex text-sm font-normal text-gray-900 transition-all duration-300 transform hover:text-gray-600 hover:translate-x-1"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Política de envíos
+                </Link>
+              </li>
             </ul>
           </div>
 
