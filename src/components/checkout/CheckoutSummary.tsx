@@ -4,6 +4,7 @@ import { useCartContext } from "@/contexts/CartContext";
 import { formatPrice } from "@/utils/formatters";
 import { constants } from "@/config/constants";
 import LazyImage from "@/components/shared/LazyImage";
+import Link from "next/link";
 
 interface CheckoutSummaryProps {
   onContinue: () => void;
@@ -214,8 +215,8 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
 
       {/* Estimated Delivery */}
       <div className="px-4 sm:px-6 py-3 sm:py-4 bg-blue-50 border-t border-blue-100">
-        <div className="flex items-center">
-          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-full flex items-center justify-center mr-2 sm:mr-3">
+        <div className="flex items-start">
+          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
             <svg
               className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600"
               fill="none"
@@ -230,18 +231,30 @@ export default function CheckoutSummary({ onContinue }: CheckoutSummaryProps) {
               />
             </svg>
           </div>
-          <div>
+          <div className="flex-1">
             <p
-              className="text-xs sm:text-sm font-semibold text-blue-900"
+              className="text-xs sm:text-sm font-semibold text-blue-900 mb-1"
               style={{ fontFamily: "var(--font-lato)" }}
             >
-              Entrega estimada
+              Tiempos de entrega
             </p>
-            <p
-              className="text-xs text-blue-700"
+            <div
+              className="text-xs text-blue-700 space-y-0.5"
               style={{ fontFamily: "var(--font-lato)" }}
             >
-              3-5 días hábiles
+              <p>Medellín y Área Metropolitana: 1 a 3 días hábiles</p>
+              <p>Resto de Colombia: 3 a 5 días hábiles</p>
+            </div>
+            <p
+              className="text-xs text-blue-600 mt-1.5"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              <Link
+                href="/politica-de-envios"
+                className="underline hover:text-blue-800"
+              >
+                Políticas de envío
+              </Link>
             </p>
           </div>
         </div>

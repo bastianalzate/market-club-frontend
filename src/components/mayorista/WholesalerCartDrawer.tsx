@@ -84,21 +84,19 @@ export default function WholesalerCartDrawer({
 
   // Función para contactar por WhatsApp
   const handleWhatsAppContact = () => {
-    if (!cart || !cart.items.length) return;
+    if (!cart || !cart.items.length) {
+      // Si no hay productos, solo abrir WhatsApp sin mensaje
+      const whatsappUrl = `https://wa.me/573160530019`;
+      window.open(whatsappUrl, "_blank");
+      return;
+    }
 
     const itemsText = cart.items
-      .map(
-        (item, index) =>
-          `${index + 1}. ${item.product?.name || "Producto"} - ${formatPrice(
-            item.total_price
-          )}`
-      )
+      .map((item, index) => `${index + 1}. ${item.product?.name || "Producto"}`)
       .join("\n");
 
-    const message = `Hola! Me interesa cotizar los siguientes productos mayoristas:\n\n${itemsText}\n\nTotal: ${formatPrice(
-      totalAmount
-    )}`;
-    const whatsappUrl = `https://wa.me/573001234567?text=${encodeURIComponent(
+    const message = `Hola! Me interesa cotizar los siguientes productos mayoristas:\n\n${itemsText}`;
+    const whatsappUrl = `https://wa.me/573160530019?text=${encodeURIComponent(
       message
     )}`;
     window.open(whatsappUrl, "_blank");
@@ -301,13 +299,6 @@ export default function WholesalerCartDrawer({
                             </div>
 
                             <div className="flex flex-col items-end justify-between">
-                              <p
-                                className="flex-shrink-0 w-20 text-sm font-bold text-right text-gray-600"
-                                style={{ fontFamily: "var(--font-lato)" }}
-                              >
-                                {formatPrice(item.total_price)}
-                              </p>
-
                               <button
                                 type="button"
                                 onClick={() =>
@@ -339,24 +330,7 @@ export default function WholesalerCartDrawer({
             {/* Footer */}
             {itemsCount > 0 && (
               <div className="px-4 py-5 border-t border-gray-200 sm:p-6">
-                <ul className="space-y-4">
-                  <li className="flex items-center justify-between">
-                    <p
-                      className="text-sm font-medium text-gray-900"
-                      style={{ fontFamily: "var(--font-lato)" }}
-                    >
-                      Total
-                    </p>
-                    <p
-                      className="text-sm font-bold text-gray-900"
-                      style={{ fontFamily: "var(--font-lato)" }}
-                    >
-                      {formatPrice(totalAmount)}
-                    </p>
-                  </li>
-                </ul>
-
-                <div className="mt-5 space-y-3">
+                <div className="space-y-3">
                   <button
                     type="button"
                     onClick={handleWhatsAppContact}

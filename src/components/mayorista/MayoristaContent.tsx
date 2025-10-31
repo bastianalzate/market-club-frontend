@@ -8,10 +8,7 @@ import WholesalerCartDrawer from "./WholesalerCartDrawer";
 import MarketClubBanner from "@/components/home/MarketClubBanner";
 import ServicesBanner from "@/components/home/ServicesBanner";
 import { useMayoristaProducts } from "@/hooks/useMayoristaProducts";
-import {
-  WholesalerCartProvider,
-  useWholesalerCartContext,
-} from "@/contexts/WholesalerCartContext";
+import { useWholesalerCartContext } from "@/contexts/WholesalerCartContext";
 import { ShoppingCart } from "lucide-react";
 
 function MayoristaContentInner() {
@@ -241,24 +238,22 @@ function MayoristaContentInner() {
 
 export default function MayoristaContent() {
   return (
-    <WholesalerCartProvider>
-      <Suspense
-        fallback={
-          <div className="min-h-screen flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-500 mx-auto mb-4"></div>
-              <p
-                className="text-gray-600"
-                style={{ fontFamily: "var(--font-lato)" }}
-              >
-                Cargando tienda mayorista...
-              </p>
-            </div>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-500 mx-auto mb-4"></div>
+            <p
+              className="text-gray-600"
+              style={{ fontFamily: "var(--font-lato)" }}
+            >
+              Cargando tienda mayorista...
+            </p>
           </div>
-        }
-      >
-        <MayoristaContentInner />
-      </Suspense>
-    </WholesalerCartProvider>
+        </div>
+      }
+    >
+      <MayoristaContentInner />
+    </Suspense>
   );
 }
