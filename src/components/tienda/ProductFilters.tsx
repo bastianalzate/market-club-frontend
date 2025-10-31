@@ -10,6 +10,7 @@ import {
   Package,
 } from "lucide-react";
 import { useFilters } from "@/hooks/useFilters";
+import { getBeerStyleLabel } from "@/constants/beerStyles";
 
 interface ProductFiltersProps {
   searchTerm: string;
@@ -56,7 +57,7 @@ export default function ProductFilters({
     { value: "", label: "Todas" },
     ...filters.beer_styles.map((style) => ({
       value: style,
-      label: style.charAt(0).toUpperCase() + style.slice(1).replace("_", " "),
+      label: getBeerStyleLabel(style),
     })),
   ];
 
