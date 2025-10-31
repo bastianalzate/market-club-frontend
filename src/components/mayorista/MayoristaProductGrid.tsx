@@ -1,10 +1,20 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { TransformedProduct } from "@/hooks/useMayoristaProducts";
 import LazyImage from "@/components/shared/LazyImage";
 import ProductCardSkeleton from "@/components/shared/ProductCardSkeleton";
-import { MessageCircle, ChevronLeft, ChevronRight, ShoppingCart, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
+import {
+  MessageCircle,
+  ChevronLeft,
+  ChevronRight,
+  ShoppingCart,
+  Plus,
+  Minus,
+  Trash2,
+  ArrowRight,
+} from "lucide-react";
 import { useWholesalerCartContext } from "@/contexts/WholesalerCartContext";
 import { useToast } from "@/hooks/useToast";
 import Toast from "@/components/shared/Toast";
@@ -35,10 +45,11 @@ export default function MayoristaProductGrid({
   onNextPage,
   onPrevPage,
 }: MayoristaProductGridProps) {
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState(pagination.currentPage);
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
   const [removingFromCart, setRemovingFromCart] = useState<number | null>(null);
-  
+
   // Hook del carrito de mayoristas
   const {
     addToCart,
@@ -48,7 +59,7 @@ export default function MayoristaProductGrid({
     isInCart,
     loading: cartLoading,
   } = useWholesalerCartContext();
-  
+
   // Hook para notificaciones
   const { toast, showSuccess, showError, hideToast } = useToast();
 
@@ -93,7 +104,7 @@ export default function MayoristaProductGrid({
         productId: product.id,
         quantity: 1,
       });
-      
+
       if (result.success) {
         showSuccess(
           "¡Producto agregado! 🍺",
@@ -124,7 +135,7 @@ export default function MayoristaProductGrid({
         productId: product.id,
         quantity: currentQuantity + 1,
       });
-      
+
       if (!result.success) {
         showError(
           "Error al actualizar cantidad",
@@ -152,7 +163,7 @@ export default function MayoristaProductGrid({
           productId: product.id,
           quantity: currentQuantity - 1,
         });
-        
+
         if (!result.success) {
           showError(
             "Error al actualizar cantidad",
@@ -176,7 +187,7 @@ export default function MayoristaProductGrid({
       const result = await removeFromCart({
         productId: product.id,
       });
-      
+
       if (result.success) {
         showError(
           "¡Producto removido!",
@@ -233,13 +244,13 @@ export default function MayoristaProductGrid({
         ) : products.length === 0 ? (
           <div className="col-span-full text-center py-12">
             <div className="text-gray-400 text-6xl mb-4">🍺</div>
-            <h3 
+            <h3
               className="text-xl font-semibold text-white mb-2"
               style={{ fontFamily: "var(--font-oswald)" }}
             >
               No se encontraron productos
             </h3>
-            <p 
+            <p
               className="text-gray-400"
               style={{ fontFamily: "var(--font-lato)" }}
             >
@@ -255,13 +266,14 @@ export default function MayoristaProductGrid({
               {/* Imagen del producto */}
               <div className="relative">
                 <div
-                  className="overflow-hidden pt-4"
+                  className="overflow-hidden pt-4 cursor-pointer"
                   style={{ height: "354px" }}
+                  onClick={() => router.push(`/producto/${product.id}`)}
                 >
                   <LazyImage
                     src={product.image}
                     alt={product.name}
-                    className={`w-full h-full object-contain ${
+                    className={`w-full h-full object-contain transition-transform hover:scale-105 ${
                       product.stock_quantity === 0 ? "grayscale opacity-60" : ""
                     }`}
                   />
@@ -269,7 +281,7 @@ export default function MayoristaProductGrid({
 
                 {/* Etiqueta de Agotado */}
                 {product.stock_quantity === 0 && (
-                  <div 
+                  <div
                     className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg sm:top-4 sm:left-4 sm:px-3 sm:text-sm"
                     style={{ fontFamily: "var(--font-lato)" }}
                   >
@@ -281,65 +293,74 @@ export default function MayoristaProductGrid({
               {/* Información del producto */}
               <div className="p-6 flex flex-col flex-grow">
                 <div className="mb-4">
-                  <h3 
-                    className="text-lg font-bold text-gray-900 mb-2"
+                  <h3
+                    className="text-lg font-bold text-gray-900 mb-2 cursor-pointer hover:text-yellow-600 transition-colors"
                     style={{ fontFamily: "var(--font-lato)" }}
+                    onClick={() => router.push(`/producto/${product.id}`)}
                   >
                     {product.name}
                   </h3>
-                  
                 </div>
 
                 {/* Controles del carrito */}
                 <div className="mt-auto">
-                {isInCart(product.id) ? (
-                  <button
-                    onClick={() => handleRemoveFromCart(product)}
-                    disabled={removingFromCart === product.id}
-                    className="w-full flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    style={{
-                      backgroundColor: "#DC2626",
-                    }}
-                    onMouseEnter={(e) =>
-                      !e.currentTarget.disabled &&
-                      (e.currentTarget.style.backgroundColor = "#B91C1C")
-                    }
-                    onMouseLeave={(e) =>
-                      !e.currentTarget.disabled &&
-                      (e.currentTarget.style.backgroundColor = "#DC2626")
-                    }
-                  >
-                    <span style={{ fontFamily: "var(--font-lato)" }}>
-                      {removingFromCart === product.id ? 'Removiendo...' : 'Remover de la cotización'}
-                    </span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    disabled={addingToCart === product.id || !product.inStock}
-                    className="w-full flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    style={{
-                      backgroundColor: !product.inStock ? "#6B7280" : "#B58E31",
-                    }}
-                    onMouseEnter={(e) =>
-                      !e.currentTarget.disabled &&
-                      (e.currentTarget.style.backgroundColor = "#A07D2A")
-                    }
-                    onMouseLeave={(e) =>
-                      !e.currentTarget.disabled &&
-                      (e.currentTarget.style.backgroundColor = "#B58E31")
-                    }
-                  >
-                    <span style={{ fontFamily: "var(--font-lato)" }}>
-                      {addingToCart === product.id ? 'Agregando...' : 
-                       !product.inStock ? 'Agotado' : 'Agregar a cotización'}
-                    </span>
-                    {addingToCart !== product.id && <ArrowRight className="w-4 h-4" />}
-                  </button>
-                )}
+                  {isInCart(product.id) ? (
+                    <button
+                      onClick={() => handleRemoveFromCart(product)}
+                      disabled={removingFromCart === product.id}
+                      className="w-full flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                      style={{
+                        backgroundColor: "#DC2626",
+                      }}
+                      onMouseEnter={(e) =>
+                        !e.currentTarget.disabled &&
+                        (e.currentTarget.style.backgroundColor = "#B91C1C")
+                      }
+                      onMouseLeave={(e) =>
+                        !e.currentTarget.disabled &&
+                        (e.currentTarget.style.backgroundColor = "#DC2626")
+                      }
+                    >
+                      <span style={{ fontFamily: "var(--font-lato)" }}>
+                        {removingFromCart === product.id
+                          ? "Removiendo..."
+                          : "Remover de la cotización"}
+                      </span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      disabled={addingToCart === product.id || !product.inStock}
+                      className="w-full flex items-center justify-center space-x-2 text-white py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                      style={{
+                        backgroundColor: !product.inStock
+                          ? "#6B7280"
+                          : "#B58E31",
+                      }}
+                      onMouseEnter={(e) =>
+                        !e.currentTarget.disabled &&
+                        (e.currentTarget.style.backgroundColor = "#A07D2A")
+                      }
+                      onMouseLeave={(e) =>
+                        !e.currentTarget.disabled &&
+                        (e.currentTarget.style.backgroundColor = "#B58E31")
+                      }
+                    >
+                      <span style={{ fontFamily: "var(--font-lato)" }}>
+                        {addingToCart === product.id
+                          ? "Agregando..."
+                          : !product.inStock
+                          ? "Agotado"
+                          : "Agregar a cotización"}
+                      </span>
+                      {addingToCart !== product.id && (
+                        <ArrowRight className="w-4 h-4" />
+                      )}
+                    </button>
+                  )}
                 </div>
-               </div>
-             </div>
+              </div>
+            </div>
           ))
         )}
       </div>
@@ -392,8 +413,8 @@ export default function MayoristaProductGrid({
                     page === currentPage + 2
                   ) {
                     return (
-                      <span 
-                        key={page} 
+                      <span
+                        key={page}
                         className="px-2 text-white"
                         style={{ fontFamily: "var(--font-lato)" }}
                       >
