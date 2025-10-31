@@ -58,9 +58,25 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [addingToCart, setAddingToCart] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [showScrollIndicator, setShowScrollIndicator] = useState(true);
 
   const { addToCart, isInCart, getProductQuantity } = useCartContext();
   const { toast, showSuccess, showError, hideToast } = useToast();
+
+  // Ocultar la flecha cuando el usuario hace scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      // Si el usuario hace scroll más de 100px, ocultar la flecha
+      if (window.scrollY > 100) {
+        setShowScrollIndicator(false);
+      } else {
+        setShowScrollIndicator(true);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -460,8 +476,8 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Flecha animada para indicar scroll hacia la descripción - Centrada en la pantalla */}
-          {product.description && (
-            <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+          {product.description && showScrollIndicator && (
+            <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-10 transition-opacity duration-300">
               <div className="flex flex-col items-center">
                 <p
                   className="text-sm text-gray-500 mb-2"
