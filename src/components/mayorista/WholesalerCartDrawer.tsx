@@ -56,7 +56,9 @@ export default function WholesalerCartDrawer({
     }
 
     // Construir URL completa con la base del backend
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:8000";
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
+      "http://localhost:8000";
     return `${baseUrl}/${imagePath}`;
   };
 
@@ -116,7 +118,7 @@ export default function WholesalerCartDrawer({
     setTimeout(() => {
       setShouldRender(false);
       onClose();
-    }, 300); // Duración de la animación
+    }, 300);
   };
 
   if (!shouldRender) return null;
@@ -168,7 +170,7 @@ export default function WholesalerCartDrawer({
 
       {/* Backdrop/Overlay */}
       <div
-        className="fixed inset-0 z-40"
+        className="fixed inset-0 z-[60]"
         style={{
           backgroundColor: "#00000091",
           animation: isAnimating
@@ -180,7 +182,7 @@ export default function WholesalerCartDrawer({
 
       {/* Cart Drawer */}
       <div
-        className="fixed inset-y-0 right-0 w-full h-full max-w-xs sm:max-w-sm z-50"
+        className="fixed inset-y-0 right-0 w-full h-full max-w-xs sm:max-w-sm z-[70]"
         style={{
           animation: isAnimating
             ? "slideInFromRight 0.3s ease-in-out"
@@ -192,13 +194,17 @@ export default function WholesalerCartDrawer({
             {/* Header */}
             <div className="flex-shrink-0 px-4 py-5">
               <div className="flex items-center justify-between">
-                <p className="text-base font-bold text-gray-900">
-                  Carrito Mayorista
+                <p
+                  className="text-base font-bold text-gray-900"
+                  style={{ fontFamily: "var(--font-lato)" }}
+                >
+                  Carrito de Compras
                 </p>
                 <button
                   type="button"
                   onClick={handleClose}
                   className="p-2 -m-2 text-gray-500 transition-all duration-200 bg-transparent rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 cursor-pointer"
+                  aria-label="Cerrar carrito"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -222,7 +228,7 @@ export default function WholesalerCartDrawer({
                     <ul className="-my-5 divide-y divide-gray-200 divide-dotted">
                       {cart.items.map((item) => (
                         <li key={item.id} className="flex py-5">
-                          <div className="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center bg-gray-100">
+                          <div className="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center bg-white overflow-hidden">
                             <LazyImage
                               src={getImageUrl(
                                 item.product?.image ||
@@ -234,13 +240,16 @@ export default function WholesalerCartDrawer({
                                 item.product_snapshot?.name ||
                                 "Producto"
                               }
-                              className="w-12 h-12 rounded-lg"
+                              className="w-full h-full object-contain p-2"
                             />
                           </div>
 
                           <div className="flex items-stretch justify-between flex-1 ml-5 space-x-5">
                             <div className="flex flex-col justify-between flex-1">
-                              <p className="text-sm font-bold text-gray-900">
+                              <p
+                                className="text-sm font-bold text-gray-900"
+                                style={{ fontFamily: "var(--font-lato)" }}
+                              >
                                 {item.product?.name ||
                                   item.product_snapshot?.name ||
                                   "Producto"}
@@ -268,7 +277,10 @@ export default function WholesalerCartDrawer({
                                   <Minus className="w-4 h-4 text-gray-600" />
                                 </button>
 
-                                <span className="text-sm font-bold text-gray-800 min-w-[20px] text-center">
+                                <span
+                                  className="text-sm font-bold text-gray-800 min-w-[20px] text-center"
+                                  style={{ fontFamily: "var(--font-lato)" }}
+                                >
                                   {item.quantity}
                                 </span>
 
@@ -289,6 +301,13 @@ export default function WholesalerCartDrawer({
                             </div>
 
                             <div className="flex flex-col items-end justify-between">
+                              <p
+                                className="flex-shrink-0 w-20 text-sm font-bold text-right text-gray-600"
+                                style={{ fontFamily: "var(--font-lato)" }}
+                              >
+                                {formatPrice(item.total_price)}
+                              </p>
+
                               <button
                                 type="button"
                                 onClick={() =>
@@ -320,12 +339,32 @@ export default function WholesalerCartDrawer({
             {/* Footer */}
             {itemsCount > 0 && (
               <div className="px-4 py-5 border-t border-gray-200 sm:p-6">
-                <div className="space-y-3">
+                <ul className="space-y-4">
+                  <li className="flex items-center justify-between">
+                    <p
+                      className="text-sm font-medium text-gray-900"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      Total
+                    </p>
+                    <p
+                      className="text-sm font-bold text-gray-900"
+                      style={{ fontFamily: "var(--font-lato)" }}
+                    >
+                      {formatPrice(totalAmount)}
+                    </p>
+                  </li>
+                </ul>
+
+                <div className="mt-5 space-y-3">
                   <button
                     type="button"
                     onClick={handleWhatsAppContact}
-                    className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white transition-all duration-200 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 hover:opacity-90 cursor-pointer"
-                    style={{ backgroundColor: "#B58E31" }}
+                    className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-white transition-all duration-200 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: "#B58E31",
+                      fontFamily: "var(--font-lato)",
+                    }}
                   >
                     <MessageCircle className="w-4 h-4 mr-2" />
                     Cotizar WhatsApp
@@ -335,8 +374,9 @@ export default function WholesalerCartDrawer({
                     type="button"
                     onClick={handleClose}
                     className="inline-flex items-center justify-center w-full px-6 py-4 text-sm font-bold text-gray-900 transition-all duration-200 bg-transparent border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 hover:bg-gray-200 focus:bg-gray-200 cursor-pointer"
+                    style={{ fontFamily: "var(--font-lato)" }}
                   >
-                    Continuar Cotizando
+                    Continuar Comprando
                   </button>
                 </div>
               </div>
